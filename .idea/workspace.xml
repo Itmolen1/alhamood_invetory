@@ -1,0 +1,1456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b1b90727-3818-43b7-a0c5-94a178baa33d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/alhamood_v1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/admin_assets/assets/dist/invoice/invoice.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/company/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/company/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/company/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/customer/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/customer/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/customer/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/customerAdvance/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/customerAdvance/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/driver/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/driver/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/driver/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/expense/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/expense/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/expense/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/loan/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/loan/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/loan/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/meter/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/meter/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/meter/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/meterReading/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/meterReading/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/meterReading/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/purchase/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/purchase/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/purchase/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/sale/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/sale/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/sale/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/supplier/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/supplier/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/supplier/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/user/login.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/user/register.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/vehicle/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/vehicle/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/vehicle/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Controllers/PageController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/about.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/contact.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/partial/layout.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/temp/base.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/temp/footer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/temp/header.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/.idea/commandlinetools/Laravel_10_7_20__3_30_PM.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/.idea/otopark_001.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/app/Http/Middleware/SessionHasUser.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/ExtraFacility/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/ExtraFacility/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/ExtraFacility/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/Reservation/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/Vehicle/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/Vehicle/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/Vehicle/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleCategory/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleCategory/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleCategory/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleExtra/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleExtra/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleExtra/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleImages/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleImages/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/VehicleImages/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/profile/change.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/profile/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/profile/editImage.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/admin/profile/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/main/autoload/extra_option_autoload.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/main/test.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/resources/views/shared/signin-layout.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_002/vendor/sebastian/type/.idea/type.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/.idea/otopark_003.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/Archive/node_modules/babel-merge/.idea/babel-merge.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/Archive/node_modules/node-releases/.idea/node-releases.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/Archive/vendor/sebastian/type/.idea/type.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/node_modules/babel-merge/.idea/babel-merge.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/node_modules/node-releases/.idea/node-releases.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../otopark_003/vendor/sebastian/type/.idea/type.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../rambowApp/.idea/rambowApp.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../rambowApp/vendor/sebastian/type/.idea/type.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../test_passport/.idea/test_passport.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6/l6_1/.idea/l6_1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6/l6_1/app/Http/Controllers/ChannalController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6/l6_1/resources/views/channel/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6_01/.idea/testl6_01.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6_1/.idea/testl6_1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6_1/app/Billing/BankPaymentGateway.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6_1/app/Billing/BankPaymentGatewayContract.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6_1/app/Billing/CreditPaymentGateway.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testl6_1/app/Orders/OrderDetails.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testlaravel/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testlaravel/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testlaravel/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testlaravel/.idea/testlaravel.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testlaravel/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testlaravel/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/.idea/autoComplete.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/autoComplete/resources/views/autocomplete.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/dynamicRows/.idea/dynamicRows.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/dynamicRows/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/dynamicRows/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/dynamicRows/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/dynamicRows/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/dynamicRows/resources/views/dynamic_field.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/.idea/l6blog.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/public/stt.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/admin.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/categories/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/categories/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/categories/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/categories/show.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/layout.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/roles/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/roles/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/roles/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/roles/show.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/users/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/users/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/users/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/Dashboard/users/show.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/resources/views/test.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/l6blog/vendor/sebastian/type/.idea/type.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/.idea/laravel-ajax.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/resources/views/grocery.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/laravel-ajax/resources/views/slct.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/multipost/.idea/multipost.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../testprojects/multipost/resources/views/front_page.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/.idea/wahidgoc.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/app/View_c/Composers/ContactComposer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/app/View_c/Composers/ProjectsComposer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/fonts/Simple-Line-Icons4c82.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/fonts/fontawesome-webfont3e6e.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/fonts/icomoonca27.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/fonts/materialdesignicons-webfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/fonts/themify.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/bootstrap-switch.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/breadcrumb-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/chat-app-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/contact-app-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/dashboard1.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/dashboard2.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/dashboard3.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/dashboard4.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/dashboard5.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/easy-pie-chart.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/error-pages.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/file-upload.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/float-chart.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/floating-label.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/footable-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/form-icheck.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/google-vector-map.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/icon-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/inbox.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/login-register-lock.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/other-pages.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/pricing-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/progressbar-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/register3.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/ribbon-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/stylish-tooltip.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/tab-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/timeline-vertical-horizontal.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/ui-bootstrap-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/user-card.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/pages/widget-page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/css/style.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/custom.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/custom.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/dashboard1.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/dashboard2.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/dashboard3.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/dashboard4.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/dashboard5.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/chat.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/flot-data.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/footable-init.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/jasny-bootstrap.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/jquery.PrintArea.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/jsgrid-init.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/mask.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/morris-data.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/toastr.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/validation.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/widget-charts.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/pages/widget-data.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/perfect-scrollbar.jquery.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/sidebarmenu.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/dist/js/waves.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/crypto-icons/cryptocoins.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/crypto-icons/cryptocoins.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/crypto-icons/cryptocoins.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/crypto-icons/cryptocoins.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flag-icon.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ad.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ae.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/af.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ag.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ai.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/al.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/am.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ao.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/aq.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ar.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/as.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/at.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/au.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/aw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ax.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/az.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ba.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bb.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bd.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/be.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bh.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bi.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bj.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bq.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/br.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bs.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bv.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/by.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/bz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ca.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cd.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ch.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ci.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ck.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/co.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cv.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cx.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cy.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/cz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/de.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/dj.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/dk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/dm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/do.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/dz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ec.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ee.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/eg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/eh.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/er.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/es.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/et.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/fi.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/fj.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/fk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/fm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/fo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/fr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ga.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gb.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gd.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ge.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gh.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gi.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gp.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gq.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gs.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/gy.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/hk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/hm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/hn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/hr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ht.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/hu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/id.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ie.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/il.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/im.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/in.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/io.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/iq.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ir.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/is.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/it.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/je.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/jm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/jo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/jp.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ke.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/kg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/kh.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ki.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/km.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/kn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/kp.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/kr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/kw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ky.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/kz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/la.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/lb.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/lc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/li.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/lk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/lr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ls.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/lt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/lu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/lv.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ly.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ma.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/md.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/me.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mh.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ml.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mp.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mq.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ms.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mv.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mx.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/my.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/mz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/na.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/nc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ne.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/nf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ng.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ni.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/nl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/no.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/np.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/nr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/nu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/nz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/om.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pa.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pe.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ph.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ps.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/pw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/py.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/qa.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/re.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ro.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/rs.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ru.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/rw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sa.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sb.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sd.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/se.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sh.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/si.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sj.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/so.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ss.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/st.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sv.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sx.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sy.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/sz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/td.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/th.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tj.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tk.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tl.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/to.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tr.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tv.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/tz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ua.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ug.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/um.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/us.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/uy.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/uz.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/va.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/vc.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ve.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/vg.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/vi.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/vn.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/vu.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/wf.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ws.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/ye.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/yt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/za.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/zm.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/flag-icon-css/flags/zw.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/font-awesome/css/font-awesome.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/material-design-iconic-font/css/materialdesignicons.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/simple-line-icons/css/simple-line-icons.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/themify-icons/fonts/themify.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/themify-icons/fonts/themify.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/themify-icons/fonts/themify9f24.eot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/themify-icons/fonts/themify9f24.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/themify-icons/fonts/themifyd41d.eot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/themify-icons/themify-icons.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/icons/weather-icons/css/weather-icons.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/alert.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/alert2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/alert3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/alert4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/alert5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/alert6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/alert7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/model.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/model2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/alert/model3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/background/error-bg.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/background/img5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/background/img5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/background/login-register.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/background/socialbg.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/big/img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/big/img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/big/img3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/big/img4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/big/img5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/big/img6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/browser/chrome-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/browser/firefox-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/browser/internet-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/browser/opera-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/browser/photoshop.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/browser/safari-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/browser/sketch.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/favicon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/img/signin.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/logo-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/logo-light-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/logo-light-text.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/logo-text.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/tooltip/Euclid.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/7.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/admin_assets/assets/images/users/8.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/all-stylesheets.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/animation.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/bootstrap/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/buttons.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/custom-layout.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/fonts.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/headings.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/mobile.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/preloader.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/projects/projects.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/special-classes.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/css/typography.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/font-awesome/css/font-awesome.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/fontawesome-webfontd41d.eot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/fontawesome-webfonte0a5.eot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/fontawesome-webfonte0a5.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/fontawesome-webfonte0a5.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/fontawesome-webfonte0a5.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/fontawesome-webfonte0a5.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/roboto-black-webfont.eot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/roboto-black-webfont.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/roboto-black-webfont.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/roboto-black-webfont.woff" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/roboto-black-webfont.woff2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/fonts/roboto-black-webfontd41d.eot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/advisor-img1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/advisor-img2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/advisor-img3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/advisor-img4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/alhamood-img" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/alhamood-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/alhamood-logo-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/alhamood-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/alnedalaali-logo-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/alnedalaali-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/alnedalaali.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/arrow-down.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/arrow-left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/arrow-right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/awfuel-img-1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/awfuel-img.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/awfuel-logo-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/awfuel-logo-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/awfuel-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/background.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/backgrounds/pattern-bg.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/about-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/blog-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/contact-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/error-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/faq-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/home-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/home-banner2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/home-banner3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/login-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/project-banner.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/banners/services-banner-img.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/big-logo-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/blog-advisor-team.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/comment-img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/comment-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/post-img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/post-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/post-img3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/recent-post-img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/recent-post-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/blog/recent-post-img3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/breadcrumb-arrow-right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/business-meeting.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/business-quality.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/business-success.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/commitment.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/company-graph.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/favicon-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/favicon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/footer-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/funds-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/funds-img2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/funds-imgHover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/invest-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/invest-img2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/invest-imgHover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/li-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/retirement-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/retirement-img2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/retirement-imgHover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/saving-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/saving-img2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/icons/saving-imgHover.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/itmolen.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/logo-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/logo-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/logo-f.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/logo2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/news-img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/news-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/pagination-arrows.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo7.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/partners/partner-logo8.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/project-img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/project-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/project-img3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/project-img4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/project-img5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/project-img6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/services/services-img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/services/services-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/services/services-img3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/services/services-img4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/small-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/soorcf.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/soordf.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/support-team.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/theme-img1.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/theme-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/theme-img3.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/theme-img4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/theme-img5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/theme-img6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/wahidcop.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/wahidfix-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/wahidfix-img2.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/wahidfix-logo-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/wahidfix.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/watanpharma-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/watanpharma-2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/watanpharma.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/images/who-we-are-img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/bootstrap/bootstrap.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/counter/counter.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/custom.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/form-submission/contact-form.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/form-submission/validate.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/jquery-1.12.3.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/jquery.animate-enhanced.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/jquery.easypiechart.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/jquery.unveilEffects.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/js/projects/isotope.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/owl-carousel/css/owl.carousel.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/public/assets/owl-carousel/js/owl.carousel.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/About/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/About/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/About/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/Contacts/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/Contacts/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/Contacts/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/Projects/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/Projects/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/Projects/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/ceos/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/ceos/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/ceos/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Admin/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Dashboard/admin.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Home/about.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Home/ceo_message.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Home/contact_us.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/Home/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/errors/404.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/shared/layout-admin.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../wahidgoc/resources/views/shared/layout-home.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_api/.idea/watanpharma_api.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_api/resources/views/forgot.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_web/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_web/.idea/commandlinetools/Laravel_9_26_20__9_47_AM.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_web/.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_web/.idea/watanpharma_web.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_web/resources/views/admin/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../watanpharma_web/resources/views/admin/user/login.blade.php" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Models/User.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="498">
+              <caret line="43" column="6" selection-start-line="43" selection-start-column="6" selection-end-line="43" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Models/Role.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/views/components/navigation.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="13" column="171" selection-start-line="13" selection-start-column="165" selection-end-line="13" selection-end-column="171" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/database/factories/UserFactory.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="465">
+              <caret line="33" selection-start-line="33" selection-end-line="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/database/seeders/UserSeeder.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+              <folding>
+                <element signature="e#36#56#0#PHP" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/database/seeders/DatabaseSeeder.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>steps</find>
+      <find>log</find>
+      <find>$</find>
+      <find>sales.st</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/resources/views/admin/supplierAdvance/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/supplierAdvance/edit.blade.php" />
+        <option value="$PROJECT_DIR$/app/Models/Vehicle.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/VehicleController.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/vehicle/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/vehicle/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/customer/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/customer/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/supplier/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/supplier/edit.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/DriverController.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/driver/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/driver/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/expense/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/purchase/index.blade.php" />
+        <option value="$PROJECT_DIR$/public/admin_assets/assets/dist/invoice.js" />
+        <option value="$PROJECT_DIR$/resources/views/admin/sale/create.blade.php" />
+        <option value="$PROJECT_DIR$/public/admin_assets/assets/dist/invoice/invoice.js" />
+        <option value="$PROJECT_DIR$/app/Models/Company.php" />
+        <option value="$PROJECT_DIR$/stubs/model.stub" />
+        <option value="$PROJECT_DIR$/resources/views/admin/purchase/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/company/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/customer/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/driver/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/supplier/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/supplierAdvance/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/vehicle/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/purchase/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/expense/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/expense/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/sale/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/sale/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/meterReading/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/meterReading/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/meterReading/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/meter/create.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/loan/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/loan/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/customerAdvance/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/loan/index.blade.php" />
+        <option value="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" />
+        <option value="$PROJECT_DIR$/database/migrations/2020_11_16_060502_create_roles_table.php" />
+        <option value="$PROJECT_DIR$/database/migrations/2020_11_16_060917_create_role_user_table.php" />
+        <option value="$PROJECT_DIR$/app/Models/Role.php" />
+        <option value="$PROJECT_DIR$/app/Models/User.php" />
+        <option value="$PROJECT_DIR$/resources/views/components/navigation.blade.php" />
+        <option value="$PROJECT_DIR$/database/factories/UserFactory.php" />
+        <option value="$PROJECT_DIR$/database/seeders/UserSeeder.php" />
+        <option value="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+      </list>
+    </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/collection" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/league/commonmark" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/asm89/stack-cors" />
+      <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/brick/math" />
+      <path value="$PROJECT_DIR$/vendor/laravel/tinker" />
+      <path value="$PROJECT_DIR$/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/vendor/fideloper/proxy" />
+      <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/vendor/fruitcake/laravel-cors" />
+      <path value="$PROJECT_DIR$/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/facade/ignition-contracts" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/vendor/facade/flare-client-php" />
+      <path value="$PROJECT_DIR$/vendor/facade/ignition" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/vendor/fakerphp/faker" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-iconv" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
+      <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/vendor/swiftmailer/swiftmailer" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+    </include_path>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="22" />
+    <option name="width" value="1440" />
+    <option name="height" value="878" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="alhamood_v1" type="b2602c69:ProjectViewProjectNode" />
+              <item name="alhamood_v1" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="editor.config.ad.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views/admin" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/admin_assets/assets/dist/invoice" />
+      <recent name="$PROJECT_DIR$/resources/views/admin" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/views/admin" />
+      <recent name="$PROJECT_DIR$/resources/views" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner scope="XML" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b1b90727-3818-43b7-a0c5-94a178baa33d" name="Default Changelist" comment="" />
+      <created>1605331646312</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1605331646312</updated>
+      <workItem from="1605331650006" duration="27154000" />
+      <workItem from="1605418691343" duration="18874000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="46028000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="22" width="1440" height="878" extended-state="0" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2532189" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="npm" order="2" side_tool="true" />
+      <window_info id="Favorites" order="3" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Database Changes" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.10687023" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="npm" order="0" side_tool="true" />
+      <window_info id="Favorites" order="1" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.24964234" />
+      <window_info id="Structure" order="3" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="1" weight="0.23282443" />
+      <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" order="3" />
+      <window_info anchor="bottom" id="Version Control" order="4" />
+      <window_info anchor="bottom" id="Message" order="5" />
+      <window_info anchor="bottom" id="Find" order="6" />
+      <window_info anchor="bottom" id="Run" order="7" />
+      <window_info anchor="bottom" id="Debug" order="8" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="11" />
+      <window_info anchor="right" id="Database" order="0" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="2" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="3" weight="0.25" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/app/Models/Vehicle.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/VehicleController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="24" column="5" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/customer/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="447">
+          <caret line="166" column="42" selection-start-line="166" selection-start-column="42" selection-end-line="166" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplier/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="418">
+          <caret line="166" column="42" selection-start-line="166" selection-start-column="42" selection-end-line="166" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplier/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="695">
+          <caret line="166" column="42" selection-start-line="166" selection-start-column="42" selection-end-line="166" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/DriverController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="33" column="5" lean-forward="true" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/vehicle/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="317">
+          <caret line="70" column="50" selection-end-line="313" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/vehicle/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="209" column="125" selection-start-line="209" selection-start-column="125" selection-end-line="209" selection-end-column="125" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/driver/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="415">
+          <caret line="114" column="53" selection-start-line="114" selection-start-column="53" selection-end-line="114" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/driver/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="50" column="71" selection-start-line="50" selection-start-column="71" selection-end-line="50" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/customer/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="605">
+          <caret line="167" column="42" lean-forward="true" selection-end-line="327" />
+          <folding>
+            <marker date="1605352506000" expanded="true" signature="20026:20167" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/Company.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" selection-start-line="6" selection-end-line="6" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stubs/model.stub">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="45" selection-start-line="6" selection-start-column="45" selection-end-line="6" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/meterReading/sale/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/company/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="282">
+          <caret line="54" column="43" selection-start-line="54" selection-start-column="43" selection-end-line="54" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/customer/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="54" selection-start-line="54" selection-end-line="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/driver/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="54" selection-start-line="54" selection-end-line="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/expense/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="71" column="74" selection-start-line="71" selection-start-column="74" selection-end-line="71" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/purchase/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-112">
+          <caret line="24" column="71" selection-start-line="24" selection-start-column="71" selection-end-line="24" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplier/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="53" column="44" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplierAdvance/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="407">
+          <caret line="72" column="40" selection-start-line="72" selection-start-column="40" selection-end-line="72" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/vehicle/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="53" column="44" selection-start-line="53" selection-start-column="44" selection-end-line="53" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/purchase/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="104" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/expense/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="108" column="50" selection-start-line="108" selection-start-column="50" selection-end-line="108" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/expense/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="562">
+          <caret line="107" column="50" selection-start-line="107" selection-start-column="50" selection-end-line="107" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/sale/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="99" column="33" selection-end-line="258" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/sale/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="130" column="125" selection-start-line="130" selection-start-column="125" selection-end-line="130" selection-end-column="125" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/sale/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="86" column="66" selection-start-line="86" selection-start-column="66" selection-end-line="86" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/purchase/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="172" column="42" lean-forward="true" selection-start-line="151" selection-start-column="35" selection-end-line="172" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/admin_assets/assets/dist/invoice/invoice.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="517">
+          <caret line="141" lean-forward="true" selection-start-line="141" selection-end-line="141" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/meter/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/meter/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="576">
+          <caret line="85" selection-start-line="85" selection-end-line="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/meterReading/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-532">
+          <caret line="63" column="73" selection-start-line="63" selection-start-column="73" selection-end-line="63" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/meterReading/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1335">
+          <caret line="89" column="34" selection-start-line="89" selection-start-column="34" selection-end-line="89" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/meterReading/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="131" column="131" selection-start-line="131" selection-start-column="131" selection-end-line="131" selection-end-column="131" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="649">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="551">
+          <caret line="318" lean-forward="true" selection-start-line="318" selection-end-line="318" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="565">
+          <caret line="67" column="59" selection-start-line="67" selection-start-column="59" selection-end-line="67" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/loan/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="184" column="11" selection-start-line="184" selection-start-column="11" selection-end-line="184" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/loan/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1950">
+          <caret line="130" column="26" selection-start-line="130" selection-start-column="26" selection-end-line="130" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/loan/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="367">
+          <caret line="97" column="89" selection-start-line="97" selection-start-column="89" selection-end-line="97" selection-end-column="89" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_16_060917_create_role_user_table.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_16_060502_create_roles_table.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="35" column="5" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/Role.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/User.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="498">
+          <caret line="43" column="6" selection-start-line="43" selection-start-column="6" selection-end-line="43" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/components/navigation.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="13" column="171" selection-start-line="13" selection-start-column="165" selection-end-line="13" selection-end-column="171" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/factories/UserFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="33" selection-start-line="33" selection-end-line="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/seeders/UserSeeder.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="e#36#56#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/seeders/DatabaseSeeder.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
