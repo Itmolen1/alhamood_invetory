@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->date('dateOfBirth')->default(now());;
+            $table->date('dateOfBirth')->default(now());
             $table->string('imageUrl')->nullable();
             $table->string('contactNumber')->nullable();
             $table->string('address')->nullable();
@@ -27,7 +27,7 @@ class CreateUsersTable extends Migration
             $table->unsignedBigInteger('gender_Id')->default('0')->index();
             $table->unsignedBigInteger('region_Id')->default('0')->index();
             $table->unsignedBigInteger('company_id')->default('0')->index();
-            $table->timestamp('createdDate')->useCurrent();;
+            $table->timestamp('createdDate')->useCurrent();
             $table->boolean('isActive')->default(true);
             $table->rememberToken();
             $table->softDeletes();

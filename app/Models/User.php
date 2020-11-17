@@ -47,4 +47,44 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Models\Role','role_user');
     }
+
+    public function companies()
+    {
+        return $this->hasMany('App\Models\Company');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Company','company_id','id');
+    }
+
+    public function customers()
+    {
+        return $this->hasMany('App\Models\Customer');
+    }
+
+    public function customer_advances()
+    {
+        return $this->hasMany('App\Models\CustomerAdvance');
+    }
+
+    public function drivers()
+    {
+        return $this->hasMany('App\Models\Driver');
+    }
+
+    public function vehicles()
+    {
+        return $this->hasMany('App\Models\Vehicle');
+    }
+
+    public function suppliers()
+    {
+        return $this->hasMany('App\Models\Supplier');
+    }
+
+    public function supplier_advances()
+    {
+        return $this->hasMany('App\Models\SupplierAdvance');
+    }
 }

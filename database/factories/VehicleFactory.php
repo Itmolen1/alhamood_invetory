@@ -22,7 +22,10 @@ class VehicleFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'registrationNumber' => $this->faker->numberBetween(1,9),
+            'user_id' => $this->faker->numberBetween(1,3),
+            'customer_id' => $this->faker->numberBetween(1,3),
+            'company_id' => $this->faker->numberBetween(1,3),
         ];
     }
 }

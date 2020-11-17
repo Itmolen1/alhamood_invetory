@@ -24,6 +24,8 @@ route::resource('customer_advances','CustomerAdvanceController');
 route::resource('supplier_advances','SupplierAdvanceController');
 route::resource('vehicles','VehicleController');
 route::resource('drivers','DriverController');
+route::resource('users','UserController');
+route::resource('roles','RoleController');
 
 
 
@@ -56,5 +58,11 @@ route::view('loan','admin.loan.create');
 route::view('loan/edit','admin.loan.edit');
 route::view('loan/index','admin.loan.index');
 
+route::view('welcome','welcome');
+
 
 /// end of sales samples /////////////////
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -22,7 +22,13 @@ class CustomerAdvanceFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'customer_id' => $this->faker->numberBetween(0,3),
+            'user_id' => $this->faker->numberBetween(0,3),
+            'company_id' => $this->faker->numberBetween(0,3),
+            'receiptNumber' => $this->faker->numberBetween(0,3),
+            'paymentType' => $this->faker->name,
+            'Amount' => $this->faker->numberBetween(12,2222),
+            'receiverName' => $this->faker->name,
         ];
     }
 }

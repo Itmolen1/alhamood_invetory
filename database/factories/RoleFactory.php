@@ -22,7 +22,8 @@ class RoleFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'Name' => $this->faker->userName,
+            'company_id' => $this->faker->numberBetween(1,3),
         ];
     }
 }

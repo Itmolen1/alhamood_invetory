@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CustomerAdvance;
 use Illuminate\Database\Seeder;
 
 class CustomerAdvanceSeeder extends Seeder
@@ -13,6 +14,6 @@ class CustomerAdvanceSeeder extends Seeder
      */
     public function run()
     {
-        //
+        CustomerAdvance::factory()->count(3)->create();
     }
 }

@@ -22,7 +22,10 @@ class DriverFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'driverName' => $this->faker->name,
+            'user_id' => $this->faker->numberBetween(1,3),
+            'customer_id' => $this->faker->numberBetween(1,3),
+            'company_id' => $this->faker->numberBetween(1,3),
         ];
     }
 }

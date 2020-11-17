@@ -22,7 +22,18 @@ class CustomerFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'Name' => $this->faker->company,
+            'Representative' => $this->faker->name,
+            'companyType' => $this->faker->name,
+            'paymentType' => $this->faker->name,
+            'paymentTerm' => $this->faker->name,
+            'Phone' => $this->faker->numberBetween(10000,122222),
+            'Mobile' => $this->faker->numberBetween(10000,122222),
+            'Address' => $this->faker->address,
+            'postCode' => $this->faker->postcode,
+            'Description' => $this->faker->text,
+            'user_id' => $this->faker->numberBetween(0,3),
+            'region_id' => $this->faker->numberBetween(0,3),
         ];
     }
 }
