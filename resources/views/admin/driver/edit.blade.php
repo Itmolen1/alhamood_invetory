@@ -20,7 +20,7 @@
             <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h4 class="text-themecolor">Driver  Registration</h4>
+                    <h4 class="text-themecolor">Driver  Modification</h4>
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -46,7 +46,9 @@
                             <h4 class="m-b-0 text-white">Driver</h4>
                         </div>
                         <div class="card-body">
-                            <form action="#">
+                            <form action="{{ route('drivers.update', $driver->id) }}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
                                 <div class="form-body">
                                     <h3 class="card-title">Modification</h3>
                                     <hr>
@@ -54,19 +56,21 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Driver Name</label>
-                                                <input type="text" id="driverName" name="driverName" class="form-control" placeholder="Enter Driver Name">
+                                                <input type="text" id="driverName" name="driverName" value="{{ $driver->driverName }}" class="form-control" placeholder="Enter Driver Name">
+                                                @if ($errors->has('driverName'))
+                                                    <span class="text-danger">{{ $errors->first('driverName') }}</span>
+                                                @endif
                                             </div>
                                         </div>
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Customer Selection</label>
-                                                <select class="form-control custom-select" name="companyType">
+                                                <select class="form-control custom-select customer_id" name="customer_id" id="customer_id">
                                                     <option>--Select your Customer--</option>
-                                                    <option>c1</option>
-                                                    <option>c2</option>
-                                                    <option>Fc3</option>
-                                                    <option>c3</option>
+                                                    @foreach($customers as $customer)
+                                                        <option value="{{ $customer->id }}" {{ ($customer->id == $driver->customer_id) ? 'selected':'' }}>{{ $customer->Name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -78,7 +82,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration date</label>
-                                                <input type="date" class="form-control" placeholder="dd/mm/yyyy">
+                                                <input type="date" class="form-control registrationDate" value="{{ $driver->customer->registrationDate }}" name="registrationDate" id="registrationDate" placeholder="dd/mm/yyyy">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -87,7 +91,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Upload File</label>
-                                                <input type="file" name="TRNNumber" class="form-control" placeholder="Enter TRN Number">
+                                                <input type="file" name="imageUrl" class="form-control" placeholder="">
                                             </div>
                                         </div>
                                     </div>
@@ -98,14 +102,14 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Mobile</label>
-                                                <input type="text" class="form-control">
+                                                <input type="text" name="Mobile" id="Mobile" value="{{ $driver->customer->Mobile }}" class="form-control Mobile">
                                             </div>
                                         </div>
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Phone</label>
-                                                <input type="text" class="form-control">
+                                                <input type="text" name="Phone" id="Phone" value="{{ $driver->customer->Phone }}" class="form-control Phone">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -115,7 +119,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note"></textarea>
+                                                <textarea name="Description" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $driver->Description }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -133,63 +137,6 @@
 
             <!-- ============================================================== -->
             <!-- End PAge Content -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Right sidebar -->
-            <!-- ============================================================== -->
-            <!-- .right-sidebar -->
-            <div class="right-sidebar">
-                <div class="slimscrollright">
-                    <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span> </div>
-                    <div class="r-panel-body">
-                        <ul id="themecolors" class="m-t-20">
-                            <li><b>With Light sidebar</b></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme">1</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
-                            <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme">7</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme">10</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme working">12</a></li>
-                        </ul>
-                        <ul class="m-t-20 chatonline">
-                            <li><b>Chat option</b></li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/2.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Right sidebar -->
             <!-- ============================================================== -->
         </div>
         <!-- ============================================================== -->
@@ -221,6 +168,42 @@
             //     $('#paymentTermAll').hide();
             // });
         });
+
+        /////////////////////////// customer select /////////////////
+        $(document).ready(function () {
+
+            $('.customer_id').change(function () {
+                // alert();
+                var Id = 0;
+                Id = $(this).val();
+
+                if (Id > 0)
+                {
+                    $.ajax({
+                        // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url: "{{ URL('customerDetails') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                //console.log(result);
+                                $('#registrationDate').val(result.registrationDate);
+                                $('#Phone').val(result.Phone);
+                                $('#Mobile').val(result.Mobile);
+
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
+
+        });
+        ////////////// end of customer select ////////////////
     </script>
 
 

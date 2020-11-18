@@ -4,6 +4,7 @@
 namespace App\WebRepositories;
 
 
+use App\Http\Requests\UserRequest;
 use App\Models\Company;
 use App\Models\Role;
 use App\Models\User;
@@ -20,13 +21,13 @@ class UserRepository implements IUserRepositoryInterface
         return view('admin.user.index',compact('users'));
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $userRequest)
     {
         //dd($request->file('fileUpload'));
         // TODO: Implement store() method.
         $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
-        if ($request->hasFile('fileUpload'))
-            $filename = $request->file('fileUpload')->storeAs('profile', $filename,'public');
+        if ($userRequest->hasFile('fileUpload'))
+            $filename = $userRequest->file('fileUpload')->storeAs('profile', $filename,'public');
 
         else
             $filename = null;
@@ -34,17 +35,17 @@ class UserRepository implements IUserRepositoryInterface
         //dd($filename);
 
         $user = [
-            'name' =>$request->name,
-            'email' =>$request->email,
-            'contactNumber' =>$request->contactNumer,
-            'company_id' =>$request->company_id,
-            'address' =>$request->address,
+            'name' =>$userRequest->name,
+            'email' =>$userRequest->email,
+            'contactNumber' =>$userRequest->contactNumer,
+            'company_id' =>$userRequest->company_id,
+            'address' =>$userRequest->address,
             'imageUrl' =>$filename,
-            'password' =>bcrypt($request->password),
+            'password' =>bcrypt($userRequest->password),
         ];
         $user = User::create($user);
 
-            $user->roles()->attach($request->roles);
+            $user->roles()->attach($userRequest->roles);
             return redirect()->route('users.index');
     }
 
@@ -54,8 +55,8 @@ class UserRepository implements IUserRepositoryInterface
         $user = User::find($Id);
 
         $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
-        if ($request->hasFile('photo'))
-            $filename = $request->file('photo')->storeAs('profile', $filename,'public');
+        if ($request->hasFile('fileUpload'))
+            $filename = $request->file('fileUpload')->storeAs('profile', $filename,'public');
 
         else
             $filename = $user->imageUrl;

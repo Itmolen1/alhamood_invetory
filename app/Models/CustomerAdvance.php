@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerAdvance extends Model
@@ -29,5 +30,10 @@ class CustomerAdvance extends Model
     public function company()
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo('App\Models\Bank','bank_id','id');
     }
 }

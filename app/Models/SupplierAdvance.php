@@ -16,9 +16,9 @@ class SupplierAdvance extends Model
     protected $primaryKey = 'id';
     protected $table = 'supplier_advances';
 
-    public function customer()
+    public function supplier()
     {
-        return $this->belongsTo('App\Models\Supplier','customer_id','id');
+        return $this->belongsTo('App\Models\Supplier','supplier_id','id');
     }
 
     public function user()
@@ -29,5 +29,10 @@ class SupplierAdvance extends Model
     public function company()
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo('App\Models\Bank','bank_id','id');
     }
 }

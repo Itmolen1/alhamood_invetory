@@ -2,31 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SupplierRequest;
 use App\Models\Supplier;
+use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
+    /**
+     * @var ISupplierRepositoryInterface
+     */
+    private $supplierRepository;
+
+    public function __construct(ISupplierRepositoryInterface $supplierRepository)
+    {
+        $this->supplierRepository = $supplierRepository;
+    }
 
     public function index()
     {
-        return view('admin.supplier.index');
+        return $this->supplierRepository->index();
     }
 
 
     public function create()
     {
-        return view('admin.supplier.create');
+        return $this->supplierRepository->create();
     }
 
 
-    public function store(Request $request)
+    public function store(SupplierRequest $supplierRequest)
     {
-        //
+        return $this->supplierRepository->store($supplierRequest);
     }
 
 
-    public function show(Supplier $supplier)
+    public function show($Id)
     {
         //
     }
@@ -34,17 +45,17 @@ class SupplierController extends Controller
 
     public function edit($Id)
     {
-        return view('admin.supplier.edit');
+        return $this->supplierRepository->edit($Id);
     }
 
 
-    public function update(Request $request, Supplier $supplier)
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->supplierRepository->update($request, $Id);
     }
 
-    public function destroy(Supplier $supplier)
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->supplierRepository->delete($request, $Id);
     }
 }

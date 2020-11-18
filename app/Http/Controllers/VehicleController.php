@@ -2,26 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VehicleRequest;
 use App\Models\Vehicle;
+use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
 use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
+    /**
+     * @var IVehicleRepositoryInterface
+     */
+    private $vehicleRepository;
+
+    public function __construct(IVehicleRepositoryInterface $vehicleRepository)
+    {
+        $this->vehicleRepository = $vehicleRepository;
+    }
 
     public function index()
     {
-        return view('admin.vehicle.index');
+        return $this->vehicleRepository->index();
     }
 
     public function create()
     {
-        return view('admin.vehicle.create');
+        return $this->vehicleRepository->create();
     }
 
 
-    public function store(Request $request)
+    public function store(VehicleRequest $vehicleRequest)
     {
-        //
+        return $this->vehicleRepository->store($vehicleRequest);
     }
 
 
@@ -33,29 +44,17 @@ class VehicleController extends Controller
 
     public function edit($Id)
     {
-        return view('admin.vehicle.edit');
+        return $this->vehicleRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Vehicle $vehicle)
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->vehicleRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Vehicle  $vehicle
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Vehicle $vehicle)
+
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->vehicleRepository->delete($request, $Id);
     }
 }

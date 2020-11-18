@@ -82,6 +82,9 @@
                                         <div class="form-group">
                                             <label class="control-label">Email Address</label>
                                             <input type="email" id="email" name="email" class="form-control" placeholder="Enter Email">
+                                            @if ($errors->has('email'))
+                                                <span class="text-danger">{{ $errors->first('email') }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                     <!--/span-->

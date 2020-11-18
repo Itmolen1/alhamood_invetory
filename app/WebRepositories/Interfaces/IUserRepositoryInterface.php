@@ -4,6 +4,7 @@
 namespace App\WebRepositories\Interfaces;
 
 
+use App\Http\Requests\UserRequest;
 use Illuminate\Http\Request;
 
 interface IUserRepositoryInterface
@@ -13,7 +14,7 @@ interface IUserRepositoryInterface
 
     public function create();
 
-    public function store(Request $request);
+    public function store(UserRequest $userRequest);
 
     public function update(Request $request, $Id);
 

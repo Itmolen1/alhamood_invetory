@@ -2,80 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
+use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    /**
+     * @var ICustomerRepositoryInterface
+     */
+    private $customerRepository;
+
+    public function __construct(ICustomerRepositoryInterface $customerRepository)
+    {
+        $this->customerRepository = $customerRepository;
+    }
 
     public function index()
     {
-        return view('admin.customer.index');
+        return $this->customerRepository->index();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        return view('admin/customer.create');
+        return $this->customerRepository->create();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(CustomerRequest $customerRequest)
     {
-        //
+        return $this->customerRepository->store($customerRequest);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Customer $customer)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($Id)
     {
-        return view('admin.customer.edit');
+        return $this->customerRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Customer $customer)
+
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->customerRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Customer $customer)
+
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->customerRepository->delete($request, $Id);
     }
 }

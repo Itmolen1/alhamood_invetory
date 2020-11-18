@@ -2,26 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
+use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    /**
+     * @var ICompanyRepositoryInterface
+     */
+    private $companyRepository;
+
+    public function __construct(ICompanyRepositoryInterface $companyRepository)
+    {
+        $this->companyRepository = $companyRepository;
+    }
 
     public function index()
     {
-        return view('admin.company.index');
+        return $this->companyRepository->index();
     }
 
     public function create()
     {
-        return view('admin.company.create');
+        return $this->companyRepository->create();
     }
 
 
-    public function store(Request $request)
+    public function store(CompanyRequest $companyRequest)
     {
-        //
+        return $this->companyRepository->store($companyRequest);
     }
 
 
@@ -33,29 +44,18 @@ class CompanyController extends Controller
 
     public function edit($Id)
     {
-        return view('admin.company.edit');
+        return $this->companyRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Company  $company
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Company $company)
+
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->companyRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Company  $company
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Company $company)
+
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->companyRepository->delete($request, $Id);
     }
 }

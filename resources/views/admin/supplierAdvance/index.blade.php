@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Supplier Advances')
+@section('title', 'Supplier advances List')
 
 @section('content')
 
@@ -24,7 +24,7 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active">supplier</li>
                         </ol>
-                        <a href="{{ route('customer_advances.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New company</button></a>
+                        <a href="{{ route('supplier_advances.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New Supplier Advance</button></a>
                     </div>
                 </div>
             </div>
@@ -38,8 +38,8 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Supplier Advance</h4>
-                            <h6 class="card-subtitle">All Supplier Advance</h6>
+                            <h4 class="card-title">Supplier Advances</h4>
+                            <h6 class="card-subtitle">All Suppliers</h6>
                             <div class="table-responsive m-t-40">
                                 <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
@@ -53,22 +53,34 @@
                                         <th>Action</th>
                                     </tr>
                                     </thead>
-                                    
+
                                     <tbody>
-
-
-
-
-                                    <tr>
-                                        <td>Michael Bruce</td>
-                                        <td>Javascript Developer</td>
-                                        <td>Singapore</td>
-                                        <td>29</td>
-                                        <td>2011/06/27</td>
-                                        <td>
-                                            <a href="{{route('customer_advances.edit', 1)}}">Edit</a>
-                                        </td>
-                                    </tr>
+                                    @if(!empty($supplierAdvances))
+                                    @foreach($supplierAdvances as $advance)
+                                        <tr>
+                                            <td>{{ $advance->supplier->Name }}</td>
+                                            <td>{{ $advance->Amount }}</td>
+                                            <td>{{ $advance->paymentType }}</td>
+                                            <td>{{ $advance->registerDate }}</td>
+                                            <td>{{ $advance->TransferDate }}</td>
+                                            <td>
+                                                @if($advance->isActive == true)
+                                                    Active
+                                                @else
+                                                    UnActive
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <form action="{{ route('supplier_advances.destroy',$advance->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a href="{{ route('supplier_advances.edit', $advance->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
+                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -82,62 +94,6 @@
             <!-- End PAge Content -->
             <!-- ============================================================== -->
             <!-- ============================================================== -->
-            <!-- Right sidebar -->
-            <!-- ============================================================== -->
-            <!-- .right-sidebar -->
-            <div class="right-sidebar">
-                <div class="slimscrollright">
-                    <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span> </div>
-                    <div class="r-panel-body">
-                        <ul id="themecolors" class="m-t-20">
-                            <li><b>With Light sidebar</b></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme">1</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
-                            <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme">7</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme">10</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme working">12</a></li>
-                        </ul>
-                        <ul class="m-t-20 chatonline">
-                            <li><b>Chat option</b></li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/2.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Right sidebar -->
-            <!-- ============================================================== -->
         </div>
         <!-- ============================================================== -->
         <!-- End Container fluid  -->
@@ -146,6 +102,41 @@
     <!-- ============================================================== -->
     <!-- End Page wrapper  -->
     <!-- ============================================================== -->
+
+    <div id="confirmModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="text-align: center !important;">
+
+                        <h2 class="modal-title" >Confirmation</h2>
+                    </div>
+                    <div class="modal-body">
+                        <h4 align="center" style="margin:0;">Are you sure you want to remove this data?</h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" name="ok_button" id="ok_button" class="btn btn-danger">OK</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // var id;
+
+        $(document).on('click', '.delete', function(){
+            //  id = $(this).attr('id');
+            $('#confirmModal').modal('show');
+        });
+
+        $('#ok_button').click(function(){
+
+            $('#ok_button').text('Deleting...');
+            window.location.reload();
+        });
+
+    </script>
+
 
 
 @endsection

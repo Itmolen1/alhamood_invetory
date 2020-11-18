@@ -16,6 +16,7 @@
                     <li><a href="{{ route('companies.index') }}">Companies list</a></li>
                     <li><a href="{{ route('users.index') }}">Users list</a></li>
                     <li><a href="{{ route('roles.index') }}">Roles list</a></li>
+                    <li><a href="{{ route('banks.index') }}">Banks list</a></li>
                     <!--  <li><a href="app-chat.html">Chat app</a></li> -->
 
                 </ul>

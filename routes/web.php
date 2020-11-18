@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,12 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Route::prefix('admin')->middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function () {
+    route::resource('companies','CompanyController');
+    route::get('/','AdminController@index');
+});
+
 Route::get('/admin','AdminController@index');
-route::get('/','AdminController@login');
 route::get('/register','AdminController@register');
 
-route::resource('companies','CompanyController');
+
 route::resource('customers','CustomerController');
+route::get('customerDetails/{id}','DriverController@customerDetails');
+
 route::resource('suppliers','SupplierController');
 route::resource('customer_advances','CustomerAdvanceController');
 route::resource('supplier_advances','SupplierAdvanceController');
@@ -26,6 +34,7 @@ route::resource('vehicles','VehicleController');
 route::resource('drivers','DriverController');
 route::resource('users','UserController');
 route::resource('roles','RoleController');
+route::resource('banks','BankController');
 
 
 
@@ -63,6 +72,11 @@ route::view('welcome','welcome');
 
 /// end of sales samples /////////////////
 
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Auth::routes([
+    'register' => false, // Registration Routes...
+    'reset' => false, // Password Reset Routes...
+    'verify' => false, // Email Verification Routes...
+]);
+//
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

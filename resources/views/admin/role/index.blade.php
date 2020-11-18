@@ -55,8 +55,12 @@
                                         <tr>
                                             <td>{{ $role->Name }}</td>
                                             <td>
-                                                <a href="{{ route('roles.edit', $role->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
-                                                <button type="button" class=" btn btn-danger delete btn-sm"><i style="font-size: 20px" class="fa fa-trash"></i></button>
+                                                <form action="{{ route('roles.destroy',$role->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a href="{{ route('roles.edit', $role->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
+                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
+                                                </form>
                                             </td>
                                         </tr>
 
@@ -83,9 +87,6 @@
 
     <div id="confirmModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
-            <form action="{{ route('roles.destroy',$role->id) }}" method="POST">
-                @csrf
-                @method('DELETE')
                 <div class="modal-content">
                     <div class="modal-header" style="text-align: center !important;">
 
@@ -99,7 +100,6 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
-            </form>
         </div>
     </div>
 

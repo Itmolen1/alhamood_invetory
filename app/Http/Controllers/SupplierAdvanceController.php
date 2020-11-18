@@ -2,60 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SupplierAdvanceRequest;
 use App\Models\SupplierAdvance;
+use App\WebRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use Illuminate\Http\Request;
 
 class SupplierAdvanceController extends Controller
 {
+    /**
+     * @var ISupplierAdvanceRepositoryInterface
+     */
+    private $supplierAdvanceRepository;
+
+    public function __construct(ISupplierAdvanceRepositoryInterface $supplierAdvanceRepository)
+    {
+        $this->supplierAdvanceRepository = $supplierAdvanceRepository;
+    }
 
     public function index()
     {
-        return view('admin.supplierAdvance.index');
+        return $this->supplierAdvanceRepository->index();
     }
 
     public function create()
     {
-        return view('admin.supplierAdvance.create');
+        return $this->supplierAdvanceRepository->create();
     }
 
 
-    public function store(Request $request)
+    public function store(SupplierAdvanceRequest $supplierAdvanceRequest)
     {
-        //
+        return $this->supplierAdvanceRepository->store($supplierAdvanceRequest);
     }
 
 
-    public function show(SupplierAdvance $supplierAdvance)
+    public function show($Id)
     {
-        //
+        return $this->supplierAdvanceRepository->getById($Id);
     }
 
 
     public function edit($Id)
     {
-        return view('admin.supplierAdvance.edit');
+        return $this->supplierAdvanceRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SupplierAdvance  $supplierAdvance
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, SupplierAdvance $supplierAdvance)
+
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->supplierAdvanceRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\SupplierAdvance  $supplierAdvance
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(SupplierAdvance $supplierAdvance)
+
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->supplierAdvanceRepository->delete($request, $Id);
     }
 }

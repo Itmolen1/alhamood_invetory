@@ -22,8 +22,10 @@ class DatabaseSeeder extends Seeder
         $this->call(SupplierSeeder::class);
         $this->call(CustomerAdvanceSeeder::class);
         $this->call(SupplierSeeder::class);
+        $this->call(SupplierAdvanceSeeder::class);
         $this->call(VehicleSeeder::class);
         $this->call(DriverSeeder::class);
+        $this->call(BankSeeder::class);
     }
 }
 

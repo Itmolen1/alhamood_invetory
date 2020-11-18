@@ -2,27 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CustomerAdvanceRequest;
 use App\Models\CustomerAdvance;
+use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use Illuminate\Http\Request;
 
 class CustomerAdvanceController extends Controller
 {
+    /**
+     * @var ICustomerAdvanceRepositoryInterface
+     */
+    private $customerAdvanceRepository;
+
+    public function __construct(ICustomerAdvanceRepositoryInterface $customerAdvanceRepository)
+    {
+        $this->customerAdvanceRepository = $customerAdvanceRepository;
+    }
 
     public function index()
     {
-        return view('admin.customerAdvance.index');
+        return $this->customerAdvanceRepository->index();
     }
 
 
     public function create()
     {
-        return view('admin.customerAdvance.create');
+        return $this->customerAdvanceRepository->create();
     }
 
 
-    public function store(Request $request)
+    public function store(CustomerAdvanceRequest $customerAdvanceRequest)
     {
-        //
+        return $this->customerAdvanceRepository->store($customerAdvanceRequest);
     }
 
 
@@ -34,23 +45,17 @@ class CustomerAdvanceController extends Controller
 
     public function edit($Id)
     {
-        return view('admin.customerAdvance.edit');
+        return $this->customerAdvanceRepository->edit($Id);
     }
 
 
-    public function update(Request $request, CustomerAdvance $customerAdvance)
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->customerAdvanceRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\CustomerAdvance  $customerAdvance
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(CustomerAdvance $customerAdvance)
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->customerAdvanceRepository->delete($request, $Id);
     }
 }

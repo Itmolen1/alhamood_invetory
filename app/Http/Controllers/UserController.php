@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Models\Company;
 use App\Models\Role;
 use App\Models\User;
@@ -31,9 +32,9 @@ class UserController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(UserRequest $userRequest)
     {
-        return $this->userRepository->store($request);
+        return $this->userRepository->store($userRequest);
     }
 
     /**

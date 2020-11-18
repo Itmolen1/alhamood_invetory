@@ -2,27 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DriverRequest;
+use App\Models\Customer;
 use App\Models\Driver;
+use App\WebRepositories\Interfaces\IDriverRepositoryInterface;
 use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
 
+    /**
+     * @var IDriverRepositoryInterface
+     */
+    private $driverRepository;
+
+    public function __construct(IDriverRepositoryInterface $driverRepository)
+    {
+        $this->driverRepository = $driverRepository;
+    }
+
     public function index()
     {
-        return view('admin.driver.index');
+        return $this->driverRepository->index();
     }
 
 
     public function create()
     {
-        return view('admin.driver.create');
+        return $this->driverRepository->create();
     }
 
 
-    public function store(Request $request)
+    public function store(DriverRequest $driverRequest)
     {
-        //
+        return $this->driverRepository->store($driverRequest);
     }
 
     public function show(Driver $driver)
@@ -30,21 +43,15 @@ class DriverController extends Controller
         //
     }
 
-    public function edit($edit)
+    public function edit($Id)
     {
-        return view('admin.driver.edit');
+        return $this->driverRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Driver  $driver
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Driver $driver)
+
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->driverRepository->update($request, $Id);
     }
 
     /**
@@ -56,5 +63,11 @@ class DriverController extends Controller
     public function destroy(Driver $driver)
     {
         //
+    }
+
+    public function customerDetails($id)
+    {
+        $customers = Customer::find($id);
+        return response()->json($customers);
     }
 }
