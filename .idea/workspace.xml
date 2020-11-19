@@ -2,25 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b1b90727-3818-43b7-a0c5-94a178baa33d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/BankRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/CompanyRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/CustomerAdvanceRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/CustomerRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/DriverRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/IBankRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/ICompanyRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/ICustomerAdvanceRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/ICustomerRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/IDriverRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/ISupplierAdvanceRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/ISupplierRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/IVehicleRepositoryInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/SupplierAdvanceRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/SupplierRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/WebRepositories/VehicleRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/bank/create.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/bank/edit.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/admin/bank/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/CityRepository.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/CountryRepository.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/ICityRepositoryInterface.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/ICountryRepositoryInterface.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/IRegionRepositoryInterface.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/IStatesRepositoryInterface.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/RegionRepository.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/WebRepositories/StateRepository.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/city/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/city/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/city/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/country/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/country/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/country/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/region/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/region/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/region/index.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/state/create.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/state/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/admin/state/index.blade.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Controllers/PageController.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/about.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../ci4-pws/app/Views/contact.php" afterDir="false" />
@@ -680,53 +681,20 @@
       <change afterPath="$PROJECT_DIR$/../watanpharma_web/resources/views/admin/index.blade.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../watanpharma_web/resources/views/admin/user/login.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/RegisterController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/RegisterController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CompanyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CompanyController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CustomerAdvanceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomerAdvanceController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CustomerController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomerController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DriverController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DriverController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SupplierAdvanceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SupplierAdvanceController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SupplierController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SupplierController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/UserController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/VehicleController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/VehicleController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CountryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CountryController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Company.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Company.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/CustomerAdvance.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/CustomerAdvance.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/SupplierAdvance.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/SupplierAdvance.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Country.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Country.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/User.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Providers/WebRepositoryServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/WebRepositoryServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/WebRepositories/Interfaces/IUserRepositoryInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/WebRepositories/Interfaces/IUserRepositoryInterface.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/WebRepositories/UserRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/WebRepositories/UserRepository.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_14_073323_create_customers_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_14_073323_create_customers_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_14_082313_create_suppliers_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_14_082313_create_suppliers_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/factories/CountryFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/factories/CountryFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_18_124407_create_countries_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_18_124407_create_countries_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/CountrySeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/CountrySeeder.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/company/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/company/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/company/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/company/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/company/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/company/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/customer/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/customer/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/customer/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/customer/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/customer/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/customer/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/customerAdvance/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/customerAdvance/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/customerAdvance/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/customerAdvance/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/admin_assets/assets/dist/css/style.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/admin_assets/assets/dist/css/style.min.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/admin/driver/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/driver/create.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/admin/driver/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/driver/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/driver/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/driver/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/role/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/role/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/supplier/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/supplier/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/supplier/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/supplier/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/supplier/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/supplier/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/supplierAdvance/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/user/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/user/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/user/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/user/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/user/login.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/user/login.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/admin/vehicle/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/vehicle/create.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/admin/vehicle/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/vehicle/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/admin/vehicle/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/admin/vehicle/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/login.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/login.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/auth/register.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/auth/register.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/components/navigation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/components/navigation.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
@@ -747,79 +715,67 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php">
+        <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="485">
-              <caret line="122" column="50" selection-start-line="114" selection-start-column="43" selection-end-line="122" selection-end-column="50" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/edit.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="239">
-              <caret line="119" column="150" selection-start-line="119" selection-start-column="88" selection-end-line="119" selection-end-column="150" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/views/admin/supplierAdvance/create.blade.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="122" column="50" selection-start-line="122" selection-start-column="50" selection-end-line="122" selection-end-column="50" />
+            <state relative-caret-position="521">
+              <caret line="44" selection-start-line="44" selection-end-line="44" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resources/views/admin/supplierAdvance/edit.blade.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/admin/region/edit.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="385">
-              <caret line="117" column="119" selection-start-line="117" selection-start-column="119" selection-end-line="117" selection-end-column="119" />
+            <state relative-caret-position="161">
+              <caret line="76" column="46" selection-start-line="76" selection-start-column="46" selection-end-line="76" selection-end-column="46" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/WebRepositories/CustomerAdvanceRepository.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/admin/region/create.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="491">
-              <caret line="60" selection-start-line="60" selection-end-line="60" />
+            <state relative-caret-position="547">
+              <caret line="68" column="97" selection-start-line="68" selection-start-column="90" selection-end-line="68" selection-end-column="97" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/views/components/navigation.blade.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="27" selection-start-line="27" selection-end-line="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/WebRepositories/RegionRepository.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3">
+              <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
               <folding>
-                <element signature="e#41#86#0#PHP" expanded="true" />
+                <element signature="e#41#77#0#PHP" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_14_084435_create_customer_advances_table.php">
+        <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_19_053919_create_regions_table.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="21" column="33" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="33" />
+            <state relative-caret-position="405">
+              <caret line="29" column="30" selection-start-line="29" selection-start-column="30" selection-end-line="29" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_14_094335_create_supplier_advances_table.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/admin/region/index.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/WebRepositories/SupplierAdvanceRepository.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="91" column="93" selection-start-line="91" selection-start-column="93" selection-end-line="91" selection-end-column="93" />
-              <folding>
-                <element signature="e#41#86#0#PHP" expanded="true" />
-              </folding>
+            <state relative-caret-position="215">
+              <caret line="26" column="50" selection-start-line="26" selection-start-column="50" selection-end-line="26" selection-end-column="50" />
             </state>
           </provider>
         </entry>
@@ -840,6 +796,7 @@
       <find>$</find>
       <find>sales.st</find>
       <find>logout</find>
+      <find>sidebar-nav ul li a</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -848,57 +805,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/IVehicleRepositoryInterface.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/VehicleRepository.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/VehicleController.php" />
+        <option value="$PROJECT_DIR$/database/migrations/2020_11_18_124407_create_countries_table.php" />
+        <option value="$PROJECT_DIR$/database/factories/CountryFactory.php" />
+        <option value="$PROJECT_DIR$/app/WebRepositories/CountryRepository.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/country/edit.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/CountryController.php" />
+        <option value="$PROJECT_DIR$/public/admin_assets/assets/dist/css/style.min.css" />
         <option value="$PROJECT_DIR$/resources/views/admin/vehicle/create.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/admin/vehicle/edit.blade.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/ICustomerAdvanceRepositoryInterface.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/CustomerAdvanceController.php" />
-        <option value="$PROJECT_DIR$/app/Http/Requests/SupplierRequest.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/ISupplierRepositoryInterface.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/supplier/create.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/SupplierController.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/supplier/edit.blade.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/SupplierRepository.php" />
-        <option value="$PROJECT_DIR$/app/Http/Requests/CustomerAdvanceRequest.php" />
-        <option value="$PROJECT_DIR$/app/Http/Requests/SupplierAdvanceRequest.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/ISupplierAdvanceRepositoryInterface.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/SupplierAdvanceController.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/customer/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/company/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/customerAdvance/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/driver/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/role/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/supplier/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/user/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/vehicle/index.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/supplierAdvance/index.blade.php" />
-        <option value="$PROJECT_DIR$/database/migrations/2020_11_18_111401_create_banks_table.php" />
-        <option value="$PROJECT_DIR$/database/factories/BankFactory.php" />
-        <option value="$PROJECT_DIR$/database/seeders/BankSeeder.php" />
-        <option value="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" />
-        <option value="$PROJECT_DIR$/app/Models/CustomerAdvance.php" />
-        <option value="$PROJECT_DIR$/app/Models/Bank.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/driver/create.blade.php" />
+        <option value="$PROJECT_DIR$/database/migrations/2020_11_18_153008_create_states_table.php" />
+        <option value="$PROJECT_DIR$/database/factories/StateFactory.php" />
+        <option value="$PROJECT_DIR$/database/seeders/StateSeeder.php" />
+        <option value="$PROJECT_DIR$/app/Models/Country.php" />
+        <option value="$PROJECT_DIR$/app/Http/Requests/StateRequest.php" />
+        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/IStatesRepositoryInterface.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/country/index.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/state/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/StateController.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/driver/edit.blade.php" />
+        <option value="$PROJECT_DIR$/app/WebRepositories/StateRepository.php" />
+        <option value="$PROJECT_DIR$/database/migrations/2020_11_19_053827_create_cities_table.php" />
+        <option value="$PROJECT_DIR$/database/migrations/2020_11_19_053919_create_regions_table.php" />
+        <option value="$PROJECT_DIR$/database/factories/RegionFactory.php" />
+        <option value="$PROJECT_DIR$/database/factories/CityFactory.php" />
         <option value="$PROJECT_DIR$/app/Models/User.php" />
         <option value="$PROJECT_DIR$/app/Models/Company.php" />
-        <option value="$PROJECT_DIR$/app/Models/SupplierAdvance.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
-        <option value="$PROJECT_DIR$/app/Http/Requests/BankRequest.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/IBankRepositoryInterface.php" />
+        <option value="$PROJECT_DIR$/app/Models/State.php" />
+        <option value="$PROJECT_DIR$/app/Models/City.php" />
+        <option value="$PROJECT_DIR$/app/Models/Region.php" />
+        <option value="$PROJECT_DIR$/app/Http/Requests/CityRequest.php" />
+        <option value="$PROJECT_DIR$/app/Http/Requests/RegionRequest.php" />
+        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/ICityRepositoryInterface.php" />
+        <option value="$PROJECT_DIR$/app/WebRepositories/Interfaces/IRegionRepositoryInterface.php" />
         <option value="$PROJECT_DIR$/app/Providers/WebRepositoryServiceProvider.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/bank/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/RegionController.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/city/index.blade.php" />
+        <option value="$PROJECT_DIR$/database/seeders/CitySeeder.php" />
+        <option value="$PROJECT_DIR$/database/seeders/RegionSeeder.php" />
+        <option value="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/CityController.php" />
+        <option value="$PROJECT_DIR$/app/WebRepositories/CityRepository.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/state/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/state/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/city/create.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/city/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/region/create.blade.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
         <option value="$PROJECT_DIR$/resources/views/components/navigation.blade.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/BankController.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/bank/create.blade.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/BankRepository.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/bank/edit.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/supplierAdvance/create.blade.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/CustomerAdvanceRepository.php" />
-        <option value="$PROJECT_DIR$/app/WebRepositories/SupplierAdvanceRepository.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/customerAdvance/edit.blade.php" />
-        <option value="$PROJECT_DIR$/resources/views/admin/supplierAdvance/edit.blade.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/region/index.blade.php" />
+        <option value="$PROJECT_DIR$/app/WebRepositories/RegionRepository.php" />
+        <option value="$PROJECT_DIR$/resources/views/admin/region/edit.blade.php" />
       </list>
     </option>
   </component>
@@ -1078,15 +1035,7 @@
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
               <item name="admin" type="462c0819:PsiDirectoryNode" />
-              <item name="customerAdvance" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="alhamood_v1" type="b2602c69:ProjectViewProjectNode" />
-              <item name="alhamood_v1" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="admin" type="462c0819:PsiDirectoryNode" />
-              <item name="supplierAdvance" type="462c0819:PsiDirectoryNode" />
+              <item name="region" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -1142,18 +1091,17 @@
       <option name="presentableId" value="Default" />
       <updated>1605331646312</updated>
       <workItem from="1605331650006" duration="27154000" />
-      <workItem from="1605418691343" duration="83027000" />
+      <workItem from="1605418691343" duration="97328000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="110181000" />
+    <option name="totallyTimeSpent" value="124482000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1440" height="878" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25965664" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25894135" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -1168,7 +1116,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.18193384" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.30661577" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -1201,393 +1149,405 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/customer/edit.blade.php">
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/vehicle/edit.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="76" column="45" selection-start-line="76" selection-start-column="45" selection-end-line="76" selection-end-column="45" />
+        <state relative-caret-position="345">
+          <caret line="134" column="46" selection-start-line="127" selection-start-column="39" selection-end-line="134" selection-end-column="46" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SupplierController.php">
+    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_18_124407_create_countries_table.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="439">
-          <caret line="47" column="47" selection-start-line="47" selection-start-column="47" selection-end-line="47" selection-end-column="47" />
-          <folding>
-            <element signature="e#40#78#0#PHP" expanded="true" />
-          </folding>
+        <state relative-caret-position="330">
+          <caret line="24" column="33" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="24" selection-end-column="33" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Models/Supplier.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="8" column="6" selection-start-line="8" selection-start-column="6" selection-end-line="8" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplier/edit.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-892">
-          <caret line="204" column="185" selection-start-line="204" selection-start-column="185" selection-end-line="204" selection-end-column="185" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Requests/CustomerAdvanceRequest.php">
+    <entry file="file://$PROJECT_DIR$/database/factories/CountryFactory.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
-          <caret line="26" column="41" lean-forward="true" selection-start-line="26" selection-start-column="11" selection-end-line="26" selection-end-column="41" />
+          <caret line="27" column="61" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="27" selection-end-column="61" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/Interfaces/ISupplierAdvanceRepositoryInterface.php">
+    <entry file="file://$PROJECT_DIR$/database/seeders/StateSeeder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+        <state relative-caret-position="240">
+          <caret line="16" column="45" selection-start-line="16" selection-start-column="45" selection-end-line="16" selection-end-column="45" />
           <folding>
-            <element signature="e#52#97#0#PHP" expanded="true" />
+            <element signature="e#36#57#0#PHP" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Requests/SupplierAdvanceRequest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="41" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/customer/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="116" column="22" selection-start-line="116" selection-start-column="22" selection-end-line="116" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/company/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="114" column="22" selection-start-line="114" selection-start-column="22" selection-end-line="114" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="117" column="22" selection-start-line="117" selection-start-column="22" selection-end-line="117" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/driver/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="116" column="22" selection-start-line="116" selection-start-column="22" selection-end-line="116" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplier/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="115" column="22" selection-start-line="115" selection-start-column="22" selection-end-line="115" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/role/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="101" column="22" selection-start-line="101" selection-start-column="22" selection-end-line="101" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/vehicle/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="114" column="22" selection-start-line="114" selection-start-column="22" selection-end-line="114" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/user/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="110" column="18" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplierAdvance/index.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="60" column="69" selection-start-line="60" selection-start-column="69" selection-end-line="60" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/SupplierAdvanceController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="23" column="50" selection-start-line="23" selection-start-column="50" selection-end-line="23" selection-end-column="50" />
-          <folding>
-            <element signature="e#40#85#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_14_082313_create_suppliers_table.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="30" column="58" lean-forward="true" selection-start-line="30" selection-start-column="58" selection-end-line="32" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/factories/CustomerAdvanceFactory.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/factories/BankFactory.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/seeders/DatabaseSeeder.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/seeders/BankSeeder.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#36#56#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Models/Company.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="61" column="5" selection-start-line="61" selection-start-column="5" selection-end-line="61" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/web.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Models/CustomerAdvance.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="37" column="5" lean-forward="true" selection-start-line="34" selection-start-column="4" selection-end-line="37" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Models/Bank.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="35" column="36" lean-forward="true" selection-start-line="35" selection-start-column="36" selection-end-line="35" selection-end-column="36" />
+        <state relative-caret-position="270">
+          <caret line="26" column="5" lean-forward="true" selection-start-line="18" selection-start-column="4" selection-end-line="26" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Models/SupplierAdvance.php">
+    <entry file="file://$PROJECT_DIR$/app/Http/Requests/StateRequest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
+        <state relative-caret-position="390">
+          <caret line="26" column="31" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/WebRepositories/Interfaces/IStatesRepositoryInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="52" selection-start-line="16" selection-start-column="52" selection-end-line="16" selection-end-column="52" />
+          <folding>
+            <element signature="e#52#87#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="123" column="46" lean-forward="true" selection-start-line="113" selection-start-column="39" selection-end-line="123" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/Country.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="31" column="5" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/driver/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="26" column="189" lean-forward="true" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="189" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/country/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="665">
+          <caret line="120" column="26" lean-forward="true" selection-start-line="120" selection-start-column="26" selection-end-line="120" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/state/index.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="49" selection-start-line="26" selection-start-column="49" selection-end-line="26" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/driver/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="545">
+          <caret line="74" column="46" lean-forward="true" selection-start-line="64" selection-start-column="39" selection-end-line="74" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/WebRepositories/CountryRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="477">
+          <caret line="71" column="52" selection-start-line="69" selection-start-column="8" selection-end-line="71" selection-end-column="52" />
+          <folding>
+            <element signature="e#41#78#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/StateController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="574">
+          <caret line="57" column="49" selection-start-line="57" selection-start-column="49" selection-end-line="57" selection-end-column="49" />
+          <folding>
+            <element signature="e#40#75#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/driver/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2910">
+          <caret line="194" column="211" selection-start-line="194" selection-start-column="211" selection-end-line="194" selection-end-column="211" />
+          <folding>
+            <element signature="e#7727#7746#0#HTML" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_18_153008_create_states_table.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="24" column="33" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="24" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_19_053827_create_cities_table.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="17" column="45" selection-start-line="17" selection-start-column="45" selection-end-line="17" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/factories/RegionFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="25" column="17" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/factories/CityFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="25" column="18" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/database/factories/StateFactory.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="27" column="61" lean-forward="true" selection-start-line="24" selection-start-column="12" selection-end-line="27" selection-end-column="61" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Models/User.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="92" column="36" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
+        <state relative-caret-position="619">
+          <caret line="113" column="5" lean-forward="true" selection-start-line="105" selection-start-column="4" selection-end-line="113" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Requests/BankRequest.php">
+    <entry file="file://$PROJECT_DIR$/app/Models/Company.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="29" selection-start-line="26" selection-start-column="29" selection-end-line="26" selection-end-column="29" />
+        <state relative-caret-position="709">
+          <caret line="81" column="5" selection-start-line="81" selection-start-column="5" selection-end-line="81" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/Region.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/State.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="38" selection-start-line="38" selection-end-line="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Models/City.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="36" column="5" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/WebRepositories/Interfaces/IRoleRepositoryInterface.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
-          <caret line="27" column="22" selection-start-line="27" selection-start-column="22" selection-end-line="27" selection-end-column="22" />
+          <caret line="27" column="30" lean-forward="true" selection-start-line="11" selection-start-column="4" selection-end-line="27" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/Interfaces/IBankRepositoryInterface.php">
+    <entry file="file://$PROJECT_DIR$/app/Http/Requests/CityRequest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="50" selection-start-line="16" selection-start-column="50" selection-end-line="16" selection-end-column="50" />
+        <state relative-caret-position="390">
+          <caret line="26" column="31" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Requests/RegionRequest.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="31" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/WebRepositories/Interfaces/ICityRepositoryInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="28" column="30" lean-forward="true" selection-start-line="12" selection-start-column="4" selection-end-line="28" selection-end-column="30" />
           <folding>
             <element signature="e#52#86#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/WebRepositories/Interfaces/IRegionRepositoryInterface.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="54" selection-start-line="17" selection-start-column="54" selection-end-line="17" selection-end-column="54" />
+          <folding>
+            <element signature="e#52#86#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/WebRepositories/StateRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="679">
+          <caret line="87" column="5" lean-forward="true" selection-start-line="15" selection-start-column="4" selection-end-line="87" selection-end-column="5" />
+          <folding>
+            <element signature="e#41#76#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/Providers/WebRepositoryServiceProvider.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="49" column="6" lean-forward="true" selection-start-line="49" selection-start-column="6" selection-end-line="49" selection-end-column="6" />
+        <state relative-caret-position="611">
+          <caret line="63" column="7" lean-forward="true" selection-start-line="63" selection-start-column="7" selection-end-line="63" selection-end-column="7" />
           <folding>
             <element signature="e#33#72#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/DriverRepository.php">
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/RegionController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="33" column="44" lean-forward="true" selection-start-line="32" selection-start-column="7" selection-end-line="33" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/RoleRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="33" column="48" lean-forward="true" selection-start-line="29" selection-start-column="8" selection-end-line="33" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_14_073323_create_customers_table.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/SupplierRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="111" column="52" lean-forward="true" selection-start-line="109" selection-start-column="8" selection-end-line="111" selection-end-column="52" />
+        <state relative-caret-position="649">
+          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
           <folding>
-            <element signature="e#41#79#0#PHP" expanded="true" />
+            <element signature="e#40#76#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_18_111401_create_banks_table.php">
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/city/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="21" column="41" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="41" />
+        <state relative-caret-position="558">
+          <caret line="65" column="77" selection-start-line="65" selection-start-column="77" selection-end-line="65" selection-end-column="77" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/BankRepository.php">
+    <entry file="file://$PROJECT_DIR$/database/seeders/CitySeeder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="52" column="39" selection-start-line="52" selection-start-column="39" selection-end-line="52" selection-end-column="39" />
+        <state relative-caret-position="240">
+          <caret line="16" column="44" selection-start-line="16" selection-start-column="44" selection-end-line="16" selection-end-column="44" />
           <folding>
-            <element signature="e#41#75#0#PHP" expanded="true" />
+            <element signature="e#36#56#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/bank/create.blade.php">
+    <entry file="file://$PROJECT_DIR$/database/seeders/DatabaseSeeder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="73" column="46" selection-end-line="128" />
+        <state relative-caret-position="345">
+          <caret line="24" column="50" lean-forward="true" selection-start-line="24" selection-start-column="50" selection-end-line="24" selection-end-column="50" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/bank/edit.blade.php">
+    <entry file="file://$PROJECT_DIR$/database/seeders/RegionSeeder.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="78" column="84" selection-start-line="78" selection-start-column="84" selection-end-line="78" selection-end-column="84" />
+        <state relative-caret-position="240">
+          <caret line="16" column="46" selection-start-line="16" selection-start-column="46" selection-end-line="16" selection-end-column="46" />
+          <folding>
+            <element signature="e#36#58#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/BankController.php">
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/CityController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="664">
-          <caret line="61" selection-start-line="61" selection-end-line="61" />
+        <state relative-caret-position="551">
+          <caret line="53" column="8" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
           <folding>
             <element signature="e#40#74#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/bank/index.blade.php">
+    <entry file="file://$PROJECT_DIR$/app/WebRepositories/CityRepository.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="32" column="83" selection-start-line="32" selection-start-column="83" selection-end-line="32" selection-end-column="83" />
+        <state relative-caret-position="197">
+          <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
+          <folding>
+            <element signature="e#41#75#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/state/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="603">
+          <caret line="68" column="62" selection-start-line="68" selection-start-column="62" selection-end-line="68" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/state/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="67" column="72" selection-start-line="67" selection-start-column="72" selection-end-line="67" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/city/create.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="545">
+          <caret line="67" column="60" selection-start-line="67" selection-start-column="60" selection-end-line="67" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/city/edit.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="423">
+          <caret line="68" column="60" selection-start-line="68" selection-start-column="60" selection-end-line="68" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="521">
+          <caret line="44" selection-start-line="44" selection-end-line="44" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/resources/views/components/navigation.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
-          <caret line="18" column="66" selection-start-line="18" selection-start-column="66" selection-end-line="18" selection-end-column="66" />
+        <state relative-caret-position="405">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/create.blade.php">
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/region/index.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="485">
-          <caret line="122" column="50" selection-start-line="114" selection-start-column="43" selection-end-line="122" selection-end-column="50" />
+        <state relative-caret-position="215">
+          <caret line="26" column="50" selection-start-line="26" selection-start-column="50" selection-end-line="26" selection-end-column="50" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplierAdvance/create.blade.php">
+    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_19_053919_create_regions_table.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
-          <caret line="122" column="50" selection-start-line="122" selection-start-column="50" selection-end-line="122" selection-end-column="50" />
+          <caret line="29" column="30" selection-start-line="29" selection-start-column="30" selection-end-line="29" selection-end-column="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/CustomerAdvanceRepository.php">
+    <entry file="file://$PROJECT_DIR$/app/WebRepositories/RegionRepository.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="491">
-          <caret line="60" selection-start-line="60" selection-end-line="60" />
+        <state relative-caret-position="3">
+          <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
           <folding>
-            <element signature="e#41#86#0#PHP" expanded="true" />
+            <element signature="e#41#77#0#PHP" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_14_084435_create_customer_advances_table.php">
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/region/create.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="21" column="33" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="33" />
+        <state relative-caret-position="547">
+          <caret line="68" column="97" selection-start-line="68" selection-start-column="90" selection-end-line="68" selection-end-column="97" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/database/migrations/2020_11_14_094335_create_supplier_advances_table.php">
+    <entry file="file://$PROJECT_DIR$/resources/views/admin/region/edit.blade.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/WebRepositories/SupplierAdvanceRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="91" column="93" selection-start-line="91" selection-start-column="93" selection-end-line="91" selection-end-column="93" />
-          <folding>
-            <element signature="e#41#86#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/customerAdvance/edit.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="119" column="150" selection-start-line="119" selection-start-column="88" selection-end-line="119" selection-end-column="150" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/views/admin/supplierAdvance/edit.blade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="117" column="119" selection-start-line="117" selection-start-column="119" selection-end-line="117" selection-end-column="119" />
+        <state relative-caret-position="161">
+          <caret line="76" column="46" selection-start-line="76" selection-start-column="46" selection-end-line="76" selection-end-column="46" />
         </state>
       </provider>
     </entry>

@@ -92,4 +92,24 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\Bank');
     }
+
+    public function countries()
+    {
+        return $this->hasMany('App\Models\Country');
+    }
+
+    public function states()
+    {
+        return $this->hasMany('App\Models\State');
+    }
+
+    public function cities()
+    {
+        return $this->hasMany('App\Models\City');
+    }
+
+    public function region()
+    {
+        return $this->hasMany('App\Models\Region');
+    }
 }

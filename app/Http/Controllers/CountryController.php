@@ -2,84 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CountryRequest;
 use App\Models\Country;
+use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use Illuminate\Http\Request;
 
 class CountryController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @var ICountryRepositoryInterface
      */
-    public function index()
+    private $countryRepository;
+
+    public function __construct(ICountryRepositoryInterface $countryRepository)
     {
-        //
+        $this->countryRepository = $countryRepository;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function index()
+    {
+        return $this->countryRepository->index();
+    }
+
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(CountryRequest $countryRequest)
     {
-        //
+        return $this->countryRepository->store($countryRequest);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Country  $country
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Country $country)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Country  $country
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Country $country)
+
+    public function edit($Id)
     {
-        //
+        return $this->countryRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Country  $country
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Country $country)
+
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->countryRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Country  $country
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Country $country)
+
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->countryRepository->delete($request, $Id);
     }
 }

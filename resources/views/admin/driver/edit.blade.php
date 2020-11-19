@@ -90,8 +90,10 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Upload File</label>
-                                                <input type="file" name="imageUrl" class="form-control" placeholder="">
+                                                <label class="control-label">Upload File </label>
+                                                <div id="img">
+                                                    <figure data-effect="pop"><img width="100" src="{{url('storage/'.$driver->customer->fileUpload)}}" /></figure>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -190,6 +192,7 @@
                                 $('#registrationDate').val(result.registrationDate);
                                 $('#Phone').val(result.Phone);
                                 $('#Mobile').val(result.Mobile);
+                                $('#img').html('<a href="{{url('storage/')}}/'+ result.fileUpload +'"><figure data-effect="pop"><img width="100" src="{{url('storage/')}}/'+ result.fileUpload +'"  /></figure></a>');
 
                             } else {
                                 alert(result);

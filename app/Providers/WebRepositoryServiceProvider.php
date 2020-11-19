@@ -3,21 +3,29 @@
 namespace App\Providers;
 
 use App\WebRepositories\BankRepository;
+use App\WebRepositories\CityRepository;
 use App\WebRepositories\CompanyRepository;
+use App\WebRepositories\CountryRepository;
 use App\WebRepositories\CustomerAdvanceRepository;
 use App\WebRepositories\CustomerRepository;
 use App\WebRepositories\DriverRepository;
 use App\WebRepositories\Interfaces\IBankRepositoryInterface;
+use App\WebRepositories\Interfaces\ICityRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
+use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\WebRepositories\Interfaces\IDriverRepositoryInterface;
+use App\WebRepositories\Interfaces\IRegionRepositoryInterface;
 use App\WebRepositories\Interfaces\IRoleRepositoryInterface;
+use App\WebRepositories\Interfaces\IStatesRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\WebRepositories\Interfaces\IUserRepositoryInterface;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
+use App\WebRepositories\RegionRepository;
 use App\WebRepositories\RoleRepository;
+use App\WebRepositories\StateRepository;
 use App\WebRepositories\SupplierAdvanceRepository;
 use App\WebRepositories\SupplierRepository;
 use App\WebRepositories\UserRepository;
@@ -43,6 +51,10 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ISupplierRepositoryInterface::class, SupplierRepository::class);
         $this->app->bind(ISupplierAdvanceRepositoryInterface::class, SupplierAdvanceRepository::class);
         $this->app->bind(IBankRepositoryInterface::class, BankRepository::class);
+        $this->app->bind(ICountryRepositoryInterface::class, CountryRepository::class);
+        $this->app->bind(IStatesRepositoryInterface::class, StateRepository::class);
+        $this->app->bind(ICityRepositoryInterface::class, CityRepository::class);
+        $this->app->bind(IRegionRepositoryInterface::class, RegionRepository::class);
     }
 
     /**

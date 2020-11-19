@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Country extends Model
+class State extends Model
 {
         use HasFactory;
         use SoftDeletes;
@@ -14,7 +14,7 @@ class Country extends Model
 
         protected $guarded=[];
         protected $primaryKey = 'id';
-        protected $table = 'countries';
+        protected $table = 'states';
 
     public function user()
     {
@@ -26,8 +26,15 @@ class Country extends Model
         return $this->belongsTo('App\Models\Company','company_id','id');
     }
 
-    public function states()
+    public function country()
     {
-        return $this->hasMany('App\Models\State');
+        return $this->belongsTo('App\Models\Country','country_id','id');
     }
+
+    public function cities()
+    {
+        return $this->hasMany('App\Models\City');
+    }
+
+
 }

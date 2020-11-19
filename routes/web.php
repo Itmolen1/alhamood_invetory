@@ -35,6 +35,10 @@ route::resource('drivers','DriverController');
 route::resource('users','UserController');
 route::resource('roles','RoleController');
 route::resource('banks','BankController');
+route::resource('countries','CountryController');
+route::resource('states','StateController');
+route::resource('cities','CityController');
+route::resource('regions','RegionController');
 
 
 

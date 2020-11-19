@@ -89,8 +89,10 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Upload File</label>
-                                                <input type="file" name="imageUrl" class="form-control" placeholder="">
+                                                <label class="control-label">Image</label>
+                                                <div id="img">
+                                                    <input type="file">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -189,6 +191,7 @@
                                  $('#registrationDate').val(result.registrationDate);
                                  $('#Phone').val(result.Phone);
                                  $('#Mobile').val(result.Mobile);
+                                $('#img').html('<figure data-effect="pop"><img width="100" src="{{url('storage/')}}/'+ result.fileUpload +'"  /></figure>');
 
                             } else {
                                 alert(result);

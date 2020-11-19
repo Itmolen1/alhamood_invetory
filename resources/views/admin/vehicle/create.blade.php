@@ -126,8 +126,10 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Upload File</label>
-                                                <input type="file" name="fileUpload" id="fileUpload" class="form-control" placeholder="Enter TRN Number">
+                                                <label class="control-label">Image</label>
+                                               <div id="img">
+                                                   <input type="file">
+                                               </div>
                                             </div>
                                         </div>
                                     </div>
@@ -179,6 +181,7 @@
                                         </div>
                                         <!--/span-->
                                     </div>
+
 
                                     <div class="row">
                                         <div class="col-md-12">
@@ -258,6 +261,7 @@
                                 $('#TRNNumber').val(result.TRNNumber);
                                 $('#Address').val(result.Address);
                                 $('#postCode').val(result.postCode);
+                                $('#img').html('<figure data-effect="pop"><img width="100" src="{{url('storage/')}}/'+ result.fileUpload +'"  /></figure>');
 
                             } else {
                                 alert(result);
