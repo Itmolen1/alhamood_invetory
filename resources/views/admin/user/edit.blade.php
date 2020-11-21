@@ -63,7 +63,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Company Selection</label>
-                                                <select class="form-control custom-select" name="company_id">
+                                                <select class="form-control custom-select select2" name="company_id">
                                                     <option>--Select Company--</option>
                                                     @foreach($companies as $company)
                                                         <option value="{{ $company->id }}" {{ ( $company->id == $user->company_id) ? 'selected' : '' }}>{{ $company->Name }}</option>

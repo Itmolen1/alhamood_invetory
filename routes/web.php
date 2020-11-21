@@ -38,7 +38,18 @@ route::resource('banks','BankController');
 route::resource('countries','CountryController');
 route::resource('states','StateController');
 route::resource('cities','CityController');
+
 route::resource('regions','RegionController');
+route::get('locationDetails/{id}','RegionController@locationDetails');
+
+route::resource('units','UnitController');
+route::resource('products','ProductController');
+route::get('productsDetails/{Id}','ProductController@productDetails');
+
+////////// purchase section //////////////////////////
+route::resource('purchases','PurchaseController');
+route::get('supplierDetails/{id}','SupplierController@supplierDetails');
+Route::post('purchaseUpdate/{Id}','PurchaseController@purchaseUpdate');
 
 
 
@@ -55,7 +66,7 @@ route::view('expenses/edit','admin.expense.edit');
 route::view('expenses/index','admin.expense.index');
 
 
-route::view('purchases','admin.purchase.create');
+route::view('purchases1','admin.purchase.create');
 route::view('purchases/edit','admin.purchase.edit');
 route::view('purchases/index','admin.purchase.index');
 

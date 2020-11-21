@@ -86,10 +86,24 @@
                                     <h3 class="box-title m-t-40">Address</h3>
                                     <hr>
                                     <div class="row">
-                                        <div class="col-md-12 ">
+                                        <div class="col-md-6 ">
                                             <div class="form-group">
                                                 <label>Street</label>
                                                 <input type="text" name="Address" value="{{ $company->Address }}" placeholder="Address" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Region</label>
+                                                <select class="form-control custom-select region_id" name="region_id" id="region_id">
+                                                    <option value="">-- Select Region --</option>
+                                                    @foreach($regions as $region)
+                                                        @if(!empty($region->Name))
+                                                            <option value="{{ $region->id }}" {{ ($region->id == $company->region_id) ? 'selected':'' }}>{{ $region->Name }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -97,14 +111,14 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>City</label>
-                                                <input type="text" name="City" placeholder="City" class="form-control">
+                                                <input type="text" name="City" id="city" value="{{ $company->region->city->Name }}" placeholder="City" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
-                                                <input type="text" name="State" PLACEHOLDER="State" class="form-control">
+                                                <input type="text" name="State" id="state" value="{{ $company->region->city->state->Name }}" PLACEHOLDER="State" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -120,11 +134,8 @@
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Country</label>
-                                                <select class="form-control custom-select">
-                                                    <option>--Select your Country--</option>
-                                                    <option selected>UAE</option>
-                                                </select>
+                                                <label>State</label>
+                                                <input type="text" name="Country" id="country" value="{{ $company->region->city->state->country->Name }}" PLACEHOLDER="Country" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -164,6 +175,42 @@
     <!-- ============================================================== -->
     <!-- footer -->
     <!-- ============================================================== -->
+
+    <script>
+        /////////////////////////// location select /////////////////
+        $(document).ready(function () {
+
+            $('.region_id').change(function () {
+                // alert();
+                var Id = 0;
+                Id = $(this).val();
+
+                if (Id > 0)
+                {
+                    $.ajax({
+                        url: "{{ URL('locationDetails') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                console.log(result);
+                                $('#city').val(result.city.Name);
+                                $('#state').val(result.city.state.Name);
+                                $('#country').val(result.city.state.country.Name);
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
+
+        });
+        ////////////// end of location select ////////////////
+    </script>
 
 
 

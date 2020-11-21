@@ -5,6 +5,14 @@ $(document).on("keypress",'.price', function (event) {
     return isNumber(event, this)
 });
 
+$(document).on("keypress",'.total', function (event) {
+    return isNumber(event, this)
+});
+
+$(document).on("keypress",'.cashPaid', function (event) {
+    return isNumber(event, this)
+});
+
 ////////////////// accept number function ////////////////
 function isNumber(evt, element) {
     var charCode = (evt.which) ? evt.which : event.keyCode
@@ -49,6 +57,8 @@ $(document).on("keyup",'.quantity', function () {
 });
 ///////// end of add quantity ///////////////////
 
+
+
 //////////////////////// Add quantity ///////////
 $(document).on("keyup",'.total', function () {
     var Currentrow = $(this).closest("tr");
@@ -62,6 +72,16 @@ $(document).on("keyup",'.total', function () {
     CountTotalVat();
 });
 ///////// end of add quantity ///////////////////
+
+/////// vat //////////////////
+$(document).on("change", '.VAT', function () {
+    var CurrentRow = $(this).closest("tr");
+    var vat = CurrentRow.find('.VAT').val();
+    RowSubTalSubtotal(vat, CurrentRow);
+    CountTotalVat();
+
+});
+////////////// end of vat /////////////////
 
 /////// vat //////////////////
 $(document).on("keyup", '.VAT', function () {
@@ -100,6 +120,8 @@ function RowSubTalSubtotal(vat, CurrentRow) {
         //     CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
         // }
         CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
+
+        CurrentRow.find('.singleRowVat').val(parseFloat(InputVatValue).toFixed(2));
     }
 }
 /////////////// end of row sub total ///////////////////////////
@@ -142,6 +164,8 @@ function CountTotalVat() {
 
     $('#GTotal').text((Gtotal.toFixed(2)));
     $('.GTotal').val((Gtotal.toFixed(2)));
+
+    $('.balance').val(Gtotal - $('.cashPaid').val());
 }
 //////////////// end of total vat /////////////
 

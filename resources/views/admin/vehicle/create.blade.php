@@ -65,7 +65,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Customer Selection</label>
-                                                <select class="form-control custom-select customer_id" name="customer_id" id="customer_id">
+                                                <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id">
                                                     <option>--Select your Customer--</option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>

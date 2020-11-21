@@ -58,4 +58,9 @@ class SupplierController extends Controller
     {
         return $this->supplierRepository->delete($request, $Id);
     }
+
+    public function supplierDetails($Id)
+    {
+        return $this->supplierRepository->supplierDetails($Id);
+    }
 }

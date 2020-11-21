@@ -5,6 +5,7 @@ namespace App\WebRepositories;
 
 
 use App\Http\Requests\SupplierRequest;
+use App\Models\Region;
 use App\Models\Supplier;
 use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use Illuminate\Http\Request;
@@ -22,7 +23,8 @@ class SupplierRepository implements ISupplierRepositoryInterface
     public function create()
     {
         // TODO: Implement create() method.
-        return view('admin.supplier.create');
+        $regions = Region::with('city')->get();
+        return view('admin.supplier.create',compact('regions'));
     }
 
     public function store(SupplierRequest $supplierRequest)
@@ -45,6 +47,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
             'Phone' =>$supplierRequest->Phone,
             'Address' =>$supplierRequest->Address,
             'postCode' =>$supplierRequest->postCode,
+            'region_id' =>$supplierRequest->region_id,
             'user_id' =>$user_id,
             'company_id' =>$company_id,
             'fileUpload' =>$filename,
@@ -78,6 +81,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
             'Phone' =>$request->Phone,
             'Address' =>$request->Address,
             'postCode' =>$request->postCode,
+            'region_id' =>$request->region_id,
             'user_id' =>$user_id,
 //            'company_id' =>$company_id,
             'fileUpload' =>$filename,
@@ -100,8 +104,9 @@ class SupplierRepository implements ISupplierRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $supplier = Supplier::find($Id);
-        return view('admin.supplier.edit',compact('supplier'));
+        $regions = Region::with('city')->get();
+        $supplier = Supplier::with('region')->find($Id);
+        return view('admin.supplier.edit',compact('supplier','regions'));
     }
 
     public function delete(Request $request, $Id)
@@ -120,5 +125,12 @@ class SupplierRepository implements ISupplierRepositoryInterface
     public function trashed()
     {
         // TODO: Implement trashed() method.
+    }
+
+    public function supplierDetails($Id)
+    {
+        // TODO: Implement supplierDetails() method.
+        $suppliers = Supplier::find($Id);
+        return response()->json($suppliers);
     }
 }

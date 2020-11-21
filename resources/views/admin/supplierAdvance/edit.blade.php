@@ -56,7 +56,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Customer Selection</label>
-                                                <select class="form-control custom-select supplier_id" name="supplier_id" id="supplier_id">
+                                                <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id">
                                                     <option>--Select your Customer--</option>
                                                     @foreach($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}" {{ ($supplier->id == $supplierAdvance->supplier_id) ? 'selected':'' }}>{{ $supplier->Name }}</option>

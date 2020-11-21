@@ -76,9 +76,39 @@ class Company extends Model
         return $this->hasMany('App\Models\City');
     }
 
-    public function region()
+    public function regions()
     {
         return $this->hasMany('App\Models\Region');
+    }
+
+    public function region()
+    {
+        return $this->belongsTo('App\Models\Region','region_id','id');
+    }
+
+    public function units()
+    {
+        return $this->hasMany('App\Models\Unit');
+    }
+
+    public function products()
+    {
+        return $this->hasMany('App\Models\Product');
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany('App\Models\Purchase');
+    }
+
+    public function purchase_details()
+    {
+        return $this->hasMany('App\Models\PurchaseDetail');
+    }
+
+    public function update_note()
+    {
+        return $this->hasMany('App\Models\UpdateNote');
     }
         
 }

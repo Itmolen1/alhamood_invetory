@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\CustomerAdvance;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -30,6 +31,10 @@ class DatabaseSeeder extends Seeder
         $this->call(StateSeeder::class);
         $this->call(CitySeeder::class);
         $this->call(RegionSeeder::class);
+        $this->call(UnitSeeder::class);
+        $this->call(ProductSeeder::class);
+        $this->call(PurchaseSeeder::class);
+        $this->call(PurchaseDetailSeeder::class);
     }
 }
 

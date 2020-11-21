@@ -29,4 +29,6 @@ interface IRegionRepositoryInterface
 
     public function trashed();
 
+    public function locationDetails($id);
+
 }

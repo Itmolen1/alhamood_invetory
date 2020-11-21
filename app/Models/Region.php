@@ -30,4 +30,19 @@ class Region extends Model
     {
         return $this->belongsTo('App\Models\City','city_id','id');
     }
+
+    public function companies()
+    {
+        return $this->hasMany('App\Models\Company');
+    }
+
+    public function customers()
+    {
+        return $this->hasMany('App\Models\Customer');
+    }
+
+    public function suppliers()
+    {
+        return $this->hasMany('App\Models\Supplier');
+    }
 }
