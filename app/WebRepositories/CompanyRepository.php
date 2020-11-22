@@ -6,6 +6,7 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
+use App\Models\Region;
 use App\Models\User;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
 use Illuminate\Http\Request;
@@ -28,7 +29,8 @@ class CompanyRepository implements ICompanyRepositoryInterface
 //        dd(Auth::user()->name);
 //        $user_id = session('user_id');
 //        dd($user_id);
-        return view('admin.company.create');
+        $regions = Region::with('city')->get();
+        return view('admin.company.create',compact('regions'));
 
     }
 
@@ -42,6 +44,7 @@ class CompanyRepository implements ICompanyRepositoryInterface
             'Representative' =>$companyRequest->Representative,
             'Phone' =>$companyRequest->Phone,
             'Address' =>$companyRequest->Address,
+            'region_id' =>$companyRequest->region_id,
             'postCode' =>$companyRequest->postCode,
             'user_id' =>$user_id,
             'Description' =>$companyRequest->Description,
@@ -61,6 +64,7 @@ class CompanyRepository implements ICompanyRepositoryInterface
             'Mobile' => $request->Mobile,
             'Representative' => $request->Representative,
             'Address' => $request->Address,
+            'region_id' =>$request->region_id,
             'postCode' => $request->postCode,
             'Description' => $request->Description,
             'user_id' => $user_id,
@@ -77,8 +81,9 @@ class CompanyRepository implements ICompanyRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $company = Company::find($Id);
-        return view('admin.company.edit',compact('company'));
+        $regions = Region::with('city')->get();
+        $company = Company::with('region')->find($Id);
+        return view('admin.company.edit',compact('company','regions'));
     }
 
     public function delete(Request $request, $Id)

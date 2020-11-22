@@ -28,4 +28,6 @@ interface ISupplierRepositoryInterface
 
     public function trashed();
 
+    public function supplierDetails($Id);
+
 }

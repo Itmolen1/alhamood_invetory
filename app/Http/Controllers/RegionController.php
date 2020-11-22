@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegionRequest;
+use App\Models\City;
 use App\Models\Region;
+use App\Models\State;
 use App\WebRepositories\Interfaces\IRegionRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -56,5 +58,10 @@ class RegionController extends Controller
     public function destroy(Request $request, $Id)
     {
         return $this->regionRepository->delete($request, $Id);
+    }
+
+    public function locationDetails($id)
+    {
+       return $this->regionRepository->locationDetails($id);
     }
 }

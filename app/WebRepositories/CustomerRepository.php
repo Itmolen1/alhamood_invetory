@@ -7,6 +7,7 @@ namespace App\WebRepositories;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Company;
 use App\Models\Customer;
+use App\Models\Region;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -24,7 +25,8 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function create()
     {
         // TODO: Implement create() method.
-        return view('admin.customer.create');
+        $regions = Region::with('city')->get();
+        return view('admin.customer.create',compact('regions'));
 
     }
 
@@ -48,6 +50,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'Phone' =>$customerRequest->Phone,
             'Address' =>$customerRequest->Address,
             'postCode' =>$customerRequest->postCode,
+            'region_id' =>$customerRequest->region_id,
             'user_id' =>$user_id,
             'company_id' =>$company_id,
             'fileUpload' =>$filename,
@@ -82,6 +85,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'Phone' =>$request->Phone,
             'Address' =>$request->Address,
             'postCode' =>$request->postCode,
+            'region_id' =>$request->region_id,
             'user_id' =>$user_id,
 //            'company_id' =>$company_id,
             'fileUpload' =>$filename,
@@ -106,8 +110,9 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $customer = Customer::find($Id);
-        return view('admin.customer.edit',compact('customer'));
+        $regions = Region::with('city')->get();
+        $customer = Customer::with('region')->find($Id);
+        return view('admin.customer.edit',compact('customer','regions'));
     }
 
     public function delete(Request $request, $Id)

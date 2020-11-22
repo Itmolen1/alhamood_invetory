@@ -31,7 +31,7 @@ class City extends Model
         return $this->belongsTo('App\Models\State','state_id','id');
     }
 
-    public function region()
+    public function regions()
     {
         return $this->hasMany('App\Models\Region');
     }

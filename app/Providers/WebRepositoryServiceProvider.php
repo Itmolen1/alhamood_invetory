@@ -16,18 +16,26 @@ use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\WebRepositories\Interfaces\IDriverRepositoryInterface;
+use App\WebRepositories\Interfaces\IProductRepositoryInterface;
+use App\WebRepositories\Interfaces\IPurchaseDetailRepositoryInterface;
+use App\WebRepositories\Interfaces\IPurchaseRepositoryInterface;
 use App\WebRepositories\Interfaces\IRegionRepositoryInterface;
 use App\WebRepositories\Interfaces\IRoleRepositoryInterface;
 use App\WebRepositories\Interfaces\IStatesRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
+use App\WebRepositories\Interfaces\IUnitRepositoryInterface;
 use App\WebRepositories\Interfaces\IUserRepositoryInterface;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
+use App\WebRepositories\ProductRepository;
+use App\WebRepositories\PurchaseDetailRepository;
+use App\WebRepositories\PurchaseRepository;
 use App\WebRepositories\RegionRepository;
 use App\WebRepositories\RoleRepository;
 use App\WebRepositories\StateRepository;
 use App\WebRepositories\SupplierAdvanceRepository;
 use App\WebRepositories\SupplierRepository;
+use App\WebRepositories\UnitRepository;
 use App\WebRepositories\UserRepository;
 use App\WebRepositories\VehicleRepository;
 use Illuminate\Support\ServiceProvider;
@@ -55,6 +63,10 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IStatesRepositoryInterface::class, StateRepository::class);
         $this->app->bind(ICityRepositoryInterface::class, CityRepository::class);
         $this->app->bind(IRegionRepositoryInterface::class, RegionRepository::class);
+        $this->app->bind(IUnitRepositoryInterface::class, UnitRepository::class);
+        $this->app->bind(IProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->bind(IPurchaseRepositoryInterface::class, PurchaseRepository::class);
+        $this->app->bind(IPurchaseDetailRepositoryInterface::class,PurchaseDetailRepository::class);
     }
 
     /**

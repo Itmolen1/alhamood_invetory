@@ -31,4 +31,15 @@ class Supplier extends Model
     {
         return $this->hasMany('App\Models\SupplierAdvance');
     }
+
+    public function region()
+    {
+        return $this->belongsTo('App\Models\Region','region_id','id');
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany('App\Models\Purchase');
+    }
+
 }

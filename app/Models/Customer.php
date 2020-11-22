@@ -41,4 +41,9 @@ class Customer extends Model
     {
         return $this->hasMany('App\Models\Vehicle');
     }
+
+    public function region()
+    {
+        return $this->belongsTo('App\Models\Region');
+    }
 }

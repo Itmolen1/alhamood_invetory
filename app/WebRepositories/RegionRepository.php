@@ -87,4 +87,11 @@ class RegionRepository implements IRegionRepositoryInterface
     {
         // TODO: Implement trashed() method.
     }
+
+    public function locationDetails($id)
+    {
+        // TODO: Implement locationDetails() method.
+        $regions = Region::with('city.state.country'  )->find($id);
+        return response()->json($regions);
+    }
 }

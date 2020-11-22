@@ -108,8 +108,34 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\City');
     }
 
-    public function region()
+    public function regions()
     {
         return $this->hasMany('App\Models\Region');
     }
+
+    public function units()
+    {
+        return $this->hasMany('App\Models\Unit');
+    }
+
+    public function products()
+    {
+        return $this->hasMany('App\Models\Product');
+    }
+
+    public function purchases()
+    {
+        return $this->hasMany('App\Models\Purchase');
+    }
+
+    public function purchase_details()
+    {
+        return $this->hasMany('App\Models\PurchaseDetail');
+    }
+
+    public function update_notes()
+    {
+        return $this->hasMany('App\Models\UpdateNote');
+    }
+
 }
