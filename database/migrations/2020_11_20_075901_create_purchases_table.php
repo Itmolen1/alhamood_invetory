@@ -36,6 +36,7 @@ class CreatePurchasesTable extends Migration
             $table->boolean('IsPaid')->default(true);
             $table->boolean('IsPartialPaid')->default(true);
             $table->boolean('IsNeedStampOrSignature')->default(true);
+            $table->date('createdDate')->default(date('Y-m-d'));
             $table->boolean('isActive')->default(true);
             $table->softDeletes();
             $table->timestamps();

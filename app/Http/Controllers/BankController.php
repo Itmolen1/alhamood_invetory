@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class BankController extends Controller
 {
-    /**
-     * @var IBankRepositoryInterface
-     */
     private $bankRepository;
 
     public function __construct(IBankRepositoryInterface $bankRepository)

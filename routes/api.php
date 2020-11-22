@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::apiResource('/Bank', 'API\BankController');
+Route::get('/Bank/restore/{Id}', 'BankController@restore')->name('Bank_restore');
+Route::get('/BankTrashed', 'BankController@trash');
+Route::get('/Bank/paginate/{page_no}/{page_size}','BankController@paginate');
+
+Route::post('Login', 'API\UserController@login');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

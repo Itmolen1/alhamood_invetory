@@ -20,7 +20,6 @@ class CreateEmployeesTable extends Migration
             $table->string('emergencyContactNumber')->nullable();
             $table->string('identityNumber')->nullable();
             $table->string('passportNumber')->nullable();
-            $table->string('passportNumber')->nullable();
             $table->string('Address')->nullable();
             $table->string('driverLicenceNumber')->nullable();
             $table->string('driverLicenceExpiry')->nullable();

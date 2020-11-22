@@ -17,7 +17,8 @@ class CreateUpdateNotesTable extends Migration
             $table->bigIncrements('id');
             $table->string('RelationTable')->nullable();
             $table->unsignedBigInteger('RelationId')->default('0')->index();
-            $table->string('Description')->nullable();
+            $table->text('Description')->nullable();
+            $table->text('UpdateDescription')->nullable();
             $table->unsignedBigInteger('user_id')->default('0')->index();
             $table->unsignedBigInteger('company_id')->default('0')->index();
             $table->softDeletes();
