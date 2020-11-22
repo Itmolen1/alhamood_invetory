@@ -94,6 +94,7 @@
                 <ul aria-expanded="false" class="collapse">
                     <li  class="border-bottom"><a href="{{ url('expenses') }}">Add Expenses</a></li>
                     <li><a href="{{ url('expenses/index') }}">Manage Expenses</a></li>
+                    <li><a href="{{ route('expense_categories.index') }}">Expenses Categories</a></li>
                 </ul>
             </li>
 

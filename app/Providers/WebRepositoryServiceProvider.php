@@ -9,6 +9,7 @@ use App\WebRepositories\CountryRepository;
 use App\WebRepositories\CustomerAdvanceRepository;
 use App\WebRepositories\CustomerRepository;
 use App\WebRepositories\DriverRepository;
+use App\WebRepositories\ExpenseCategoryRepository;
 use App\WebRepositories\Interfaces\IBankRepositoryInterface;
 use App\WebRepositories\Interfaces\ICityRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
@@ -16,6 +17,7 @@ use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\WebRepositories\Interfaces\IDriverRepositoryInterface;
+use App\WebRepositories\Interfaces\IExpenseCategoryRepositoryInterface;
 use App\WebRepositories\Interfaces\IProductRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseRepositoryInterface;
@@ -67,6 +69,7 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(IPurchaseRepositoryInterface::class, PurchaseRepository::class);
         $this->app->bind(IPurchaseDetailRepositoryInterface::class,PurchaseDetailRepository::class);
+        $this->app->bind(IExpenseCategoryRepositoryInterface::class, ExpenseCategoryRepository::class);
     }
 
     /**

@@ -48,8 +48,13 @@ route::get('productsDetails/{Id}','ProductController@productDetails');
 
 ////////// purchase section //////////////////////////
 route::resource('purchases','PurchaseController');
+
 route::get('supplierDetails/{id}','SupplierController@supplierDetails');
 Route::post('purchaseUpdate/{Id}','PurchaseController@purchaseUpdate');
+
+
+//////////////expense /////////////////
+route::resource('expense_categories','ExpenseCategoryController');
 
 
 

@@ -138,4 +138,14 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\UpdateNote');
     }
 
+    public function expense_categories()
+    {
+        return $this->hasMany('App\Models\ExpenseCategory');
+    }
+
+    public function employees()
+    {
+        return $this->hasMany('App\Models\Employee');
+    }
+
 }
