@@ -51,20 +51,12 @@
                                     <h3 class="card-title">Registration</h3>
                                     <hr>
                                     <div class="row p-t-20">
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="control-label">Meter Name</label>
                                                 <input type="text" id="meterName" name="meterName" class="form-control" placeholder="Enter Meter Name">
                                         </div>
                                         </div>
-                                        <!--/span-->
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="control-label">Start Reading</label>
-                                                    <input type="text" id="startReading" name="startReading" class="form-control" placeholder="Enter start Reading">
-                                                </div>
-                                            </div>
-                                        <!--/span-->
                                     </div>
                                     <!--/row-->
 

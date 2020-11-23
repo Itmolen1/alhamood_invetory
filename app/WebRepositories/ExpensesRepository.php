@@ -196,7 +196,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
     public function invoiceNumber()
     {
         $invoice = new Expense();
-        $lastInvoiceID = $invoice->orderByDesc('Id')->pluck('Id')->first();
+        $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
         $newInvoiceID = 'EXP-00'.($lastInvoiceID + 1);
         return $newInvoiceID;
     }

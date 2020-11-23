@@ -1,20 +1,24 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * User: rizwanafridi
+ * Date: 11/23/20
+ * Time: 14:11
+ */
 
 namespace App\WebRepositories\Interfaces;
 
 
-use App\Http\Requests\CustomerRequest;
 use Illuminate\Http\Request;
 
-interface ICustomerRepositoryInterface
+interface ISaleRepositoryInterface
 {
 
     public function index();
 
     public function create();
 
-    public function store(CustomerRequest $customerRequest);
+    public function store(Request $request);
 
     public function update(Request $request, $Id);
 
@@ -28,6 +32,6 @@ interface ICustomerRepositoryInterface
 
     public function trashed();
 
-    public function getCustomerVehicleDetails($Id);
+    public function invoiceNumber();
 
 }

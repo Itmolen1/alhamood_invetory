@@ -27,6 +27,7 @@ route::get('/register','AdminController@register');
 route::resource('customers','CustomerController');
 route::get('customerDetails/{id}','DriverController@customerDetails');
 
+
 route::resource('suppliers','SupplierController');
 route::resource('customer_advances','CustomerAdvanceController');
 route::resource('supplier_advances','SupplierAdvanceController');
@@ -60,12 +61,17 @@ route::post('expenseUpdate/{id}','ExpenseController@expenseUpdate');
 route::resource('employees','EmployeeController');
 
 
+////////////// sales /////////////////////
+route::resource('sales','SaleController');
+route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehicle');
+
+
 
 
 
 
 ///////////// sales samples ////////////////////
-route::view('sales','admin.sale.create');
+route::view('sales1','admin.sale.create');
 route::view('sales/index','admin.sale.index');
 route::view('sales/edit','admin.sale.edit');
 

@@ -30,4 +30,9 @@ class Vehicle extends Model
     {
         return $this->belongsTo('App\Models\Customer','customer_id','id');
     }
+
+    public function sale_details()
+    {
+        return $this->hasMany('App\Models\SaleDetail');
+    }
 }

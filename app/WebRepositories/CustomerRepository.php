@@ -132,4 +132,10 @@ class CustomerRepository implements ICustomerRepositoryInterface
     {
         // TODO: Implement trashed() method.
     }
+
+
+    public function getCustomerVehicleDetails($Id)
+    {
+        // TODO: Implement getCustomerVehicleDetails() method.
+    }
 }

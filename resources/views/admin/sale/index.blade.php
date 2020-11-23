@@ -24,7 +24,7 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active">sale</li>
                         </ol>
-                        <a href="{{ url('sales') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New sale</button></a>
+                        <a href="{{ route('sales.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New sale</button></a>
                     </div>
                 </div>
             </div>
@@ -49,6 +49,7 @@
                                         <th style="width: 150px">Customer</th>
                                         <th style="width: 150px">Vehicle</th>
                                         <th style="width: 150px">Product</th>
+                                        <th>Due Date</th>
                                         <th>Quantity</th>
                                         <th>Unit Price</th>
                                         <th>VAT</th>
@@ -71,22 +72,59 @@
 {{--                                    </tr>--}}
 {{--                                    </tfoot>--}}
                                     <tbody>
+                                    @foreach($sales as $sale)
+                                        <tr>
+                                            {{--<td>--}}
 
+                                                {{--@if( $sale->updated_at->diffForHumans()  > '3 minutes ago')--}}
+                                                    {{--<p>exist</p>--}}
+                                                    {{--{{ $sale->updated_at->diffForHumans() }}--}}
+                                                    {{--@else--}}
+                                                    {{--<p>No</p>--}}
+                                                    {{--{{ $sale->updated_at->diffForHumans() }}--}}
+                                                {{--@endif--}}
+                                            {{--</td>--}}
+                                            <td>
+                                                @if(!empty($sale->sale_details[0]->createdDate))
+                                                    {{ $sale->sale_details[0]->createdDate }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(!empty($sale->sale_details[0]->PadNumber))
+                                                    {{ $sale->sale_details[0]->PadNumber }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(!empty($sale->customer->Name))
+                                                    {{ $sale->customer->Name }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(!empty($sale->sale_details[0]->vehicle->Name))
+                                                    {{ $sale->sale_details[0]->vehicle->Name }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(!empty($sale->sale_details[0]->product_id))
+                                                    {{ $sale->sale_details[0]->product->Name }}
+                                                @endif
+                                            </td>
 
-                                    <tr>
-                                        <td>Michael Bruce</td>
-                                        <td>Javascript Developer</td>
-                                        <td>Singapore</td>
-                                        <td>Singapore</td>
-                                        <td>Singapore</td>
-                                        <td>Singapore</td>
-                                        <td>Singapore</td>
-                                        <td>29</td>
-                                        <td>2011/06/27</td>
-                                        <td>
-                                            <a href="{{url('sales/edit')}}">Edit</a>
-                                        </td>
-                                    </tr>
+                                            <td>{{ $sale->DueDate }}</td>
+                                            <td>{{ $sale->Quantity }}</td>
+                                            <td>{{ $sale->Price }}</td>
+                                            <td>{{ $sale->totalVat }}</td>
+                                            <td>{{ $sale->grandTotal }}</td>
+                                            <td>
+                                                <form action="{{ route('sales.destroy',$sale->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a href="{{ route('sales.edit', $sale->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
+                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>

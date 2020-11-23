@@ -49,53 +49,67 @@
                             <form action="#">
                                 <div class="form-body">
 
-
+                                    <input type="hidden" name="SaleNumber" id="SaleNumber" value="{{ $saleNo }}">
                                     <div class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
                                                 <th style="width: 100px">Date</th>
                                                 <th style="width: 150px">Pad #</th>
-                                                <th style="width: 150px">Customer</th>
+                                                <th style="width: 200px">Customer</th>
                                                 <th style="width: 150px">Vehicle</th>
                                                 <th style="width: 150px">Product</th>
                                                 <th>Quantity</th>
                                                 <th>Unit Price</th>
-                                                <th>VAT</th>
+                                                <th style="width: 120px">VAT</th>
                                                 <th>Total Amount</th>
 {{--                                                <th>Action</th>--}}
                                             </tr>
                                             </thead>
                                             <tbody id="newRow">
                                             <tr>
-                                                <td> <input type="date" name="saleDate" id="saleDate" class="form-control" placeholder=""></td>
-                                                <td><input type="text" placeholder="Invoice Number" class="invoiceNumber form-control"></td>
+                                                <td> <input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="customer" class="form-control customer">
-                                                            <option value="0">Customer</option>
+                                                        <select name="customer" class="form-control customer_id" id="customer_id">
+                                                            <option readonly="" disabled selected>--Customer--</option>
+                                                            @foreach($customers as $customer)
+                                                                <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="vehicle" class="form-control vehicle">
-                                                            <option value="0">Vehicle</option>
+                                                        <select name="vehicle" id="vehicle" class="form-control vehicle_id">
+                                                            <option class="opt" value="0">Vehicle</option>
                                                         </select>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="Product" class="form-control product">
-                                                            <option value="0" selected>Diesel</option>
+                                                        <select name="Product_id" class="form-control product_id" id="product_id">
+                                                            <option readonly="" disabled selected>--Product--</option>
+                                                            @foreach($products as $product)
+                                                                <option value="{{ $product->id }}">{{ $product->Name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Quantity" class="quantity form-control">
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Total" class="total form-control">
+                                                    <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                                 </td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Price" class="price form-control"></td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="VAT" name="VAT" value="0" class="VAT form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" class="price form-control"></td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <select name="VAT" class="form-control VAT">
+                                                            <option value="0">0.00</option>
+                                                            <option value="5">5.00</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
                                                 <td><input type="hidden" placeholder="Total" class="rowTotal form-control">
                                                     <input type="text" placeholder="Total" class="rowTotal form-control" disabled="disabled">
                                                 </td>
@@ -114,21 +128,27 @@
 
                                         <div class="col-md-4">
 
-                                            <p>Total Vat: <input type="text" value="0.00" class="form-control TotalVat" disabled=""></p>
+                                            <p>Total Vat: <input type="text" value="0.00" class="form-control TotalVat" disabled="">
+                                                <input type="hidden" value="0.00" class="form-control TotalVat">
+                                            </p>
 
 
-                                            <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled></p>
+                                            <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled>
+                                                <input type="hidden" value="0.00" class="form-control GTotal" >
+                                            </p>
 
-                                            <p>Cash Paid: <input type="text" value="0.00" class="form-control cashPaid"></p>
+                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
 
-                                            <p>Balance: <input type="text" value="0.00" class="form-control balance"></p>
+                                            <p>Balance: <input type="text" value="0.00" id="balance" class="form-control balance" disabled>
+                                                <input type="hidden" value="0.00" id="balance" class="form-control balance">
+                                            </p>
 
 
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-actions">
-                                    <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Save</button>
+                                    <button type="button" class="btn btn-success" id="submit"> <i class="fa fa-check"></i> Save</button>
                                     <button type="button" class="btn btn-inverse">Cancel</button>
                                 </div>
                             </form>
@@ -138,7 +158,7 @@
                                 <table class="table color-table danger-table">
                                     <thead>
                                     <tr>
-                                        <th style="width: 100px">Date</th>
+                                        <th style="width: 130px">Date</th>
                                         <th style="width: 150px">Pad #</th>
                                         <th style="width: 150px">Customer</th>
                                         <th style="width: 150px">Vehicle</th>
@@ -147,32 +167,24 @@
                                         <th>Unit Price</th>
                                         <th>VAT</th>
                                         <th>Total Amount</th>
+                                        <th>Time</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Nigam</td>
-                                        <td>Eichmann</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                    </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Nigam</td>
-                                        <td>Eichmann</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                        <td>@Sonu</td>
-                                    </tr>
-
+                                    @foreach($salesRecords as $records)
+                                        <tr id="rowData">
+                                            <td> {{ $records->sale_details[0]->createdDate }}</td>
+                                            <td>{{ $records->sale_details[0]->PadNumber }}</td>
+                                            <td>{{ $records->customer->Name }}</td>
+                                            <td>{{ $records->sale_details[0]->vehicle->registrationNumber }}</td    >
+                                            <td>{{ $records->sale_details[0]->product->Name }}</td>
+                                            <td>{{ $records->DueDate }}</td>
+                                            <td>{{ $records->sale_details[0]->Quantity }}</td>
+                                            <td>{{ $records->sale_details[0]->Price }}</td>
+                                            <td>{{ $records->grandTotal }}</td>
+                                            <td>{{ $records->updated_at->diffForHumans() }}</td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -242,6 +254,174 @@
 
 
             //////// end Accept only Number ////////////////////
+
+
+            /////////////////////////// customer select /////////////////
+            $(document).ready(function () {
+
+                /////////////// Add Record //////////////////////
+                $('#submit').click(function () {
+
+                    $('#submit').text('please wait...');
+                    $('#submit').attr('disabled',true);
+
+                    var supplierNew = $('.customer_id').val();
+                    //alert(supplierNew);
+                    if (supplierNew != null)
+                    {
+                        var insert = [], orderItem = [], nonArrayData = "";
+                        $('#newRow tr').each(function () {
+                            var currentRow = $(this).closest("tr");
+                            if (validateRow(currentRow)) {
+                                orderItem =
+                                    {
+                                        product_id: currentRow.find('.product_id').val(),
+                                        vehicle_id: currentRow.find('.vehicle_id').val(),
+                                        Quantity: currentRow.find('.quantity').val(),
+                                        Price: currentRow.find('.price').val(),
+                                        rowTotal: currentRow.find('.total').val(),
+                                        Vat: currentRow.find('.VAT').val(),
+                                        rowVatAmount: currentRow.find('.singleRowVat').val(),
+                                        rowSubTotal: currentRow.find('.rowTotal').val(),
+                                        PadNumber: currentRow.find('.PadNumber').val(),
+                                        createdDate: currentRow.find('.createdDate').val(),
+                                    };
+                                insert.push(orderItem);
+                            }
+                            else
+                            {
+                                return false;
+                            }
+
+                        });
+                        let details = {
+                            SaleNumber: $('#SaleNumber').val(),
+                            SaleDate: $('#createdDate').val(),
+                            Total: $('.total').val(),
+                            subTotal: $('.rowTotal').val(),
+                            totalVat: $('.TotalVat').val(),
+                            grandTotal: $('.GTotal').val(),
+                            paidBalance: $('.cashPaid').val(),
+                            remainingBalance: $('#balance').val(),
+                            customer_id:$('#customer_id').val(),
+                            customerNote:$('#description').val(),
+                            orders: insert,
+                        }
+                        // var Datas = {Data: details}
+                        // console.log(Datas);
+                        if (insert.length > 0) {
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }
+                            });
+                            var Datas = {Data: details};
+                            console.log(Datas);
+                            $.ajax({
+                                url: "{{ route('sales.store') }}",
+                                type: "post",
+                                data: Datas,
+                                success: function (result) {
+                                    if (result !== "Failed") {
+                                        details = [];
+                                        //console.log(result);
+                                        alert("Data Inserted Successfully");
+                                        window.location.href = "{{ route('sales.create') }}";
+
+                                    } else {
+                                        alert(result);
+                                    }
+                                },
+                                error: function (errormessage) {
+                                    alert(errormessage);
+                                }
+                            });
+                        } else
+                        {
+                            alert('Please Add item to list');
+                        }
+                    }
+                    else
+                    {
+                        alert('Select Customer first')
+                    }
+
+                });
+                //////// end of submit Records /////////////////
+
+                //////// validate rows ////////
+                function validateRow(currentRow) {
+
+                    var isvalid = true;
+                    var rate = 0, product = 0, quantity = 0, vehicle = $('.vehicle_id').val();
+                    if (parseInt(vehicle) === 0 || vehicle === ""){
+                        isvalid = false;
+                    }
+
+                    product = currentRow.find('.product').val();
+                    quantity  = currentRow.find('.quantity').val();
+                    rate = currentRow.find('.price').val();
+                    if (parseInt(product) === 0 || product === ""){
+                        //alert(product);
+                        isvalid = false;
+
+                    }
+                    if (parseInt(quantity) == 0 || quantity == "")
+                    {
+                        isvalid = false;
+                    }
+                    if (parseInt(rate) == 0 || rate == "")
+                    {
+                        isvalid = false
+                    }
+                    return isvalid;
+                }
+                ////// end of validate row ///////////////////
+
+
+                $('.customer_id').change(function () {
+                    //alert();
+                    var Id = 0;
+                    Id = $(this).val();
+
+                    if (Id > 0)
+                    {
+                        $.ajax({
+                            // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            url: "{{ URL('customerDetails') }}/" + Id,
+                            type: "get",
+                            dataType: "json",
+                            success: function (result) {
+                                if (result !== "Failed") {
+                                    console.log(result);
+
+                                    $("#vehicle").html('');
+                                    var vehicleDetails = '';
+                                    if (result.vehicles.length > 0)
+                                    {
+                                        for (var i = 0; i < result.vehicles.length; i++) {
+                                            vehicleDetails += '<option value="' + result.vehicles[i].id + '">' + result.vehicles[i].registrationNumber + '</option>';
+                                        }
+                                    }
+                                    else {
+                                        vehicleDetails += '<option value="0">No Data</option>';
+                                    }
+                                    $("#vehicle").append(vehicleDetails);
+
+
+                                } else {
+                                    alert(result);
+                                }
+                            },
+                            error: function (errormessage) {
+                                alert(errormessage);
+                            }
+                        });
+                    }
+                });
+
+            });
+            ////////////// end of customer select ////////////////
         });
 
 

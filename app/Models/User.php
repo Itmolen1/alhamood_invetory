@@ -163,4 +163,14 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\FileUpload');
     }
 
+    public function sales()
+    {
+        return $this->hasMany('App\Models\Sale');
+    }
+
+    public function sale_Details()
+    {
+        return $this->hasMany('App\Models\SaleDetail');
+    }
+
 }

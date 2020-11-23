@@ -84,8 +84,8 @@
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-cart-plus"></i><span class="hide-menu">Sales</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li  class="border-bottom"><a href="{{ url('sales') }}">Add Sales</a></li>
-                    <li><a href="{{ url('sales/index') }}">Manage Sales</a></li>
+                    <li  class="border-bottom"><a href="{{ route('sales.create') }}">Add Sales</a></li>
+                    <li><a href="{{ route('sales.index') }}">Manage Sales</a></li>
 {{--                    <li><a href="app-calendar.html">Receivables</a></li>--}}
                 </ul>
             </li>
@@ -110,19 +110,19 @@
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-bar-chart"></i><span class="hide-menu">Accounts</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li  class="border-bottom">
+                   <!-- <li  class="border-bottom">
                         <a href="#">Chart of Account</a>
                     </li>
                     <li class="border-bottom">
                         <a href="#">Manufacturer Payment</a>
-                    </li>
+                    </li>-->
                     <li class="border-bottom">
                         <a href="#">Supplier Payment</a>
                     </li>
                     <li class="border-bottom">
                         <a href="#">Customer Receive</a>
                     </li>
-                    <li class="border-bottom">
+                  <!--  <li class="border-bottom">
                         <a href="#">Cash Adjustment</a>
                     </li>
                     <li class="border-bottom">
@@ -133,13 +133,13 @@
                     </li>
                     <li class="border-bottom">
                         <a href="#">Conta Voucher</a>
-                    </li>
+                    </li> -->
                     <li class="border-bottom">
                         <a href="#">Journal Voucher</a>
                     </li>
-                    <li class="border-bottom">
-                        <a href="#"> Voucher Approval</a>
-                    </li>
+                    {{--<li class="border-bottom">--}}
+                        {{--<a href="#"> Voucher Approval</a>--}}
+                    {{--</li>--}}
                     <li class="border-bottom"><a href="{{ url('loan') }}">Add Loan</a></li>
                     <li><a href="{{ url('loan/index') }}">Manage Loan</a></li>
                 </ul>
@@ -190,7 +190,7 @@
                                 <a href="#">Trial balance</a>
                             </li>
                             <li>
-                                <a href="#">COA Print</a>
+                                <a href="#">Monthly Closings</a>
                             </li>
                         </ul>
 

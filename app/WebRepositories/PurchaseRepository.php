@@ -199,7 +199,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         // TODO: Implement invoiceNumber() method.
 
         $invoice = new Purchase();
-        $lastInvoiceID = $invoice->orderByDesc('Id')->pluck('Id')->first();
+        $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
         $newInvoiceID = 'PUR-00'.($lastInvoiceID + 1);
         return $newInvoiceID;
     }

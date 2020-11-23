@@ -30,4 +30,9 @@ class Product extends Model
     {
         return $this->belongsTo('App\Models\Unit','unit_id','id');
     }
+
+    public function sale_Details()
+    {
+        return $this->hasMany('App\Models\SaleDetail');
+    }
 }

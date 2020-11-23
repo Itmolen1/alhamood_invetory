@@ -33,6 +33,8 @@ use App\WebRepositories\Interfaces\IPurchaseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseRepositoryInterface;
 use App\WebRepositories\Interfaces\IRegionRepositoryInterface;
 use App\WebRepositories\Interfaces\IRoleRepositoryInterface;
+use App\WebRepositories\Interfaces\ISaleDetailsRepositoryInterface;
+use App\WebRepositories\Interfaces\ISaleRepositoryInterface;
 use App\WebRepositories\Interfaces\IStatesRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
@@ -44,6 +46,8 @@ use App\WebRepositories\PurchaseDetailRepository;
 use App\WebRepositories\PurchaseRepository;
 use App\WebRepositories\RegionRepository;
 use App\WebRepositories\RoleRepository;
+use App\WebRepositories\SaleDetailsRepository;
+use App\WebRepositories\SaleRepository;
 use App\WebRepositories\StateRepository;
 use App\WebRepositories\SupplierAdvanceRepository;
 use App\WebRepositories\SupplierRepository;
@@ -83,6 +87,8 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IEmployeeRepositoryInterface::class,EmployeeRepository::class);
         $this->app->bind(IExpensesRepositoryInterface::class, ExpensesRepository::class);
         $this->app->bind(IExpenseDetailsRepositoryInterface::class,ExpenseDetailsRepository::class);
+        $this->app->bind(ISaleRepositoryInterface::class,SaleRepository::class);
+        $this->app->bind(ISaleDetailsRepositoryInterface::class,SaleDetailsRepository::class);
     }
 
     /**

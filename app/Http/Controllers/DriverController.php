@@ -67,7 +67,7 @@ class DriverController extends Controller
 
     public function customerDetails($id)
     {
-        $customers = Customer::find($id);
+        $customers = Customer::with('vehicles')->find($id);
         return response()->json($customers);
     }
 }
