@@ -37,6 +37,8 @@ class DatabaseSeeder extends Seeder
         $this->call(PurchaseDetailSeeder::class);
         $this->call(ExpenseCategorySeeder::class);
         $this->call(EmployeeSeeder::class);
+        $this->call(ExpenseSeeder::class);
+        $this->call(ExpenseDetailSeeder::class);
     }
 }
 

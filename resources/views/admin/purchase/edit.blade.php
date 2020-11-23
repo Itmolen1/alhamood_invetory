@@ -73,8 +73,9 @@
                                                 </div>
                                                 <div class="col-md 6">
                                                     <div class="form-group">
-                                                        <label class="control-label">purchase Number</label>
-                                                        <input type="text" class="form-control PurchaseNumber" value="{{ $purchase_details[0]->purchase->PurchaseNumber }}"  name="PurchaseNumber" id="PurchaseNumber" value="" placeholder="">
+                                                            <label class="control-label">Due date</label>
+                                                            <input type="date" name="DueDate" id="DueDate" value="{{ $purchase_details[0]->purchase->DueDate }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
+                                                            <input type="hidden" class="form-control PurchaseNumber" value="{{ $purchase_details[0]->purchase->PurchaseNumber }}"  name="PurchaseNumber" id="PurchaseNumber" value="" placeholder="">
                                                     </div>
                                                 </div>
                                             </div>
@@ -119,10 +120,7 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Due date</label>
-                                                <input type="date" name="DueDate" id="DueDate" value="{{ $purchase_details[0]->purchase->DueDate }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
-                                            </div>
+
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
@@ -181,7 +179,7 @@
                                                 @if(is_null($details->deleted_at))
                                             <tr>
                                                 <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ $details->createdDate }}" placeholder=""></td>
-                                                <td><input type="text" placeholder="Pad Number" id="PadNumber" name="PadNumber" value="{{ $details->PadNumber }}" class="PadNumber form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" name="PadNumber" value="{{ $details->PadNumber }}" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="product" class="form-control product">
@@ -194,13 +192,13 @@
                                                 </td>
                                                 <td><input type="text" placeholder="Unit" value="{{ $details->product->unit->Name }}" class="unit form-control"></td>
                                                 <td><input type="text" placeholder="Description" value="{{ $details->Description }}"  class="description form-control"></td>
-                                                <td><input type="text" onfocus="this.value=''" value="{{ $details->Quantity }}"  placeholder="Quantity" class="quantity form-control">
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Quantity }}"  placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="{{ $details->rowVatAmount }}"  class="singleRowVat form-control">
                                                 </td>
-                                                <td><input type="text" onfocus="this.value=''" value="{{ $details->Price }}" placeholder="Price" class="price form-control"></td>
-                                                <td><input type="text" onfocus="this.value=''"  placeholder="Total" value="{{ $details->rowTotal }}" class="total form-control" disabled>
-                                                    <input type="hidden" onfocus="this.value=''"  placeholder="Total" value="{{ $details->rowTotal }}" class="total form-control">
-                                                    <input type="hidden" onfocus="this.value=''"  placeholder="detail_Id" value="{{ $details->id }}" class="detail_Id form-control">
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Price }}" placeholder="Price" class="price form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)"  placeholder="Total" value="{{ $details->rowTotal }}" class="total form-control" disabled>
+                                                    <input type="hidden" onClick="this.select();"  placeholder="Total" value="{{ $details->rowTotal }}" class="total form-control">
+                                                    <input type="hidden" onClick="this.select();"  placeholder="detail_Id" value="{{ $details->id }}" class="detail_Id form-control">
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
@@ -223,7 +221,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $purchase_details[0]->purchase->supplierNote }}</textarea>
+                                                <textarea name="" id="PurchaseDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $purchase_details[0]->purchase->supplierNote }}</textarea>
                                                 <input type="file">
                                                 <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
                                             </div>
@@ -240,7 +238,7 @@
                                                 <input type="hidden" class="form-control GTotal" value="{{ $purchase_details[0]->purchase->grandTotal }}" >
                                             </p>
 
-                                            <p>Cash Paid: <input type="text"  class="form-control cashPaid" value="{{ $purchase_details[0]->purchase->paidBalance }}"></p>
+                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $purchase_details[0]->purchase->paidBalance }}"></p>
 
                                             <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $purchase_details[0]->purchase->remainingBalance }}" disabled="disabled">
                                                 <input type="hidden" class="form-control balance" value="{{ $purchase_details[0]->purchase->remainingBalance }}">
@@ -351,7 +349,7 @@
             /////////////// Add Record //////////////////////
             $('#submit').click(function () {
                 $('#submit').val('please wait...');
-                $('#submit').attr('disabled',true)
+                $('#submit').attr('disabled',true);
                 //alert();
                 var updateNote = $('#updateDescription').val();
                 if (updateNote !== "") {
@@ -375,6 +373,7 @@
                                         rowSubTotal: currentRow.find('.rowTotal').val(),
                                         PadNumber: currentRow.find('.PadNumber').val(),
                                         createdDate: currentRow.find('.createdDate').val(),
+                                        description: currentRow.find('.description').val(),
                                     };
                                 insert.push(orderItem);
                             } else {
@@ -396,7 +395,7 @@
                             paidBalance: $('.cashPaid').val(),
                             remainingBalance: $('#balance').val(),
                             supplier_id: $('#supplier_id').val(),
-                            supplierNote: $('#description').val(),
+                            supplierNote: $('#PurchaseDescription').val(),
                             UpdateDescription: $('#UpdateDescription').val(),
                             orders: insert,
                         }

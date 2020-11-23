@@ -22,6 +22,7 @@
                     <li class="border-bottom"><a href="{{ route('cities.index') }}">Cities list</a></li>
                     <li class="border-bottom"><a href="{{ route('regions.index') }}">Regions list</a></li>
                     <li class="border-bottom"><a href="{{ route('units.index') }}">Units list</a></li>
+                    <li class="border-bottom"><a href="{{ route('employees.index') }}">Employees list</a></li>
                     <li><a href="{{ route('products.index') }}">Products list</a></li>
                     <!--  <li><a href="app-chat.html">Chat app</a></li> -->
 
@@ -92,8 +93,8 @@
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-money"></i><span class="hide-menu">Expenses</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li  class="border-bottom"><a href="{{ url('expenses') }}">Add Expenses</a></li>
-                    <li><a href="{{ url('expenses/index') }}">Manage Expenses</a></li>
+                    <li  class="border-bottom"><a href="{{ route('expenses.create') }}">Add Expenses</a></li>
+                    <li class="border-bottom"><a href="{{ route('expenses.index') }}">Manage Expenses</a></li>
                     <li><a href="{{ route('expense_categories.index') }}">Expenses Categories</a></li>
                 </ul>
             </li>

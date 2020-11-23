@@ -72,8 +72,9 @@
                                                 </div>
                                                 <div class="col-md 6">
                                                     <div class="form-group">
-                                                        <label class="control-label">purchase Number</label>
-                                                        <input type="text" class="form-control PurchaseNumber" name="PurchaseNumber" id="PurchaseNumber" value="{{ $purchaseNo }}" placeholder="">
+                                                            <label class="control-label">Due date</label>
+                                                            <input type="date" name="DueDate" id="DueDate" value="{{ date('Y-m-d') }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
+                                                        <input type="hidden" class="form-control PurchaseNumber" name="PurchaseNumber" id="PurchaseNumber" value="{{ $purchaseNo }}" placeholder="">
                                                     </div>
                                                 </div>
                                             </div>
@@ -94,10 +95,7 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Due date</label>
-                                                <input type="date" name="DueDate" id="DueDate" value="{{ date('Y-m-d') }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
-                                            </div>
+
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
@@ -134,7 +132,7 @@
                                             <tbody id="newRow">
                                             <tr>
                                                 <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ date('Y-m-d') }}" placeholder=""></td>
-                                                <td><input type="text" placeholder="Pad Number" id="PadNumber" name="PadNumber" class="PadNumber form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" name="PadNumber" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="product" class="form-control product">
@@ -147,12 +145,12 @@
                                                 </td>
                                                 <td><input type="text" placeholder="Unit" class="unit form-control"></td>
                                                 <td><input type="text" placeholder="Description" class="description form-control"></td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Quantity" class="quantity form-control">
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                                 </td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Price" class="price form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" class="price form-control"></td>
                                                 <td><input type="text" onfocus="this.value=''"  placeholder="Total" class="total form-control" disabled>
-                                                    <input type="hidden" onfocus="this.value=''"  placeholder="Total" class="total form-control">
+                                                    <input type="hidden" onClick="this.select();"  placeholder="Total" class="total form-control">
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
@@ -190,7 +188,7 @@
                                                 <input type="hidden" value="0.00" class="form-control GTotal" >
                                             </p>
 
-                                            <p>Cash Paid: <input type="text" value="0.00" class="form-control cashPaid"></p>
+                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
 
                                             <p>Balance: <input type="text" value="0.00" class="form-control balance" id="balance" disabled="disabled">
                                                 <input type="hidden" value="0.00" class="form-control balance">
@@ -247,6 +245,7 @@
                                     rowSubTotal: currentRow.find('.rowTotal').val(),
                                     PadNumber: currentRow.find('.PadNumber').val(),
                                     createdDate: currentRow.find('.createdDate').val(),
+                                    description: currentRow.find('.description').val(),
                                 };
                             insert.push(orderItem);
                          }

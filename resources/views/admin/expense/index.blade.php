@@ -24,7 +24,7 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active">expenses</li>
                         </ol>
-                        <a href="{{ route('customers.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New Expense</button></a>
+                        <a href="{{ route('expenses.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> create new</button></a>
                     </div>
                 </div>
             </div>
@@ -56,22 +56,27 @@
                                     </thead>
 
                                     <tbody>
-
-
-
-
+                                    @foreach($expenses as $expense)
                                     <tr>
-                                        <td>Michael Bruce</td>
-                                        <td>Javascript Developer</td>
-                                        <td>Singapore</td>
-                                        <td>29</td>
-                                        <td>2011/06/27</td>
-                                        <td>2011/06/27</td>
-                                        <td>2011/06/27</td>
                                         <td>
-                                            <a href="{{url('expenses/edit')}}">Edit</a>
+                                                {{ $expense->expense_details[0]->expenseDate }}
+                                        </td>
+                                        <td>{{ $expense->expense_details[0]->PadNumber }}</td>
+                                        <td>{{ $expense->expense_details[0]->expense_category->Name }}</td>
+                                        <td>{{ $expense->expense_details[0]->Description }}</td>
+                                        <td>{{ $expense->subTotal}}</td>
+                                        <td>{{ $expense->totalVat}}</td>
+                                        <td>{{ $expense->grandTotal }}</td>
+                                        <td>
+                                            <form action="{{ route('expenses.destroy',$expense->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <a href="{{ route('expenses.edit', $expense->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
+                                                <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
+                                            </form>
                                         </td>
                                     </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>

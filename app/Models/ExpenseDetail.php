@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Region extends Model
+class ExpenseDetail extends Model
 {
         use HasFactory;
         use SoftDeletes;
@@ -14,7 +14,7 @@ class Region extends Model
 
         protected $guarded=[];
         protected $primaryKey = 'id';
-        protected $table = 'regions';
+        protected $table = 'expense_details';
 
     public function user()
     {
@@ -26,28 +26,14 @@ class Region extends Model
         return $this->belongsTo('App\Models\Company','company_id','id');
     }
 
-    public function city()
+
+    public function expense()
     {
-        return $this->belongsTo('App\Models\City','city_id','id');
+        return $this->belongsTo('App\Models\Expense','expense_id','id');
     }
 
-    public function companies()
+    public function expense_category()
     {
-        return $this->hasMany('App\Models\Company');
-    }
-
-    public function customers()
-    {
-        return $this->hasMany('App\Models\Customer');
-    }
-
-    public function suppliers()
-    {
-        return $this->hasMany('App\Models\Supplier');
-    }
-
-    public function employees()
-    {
-        return $this->hasMany('App\Models\Employee');
+        return $this->belongsTo('App\Models\ExpenseCategory','expense_category_id','id');
     }
 }

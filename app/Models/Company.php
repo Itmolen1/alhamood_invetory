@@ -120,5 +120,19 @@ class Company extends Model
     {
         return $this->hasMany('App\Models\Employee');
     }
+
+    public function expenses()
+    {
+        return $this->hasMany('App\Models\Expense');
+    }
+
+    public function expense_details()
+    {
+        return $this->hasMany('App\Models\ExpenseDetail');
+    }
+    public function file_upload()
+    {
+        return $this->hasMany('App\Models\FileUpload');
+    }
         
 }

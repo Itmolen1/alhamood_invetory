@@ -25,4 +25,9 @@ class Employee extends Model
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
     }
+
+    public function region()
+    {
+        return $this->belongsTo('App\Models\Region','region_id','id');
+    }
 }

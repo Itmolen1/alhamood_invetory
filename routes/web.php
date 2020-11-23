@@ -54,7 +54,10 @@ Route::post('purchaseUpdate/{Id}','PurchaseController@purchaseUpdate');
 
 
 //////////////expense /////////////////
+route::resource('expenses','ExpenseController');
 route::resource('expense_categories','ExpenseCategoryController');
+route::post('expenseUpdate/{id}','ExpenseController@expenseUpdate');
+route::resource('employees','EmployeeController');
 
 
 
@@ -66,14 +69,14 @@ route::view('sales','admin.sale.create');
 route::view('sales/index','admin.sale.index');
 route::view('sales/edit','admin.sale.edit');
 
-route::view('expenses','admin.expense.create');
+route::view('expenses1','admin.expense.create');
 route::view('expenses/edit','admin.expense.edit');
 route::view('expenses/index','admin.expense.index');
 
 
-route::view('purchases1','admin.purchase.create');
-route::view('purchases/edit','admin.purchase.edit');
-route::view('purchases/index','admin.purchase.index');
+//route::view('purchases1','admin.purchase.create');
+//route::view('purchases/edit','admin.purchase.edit');
+//route::view('purchases/index','admin.purchase.index');
 
 
 route::view('add_meter','admin.meter.create');

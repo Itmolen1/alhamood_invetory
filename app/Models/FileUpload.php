@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ExpenseCategory extends Model
+class FileUpload extends Model
 {
         use HasFactory;
         use SoftDeletes;
@@ -14,7 +14,7 @@ class ExpenseCategory extends Model
 
         protected $guarded=[];
         protected $primaryKey = 'id';
-        protected $table = 'expense_categories';
+        protected $table = 'file_uploads';
 
     public function user()
     {
@@ -25,11 +25,4 @@ class ExpenseCategory extends Model
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
     }
-
-    public function expense_details()
-    {
-        return $this->hasMany('App\Models\ExpenseDetail');
-    }
-
-
 }

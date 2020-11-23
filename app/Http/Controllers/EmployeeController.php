@@ -2,84 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EmployeeRquest;
 use App\Models\Employee;
+use App\WebRepositories\Interfaces\IEmployeeRepositoryInterface;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @var IEmployeeRepositoryInterface
      */
+    private $employeeRepository;
+
+    public function __construct(IEmployeeRepositoryInterface $employeeRepository)
+   {
+
+       $this->employeeRepository = $employeeRepository;
+   }
     public function index()
     {
-        //
+        return $this->employeeRepository->index();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        //
+        return $this->employeeRepository->create();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function store(EmployeeRquest $employeeRequest)
     {
-        //
+        return $this->employeeRepository->store($employeeRequest);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Employee  $employee
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Employee $employee)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Employee  $employee
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Employee $employee)
+
+    public function edit($Id)
     {
-        //
+        return $this->employeeRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Employee  $employee
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Employee $employee)
+
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->employeeRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Employee  $employee
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Employee $employee)
+
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->employeeRepository->delete($request, $Id);
     }
 }

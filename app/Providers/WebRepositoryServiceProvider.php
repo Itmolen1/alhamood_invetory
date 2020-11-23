@@ -9,7 +9,12 @@ use App\WebRepositories\CountryRepository;
 use App\WebRepositories\CustomerAdvanceRepository;
 use App\WebRepositories\CustomerRepository;
 use App\WebRepositories\DriverRepository;
+use App\WebRepositories\EmployeeRepository;
 use App\WebRepositories\ExpenseCategoryRepository;
+use App\WebRepositories\ExpenseDetailRepository;
+use App\WebRepositories\ExpenseDetailsRepository;
+use App\WebRepositories\ExpenseRepository;
+use App\WebRepositories\ExpensesRepository;
 use App\WebRepositories\Interfaces\IBankRepositoryInterface;
 use App\WebRepositories\Interfaces\ICityRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
@@ -17,7 +22,12 @@ use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\WebRepositories\Interfaces\IDriverRepositoryInterface;
+use App\WebRepositories\Interfaces\IEmployeeRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseCategoryRepositoryInterface;
+use App\WebRepositories\Interfaces\IExpenseDetailRepositoryInterface;
+use App\WebRepositories\Interfaces\IExpenseDetailsRepositoryInterface;
+use App\WebRepositories\Interfaces\IExpenseRepositoryInterface;
+use App\WebRepositories\Interfaces\IExpensesRepositoryInterface;
 use App\WebRepositories\Interfaces\IProductRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseRepositoryInterface;
@@ -70,6 +80,9 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IPurchaseRepositoryInterface::class, PurchaseRepository::class);
         $this->app->bind(IPurchaseDetailRepositoryInterface::class,PurchaseDetailRepository::class);
         $this->app->bind(IExpenseCategoryRepositoryInterface::class, ExpenseCategoryRepository::class);
+        $this->app->bind(IEmployeeRepositoryInterface::class,EmployeeRepository::class);
+        $this->app->bind(IExpensesRepositoryInterface::class, ExpensesRepository::class);
+        $this->app->bind(IExpenseDetailsRepositoryInterface::class,ExpenseDetailsRepository::class);
     }
 
     /**
