@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers\api;
 
-use App\ApiRepositories\Interfaces\IBankRepositoryInterface;
+use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\MISC\ServiceResponse;
-use App\Models\Bank;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use mysql_xdevapi\Exception;
 
-class BankController extends Controller
+class CustomerController extends Controller
 {
+    private $customerRepository;
     private $userResponse;
-    private $bankRepository;
 
-    public function __construct(ServiceResponse $serviceResponse, IBankRepositoryInterface $bankRepository)
+    public function __construct(ServiceResponse $serviceResponse, ICustomerRepositoryInterface $customerRepository)
     {
         $this->userResponse=$serviceResponse;
-        $this->bankRepository=$bankRepository;
+        $this->customerRepository=$customerRepository;
     }
 
     public function index()
     {
         try
         {
-            return $this->userResponse->Success($this->bankRepository->all());
+            return $this->userResponse->Success($this->customerRepository->all());
         }
         catch (Exception $ex)
         {
@@ -36,7 +36,7 @@ class BankController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->bankRepository->paginate($page_no,$page_size));
+            return $this->userResponse->Success($this->customerRepository->paginate($page_no,$page_size));
         }
         catch(Exception $ex)
         {
@@ -53,8 +53,8 @@ class BankController extends Controller
     {
         try
         {
-            $bank = Bank::create($request->all());
-            return $this->userResponse->Success($bank);
+            $customer = Customer::create($request->all());
+            return $this->userResponse->Success($customer);
         }
         catch(Exception $ex)
         {
@@ -66,12 +66,12 @@ class BankController extends Controller
     {
         try
         {
-            $bank = Bank::find($id);
-            if(is_null($bank))
+            $customer = Customer::find($id);
+            if(is_null($customer))
             {
-                return $this->userResponse->Failed($bank = (object)[],'Not Found.');
+                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
             }
-            return $this->userResponse->Success($bank);
+            return $this->userResponse->Success($customer);
         }
         catch(Exception $ex)
         {
@@ -79,23 +79,23 @@ class BankController extends Controller
         }
     }
 
-    public function edit(Bank $bank)
+    public function edit($id)
     {
         //
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         try
         {
-            $bank = Bank::find($id);
-            if(is_null($bank))
+            $customer = Customer::find($id);
+            if(is_null($customer))
             {
-                return $this->userResponse->Failed($product = (object)[],'Not Found.');
+                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
             }
-            $bank->update($request->all());
-            $bank->save();
-            return $this->userResponse->Success($bank);
+            $customer->update($request->all());
+            $customer->save();
+            return $this->userResponse->Success($customer);
         }
         catch(Exception $ex)
         {
@@ -107,8 +107,8 @@ class BankController extends Controller
     {
         try
         {
-            $bank = $this->bankRepository->delete($request,$Id);
-            return $this->userResponse->Success($bank);
+            $customer = $this->customerRepository->delete($request,$Id);
+            return $this->userResponse->Success($customer);
         }
         catch (Exception $exception)
         {
@@ -119,7 +119,7 @@ class BankController extends Controller
     public function restore($Id)
     {
         try {
-            $restore = Bank::withTrashed()->where('Id', $Id)->restore();
+            $restore = Customer::withTrashed()->where('Id', $Id)->restore();
             return $this->userResponse->Success($restore);
 
         }
@@ -131,7 +131,7 @@ class BankController extends Controller
 
     public  function  trash()
     {
-        $trashed = $this->bankRepository->trashed();
+        $trashed = $this->customerRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
 }
