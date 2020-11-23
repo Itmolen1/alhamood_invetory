@@ -6,9 +6,8 @@ namespace App\ApiRepositories;
 
 use App\ApiRepositories\Interfaces\IUserRepositoryInterface;
 use App\Http\Requests\UserRequest;
-use App\Http\Resources\Role\RoleResource;
 use App\Http\Resources\User\UserResource;
-use App\Models\Role;
+use App\MISC\ServiceResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +15,11 @@ use Illuminate\Support\Facades\DB;
 
 class UserRepository implements IUserRepositoryInterface
 {
+    protected $userResponse;
+    public function __construct(ServiceResponse $serviceResponse)
+    {
+        $this->userResponse = $serviceResponse;
+    }
 
     public function all()
     {
@@ -52,13 +56,13 @@ class UserRepository implements IUserRepositoryInterface
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
             if ($user) {
-                $accessToken = $user->createToken('MyApp')->accessToken;
+                //$accessToken = $user->createToken('MyApp')->accessToken;
                 $users = new UserResource(User::all()->where('email', $user->email)->first());
-                if ($users->role == null)
-                {
-                    Return $this->userResponse->NotFoundRole();
-                }
-                else {
+//                if ($users->role == null)
+//                {
+//                    Return $this->userResponse->NotFoundRole();
+//                }
+//                else {
                     /*device token*/
                     $device_token=request('device_token');
                     $device_id=request('device_id');
@@ -81,8 +85,8 @@ class UserRepository implements IUserRepositoryInterface
                     /*device token*/
 
                     //$UserToAuthorities = RoleResource::Collection(Role::all()->where('Id', $users->role_Id));
-                    return $this->userResponse->LoginSuccess($accessToken, $users, 'Login Successful');
-                }
+                    return $this->userResponse->LoginSuccess( null,$users,null ,'Login Successful');
+                //}
             }
             else
             {
