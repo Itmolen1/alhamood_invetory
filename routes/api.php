@@ -27,6 +27,7 @@ Route::apiResource('/Customer', 'API\CustomerController');
 Route::apiResource('/Supplier', 'API\SupplierController');
 Route::apiResource('/Unit', 'API\UnitController');
 Route::apiResource('/Product', 'API\ProductController');
+Route::apiResource('/Employee', 'API\EmployeeController');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

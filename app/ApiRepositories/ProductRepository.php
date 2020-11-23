@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 
 class ProductRepository implements IProductRepositoryInterface
 {
-
     public function all()
     {
         return ProductResource::collection(Product::all()->sortDesc());

@@ -6,9 +6,11 @@ namespace App\Providers;
 
 use App\ApiRepositories\CustomerRepository;
 use App\ApiRepositories\DriverRepository;
+use App\ApiRepositories\EmployeeRepository;
 use App\ApiRepositories\Interfaces\IBankRepositoryInterface;
 use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\ApiRepositories\Interfaces\IDriverRepositoryInterface;
+use App\ApiRepositories\Interfaces\IEmployeeRepositoryInterface;
 use App\ApiRepositories\Interfaces\IProductRepositoryInterface;
 use App\ApiRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\ApiRepositories\Interfaces\IUnitRepositoryInterface;
@@ -33,6 +35,7 @@ class ApiRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ISupplierRepositoryInterface::class,SupplierRepository::class);
         $this->app->bind(IUnitRepositoryInterface::class,UnitRepository::class);
         $this->app->bind(IProductRepositoryInterface::class,ProductRepository::class);
+        $this->app->bind(IEmployeeRepositoryInterface::class,EmployeeRepository::class);
     }
     public function boot()
     {

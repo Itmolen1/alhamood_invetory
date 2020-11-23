@@ -4,37 +4,37 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
+class ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
+        '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
+        'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
+        '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '265b4faa2b3a9766332744949e83bf97' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Collections/helpers.php',
         'c7a3c339e7e14b60e06a2d7fcce9476b' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Events/functions.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
-        '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         '9cdd7b9056abc3081735233ba9dd9c7f' => __DIR__ . '/..' . '/facade/flare-client-php/src/helpers.php',
-        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
-        'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
+        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         'ed962a97bd972bc82007176b647d4e36' => __DIR__ . '/..' . '/facade/ignition/src/helpers.php',
         '0b47d6d4a00ca9112ba3953b49e7c9a4' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/helper.php',
     );
@@ -211,8 +211,8 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'Yajra\\DataTables\\' => 
         array (
@@ -368,8 +368,8 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -582,9 +582,21 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
 
     public static $classMap = array (
         'App\\ApiRepositories\\BankRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/BankRepository.php',
+        'App\\ApiRepositories\\CustomerRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/CustomerRepository.php',
+        'App\\ApiRepositories\\DriverRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/DriverRepository.php',
         'App\\ApiRepositories\\Interfaces\\IBankRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/IBankRepositoryInterface.php',
+        'App\\ApiRepositories\\Interfaces\\ICustomerRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/ICustomerRepositoryInterface.php',
+        'App\\ApiRepositories\\Interfaces\\IDriverRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/IDriverRepositoryInterface.php',
+        'App\\ApiRepositories\\Interfaces\\IProductRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/IProductRepositoryInterface.php',
+        'App\\ApiRepositories\\Interfaces\\ISupplierRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/ISupplierRepositoryInterface.php',
+        'App\\ApiRepositories\\Interfaces\\IUnitRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/IUnitRepositoryInterface.php',
         'App\\ApiRepositories\\Interfaces\\IUserRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/IUserRepositoryInterface.php',
+        'App\\ApiRepositories\\Interfaces\\IVehicleRepositoryInterface' => __DIR__ . '/../..' . '/app/ApiRepositories/Interfaces/IVehicleRepositoryInterface.php',
+        'App\\ApiRepositories\\ProductRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/ProductRepository.php',
+        'App\\ApiRepositories\\SupplierRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/SupplierRepository.php',
+        'App\\ApiRepositories\\UnitRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/UnitRepository.php',
         'App\\ApiRepositories\\UserRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/UserRepository.php',
+        'App\\ApiRepositories\\VehicleRepository' => __DIR__ . '/../..' . '/app/ApiRepositories/VehicleRepository.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
@@ -604,6 +616,8 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'App\\Http\\Controllers\\DriverController' => __DIR__ . '/../..' . '/app/Http/Controllers/DriverController.php',
         'App\\Http\\Controllers\\EmployeeController' => __DIR__ . '/../..' . '/app/Http/Controllers/EmployeeController.php',
         'App\\Http\\Controllers\\ExpenseCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/ExpenseCategoryController.php',
+        'App\\Http\\Controllers\\ExpenseController' => __DIR__ . '/../..' . '/app/Http/Controllers/ExpenseController.php',
+        'App\\Http\\Controllers\\ExpenseDetailController' => __DIR__ . '/../..' . '/app/Http/Controllers/ExpenseDetailController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductController.php',
         'App\\Http\\Controllers\\PurchaseController' => __DIR__ . '/../..' . '/app/Http/Controllers/PurchaseController.php',
@@ -617,7 +631,13 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Controllers\\VehicleController' => __DIR__ . '/../..' . '/app/Http/Controllers/VehicleController.php',
         'App\\Http\\Controllers\\api\\BankController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/BankController.php',
+        'App\\Http\\Controllers\\api\\CustomerController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CustomerController.php',
+        'App\\Http\\Controllers\\api\\DriverController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/DriverController.php',
+        'App\\Http\\Controllers\\api\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/ProductController.php',
+        'App\\Http\\Controllers\\api\\SupplierController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/SupplierController.php',
+        'App\\Http\\Controllers\\api\\UnitController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/UnitController.php',
         'App\\Http\\Controllers\\api\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/UserController.php',
+        'App\\Http\\Controllers\\api\\VehicleController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/VehicleController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
@@ -634,7 +654,10 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'App\\Http\\Requests\\CustomerAdvanceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CustomerAdvanceRequest.php',
         'App\\Http\\Requests\\CustomerRequest' => __DIR__ . '/../..' . '/app/Http/Requests/CustomerRequest.php',
         'App\\Http\\Requests\\DriverRequest' => __DIR__ . '/../..' . '/app/Http/Requests/DriverRequest.php',
+        'App\\Http\\Requests\\EmployeeRquest' => __DIR__ . '/../..' . '/app/Http/Requests/EmployeeRquest.php',
         'App\\Http\\Requests\\ExpenseCategoryRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ExpenseCategoryRequest.php',
+        'App\\Http\\Requests\\ExpenseDetailRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ExpenseDetailRequest.php',
+        'App\\Http\\Requests\\ExpenseRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ExpenseRequest.php',
         'App\\Http\\Requests\\ProductRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProductRequest.php',
         'App\\Http\\Requests\\PurchaseDetailRequest' => __DIR__ . '/../..' . '/app/Http/Requests/PurchaseDetailRequest.php',
         'App\\Http\\Requests\\PurchaseRequest' => __DIR__ . '/../..' . '/app/Http/Requests/PurchaseRequest.php',
@@ -647,8 +670,20 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'App\\Http\\Requests\\VehicleRequest' => __DIR__ . '/../..' . '/app/Http/Requests/VehicleRequest.php',
         'App\\Http\\Resources\\Bank\\BankCollection' => __DIR__ . '/../..' . '/app/Http/Resources/Bank/BankCollection.php',
         'App\\Http\\Resources\\Bank\\BankResource' => __DIR__ . '/../..' . '/app/Http/Resources/Bank/BankResource.php',
+        'App\\Http\\Resources\\Customer\\CustomerCollection' => __DIR__ . '/../..' . '/app/Http/Resources/Customer/CustomerCollection.php',
+        'App\\Http\\Resources\\Customer\\CustomerResource' => __DIR__ . '/../..' . '/app/Http/Resources/Customer/CustomerResource.php',
+        'App\\Http\\Resources\\Driver\\DriverCollection' => __DIR__ . '/../..' . '/app/Http/Resources/Driver/DriverCollection.php',
+        'App\\Http\\Resources\\Driver\\DriverResource' => __DIR__ . '/../..' . '/app/Http/Resources/Driver/DriverResource.php',
+        'App\\Http\\Resources\\Product\\ProductCollection' => __DIR__ . '/../..' . '/app/Http/Resources/Product/ProductCollection.php',
+        'App\\Http\\Resources\\Product\\ProductResource' => __DIR__ . '/../..' . '/app/Http/Resources/Product/ProductResource.php',
+        'App\\Http\\Resources\\Supplier\\SupplierCollection' => __DIR__ . '/../..' . '/app/Http/Resources/Supplier/SupplierCollection.php',
+        'App\\Http\\Resources\\Supplier\\SupplierResource' => __DIR__ . '/../..' . '/app/Http/Resources/Supplier/SupplierResource.php',
+        'App\\Http\\Resources\\Unit\\UnitCollection' => __DIR__ . '/../..' . '/app/Http/Resources/Unit/UnitCollection.php',
+        'App\\Http\\Resources\\Unit\\UnitResource' => __DIR__ . '/../..' . '/app/Http/Resources/Unit/UnitResource.php',
         'App\\Http\\Resources\\User\\UserCollection' => __DIR__ . '/../..' . '/app/Http/Resources/User/UserCollection.php',
         'App\\Http\\Resources\\User\\UserResource' => __DIR__ . '/../..' . '/app/Http/Resources/User/UserResource.php',
+        'App\\Http\\Resources\\Vehicle\\VehicleCollection' => __DIR__ . '/../..' . '/app/Http/Resources/Vehicle/VehicleCollection.php',
+        'App\\Http\\Resources\\Vehicle\\VehicleResource' => __DIR__ . '/../..' . '/app/Http/Resources/Vehicle/VehicleResource.php',
         'App\\MISC\\ServiceResponse' => __DIR__ . '/../..' . '/app/MISC/ServiceResponse.php',
         'App\\Models\\Bank' => __DIR__ . '/../..' . '/app/Models/Bank.php',
         'App\\Models\\City' => __DIR__ . '/../..' . '/app/Models/City.php',
@@ -658,7 +693,10 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'App\\Models\\CustomerAdvance' => __DIR__ . '/../..' . '/app/Models/CustomerAdvance.php',
         'App\\Models\\Driver' => __DIR__ . '/../..' . '/app/Models/Driver.php',
         'App\\Models\\Employee' => __DIR__ . '/../..' . '/app/Models/Employee.php',
+        'App\\Models\\Expense' => __DIR__ . '/../..' . '/app/Models/Expense.php',
         'App\\Models\\ExpenseCategory' => __DIR__ . '/../..' . '/app/Models/ExpenseCategory.php',
+        'App\\Models\\ExpenseDetail' => __DIR__ . '/../..' . '/app/Models/ExpenseDetail.php',
+        'App\\Models\\FileUpload' => __DIR__ . '/../..' . '/app/Models/FileUpload.php',
         'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',
         'App\\Models\\Purchase' => __DIR__ . '/../..' . '/app/Models/Purchase.php',
         'App\\Models\\PurchaseDetail' => __DIR__ . '/../..' . '/app/Models/PurchaseDetail.php',
@@ -686,7 +724,10 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'App\\WebRepositories\\CustomerAdvanceRepository' => __DIR__ . '/../..' . '/app/WebRepositories/CustomerAdvanceRepository.php',
         'App\\WebRepositories\\CustomerRepository' => __DIR__ . '/../..' . '/app/WebRepositories/CustomerRepository.php',
         'App\\WebRepositories\\DriverRepository' => __DIR__ . '/../..' . '/app/WebRepositories/DriverRepository.php',
+        'App\\WebRepositories\\EmployeeRepository' => __DIR__ . '/../..' . '/app/WebRepositories/EmployeeRepository.php',
         'App\\WebRepositories\\ExpenseCategoryRepository' => __DIR__ . '/../..' . '/app/WebRepositories/ExpenseCategoryRepository.php',
+        'App\\WebRepositories\\ExpenseDetailsRepository' => __DIR__ . '/../..' . '/app/WebRepositories/ExpenseDetailsRepository.php',
+        'App\\WebRepositories\\ExpensesRepository' => __DIR__ . '/../..' . '/app/WebRepositories/ExpensesRepository.php',
         'App\\WebRepositories\\Interfaces\\IBankRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IBankRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\ICityRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/ICityRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\ICompanyRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/ICompanyRepositoryInterface.php',
@@ -694,7 +735,10 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'App\\WebRepositories\\Interfaces\\ICustomerAdvanceRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/ICustomerAdvanceRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\ICustomerRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/ICustomerRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\IDriverRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IDriverRepositoryInterface.php',
+        'App\\WebRepositories\\Interfaces\\IEmployeeRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IEmployeeRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\IExpenseCategoryRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IExpenseCategoryRepositoryInterface.php',
+        'App\\WebRepositories\\Interfaces\\IExpenseDetailsRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IExpenseDetailsRepositoryInterface.php',
+        'App\\WebRepositories\\Interfaces\\IExpensesRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IExpensesRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\IProductRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IProductRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\IPurchaseDetailRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IPurchaseDetailRepositoryInterface.php',
         'App\\WebRepositories\\Interfaces\\IPurchaseRepositoryInterface' => __DIR__ . '/../..' . '/app/WebRepositories/Interfaces/IPurchaseRepositoryInterface.php',
@@ -828,6 +872,8 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'Database\\Factories\\DriverFactory' => __DIR__ . '/../..' . '/database/factories/DriverFactory.php',
         'Database\\Factories\\EmployeeFactory' => __DIR__ . '/../..' . '/database/factories/EmployeeFactory.php',
         'Database\\Factories\\ExpenseCategoryFactory' => __DIR__ . '/../..' . '/database/factories/ExpenseCategoryFactory.php',
+        'Database\\Factories\\ExpenseDetailFactory' => __DIR__ . '/../..' . '/database/factories/ExpenseDetailFactory.php',
+        'Database\\Factories\\ExpenseFactory' => __DIR__ . '/../..' . '/database/factories/ExpenseFactory.php',
         'Database\\Factories\\ProductFactory' => __DIR__ . '/../..' . '/database/factories/ProductFactory.php',
         'Database\\Factories\\PurchaseDetailFactory' => __DIR__ . '/../..' . '/database/factories/PurchaseDetailFactory.php',
         'Database\\Factories\\PurchaseFactory' => __DIR__ . '/../..' . '/database/factories/PurchaseFactory.php',
@@ -849,6 +895,8 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'Database\\Seeders\\DriverSeeder' => __DIR__ . '/../..' . '/database/seeders/DriverSeeder.php',
         'Database\\Seeders\\EmployeeSeeder' => __DIR__ . '/../..' . '/database/seeders/EmployeeSeeder.php',
         'Database\\Seeders\\ExpenseCategorySeeder' => __DIR__ . '/../..' . '/database/seeders/ExpenseCategorySeeder.php',
+        'Database\\Seeders\\ExpenseDetailSeeder' => __DIR__ . '/../..' . '/database/seeders/ExpenseDetailSeeder.php',
+        'Database\\Seeders\\ExpenseSeeder' => __DIR__ . '/../..' . '/database/seeders/ExpenseSeeder.php',
         'Database\\Seeders\\ProductSeeder' => __DIR__ . '/../..' . '/database/seeders/ProductSeeder.php',
         'Database\\Seeders\\PurchaseDetailSeeder' => __DIR__ . '/../..' . '/database/seeders/PurchaseDetailSeeder.php',
         'Database\\Seeders\\PurchaseSeeder' => __DIR__ . '/../..' . '/database/seeders/PurchaseSeeder.php',
@@ -1220,6 +1268,7 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'Faker\\Provider\\Image' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/Image.php',
         'Faker\\Provider\\Internet' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/Internet.php',
         'Faker\\Provider\\Lorem' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/Lorem.php',
+        'Faker\\Provider\\Medical' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/Medical.php',
         'Faker\\Provider\\Miscellaneous' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/Miscellaneous.php',
         'Faker\\Provider\\Payment' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/Payment.php',
         'Faker\\Provider\\Person' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/Person.php',
@@ -1323,6 +1372,7 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
         'Faker\\Provider\\en_PH\\Address' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/en_PH/Address.php',
         'Faker\\Provider\\en_PH\\PhoneNumber' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/en_PH/PhoneNumber.php',
         'Faker\\Provider\\en_SG\\Address' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/en_SG/Address.php',
+        'Faker\\Provider\\en_SG\\Person' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/en_SG/Person.php',
         'Faker\\Provider\\en_SG\\PhoneNumber' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/en_SG/PhoneNumber.php',
         'Faker\\Provider\\en_UG\\Address' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/en_UG/Address.php',
         'Faker\\Provider\\en_UG\\Internet' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/en_UG/Internet.php',
@@ -5569,10 +5619,10 @@ class ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitc1bbf1f8de78f59caf8cf567969a2884::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e::$classMap;
 
         }, null, ClassLoader::class);
     }
