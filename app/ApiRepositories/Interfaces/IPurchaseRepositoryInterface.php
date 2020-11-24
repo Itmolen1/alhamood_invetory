@@ -4,10 +4,10 @@
 namespace App\ApiRepositories\Interfaces;
 
 
-use App\Http\Requests\BankRequest;
+use App\Http\Requests\PurchaseRequest;
 use Illuminate\Http\Request;
 
-interface IBankRepositoryInterface
+interface IPurchaseRepositoryInterface
 {
     public  function all();
 
@@ -15,10 +15,9 @@ interface IBankRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(BankRequest $bankRequest,$Id);
+    public  function update(PurchaseRequest $purchaseRequest,$Id);
 
-    public  function getBankById($Id);
+    public  function getById($Id);
 
     public  function delete(Request $request,$Id);
-
 }

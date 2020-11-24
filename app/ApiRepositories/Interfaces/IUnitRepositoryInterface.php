@@ -15,7 +15,7 @@ interface IUnitRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(UnitRequest $bankRequest,$Id);
+    public  function update(UnitRequest $unitRequest,$Id);
 
     public  function getById($Id);
 

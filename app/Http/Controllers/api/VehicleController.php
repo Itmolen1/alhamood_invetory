@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\IVehicleRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\VehicleRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
@@ -44,22 +45,9 @@ class VehicleController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        try
-        {
-            $vehicle = Vehicle::create($request->all());
-            return $this->userResponse->Success($vehicle);
-        }
-        catch(Exception $ex)
-        {
-            $this->userResponse->Exception($ex);
-        }
+        return $this->vehicleRepository->insert($request);
     }
 
     public function show($id)
@@ -79,12 +67,7 @@ class VehicleController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
+    public function update(VehicleRequest $vehicleRequest, $id)
     {
         try
         {
@@ -93,9 +76,7 @@ class VehicleController extends Controller
             {
                 return $this->userResponse->Failed($vehicle = (object)[],'Not Found.');
             }
-            $vehicle->update($request->all());
-            $vehicle->save();
-            return $this->userResponse->Success($vehicle);
+            return $this->vehicleRepository->update($vehicleRequest,$id);
         }
         catch(Exception $ex)
         {
@@ -107,6 +88,11 @@ class VehicleController extends Controller
     {
         try
         {
+            $vehicle = Vehicle::find($Id);
+            if(is_null($vehicle))
+            {
+                return $this->userResponse->Failed($vehicle = (object)[],'Not Found.');
+            }
             $vehicle = $this->vehicleRepository->delete($request,$Id);
             return $this->userResponse->Success($vehicle);
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SupplierRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -44,22 +45,9 @@ class SupplierController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        try
-        {
-            $supplier = Supplier::create($request->all());
-            return $this->userResponse->Success($supplier);
-        }
-        catch(Exception $ex)
-        {
-            $this->userResponse->Exception($ex);
-        }
+        return $this->supplierRepository->insert($request);
     }
 
     public function show($id)
@@ -79,12 +67,7 @@ class SupplierController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
+    public function update(SupplierRequest $supplierRequest, $id)
     {
         try
         {
@@ -93,9 +76,7 @@ class SupplierController extends Controller
             {
                 return $this->userResponse->Failed($supplier = (object)[],'Not Found.');
             }
-            $supplier->update($request->all());
-            $supplier->save();
-            return $this->userResponse->Success($supplier);
+            return $this->supplierRepository->update($supplierRequest,$id);
         }
         catch(Exception $ex)
         {
@@ -107,6 +88,11 @@ class SupplierController extends Controller
     {
         try
         {
+            $supplier = Supplier::find($Id);
+            if(is_null($supplier))
+            {
+                return $this->userResponse->Failed($supplier = (object)[],'Not Found.');
+            }
             $supplier = $this->supplierRepository->delete($request,$Id);
             return $this->userResponse->Success($supplier);
         }

@@ -9,6 +9,7 @@ use App\Http\Requests\SupplierRequest;
 use App\Http\Resources\Supplier\SupplierResource;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierRepository implements ISupplierRepositoryInterface
 {
@@ -24,6 +25,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $supplier = new Supplier();
         $supplier->Name=$request->Name;
         $supplier->Representative=$request->Representative;
@@ -42,14 +44,16 @@ class SupplierRepository implements ISupplierRepositoryInterface
         $supplier->region_id=$request->region_id;
         $supplier->createdDate=date('Y-m-d h:i:s');
         $supplier->isActive=1;
-        $supplier->user_id = 1;//login user id
+        $supplier->user_id = $userId ?? 0;
         $supplier->save();
         return new SupplierResource(Supplier::find($supplier->id));
     }
 
     public function update(SupplierRequest $supplierRequest, $Id)
     {
+        $userId = Auth::id();
         $supplier = Supplier::find($Id);
+        $supplierRequest['user_id']=$userId ?? 0;
         $supplier->update($supplierRequest->all());
         return new SupplierResource(Supplier::find($Id));
     }
@@ -61,8 +65,11 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Supplier::find($Id);
-        $update->update($request->all());
+        $update->user_id=$userId;
+        $update->save();
         $supplier = Supplier::withoutTrashed()->find($Id);
         if($supplier->trashed())
         {

@@ -5,6 +5,7 @@ namespace App\ApiRepositories\Interfaces;
 
 
 use App\Http\Requests\BankRequest;
+use App\Http\Requests\DriverRequest;
 use Illuminate\Http\Request;
 
 interface IDriverRepositoryInterface
@@ -15,7 +16,7 @@ interface IDriverRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(BankRequest $bankRequest,$Id);
+    public  function update(DriverRequest $driverRequest,$Id);
 
     public  function getById($Id);
 

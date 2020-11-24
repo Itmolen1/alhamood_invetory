@@ -9,6 +9,7 @@ use App\Http\Requests\VehicleRequest;
 use App\Http\Resources\Vehicle\VehicleResource;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VehicleRepository implements IVehicleRepositoryInterface
 {
@@ -25,6 +26,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $vehicle = new Vehicle();
         $vehicle->registrationNumber=$request->registrationNumber;
         $vehicle->Description=$request->Description;
@@ -32,14 +34,16 @@ class VehicleRepository implements IVehicleRepositoryInterface
         $vehicle->company_id=$request->company_id;
         $vehicle->createdDate=date('Y-m-d h:i:s');
         $vehicle->isActive=1;
-        $vehicle->user_id = 1;//login user id
+        $vehicle->user_id = $userId ?? 0;
         $vehicle->save();
-        return new VehicleResource(Vehicle::find($vehicle->Id));
+        return new VehicleResource(Vehicle::find($vehicle->id));
     }
 
     public function update(VehicleRequest $vehicleRequest, $Id)
     {
+        $userId = Auth::id();
         $vehicle = Vehicle::find($Id);
+        $vehicleRequest['user_id']=$userId ?? 0;
         $vehicle->update($vehicleRequest->all());
         return new VehicleResource(Vehicle::find($Id));
     }
@@ -51,8 +55,11 @@ class VehicleRepository implements IVehicleRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Vehicle::find($Id);
-        $update->update($request->all());
+        $update->user_id=$userId;
+        $update->save();
         $vehicle = Vehicle::withoutTrashed()->find($Id);
         if($vehicle->trashed())
         {

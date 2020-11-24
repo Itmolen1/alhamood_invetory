@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->date('dateOfBirth')->default(now());
-            $table->string('imageUrl')->nullable();
+            $table->string('imageUrl')->default('admin_assets/assets/images/users/default.png');
             $table->string('contactNumber')->nullable();
             $table->string('address')->nullable();
             $table->unsignedBigInteger('user_id')->default('0')->index();

@@ -9,6 +9,7 @@ use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\Customer\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerRepository implements ICustomerRepositoryInterface
 {
@@ -24,6 +25,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $customer = new Customer();
         $customer->Name=$request->Name;
         $customer->Representative=$request->Representative;
@@ -42,14 +44,16 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer->region_id=$request->region_id;
         $customer->createdDate=date('Y-m-d h:i:s');
         $customer->isActive=1;
-        $customer->user_id = 1;//login user id
+        $customer->user_id = $userId ?? 0;
         $customer->save();
         return new CustomerResource(Customer::find($customer->id));
     }
 
     public function update(CustomerRequest $customerRequest, $Id)
     {
+        $userId = Auth::id();
         $customer = Customer::find($Id);
+        $customerRequest['user_id']=$userId ?? 0;
         $customer->update($customerRequest->all());
         return new CustomerResource(Customer::find($Id));
     }
@@ -61,8 +65,11 @@ class CustomerRepository implements ICustomerRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Customer::find($Id);
-        $update->update($request->all());
+        $update->user_id=$userId;
+        $update->save();
         $customer = Customer::withoutTrashed()->find($Id);
         if($customer->trashed())
         {
