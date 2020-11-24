@@ -30,4 +30,9 @@ class UserController extends Controller
             Return $this->userResponse->Exception($ex);
         }
     }
+
+    public function logout(Request $request)
+    {
+        return $this->IUserRepository->logout($request);
+    }
 }

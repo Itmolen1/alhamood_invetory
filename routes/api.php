@@ -14,21 +14,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('/Bank', 'API\BankController');
+Route::apiResource('/Bank', 'api\BankController');
 Route::get('/Bank/restore/{Id}', 'BankController@restore')->name('Bank_restore');
 Route::get('/BankTrashed', 'BankController@trash');
 Route::get('/Bank/paginate/{page_no}/{page_size}','BankController@paginate');
 
-Route::post('Login', 'API\UserController@login');
+Route::post('Login', 'api\UserController@login');
+Route::post('Logout', 'api\UserController@logout');
 
-Route::apiResource('/Driver', 'API\DriverController');
-Route::apiResource('/Vehicle', 'API\VehicleController');
-Route::apiResource('/Customer', 'API\CustomerController');
-Route::apiResource('/Supplier', 'API\SupplierController');
-Route::apiResource('/Unit', 'API\UnitController');
-Route::apiResource('/Product', 'API\ProductController');
-Route::apiResource('/Employee', 'API\EmployeeController');
+Route::apiResource('/Driver', 'api\DriverController');
+Route::apiResource('/Vehicle', 'api\VehicleController');
+Route::apiResource('/Customer', 'api\CustomerController');
+Route::apiResource('/Supplier', 'api\SupplierController');
+Route::apiResource('/Unit', 'api\UnitController');
+Route::apiResource('/Product', 'api\ProductController');
+Route::apiResource('/Employee', 'api\EmployeeController');
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => 'auth:api'], function () {
+    // employee api
+    Route::get('/Employee/restore/{Id}', 'EmployeeController@restore');
+    Route::get('/EmployeeTrashed', 'EmployeeController@trash');
+    Route::get('/Employee/paginate/{page_no}/{page_size}','EmployeeController@paginate');
 });
+
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
