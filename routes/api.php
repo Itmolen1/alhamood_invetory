@@ -18,6 +18,11 @@ Route::post('Login', 'api\UserController@login');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('Logout', 'api\UserController@logout');
+    Route::post('UserUpdate', 'api\UserController@UserUpdate');
+    Route::post('UserChangePassword', 'api\UserController@UserChangePassword');
+    Route::get('UserDetail/{id}', 'api\UserController@UserDetail');
+    Route::delete('UserDelete/{id}', 'api\UserController@destroy');
+    Route::post('UserUpdateProfilePicture', 'api\UserController@UserUpdateProfilePicture');
 
     Route::get('/Employee/restore/{Id}', 'EmployeeController@restore');
     Route::get('/EmployeeTrashed', 'EmployeeController@trash');

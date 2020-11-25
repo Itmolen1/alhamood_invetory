@@ -11,9 +11,9 @@ interface IUserRepositoryInterface
 {
     public function all();
 
-    public function updateUser(Request $request);
+    public function update(Request $request);
 
-    public function updateUserImage(Request $request);
+    public function UserUpdateProfilePicture(Request $request);
 
     public function changePassword(Request $request);
 
@@ -25,7 +25,7 @@ interface IUserRepositoryInterface
 
     public function register(UserRequest $userRequest);
 
-    public function details();
+    public function details($id);
 
     public function delete($Id);
 
