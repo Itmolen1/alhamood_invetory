@@ -28,6 +28,9 @@ use App\WebRepositories\Interfaces\IExpenseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseDetailsRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpensesRepositoryInterface;
+use App\WebRepositories\Interfaces\IMeterReaderRepositoryInterface;
+use App\WebRepositories\Interfaces\IMeterReadingDetailRepositoryInterface;
+use App\WebRepositories\Interfaces\IMeterReadingRepositoryInterface;
 use App\WebRepositories\Interfaces\IProductRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseRepositoryInterface;
@@ -41,6 +44,9 @@ use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\WebRepositories\Interfaces\IUnitRepositoryInterface;
 use App\WebRepositories\Interfaces\IUserRepositoryInterface;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
+use App\WebRepositories\MeterReaderRepository;
+use App\WebRepositories\MeterReadingDetailRepository;
+use App\WebRepositories\MeterReadingRepository;
 use App\WebRepositories\ProductRepository;
 use App\WebRepositories\PurchaseDetailRepository;
 use App\WebRepositories\PurchaseRepository;
@@ -89,6 +95,9 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IExpenseDetailsRepositoryInterface::class,ExpenseDetailsRepository::class);
         $this->app->bind(ISaleRepositoryInterface::class,SaleRepository::class);
         $this->app->bind(ISaleDetailsRepositoryInterface::class,SaleDetailsRepository::class);
+        $this->app->bind(IMeterReaderRepositoryInterface::class, MeterReaderRepository::class);
+        $this->app->bind(IMeterReadingRepositoryInterface::class, MeterReadingRepository::class);
+        $this->app->bind(IMeterReadingDetailRepositoryInterface::class, MeterReadingDetailRepository::class);
     }
 
     /**

@@ -28,7 +28,7 @@ class SaleDetail extends Model
 
         public function sale()
         {
-            return $this->hasMany('App\Models\Sale','sale_id','id');
+            return $this->belongsTo('App\Models\Sale','sale_id','id');
         }
 
         public function vehicle()

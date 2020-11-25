@@ -62,7 +62,7 @@
                                                 <th>Quantity</th>
                                                 <th>Unit Price</th>
                                                 <th style="width: 120px">VAT</th>
-                                                <th>Total Amount</th>
+                                                <th>Amount</th>
 {{--                                                <th>Action</th>--}}
                                             </tr>
                                             </thead>
@@ -72,7 +72,7 @@
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="customer" class="form-control customer_id" id="customer_id">
+                                                        <select name="customer" class="form-control customer_id select2" id="customer_id">
                                                             <option readonly="" disabled selected>--Customer--</option>
                                                             @foreach($customers as $customer)
                                                                 <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
@@ -82,7 +82,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="vehicle" id="vehicle" class="form-control vehicle_id">
+                                                        <select name="vehicle" id="vehicle" class="form-control vehicle_id select2">
                                                             <option class="opt" value="0">Vehicle</option>
                                                         </select>
                                                     </div>
@@ -121,8 +121,38 @@
 
                                     <div class="row">
                                         <div class="col-md-8">
-                                            <div class="form-group">
+                                            <div class="form-group" hidden>
                                                 <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note"></textarea>
+                                            </div>
+                                            <div class="table-responsive" style="margin-top: 20px">
+                                                <table class="table color-table inverse-table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th style="width: 100px">Pad #</th>
+                                                        <th style="width: 210px">Customer</th>
+                                                        <th style="width: 100px">Vehicle</th>
+                                                        <th>Quantity</th>
+                                                        <th>Unit Price</th>
+                                                        <th>Amount</th>
+                                                        <th>Paid</th>
+                                                        <th>Time</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @foreach($salesRecords as $records)
+                                                        <tr id="rowData" style="background: #1285ff;color: white;font-size: 12px">
+                                                            <td>{{ $records->sale_details[0]->PadNumber }}</td>
+                                                            <td>{{ $records->customer->Name }}</td>
+                                                            <td>{{ $records->sale_details[0]->vehicle->registrationNumber }}</td>
+                                                            <td>{{ $records->sale_details[0]->Quantity }}</td>
+                                                            <td>{{ $records->sale_details[0]->Price }}</td>
+                                                            <td>{{ $records->grandTotal }}</td>
+                                                            <td>{{ $records->paidBalance }}</td>
+                                                            <td>{{ $records->updated_at->diffForHumans() }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
 
@@ -153,41 +183,6 @@
                                 </div>
                             </form>
 
-
-                            <div class="table-responsive" style="margin-top: 20px">
-                                <table class="table color-table danger-table">
-                                    <thead>
-                                    <tr>
-                                        <th style="width: 130px">Date</th>
-                                        <th style="width: 150px">Pad #</th>
-                                        <th style="width: 150px">Customer</th>
-                                        <th style="width: 150px">Vehicle</th>
-                                        <th style="width: 150px">Product</th>
-                                        <th>Quantity</th>
-                                        <th>Unit Price</th>
-                                        <th>VAT</th>
-                                        <th>Total Amount</th>
-                                        <th>Time</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($salesRecords as $records)
-                                        <tr id="rowData">
-                                            <td> {{ $records->sale_details[0]->createdDate }}</td>
-                                            <td>{{ $records->sale_details[0]->PadNumber }}</td>
-                                            <td>{{ $records->customer->Name }}</td>
-                                            <td>{{ $records->sale_details[0]->vehicle->registrationNumber }}</td    >
-                                            <td>{{ $records->sale_details[0]->product->Name }}</td>
-                                            <td>{{ $records->DueDate }}</td>
-                                            <td>{{ $records->sale_details[0]->Quantity }}</td>
-                                            <td>{{ $records->sale_details[0]->Price }}</td>
-                                            <td>{{ $records->grandTotal }}</td>
-                                            <td>{{ $records->updated_at->diffForHumans() }}</td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
 
                         </div>
                     </div>
@@ -339,11 +334,15 @@
                         } else
                         {
                             alert('Please Add item to list');
+                            $('#submit').text('Save');
+                            $('#submit').attr('disabled',false);
                         }
                     }
                     else
                     {
                         alert('Select Customer first')
+                        $('#submit').text('Save');
+                        $('#submit').attr('disabled',false);
                     }
 
                 });

@@ -175,7 +175,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         //dd($update_notes[0]->Description);
         $suppliers = Supplier::all();
         $products = Product::all();
-        $purchase_details = PurchaseDetail::withTrashed()->with('purchase.supplier','user','product.unit')->where('purchase_Id', $Id)->get();
+        $purchase_details = PurchaseDetail::withTrashed()->with('purchase.supplier','user','product.unit')->where('purchase_id', $Id)->get();
         return view('admin.purchase.edit',compact('purchase_details','suppliers','products','update_notes'));
     }
 

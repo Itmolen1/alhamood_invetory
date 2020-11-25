@@ -144,5 +144,20 @@ class Company extends Model
     {
         return $this->hasMany('App\Models\SaleDetail');
     }
+
+    public function meter_readers()
+    {
+        return $this->hasMany('App\Models\MeterReader');
+    }
+
+    public function meter_readings()
+    {
+        return $this->hasMany('App\Models\MeterReading');
+    }
+
+    public function meter_reading_details()
+    {
+        return $this->hasMany('App\Models\MeterReadingDetail');
+    }
         
 }

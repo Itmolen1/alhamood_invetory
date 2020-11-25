@@ -53,7 +53,7 @@
                                         <div class="col-md-8">
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="date" class="form-control">
+                                            <input type="date" value="{{ date('Y-m-d') }}" id="meterReadingDate" class="form-control">
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -75,7 +75,10 @@
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="meter_id" class="form-control customer">
-                                                            <option value="0">Meter</option>
+                                                            <option value="0" readonly disabled selected>Meter</option>
+                                                            @foreach($meter_readers as $reader)
+                                                                <option value="{{ $reader->id }}">{{ $reader->Name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </td>
@@ -104,17 +107,17 @@
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <p>Start Pad: <input type="text" value="0.00" class="form-control "></p>
+                                                    <p>Start Pad: <input type="text" value="{{ $salesByDate['firstPad'] }}" class="form-control startPad"></p>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <p>End Pad: <input type="text" value="0.00" class="form-control "></p>
+                                                    <p>End Pad: <input type="text" value="{{ $salesByDate['lastPad'] }}" class="form-control endPad"></p>
                                                 </div>
                                             </div>
 
                                             <p>Total Meter Reading Sale: <input type="text" value="0.00" class="form-control totalSale"></p>
 
-                                            <p>Total Pad Sale: <input type="text" value="200" class="form-control tatalPad" disabled>
-                                                <input type="hidden" value="20" class="form-control tatalPad">
+                                            <p>Total Pad Sale: <input type="text" value="{{ $salesByDate['totalSale'] }}" class="form-control totalPad" disabled>
+                                                <input type="hidden" value="{{ $salesByDate['totalSale'] }}" class="form-control totalPad">
                                             </p>
 
 
@@ -159,6 +162,43 @@
 
     <script>
         $(document).ready(function () {
+
+            $('#meterReadingDate').change(function () {
+              // alert($(this).val());
+
+                       // var Id = 0;
+                       var Id = $(this).val();
+
+                            $.ajax({
+                                // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                url: "{{ URL('getSalesByDate') }}/" + Id,
+                                type: "get",
+                                dataType: "json",
+                                statusCode: {
+                                    500: function() {
+                                        alert("No Data Available On same Date");
+                                        $('.startPad').val('');
+                                        $('.endPad').val('');
+                                        $('.totalPad').val('');
+                                    }
+                                },
+                                success: function (result) {
+                                    if (result !== "Failed") {
+                                        console.log(result);
+                                        $('.startPad').val(result.firstPad.toFixed(2));
+                                        $('.endPad').val(result.lastPad.toFixed(2));
+                                        $('.totalPad').val((result.totalSale.toFixed(2)));
+
+                                    }
+                                },
+//                                error: function (errormessage) {
+//                                    alert(errormessage);
+//                                }
+                            });
+            });
+
+
+
 
             // ///////////////////// Add new Row //////////////////////
             $(document).on("click",'.addRow', function () {
@@ -284,7 +324,7 @@
             });
 
             $('.totalSale').val((Gtotal.toFixed(2)));
-            var Input = parseFloat(Gtotal - $('.tatalPad').val());
+            var Input = parseFloat(Gtotal - $('.totalPad').val());
             $('.balance').val((Input.toFixed(2)));
 
         }

@@ -63,7 +63,15 @@ route::resource('employees','EmployeeController');
 
 ////////////// sales /////////////////////
 route::resource('sales','SaleController');
+route::post('salesUpdate/{Id}','SaleController@salesUpdate');
 route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehicle');
+route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
+
+
+
+//////////////// meterReading ///////////////
+route::resource('meter_readers','MeterReaderController');
+route::resource('meter_readings','MeterReadingController');
 
 
 
@@ -71,13 +79,13 @@ route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehi
 
 
 ///////////// sales samples ////////////////////
-route::view('sales1','admin.sale.create');
-route::view('sales/index','admin.sale.index');
-route::view('sales/edit','admin.sale.edit');
-
-route::view('expenses1','admin.expense.create');
-route::view('expenses/edit','admin.expense.edit');
-route::view('expenses/index','admin.expense.index');
+//route::view('sales1','admin.sale.create');
+//route::view('sales/index','admin.sale.index');
+//route::view('sales/edit','admin.sale.edit');
+//
+//route::view('expenses1','admin.expense.create');
+//route::view('expenses/edit','admin.expense.edit');
+//route::view('expenses/index','admin.expense.index');
 
 
 //route::view('purchases1','admin.purchase.create');
@@ -85,9 +93,9 @@ route::view('expenses/index','admin.expense.index');
 //route::view('purchases/index','admin.purchase.index');
 
 
-route::view('add_meter','admin.meter.create');
+//route::view('add_meter','admin.meter.create');
 
-route::view('meterReading','admin.meterReading.create');
+route::view('meterReading1','admin.meterReading.create');
 route::view('meterReading/index','admin.meterReading.index');
 route::view('meterReading/edit','admin.meterReading.edit');
 

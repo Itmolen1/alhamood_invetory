@@ -41,6 +41,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ExpenseDetailSeeder::class);
         $this->call(SaleSeeder::class);
         $this->call(SaleDetailSeeder::class);
+        $this->call(MeterReaderSeeder::class);
+        $this->call(MeterReaderSeeder::class);
+        $this->call(MeterReadingSeeder::class);
     }
 }
 

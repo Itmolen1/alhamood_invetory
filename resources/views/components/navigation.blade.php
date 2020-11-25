@@ -102,9 +102,9 @@
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-sort-numeric-asc"></i><span class="hide-menu">Meter Readings</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li  class="border-bottom"><a href="{{ url('add_meter') }}">Add Meter</a></li>
-                    <li  class="border-bottom"><a href="{{ url('meterReading') }}">Add Meter Reading</a></li>
-                    <li><a href="{{ url('meterReading/index') }}">Manage Meter Records</a></li>
+                    <li  class="border-bottom"><a href="{{ route('meter_readers.index') }}">Add Meter</a></li>
+                    <li  class="border-bottom"><a href="{{ route('meter_readings.create') }}">Add Meter Reading</a></li>
+                    <li><a href="{{ route('meter_readings.index') }}">Manage Meter Records</a></li>
                 </ul>
             </li>
 

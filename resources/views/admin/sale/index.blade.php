@@ -49,12 +49,12 @@
                                         <th style="width: 150px">Customer</th>
                                         <th style="width: 150px">Vehicle</th>
                                         <th style="width: 150px">Product</th>
-                                        <th>Due Date</th>
                                         <th>Quantity</th>
                                         <th>Unit Price</th>
                                         <th>VAT</th>
-                                        <th>Total Amount</th>
-                                        <th>Action</th>
+                                        <th>Amount</th>
+                                        <th>Paid</th>
+                                        <th style="width: 40px">Action</th>
                                     </tr>
                                     </thead>
 {{--                                    <tfoot>--}}
@@ -100,28 +100,23 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(!empty($sale->sale_details[0]->vehicle->Name))
-                                                    {{ $sale->sale_details[0]->vehicle->Name }}
+                                                @if(!empty($sale->sale_details[0]->vehicle->registrationNumber))
+                                                    {{ $sale->sale_details[0]->vehicle->registrationNumber }}
                                                 @endif
                                             </td>
                                             <td>
-                                                @if(!empty($sale->sale_details[0]->product_id))
+                                                @if(!empty($sale->sale_details[0]->product_Name))
                                                     {{ $sale->sale_details[0]->product->Name }}
                                                 @endif
                                             </td>
 
-                                            <td>{{ $sale->DueDate }}</td>
-                                            <td>{{ $sale->Quantity }}</td>
-                                            <td>{{ $sale->Price }}</td>
+                                            <td>{{ $sale->sale_details[0]->Quantity }}</td>
+                                            <td>{{ $sale->sale_details[0]->Price }}</td>
                                             <td>{{ $sale->totalVat }}</td>
                                             <td>{{ $sale->grandTotal }}</td>
+                                            <td>{{ $sale->paidBalance }}</td>
                                             <td>
-                                                <form action="{{ route('sales.destroy',$sale->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <a href="{{ route('sales.edit', $sale->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
-                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
-                                                </form>
+                                                <a href="{{ route('sales.edit', $sale->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach

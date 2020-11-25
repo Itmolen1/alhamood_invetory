@@ -13,6 +13,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
+use App\Models\UpdateNote;
 use App\WebRepositories\Interfaces\ISaleRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -33,7 +34,7 @@ class SaleRepository implements ISaleRepositoryInterface
         $saleNo = $this->invoiceNumber();
         $customers = Customer::all();
         $products = Product::all();
-        $salesRecords = Sale::with('sale_details.vehicle','customer')->orderBy('id', 'desc')->skip(0)->take(2)->get();
+        $salesRecords = Sale::with('sale_details.vehicle','customer')->orderBy('id', 'desc')->skip(0)->take(3)->get();
         //dd($salesRecords);
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords'));
     }
@@ -100,6 +101,61 @@ class SaleRepository implements ISaleRepositoryInterface
     public function update(Request $request, $Id)
     {
         // TODO: Implement update() method.
+        $AllRequestCount = collect($request->Data)->count();
+        if($AllRequestCount > 0)
+        {
+            $saled = Sale::find($Id);
+            $user_id = session('user_id');
+            $company_id = session('company_id');
+            $saled->update(
+                [
+                    'SaleNumber' => $request->Data['SaleNumber'],
+                    'SaleDate' => $request->Data['SaleDate'],
+                    'Total' => $request->Data['Total'],
+                    'subTotal' => $request->Data['subTotal'],
+                    'totalVat' => $request->Data['totalVat'],
+                    'grandTotal' => $request->Data['grandTotal'],
+                    'paidBalance' => $request->Data['paidBalance'],
+                    'remainingBalance' => $request->Data['remainingBalance'],
+                    'customer_id' => $request->Data['customer_id'],
+                    'Description' => $request->Data['Description'],
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                ]);
+
+            $update_note = new UpdateNote();
+            $update_note->RelationTable = 'sales';
+            $update_note->RelationId = $Id;
+            $update_note->Description = $request->Data['UpdateDescription'];
+            $update_note->user_id = $user_id;
+            $update_note->company_id = $company_id;
+            $update_note->save();
+
+            $d = SaleDetail::where('sale_id', array($Id))->delete();
+            $slct = SaleDetail::where('sale_id', $Id)->get();
+            foreach ($request->Data['orders'] as $detail)
+            {
+                $saleDetails = SaleDetail::create([
+                    //"Id" => $detail['Id'],
+                    "product_id"        => $detail['product_id'],
+                    "vehicle_id"        => $detail['vehicle_id'],
+                    "Quantity"        => $detail['Quantity'],
+                    "Price"        => $detail['Price'],
+                    "rowTotal"        => $detail['rowTotal'],
+                    "VAT"        => $detail['Vat'],
+                    "rowVatAmount"        => $detail['rowVatAmount'],
+                    "rowSubTotal"        => $detail['rowSubTotal'],
+                    "PadNumber"        => $detail['PadNumber'],
+                    "company_id" => $company_id,
+                    "user_id"      => $user_id,
+                    "sale_id"      => $Id,
+                    "createdDate" => $detail['createdDate'],
+                ]);
+            }
+            $ss = SaleDetail::where('sale_id', array($saleDetails['sale_id']))->get();
+            return Response()->json($ss);
+
+        }
     }
 
     public function getById($Id)
@@ -110,6 +166,12 @@ class SaleRepository implements ISaleRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
+        $update_notes = UpdateNote::with('company','user')->where('RelationId',$Id)->get();
+        //dd($update_notes[0]->Description);
+        $customers = Customer::all();
+        $products = Product::all();
+        $sale_details = SaleDetail::withTrashed()->with('sale.customer','user','product.unit','vehicle')->where('sale_id', $Id)->get();
+        return view('admin.sale.edit',compact('sale_details','customers','products','update_notes'));
     }
 
     public function delete(Request $request, $Id)

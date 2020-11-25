@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sale;
 use App\WebRepositories\Interfaces\ISaleRepositoryInterface;
+use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 
 class SaleController extends Controller
@@ -35,38 +36,23 @@ class SaleController extends Controller
         $this->saleRepository->store($request);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Sale $sale)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Sale $sale)
+
+    public function edit($Id)
     {
-        //
+        return $this->saleRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Sale $sale)
+
+
+    public function salesUpdate(Request $request, $Id)
     {
-        //
+        return $this->saleRepository->update($request, $Id);
     }
 
     /**
@@ -78,5 +64,25 @@ class SaleController extends Controller
     public function destroy(Sale $sale)
     {
         //
+    }
+
+    public function salesByDateDetails($id)
+    {
+        // $customers = Customer::with('vehicles')->find($id);
+
+
+        $salesByDate['totalSale'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->sum('grandTotal');
+        $salesByDate['firstPad'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->first()->sale_details->first()->PadNumber;
+        $salesByDate['lastPad'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->last()->sale_details->last()->PadNumber;
+//        $salesByDate1['firstPadSale'] = Sale::with('sale_details')->where('SaleDate', $id)->first();
+//        $salesByDate1['firstPadSale2'] = $salesByDate1['firstPadSale']->sale_details1->first();
+//        $salesByDate1['firstPad'] = $salesByDate1['firstPadSale2']->PadNumber;
+
+        //$salesByDate['lastPadSale'] = $salesByDate->last();
+//        $salesByDate['lastPadSaleDetail'] = $salesByDate->last()->sale_details->last();
+//        $salesByDate['lastPad'] = $salesByDate->last()->sale_details->last()->PadNumber;
+//        $salesByDate['firstPad'] = $salesByDate->first()->sale_details->first()->PadNumber;
+        //$salesByDate['sumOfSale'] = $salesByDate->sum('grandTotal');
+        return response()->json($salesByDate);
     }
 }

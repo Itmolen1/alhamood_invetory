@@ -24,7 +24,7 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active">Meter Reading</li>
                         </ol>
-                        <a href="{{ url('meterReading') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New Meter Reading</button></a>
+                        <a href="{{ route('meter_readings.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Create New</button></a>
                     </div>
                 </div>
             </div>
@@ -45,25 +45,31 @@
                                     <thead>
                                     <tr>
                                         <th >Date</th>
-                                        <th>Total Purchases</th>
+                                        {{--<th>Total Purchases</th>--}}
                                         <th>Total Sales</th>
                                         <th>Total Pad Sale</th>
                                         <th>Difference</th>
-                                        <th>Action</th>
+                                        <th width="100">Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-
-                                        <td>data</td>
-                                        <td>data</td>
-                                        <td>data</td>
-                                        <td>data</td>
-                                        <td>data</td>
-                                        <td>
-                                            <a href="{{url('meterReading/edit')}}">Edit</a>
-                                        </td>
-                                    </tr>
+                                    @foreach($meter_readings as $reading)
+                                        <tr>
+                                            <td>{{ $reading->readingDate }}</td>
+                                            {{--<td>{{ $reading->totalPurchases }}</td>--}}
+                                            <td>{{ $reading->totalMeterSale }}</td>
+                                            <td>{{ $reading->totalPadSale }}</td>
+                                            <td>{{ $reading->saleDifference }}</td>
+                                            <td>
+                                                <form action="{{ route('meter_readings.destroy',$reading->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a href="{{ route('meter_readings.edit', $reading->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
+                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                 </table>
                             </div>

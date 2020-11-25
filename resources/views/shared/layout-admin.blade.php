@@ -376,7 +376,7 @@
     <!-- footer -->
     <!-- ============================================================== -->
     <footer class="footer">
-        Powered by <a href="https://itmolen.nl/">IT MOlen</a> | © wahidgoc 2018
+        Powered by <a href="https://itmolen.nl/">IT Molen</a> | © A Product of wahid group of companies
     </footer>
     <!-- ============================================================== -->
     <!-- End footer -->
