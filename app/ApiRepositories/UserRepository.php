@@ -12,6 +12,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use mysql_xdevapi\Exception;
 
 class UserRepository implements IUserRepositoryInterface
@@ -27,19 +29,102 @@ class UserRepository implements IUserRepositoryInterface
         // TODO: Implement all() method.
     }
 
-    public function updateUser(Request $request)
+    public function update(Request $request)
     {
-        // TODO: Implement updateUser() method.
+        $users = new User();
+        try
+        {
+            $user = User::find($request->id);
+            if(is_null($user))
+            {
+                return $this->userResponse->Failed($user = (object)[],'Not Found.');
+            }
+            $users->where('id', $request->id)->update(
+                [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'dateOfBirth' =>$request->dateOfBirth,
+                    'contactNumber' =>$request->contactNumber,
+                    'address' =>$request->address,
+                    'gender_Id' =>$request->gender_Id,
+                    'region_Id' =>$request->region_Id,
+                ]);
+
+            $users = new UserResource(User::all()->where('id', $request->id)->first());
+            return $this->userResponse->Success($users);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
     }
 
-    public function updateUserImage(Request $request)
+    public function UserUpdateProfilePicture(Request $request)
     {
-        // TODO: Implement updateUserImage() method.
+        try
+        {
+            $users = new User();
+            if ($request->hasFile('imageUrl'))
+            {
+                $userId = Auth::id();
+                $file = $request->file('imageUrl');
+                $extension = $file->getClientOriginalExtension();
+                $filename=uniqid('user_').'.'.$extension;
+                $request->file('imageUrl')->storeAs('profile', $filename,'public');
+                $users->where('id', $userId)->update(['imageUrl' => $filename]);
+                $users = new UserResource(User::all()->where('id', $userId)->first());
+                return $this->userResponse->Success($users);
+            }
+//            if ($request->hasfile('imageUrl'))
+//            {
+//                $userId = Auth::id();
+//                $file = $request->file('imageUrl');
+//                $extension = $file->getClientOriginalExtension();
+//                $filename=uniqid('user_').'.'.$extension;
+//                Storage::disk('sto')->put($filename, File::get($file));
+//                $users->Imageurl = $file->getFilename() . '.' . $extension;
+//                $users->id = $userId;
+//                $users->where('id', $userId)->update(['imageUrl' => $filename]);
+//                $users = new UserResource(User::all()->where('id', $userId)->first());
+//                return $this->userResponse->Success($users);
+//            }
+            else
+            {
+                return $this->userResponse->Failed("user Image","file not found");
+            }
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
     }
 
     public function changePassword(Request $request)
     {
-        // TODO: Implement changePassword() method.
+        $users = new User();
+        try
+        {
+            $user = User::find($request->id);
+            if(is_null($user))
+            {
+                return $this->userResponse->Failed($user = (object)[],'Not Found.');
+            }
+            $users=DB::table('users')->where([['email',$request->email],['password',$request->password]]);
+
+            if ($user->where(['email' => request('email'), 'password' => request('currentPassword')]))
+            {
+                $users->where('id', $request->id)->update(['password' => bcrypt($request['password'])]);
+                return $this->userResponse->Success('Password Update successfully');
+            }
+            else
+            {
+                return $this->userResponse->Success($request->id.'Current Password missed matched'.bcrypt($request->currentPassword));
+            }
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
     }
 
     public function ResetPassword(Request $request)
@@ -59,6 +144,7 @@ class UserRepository implements IUserRepositoryInterface
             if ($user) {
                 $accessToken = $user->createToken('MyApp')->accessToken;
                 $users = new UserResource(User::all()->where('email', $user->email)->first());
+
 //                if ($users->role == null)
 //                {
 //                    Return $this->userResponse->NotFoundRole();
@@ -105,14 +191,29 @@ class UserRepository implements IUserRepositoryInterface
         // TODO: Implement register() method.
     }
 
-    public function details()
+    public function details($id)
     {
-        // TODO: Implement details() method.
+        $user = User::find($id);
+        if(is_null($user))
+        {
+            return $this->userResponse->Failed($user = (object)[],'Not Found.');
+        }
+        $users = new UserResource(User::all()->where('id', $user->id)->first());
+        return $this->userResponse->Success($users);
     }
 
     public function delete($Id)
     {
-        // TODO: Implement delete() method.
+        $user = User::withoutTrashed()->find($Id);
+        if(is_null($user))
+        {
+            return $this->userResponse->Failed($user = (object)[],'Not Found.');
+        }
+        else
+        {
+            $user->delete();
+            return $this->userResponse->Delete();
+        }
     }
 
     public function restore($Id)
@@ -127,7 +228,6 @@ class UserRepository implements IUserRepositoryInterface
 
     public function logout(Request $request)
     {
-
         try
         {
             if (Auth::check()) {

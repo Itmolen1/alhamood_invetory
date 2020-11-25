@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\IUserRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRequest;
 use App\MISC\ServiceResponse;
 use Illuminate\Http\Request;
 use mysql_xdevapi\Exception;
@@ -34,5 +35,30 @@ class UserController extends Controller
     public function logout(Request $request)
     {
         return $this->IUserRepository->logout($request);
+    }
+
+    public function UserUpdate(Request $request)
+    {
+        return $this->IUserRepository->update($request);
+    }
+
+    public function UserChangePassword(Request $request)
+    {
+        return $this->IUserRepository->changePassword($request);
+    }
+
+    public function UserDetail($id)
+    {
+        return $this->IUserRepository->details($id);
+    }
+
+    public function destroy($Id)
+    {
+        return $this->IUserRepository->delete($Id);
+    }
+
+    public function UserUpdateProfilePicture(Request $request)
+    {
+        return $this->IUserRepository->UserUpdateProfilePicture($request);
     }
 }

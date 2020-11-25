@@ -90,7 +90,7 @@ class ServiceResponse
     {
         return Response([
             'IsSuccess' => true,
-            'Data' => [],
+            'Data' => (object)[],
             'StatusCode' => 200,
             'Message' => 'Data delete SuccessFull'
         ], 200);

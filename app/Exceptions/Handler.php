@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\MISC\ServiceResponse;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -33,5 +35,19 @@ class Handler extends ExceptionHandler
     public function register()
     {
         //
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+
+        if ($request->expectsJson()) {
+            $userResponse=new ServiceResponse();
+            return $userResponse->Bad(['error' => 'Unauthenticated.']);
+//            echo "here";die;
+//            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
+        // return a plain 401 response even when not a json call
+        //return response('Unauthenticated.', 401);
     }
 }
