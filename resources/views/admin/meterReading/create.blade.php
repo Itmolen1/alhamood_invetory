@@ -74,7 +74,7 @@
                                             <tr>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="meter_id" class="form-control customer">
+                                                        <select name="meter_id" class="form-control meter_id">
                                                             <option value="0" readonly disabled selected>Meter</option>
                                                             @foreach($meter_readers as $reader)
                                                                 <option value="{{ $reader->id }}">{{ $reader->Name }}</option>
@@ -82,15 +82,15 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Start Reading" class="startReading form-control"></td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="End Reading" class="endReading form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Start Reading" class="startReading form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="End Reading" class="endReading form-control"></td>
                                                 <td><input type="text" value="0.00" placeholder="Net Reading" class="netReading form-control" disabled>
                                                     <input type="hidden" value="0.00" placeholder="Net Reading" class="netReading form-control" ></td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Purchases" class="purchases form-control">
-                                                    <input type="hidden" onfocus="this.value=''" value="0.00" placeholder="Total Row Sale" class="totalRow form-control">
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Purchases" class="purchases form-control">
+                                                    <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Total Row Sale" class="totalRow form-control">
                                                 </td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Sales" class="sales form-control" disabled>
-                                                    <input type="hidden" onfocus="this.value=''" value="0.00" placeholder="Sales" class="sales form-control">
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Sales" class="sales form-control" disabled>
+                                                    <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Sales" class="sales form-control">
                                                 </td>
                                                 <td><input type="text" placeholder="Net Description" class="Description form-control"></td>
                                                 <td><input class=" btn btn-success addRow" id="addRow" type="button" value="+" /></td>
@@ -107,14 +107,14 @@
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <p>Start Pad: <input type="text" value="{{ $salesByDate['firstPad'] }}" class="form-control startPad"></p>
+                                                    <p>Start Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $salesByDate['firstPad'] }}" class="form-control startPad"></p>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <p>End Pad: <input type="text" value="{{ $salesByDate['lastPad'] }}" class="form-control endPad"></p>
+                                                    <p>End Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $salesByDate['lastPad'] }}" class="form-control endPad"></p>
                                                 </div>
                                             </div>
 
-                                            <p>Total Meter Reading Sale: <input type="text" value="0.00" class="form-control totalSale"></p>
+                                            <p>Total Meter Reading Sale: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control totalSale"></p>
 
                                             <p>Total Pad Sale: <input type="text" value="{{ $salesByDate['totalSale'] }}" class="form-control totalPad" disabled>
                                                 <input type="hidden" value="{{ $salesByDate['totalSale'] }}" class="form-control totalPad">
@@ -204,7 +204,7 @@
             $(document).on("click",'.addRow', function () {
 
                 var currentRow = $(this).closest("tr");
-
+                if (validateRow(currentRow))
                 {
                     $('.addRow').removeAttr("value", "");
                     $('.addRow').attr("value", "X");
@@ -308,6 +308,36 @@
             }
         });
         ///////// end of add quantity ///////////////////
+
+
+        //////// validate rows ////////
+        function validateRow(currentRow) {
+
+            var isvalid = true;
+            var endReading = 0, meter = 0, startReading = 0, meterReadingDate = $('#meterReadingDate').val();
+            if (parseInt(meterReadingDate) === 0 || meterReadingDate === ""){
+                isvalid = false;
+            }
+
+            meter = currentRow.find('.meter_id').val();
+            startReading  = currentRow.find('.startReading').val();
+            endReading = currentRow.find('.endReading').val();
+            if (parseInt(meter) === 0 || meter === ""){
+                //alert(product);
+                isvalid = false;
+
+            }
+            if (parseInt(startReading) == 0 || startReading == "")
+            {
+                isvalid = false;
+            }
+            if (parseInt(endReading) == 0 || endReading == "")
+            {
+                isvalid = false
+            }
+            return isvalid;
+        }
+        ////// end of validate row ///////////////////
 
 
         //////////// tatal  /////////////////
