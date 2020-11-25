@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CustomerRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Customer;
 use Illuminate\Http\Request;
@@ -44,22 +45,9 @@ class CustomerController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        try
-        {
-            $customer = Customer::create($request->all());
-            return $this->userResponse->Success($customer);
-        }
-        catch(Exception $ex)
-        {
-            $this->userResponse->Exception($ex);
-        }
+        return $this->customerRepository->insert($request);
     }
 
     public function show($id)
@@ -79,12 +67,7 @@ class CustomerController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
+    public function update(CustomerRequest $customerRequest, $id)
     {
         try
         {
@@ -93,9 +76,7 @@ class CustomerController extends Controller
             {
                 return $this->userResponse->Failed($customer = (object)[],'Not Found.');
             }
-            $customer->update($request->all());
-            $customer->save();
-            return $this->userResponse->Success($customer);
+            return $this->customerRepository->update($customerRequest,$id);
         }
         catch(Exception $ex)
         {
@@ -107,6 +88,11 @@ class CustomerController extends Controller
     {
         try
         {
+            $customer = Customer::find($Id);
+            if(is_null($customer))
+            {
+                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
+            }
             $customer = $this->customerRepository->delete($request,$Id);
             return $this->userResponse->Success($customer);
         }

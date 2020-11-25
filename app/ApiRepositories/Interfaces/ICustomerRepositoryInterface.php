@@ -15,7 +15,7 @@ interface ICustomerRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(CustomerRequest $bankRequest,$Id);
+    public  function update(CustomerRequest $customerRequest,$Id);
 
     public  function getById($Id);
 

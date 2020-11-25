@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\IDriverRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DriverRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Driver;
 use Illuminate\Http\Request;
@@ -44,22 +45,9 @@ class DriverController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        try
-        {
-            $driver = Driver::create($request->all());
-            return $this->userResponse->Success($driver);
-        }
-        catch(Exception $ex)
-        {
-            $this->userResponse->Exception($ex);
-        }
+        return $this->driverRepository->insert($request);
     }
 
     public function show($id)
@@ -79,12 +67,7 @@ class DriverController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
+    public function update(DriverRequest $driverRequest, $id)
     {
         try
         {
@@ -93,9 +76,7 @@ class DriverController extends Controller
             {
                 return $this->userResponse->Failed($driver = (object)[],'Not Found.');
             }
-            $driver->update($request->all());
-            $driver->save();
-            return $this->userResponse->Success($driver);
+            return $this->driverRepository->update($driverRequest,$id);
         }
         catch(Exception $ex)
         {
@@ -107,6 +88,11 @@ class DriverController extends Controller
     {
         try
         {
+            $driver = Driver::find($Id);
+            if(is_null($driver))
+            {
+                return $this->userResponse->Failed($driver = (object)[],'Not Found.');
+            }
             $driver = $this->driverRepository->delete($request,$Id);
             return $this->userResponse->Success($driver);
         }

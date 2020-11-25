@@ -2,30 +2,30 @@
 
 namespace App\Http\Controllers\api;
 
-use App\ApiRepositories\Interfaces\IUnitRepositoryInterface;
+use App\ApiRepositories\Interfaces\IPurchaseRepositoryInterface;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UnitRequest;
+use App\Http\Requests\PurchaseRequest;
 use App\MISC\ServiceResponse;
-use App\Models\Unit;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use mysql_xdevapi\Exception;
 
-class UnitController extends Controller
+class PurchaseController extends Controller
 {
-    private $unitRepository;
+    private $purchaseRepository;
     private $userResponse;
 
-    public function __construct(ServiceResponse $serviceResponse, IUnitRepositoryInterface $unitRepository)
+    public function __construct(ServiceResponse $serviceResponse, IPurchaseRepositoryInterface $purchaseRepository)
     {
         $this->userResponse=$serviceResponse;
-        $this->unitRepository=$unitRepository;
+        $this->purchaseRepository=$purchaseRepository;
     }
 
     public function index()
     {
         try
         {
-            return $this->userResponse->Success($this->unitRepository->all());
+            return $this->userResponse->Success($this->purchaseRepository->all());
         }
         catch (Exception $ex)
         {
@@ -37,7 +37,7 @@ class UnitController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->unitRepository->paginate($page_no,$page_size));
+            return $this->userResponse->Success($this->purchaseRepository->paginate($page_no,$page_size));
         }
         catch(Exception $ex)
         {
@@ -47,19 +47,19 @@ class UnitController extends Controller
 
     public function store(Request $request)
     {
-        return $this->unitRepository->insert($request);
+        return $this->purchaseRepository->insert($request);
     }
 
     public function show($id)
     {
         try
         {
-            $unit = Unit::find($id);
-            if(is_null($unit))
+            $employee = Purchase::find($id);
+            if(is_null($employee))
             {
-                return $this->userResponse->Failed($unit = (object)[],'Not Found.');
+                return $this->userResponse->Failed($employee = (object)[],'Not Found.');
             }
-            return $this->userResponse->Success($unit);
+            return $this->userResponse->Success($employee);
         }
         catch(Exception $ex)
         {
@@ -67,16 +67,16 @@ class UnitController extends Controller
         }
     }
 
-    public function update(UnitRequest $unitRequest, $id)
+    public function update(PurchaseRequest $purchaseRequest, $id)
     {
         try
         {
-            $unit = Unit::find($id);
-            if(is_null($unit))
+            $employee = Purchase::find($id);
+            if(is_null($employee))
             {
-                return $this->userResponse->Failed($unit = (object)[],'Not Found.');
+                return $this->userResponse->Failed($employee = (object)[],'Not Found.');
             }
-            return $this->unitRepository->update($unitRequest,$id);
+            return $this->purchaseRepository->update($purchaseRequest,$id);
         }
         catch(Exception $ex)
         {
@@ -88,13 +88,13 @@ class UnitController extends Controller
     {
         try
         {
-            $unit = Unit::find($Id);
-            if(is_null($unit))
+            $employee = Purchase::find($Id);
+            if(is_null($employee))
             {
-                return $this->userResponse->Failed($unit = (object)[],'Not Found.');
+                return $this->userResponse->Failed($employee = (object)[],'Not Found.');
             }
-            $unit = $this->unitRepository->delete($request,$Id);
-            return $this->userResponse->Success($unit);
+            $employee = $this->purchaseRepository->delete($request,$Id);
+            return $this->userResponse->Success($employee);
         }
         catch (Exception $exception)
         {
@@ -105,7 +105,7 @@ class UnitController extends Controller
     public function restore($Id)
     {
         try {
-            $restore = Unit::withTrashed()->where('Id', $Id)->restore();
+            $restore = Purchase::withTrashed()->where('Id', $Id)->restore();
             return $this->userResponse->Success($restore);
 
         }
@@ -117,7 +117,7 @@ class UnitController extends Controller
 
     public  function  trash()
     {
-        $trashed = $this->unitRepository->trashed();
+        $trashed = $this->purchaseRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
 }

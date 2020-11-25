@@ -15,7 +15,7 @@ interface ISupplierRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(SupplierRequest $bankRequest,$Id);
+    public  function update(SupplierRequest $supplierRequest,$Id);
 
     public  function getById($Id);
 

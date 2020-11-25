@@ -9,6 +9,7 @@ use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductRepository implements IProductRepositoryInterface
 {
@@ -24,20 +25,24 @@ class ProductRepository implements IProductRepositoryInterface
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $product = new Product();
         $product->Name=$request->Name;
         $product->Description=$request->Description;
         $product->company_id=$request->company_id;
+        $product->unit_id=$request->unit_id;
         $product->createdDate=date('Y-m-d h:i:s');
         $product->isActive=1;
-        $product->user_id = 1;//login user id
+        $product->user_id = $userId ?? 0;
         $product->save();
-        return new ProductResource(Product::find($product->Id));
+        return new ProductResource(Product::find($product->id));
     }
 
     public function update(ProductRequest $productRequest, $Id)
     {
+        $userId = Auth::id();
         $product = Product::find($Id);
+        $productRequest['user_id']=$userId ?? 0;
         $product->update($productRequest->all());
         return new ProductResource(Product::find($Id));
     }
@@ -49,8 +54,11 @@ class ProductRepository implements IProductRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Product::find($Id);
-        $update->update($request->all());
+        $update->user_id=$userId;
+        $update->save();
         $product = Product::withoutTrashed()->find($Id);
         if($product->trashed())
         {

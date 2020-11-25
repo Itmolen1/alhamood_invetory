@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Exception;
 
 class UserRepository implements IUserRepositoryInterface
 {
@@ -56,7 +57,7 @@ class UserRepository implements IUserRepositoryInterface
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
             if ($user) {
-                //$accessToken = $user->createToken('MyApp')->accessToken;
+                $accessToken = $user->createToken('MyApp')->accessToken;
                 $users = new UserResource(User::all()->where('email', $user->email)->first());
 //                if ($users->role == null)
 //                {
@@ -85,7 +86,7 @@ class UserRepository implements IUserRepositoryInterface
                     /*device token*/
 
                     //$UserToAuthorities = RoleResource::Collection(Role::all()->where('Id', $users->role_Id));
-                    return $this->userResponse->LoginSuccess( null,$users,null ,'Login Successful');
+                    return $this->userResponse->LoginSuccess( $accessToken,$users,null ,'Login Successful');
                 //}
             }
             else
@@ -126,6 +127,36 @@ class UserRepository implements IUserRepositoryInterface
 
     public function logout(Request $request)
     {
-        // TODO: Implement logout() method.
+
+        try
+        {
+            if (Auth::check()) {
+                Auth::user()->token()->revoke();
+
+                /*device token*/
+                $device_id=$request['device_id'];
+                $user_id=$request->id;
+                if($user_id!='' && $device_id!='')
+                {
+                    $device_check = DB::table('token_master')->select('id')->where([['device_id',$device_id],['user_id',$user_id]])->first();
+                    if(isset($device_check->id))
+                    {
+                        //remove device token for given device id
+                        DB::table('token_master')->where([['device_id', $device_id],['user_id',$user_id]])->update(['device_token' =>NULL]);
+                    }
+                }
+                /*device token*/
+
+                return $this->userResponse->LogOut();
+            }
+            else
+            {
+                return $this->userResponse->Exception('Something is wrong, failed to logOut');
+            }
+        }
+        catch (Exception $ex)
+        {
+            return $this->userResponse->Exception($ex);
+        }
     }
 }

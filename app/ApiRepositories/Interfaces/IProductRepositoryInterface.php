@@ -15,7 +15,7 @@ interface IProductRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(ProductRequest $bankRequest,$Id);
+    public  function update(ProductRequest $productRequest,$Id);
 
     public  function getById($Id);
 

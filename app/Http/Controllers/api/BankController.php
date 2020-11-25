@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\IBankRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BankRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Bank;
 use Illuminate\Http\Request;
@@ -44,22 +45,9 @@ class BankController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        try
-        {
-            $bank = Bank::create($request->all());
-            return $this->userResponse->Success($bank);
-        }
-        catch(Exception $ex)
-        {
-            $this->userResponse->Exception($ex);
-        }
+        return $this->bankRepository->insert($request);
     }
 
     public function show($id)
@@ -79,12 +67,7 @@ class BankController extends Controller
         }
     }
 
-    public function edit(Bank $bank)
-    {
-        //
-    }
-
-    public function update(Request $request,$id)
+    public function update(BankRequest $bankRequest,$id)
     {
         try
         {
@@ -93,9 +76,7 @@ class BankController extends Controller
             {
                 return $this->userResponse->Failed($product = (object)[],'Not Found.');
             }
-            $bank->update($request->all());
-            $bank->save();
-            return $this->userResponse->Success($bank);
+            return $this->bankRepository->update($bankRequest,$id);
         }
         catch(Exception $ex)
         {
@@ -107,6 +88,11 @@ class BankController extends Controller
     {
         try
         {
+            $bank = Bank::find($Id);
+            if(is_null($bank))
+            {
+                return $this->userResponse->Failed($bank = (object)[],'Not Found.');
+            }
             $bank = $this->bankRepository->delete($request,$Id);
             return $this->userResponse->Success($bank);
         }

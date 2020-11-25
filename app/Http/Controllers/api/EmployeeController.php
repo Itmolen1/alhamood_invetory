@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\IEmployeeRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EmployeeRquest;
 use App\MISC\ServiceResponse;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -44,22 +45,9 @@ class EmployeeController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        try
-        {
-            $employee = Employee::create($request->all());
-            return $this->userResponse->Success($employee);
-        }
-        catch(Exception $ex)
-        {
-            $this->userResponse->Exception($ex);
-        }
+        return $this->employeeRepository->insert($request);
     }
 
     public function show($id)
@@ -79,12 +67,7 @@ class EmployeeController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
+    public function update(EmployeeRquest $employeeRquest, $id)
     {
         try
         {
@@ -93,9 +76,7 @@ class EmployeeController extends Controller
             {
                 return $this->userResponse->Failed($employee = (object)[],'Not Found.');
             }
-            $employee->update($request->all());
-            $employee->save();
-            return $this->userResponse->Success($employee);
+            return $this->employeeRepository->update($employeeRquest,$id);
         }
         catch(Exception $ex)
         {
@@ -107,6 +88,11 @@ class EmployeeController extends Controller
     {
         try
         {
+            $employee = Employee::find($Id);
+            if(is_null($employee))
+            {
+                return $this->userResponse->Failed($employee = (object)[],'Not Found.');
+            }
             $employee = $this->employeeRepository->delete($request,$Id);
             return $this->userResponse->Success($employee);
         }

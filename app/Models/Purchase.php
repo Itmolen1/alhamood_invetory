@@ -33,7 +33,7 @@ class Purchase extends Model
 
     public function purchase_details()
     {
-        return $this->hasMany('App\Models\PurchaseDetail');
+        return $this->hasMany('App\Models\PurchaseDetail','purchase_id')->withTrashed();
     }
 
 

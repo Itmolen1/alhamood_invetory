@@ -9,6 +9,7 @@ use App\Http\Requests\BankRequest;
 use App\Http\Resources\Bank\BankResource;
 use App\Models\Bank;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BankRepository implements IBankRepositoryInterface
 {
@@ -25,6 +26,7 @@ class BankRepository implements IBankRepositoryInterface
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $bank = new Bank();
         $bank->Name=$request->Name;
         $bank->Branch=$request->Branch;
@@ -32,15 +34,17 @@ class BankRepository implements IBankRepositoryInterface
         $bank->updateDescription=$request->updateDescription;
         $bank->contactNumber=$request->contactNumber;
         $bank->Address=$request->Address;
-        $bank->IsActive=$request->IsActive;
-        $bank->user_id = $request->user_id;
+        $bank->IsActive=1;
+        $bank->user_id = $userId ?? 0;
         $bank->save();
-        return new BankResource(Bank::find($bank->Id));
+        return new BankResource(Bank::find($bank->id));
     }
 
     public function update(BankRequest $bankRequest, $Id)
     {
+        $userId = Auth::id();
         $bank = Bank::find($Id);
+        $bankRequest['user_id']=$userId ?? 0;
         $bank->update($bankRequest->all());
         return new BankResource(Bank::find($Id));
     }
@@ -50,10 +54,13 @@ class BankRepository implements IBankRepositoryInterface
         return new BankResource(Bank::find($Id));
     }
 
-    public function delete(Request $request, $Id)
+    public function delete(Request $request,$Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Bank::find($Id);
-        $update->update($request->all());
+        $update->user_id=$userId;
+        $update->save();
         $bank = Bank::withoutTrashed()->find($Id);
         if($bank->trashed())
         {

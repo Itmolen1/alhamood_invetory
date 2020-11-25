@@ -12,11 +12,13 @@ use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\ApiRepositories\Interfaces\IDriverRepositoryInterface;
 use App\ApiRepositories\Interfaces\IEmployeeRepositoryInterface;
 use App\ApiRepositories\Interfaces\IProductRepositoryInterface;
+use App\ApiRepositories\Interfaces\IPurchaseRepositoryInterface;
 use App\ApiRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\ApiRepositories\Interfaces\IUnitRepositoryInterface;
 use App\ApiRepositories\Interfaces\IUserRepositoryInterface;
 use App\ApiRepositories\Interfaces\IVehicleRepositoryInterface;
 use App\ApiRepositories\ProductRepository;
+use App\ApiRepositories\PurchaseRepository;
 use App\ApiRepositories\SupplierRepository;
 use App\ApiRepositories\UnitRepository;
 use App\ApiRepositories\UserRepository;
@@ -36,6 +38,7 @@ class ApiRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IUnitRepositoryInterface::class,UnitRepository::class);
         $this->app->bind(IProductRepositoryInterface::class,ProductRepository::class);
         $this->app->bind(IEmployeeRepositoryInterface::class,EmployeeRepository::class);
+        $this->app->bind(IPurchaseRepositoryInterface::class,PurchaseRepository::class);
     }
     public function boot()
     {

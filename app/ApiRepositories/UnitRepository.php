@@ -9,8 +9,9 @@ use App\Http\Requests\UnitRequest;
 use App\Http\Resources\Unit\UnitResource;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-    class UnitRepository implements IUnitRepositoryInterface
+class UnitRepository implements IUnitRepositoryInterface
 {
     public function all()
     {
@@ -24,19 +25,22 @@ use Illuminate\Http\Request;
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $unit = new Unit();
         $unit->Name=$request->Name;
         $unit->company_id=$request->company_id;
         $unit->createdDate=date('Y-m-d h:i:s');
         $unit->isActive=1;
-        $unit->user_id = 1;//login user id
+        $unit->user_id = $userId ?? 0;
         $unit->save();
-        return new UnitResource(Unit::find($unit->Id));
+        return new UnitResource(Unit::find($unit->id));
     }
 
     public function update(UnitRequest $unitRequest, $Id)
     {
+        $userId = Auth::id();
         $unit = Unit::find($Id);
+        $unitRequest['user_id']=$userId ?? 0;
         $unit->update($unitRequest->all());
         return new UnitResource(Unit::find($Id));
     }
@@ -48,8 +52,11 @@ use Illuminate\Http\Request;
 
     public function delete(Request $request, $Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Unit::find($Id);
-        $update->update($request->all());
+        $update->user_id=$userId;
+        $update->save();
         $unit = Unit::withoutTrashed()->find($Id);
         if($unit->trashed())
         {

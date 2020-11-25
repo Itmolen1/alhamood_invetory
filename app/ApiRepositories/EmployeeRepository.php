@@ -9,6 +9,7 @@ use App\Http\Requests\EmployeeRquest;
 use App\Http\Resources\Employee\EmployeeResource;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeRepository implements IEmployeeRepositoryInterface
 {
@@ -24,6 +25,7 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $employee = new Employee();
         $employee->Name=$request->Name;
         $employee->Mobile=$request->Mobile;
@@ -36,17 +38,19 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
         $employee->startOfJob=$request->startOfJob;
         $employee->DOB=$request->DOB;
         $employee->Description=$request->Description;
-        $employee->company_id=$request->company_id;
+        //$employee->company_id=$request->company_id;
         $employee->createdDate=date('Y-m-d h:i:s');
         $employee->isActive=1;
-        $employee->user_id = 1;//login user id
+        $employee->user_id = $userId ?? 0;
         $employee->save();
-        return new EmployeeResource(Employee::find($employee->Id));
+        return new EmployeeResource(Employee::find($employee->id));
     }
 
     public function update(EmployeeRquest $employeeRquest, $Id)
     {
+        $userId = Auth::id();
         $employee = Employee::find($Id);
+        $employeeRquest['user_id']=$userId ?? 0;
         $employee->update($employeeRquest->all());
         return new EmployeeResource(Employee::find($Id));
     }
@@ -58,8 +62,11 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Employee::find($Id);
-        $update->update($request->all());
+        $update->user_id=$userId;
+        $update->save();
         $employee = Employee::withoutTrashed()->find($Id);
         if($employee->trashed())
         {

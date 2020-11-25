@@ -6,9 +6,11 @@ namespace App\ApiRepositories;
 
 use App\ApiRepositories\Interfaces\IDriverRepositoryInterface;
 use App\Http\Requests\BankRequest;
+use App\Http\Requests\DriverRequest;
 use App\Http\Resources\Driver\DriverResource;
 use App\Models\Driver;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DriverRepository implements IDriverRepositoryInterface
 {
@@ -24,6 +26,7 @@ class DriverRepository implements IDriverRepositoryInterface
 
     public function insert(Request $request)
     {
+        $userId = Auth::id();
         $driver = new Driver();
         $driver->driverName=$request->driverName;
         $driver->Description=$request->Description;
@@ -31,15 +34,17 @@ class DriverRepository implements IDriverRepositoryInterface
         $driver->company_id=$request->company_id;
         $driver->createdDate=date('Y-m-d h:i:s');
         $driver->isActive=1;
-        $driver->user_id = 1;//login user id
+        $driver->user_id = $userId ?? 0;
         $driver->save();
-        return new DriverResource(Driver::find($driver->Id));
+        return new DriverResource(Driver::find($driver->id));
     }
 
-    public function update(BankRequest $bankRequest, $Id)
+    public function update(DriverRequest $driverRequest, $Id)
     {
+        $userId = Auth::id();
         $driver = Driver::find($Id);
-        $driver->update($bankRequest->all());
+        $driverRequest['user_id']=$userId ?? 0;
+        $driver->update($driverRequest->all());
         return new DriverResource(Driver::find($Id));
     }
 
@@ -48,18 +53,21 @@ class DriverRepository implements IDriverRepositoryInterface
         return new DriverResource(Driver::find($Id));
     }
 
-    public function delete(Request $request, $Id)
+    public function delete(Request $request,$Id)
     {
+        $userId = Auth::id();
+        $request['user_id']=$userId ?? 0;
         $update = Driver::find($Id);
-        $update->update($request->all());
-        $driver = Driver::withoutTrashed()->find($Id);
-        if($driver->trashed())
+        $update->user_id=$userId;
+        $update->save();
+        $bank = Driver::withoutTrashed()->find($Id);
+        if($bank->trashed())
         {
             return new DriverResource(Driver::onlyTrashed()->find($Id));
         }
         else
         {
-            $driver->delete();
+            $bank->delete();
             return new DriverResource(Driver::onlyTrashed()->find($Id));
 
         }

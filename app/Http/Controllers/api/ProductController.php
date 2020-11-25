@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\ApiRepositories\Interfaces\IProductRepositoryInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -44,22 +45,9 @@ class ProductController extends Controller
         }
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
-        try
-        {
-            $product = Product::create($request->all());
-            return $this->userResponse->Success($product);
-        }
-        catch(Exception $ex)
-        {
-            $this->userResponse->Exception($ex);
-        }
+        return $this->productRepository->insert($request);
     }
 
     public function show($id)
@@ -79,12 +67,7 @@ class ProductController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
+    public function update(ProductRequest $productRequest, $id)
     {
         try
         {
@@ -93,9 +76,7 @@ class ProductController extends Controller
             {
                 return $this->userResponse->Failed($product = (object)[],'Not Found.');
             }
-            $product->update($request->all());
-            $product->save();
-            return $this->userResponse->Success($product);
+            return $this->productRepository->update($productRequest,$id);
         }
         catch(Exception $ex)
         {
@@ -107,6 +88,11 @@ class ProductController extends Controller
     {
         try
         {
+            $product = Product::find($Id);
+            if(is_null($product))
+            {
+                return $this->userResponse->Failed($product = (object)[],'Not Found.');
+            }
             $product = $this->productRepository->delete($request,$Id);
             return $this->userResponse->Success($product);
         }
