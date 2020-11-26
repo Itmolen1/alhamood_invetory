@@ -46,8 +46,14 @@ class Handler extends ExceptionHandler
 //            echo "here";die;
 //            return response()->json(['error' => 'Unauthenticated.'], 401);
         }
+        else
+        {
+            return redirect()->route('login');
+        }
 
         // return a plain 401 response even when not a json call
-        //return response('Unauthenticated.', 401);
+        return response('Unauthenticated.', 401);
     }
+
+
 }
