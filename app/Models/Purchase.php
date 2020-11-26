@@ -36,5 +36,14 @@ class Purchase extends Model
         return $this->hasMany('App\Models\PurchaseDetail','purchase_id')->withTrashed();
     }
 
+    public function update_notes()
+    {
+        return $this->hasMany('App\Models\UpdateNote','RelationId')->where('RelationTable','=','purchases');
+    }
+
+    public function documents()
+    {
+        return $this->hasMany('App\Models\FileUpload','RelationId')->where('RelationTable','=','purchases');
+    }
 
 }

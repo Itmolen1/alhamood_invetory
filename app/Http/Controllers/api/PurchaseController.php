@@ -47,24 +47,27 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
-        return $this->purchaseRepository->insert($request);
+        $purchase=$this->purchaseRepository->insert($request);
+        return $this->userResponse->Success($purchase);
     }
 
     public function show($id)
     {
         try
         {
-            $employee = Purchase::find($id);
-            if(is_null($employee))
+            $purchase = Purchase::find($id);
+            if(is_null($purchase))
             {
-                return $this->userResponse->Failed($employee = (object)[],'Not Found.');
+                return $this->userResponse->Failed($purchase = (object)[],'Not Found.');
             }
-            return $this->userResponse->Success($employee);
+            $purchase = $this->purchaseRepository->getById($id);
+            return $this->userResponse->Success($purchase);
         }
         catch(Exception $ex)
         {
             $this->userResponse->Exception($ex);
         }
+
     }
 
     public function update(PurchaseRequest $purchaseRequest, $id)
@@ -76,7 +79,8 @@ class PurchaseController extends Controller
             {
                 return $this->userResponse->Failed($employee = (object)[],'Not Found.');
             }
-            return $this->purchaseRepository->update($purchaseRequest,$id);
+            $purchase = $this->purchaseRepository->update($purchaseRequest,$id);
+            return $this->userResponse->Success($purchase);
         }
         catch(Exception $ex)
         {
@@ -88,13 +92,13 @@ class PurchaseController extends Controller
     {
         try
         {
-            $employee = Purchase::find($Id);
-            if(is_null($employee))
+            $purchase = Purchase::find($Id);
+            if(is_null($purchase))
             {
-                return $this->userResponse->Failed($employee = (object)[],'Not Found.');
+                return $this->userResponse->Failed($purchase = (object)[],'Not Found.');
             }
-            $employee = $this->purchaseRepository->delete($request,$Id);
-            return $this->userResponse->Success($employee);
+            $purchase = $this->purchaseRepository->delete($request,$Id);
+            return $this->userResponse->Success($purchase);
         }
         catch (Exception $exception)
         {
@@ -119,5 +123,35 @@ class PurchaseController extends Controller
     {
         $trashed = $this->purchaseRepository->trashed();
         return $this->userResponse->Success($trashed);
+    }
+
+    public function BaseList()
+    {
+        $data = $this->purchaseRepository->BaseList();
+        return $this->userResponse->Success($data);
+    }
+
+    public function PurchaseDocumentsUpload(Request $request)
+    {
+        $this->purchaseRepository->PurchaseDocumentsUpload($request);
+        return $this->userResponse->Success($purchase = (object)['message'=>'Document(s) uploaded.']);
+    }
+
+    public function print($id)
+    {
+        try
+        {
+            $purchase = Purchase::find($id);
+            if(is_null($purchase))
+            {
+                return $this->userResponse->Failed($purchase = (object)[],'Not Found.');
+            }
+            $purchase = $this->purchaseRepository->print($id);
+            return $this->userResponse->Success($purchase);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
     }
 }

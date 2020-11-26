@@ -56,6 +56,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::apiResource('/Purchase', 'api\PurchaseController');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');
+    Route::get('/getPurchaseOrderBaseLists', 'api\PurchaseController@BaseList');
+    Route::post('PurchaseDocumentsUpload', 'api\PurchaseController@PurchaseDocumentsUpload');
+    Route::get('/Purchase/print/{Id}', 'api\PurchaseController@print');
 });
 
 

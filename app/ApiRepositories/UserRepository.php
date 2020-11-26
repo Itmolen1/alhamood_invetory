@@ -67,6 +67,15 @@ class UserRepository implements IUserRepositoryInterface
             if ($request->hasFile('imageUrl'))
             {
                 $userId = Auth::id();
+
+                //remove previously uploaded image first *will work in live server
+                $image_val= DB::table('users')->select('imageUrl')->where([['id',$userId]])->first();
+                $image_path = $_SERVER['DOCUMENT_ROOT']."/storage/app/public/images/".$image_val->imageUrl;
+                if (file_exists($image_path)){
+                    unlink($image_path);
+                }
+                //remove previously uploaded image first *will work in live server
+
                 $file = $request->file('imageUrl');
                 $extension = $file->getClientOriginalExtension();
                 $filename=uniqid('user_').'.'.$extension;
@@ -75,19 +84,6 @@ class UserRepository implements IUserRepositoryInterface
                 $users = new UserResource(User::all()->where('id', $userId)->first());
                 return $this->userResponse->Success($users);
             }
-//            if ($request->hasfile('imageUrl'))
-//            {
-//                $userId = Auth::id();
-//                $file = $request->file('imageUrl');
-//                $extension = $file->getClientOriginalExtension();
-//                $filename=uniqid('user_').'.'.$extension;
-//                Storage::disk('sto')->put($filename, File::get($file));
-//                $users->Imageurl = $file->getFilename() . '.' . $extension;
-//                $users->id = $userId;
-//                $users->where('id', $userId)->update(['imageUrl' => $filename]);
-//                $users = new UserResource(User::all()->where('id', $userId)->first());
-//                return $this->userResponse->Success($users);
-//            }
             else
             {
                 return $this->userResponse->Failed("user Image","file not found");
@@ -104,6 +100,17 @@ class UserRepository implements IUserRepositoryInterface
         $users = new User();
         try
         {
+            $credentials = $request->only(['email','currentPassword']);
+            //$valid_user= DB::table('users')->select('id')->where([['email',$credentials['email']],['password',bcrypt($credentials['currentPassword'])]])->first();
+            if (Auth::guard('client')->attempt($credentials))
+            {
+                return $this->userResponse->Failed($user = (object)[],"Invalid Credentials.");
+            }
+            else
+            {
+                echo "coming inside else";
+            }
+            die;
             $user = User::find($request->id);
             if(is_null($user))
             {

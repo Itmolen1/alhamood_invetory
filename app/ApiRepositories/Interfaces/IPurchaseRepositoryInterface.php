@@ -20,4 +20,8 @@ interface IPurchaseRepositoryInterface
     public  function getById($Id);
 
     public  function delete(Request $request,$Id);
+
+    public  function PurchaseDocumentsUpload(Request $request);
+
+    public  function print($Id);
 }

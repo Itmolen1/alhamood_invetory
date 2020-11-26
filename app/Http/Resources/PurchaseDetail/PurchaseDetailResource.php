@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\PurchaseDetail;
 
+use App\Http\Resources\Product\ProductResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -12,9 +13,8 @@ class PurchaseDetailResource extends JsonResource
         return [
             'id' => $this->id,
             'purchase_id' => $this->purchase_id,
-            'user_id'=>$this->user_id,
-            'company_id'=>$this->company_id,
             'product_id'=>$this->product_id,
+            'company_id'=>$this->company_id,
             'PadNumber'=>$this->PadNumber,
             'Description'=>$this->Description,
             'Quantity'=>$this->Quantity,
@@ -27,6 +27,7 @@ class PurchaseDetailResource extends JsonResource
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
+            'product'=>$this->product,
         ];
     }
 }
