@@ -32,4 +32,11 @@ class MeterReadingDetail extends Model
         return $this->belongsTo('App\Models\MeterReading','meter_reading_id','id');
     }
 
+    public function meter_reader()
+    {
+        return $this->belongsTo('App\Models\MeterReader','meter_reader_id','id');
+    }
+
+
+
 }

@@ -30,4 +30,6 @@ class MeterReading extends Model
     {
         return $this->hasMany('App\Models\MeterReadingDetail');
     }
+
+
 }

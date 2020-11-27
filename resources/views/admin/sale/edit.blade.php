@@ -390,7 +390,7 @@
                                             details = [];
                                             //console.log(result);
                                             alert("Data Inserted Successfully");
-                                            //window.location.href = "{{ route('sales.index') }}";
+                                            window.location.href = "{{ route('sales.index') }}";
                                         } else {
                                             alert(result);
                                         }

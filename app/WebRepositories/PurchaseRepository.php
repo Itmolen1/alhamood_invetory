@@ -171,7 +171,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $update_notes = UpdateNote::with('company','user')->where('RelationId',$Id)->get();
+        $update_notes = UpdateNote::with('company','user')->where(['RelationId' => $Id, 'RelationTable' => 'purchases'])->get();
         //dd($update_notes[0]->Description);
         $suppliers = Supplier::all();
         $products = Product::all();

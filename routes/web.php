@@ -20,7 +20,7 @@ Route::middleware(['auth'])->group(function () {
     route::get('/','AdminController@index');
 });
 
-Route::get('/admin','AdminController@index');
+Route::get('/admin','AdminController@index')->name('admin');
 route::get('/register','AdminController@register');
 
 
@@ -72,6 +72,7 @@ route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
 //////////////// meterReading ///////////////
 route::resource('meter_readers','MeterReaderController');
 route::resource('meter_readings','MeterReadingController');
+route::post('meterReadingUpdate/{Id}','MeterReadingController@meterReadingUpdate');
 
 
 

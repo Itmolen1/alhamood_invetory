@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Meter Reading Edit')
+@section('title', 'Meter Reading')
 
 @section('content')
 
@@ -20,7 +20,7 @@
             <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h4 class="text-themecolor">Meter Reading</h4>
+                    <h4 class="text-themecolor">Edit Meter Reading</h4>
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -53,10 +53,11 @@
                                         <div class="col-md-8">
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="date" class="form-control">
+                                            <input type="date" value="{{ $meter_details[0]->meter_reading->readingDate }}" id="meterReadingDate" class="form-control">
+                                            <input type="hidden" value="{{ $meter_details[0]->meter_reading->id }}" id="id" class="id">
                                         </div>
                                     </div>
-                                    <div class="table-responsive">
+                                    <tr class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
@@ -70,56 +71,94 @@
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
+
+                                            <tbody>
+                                            @foreach($meter_details as $details)
+                                                @if(!is_null($details->deleted_at))
+                                                    <tr style="text-decoration: line-through; color:red">
+                                                    <td><input type="text" value="{{ $details->meter_reader->Name }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->startReading }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->endReading }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->netReading }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->Purchases }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->Sales }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->Description }}" class="form-control"></td>
+                                                        <td><input class=" btn btn-danger" type="button" value="Deleted" /></td>
+                                                    </tr>
+
+                                                    {{--<tr style="text-decoration: line-through; color:red">--}}
+                                                        {{--<td>Etart Pad: <input type="text" value="{{ $meter_details[0]->meter_reading->startPad }}"  class="form-control"></td>--}}
+                                                        {{--<td>End Pad<input type="text" value="{{ $meter_details[0]->meter_reading->endPad }}" class="form-control"></td>--}}
+                                                        {{--<td  colspan="2">Meter Sale:<input type="text" value="{{ $meter_details[0]->meter_reading->totalMeterSale }}" class="form-control"></td>--}}
+                                                        {{--<td  colspan="2">Pad Sale<input type="text" value="{{ $meter_details[0]->meter_reading->totalPadSale }}" class="form-control"></td>--}}
+                                                        {{--<td  colspan="2">Difference<input type="text" value="{{ $meter_details[0]->meter_reading->saleDifference }}"  class="form-control"></td>--}}
+                                                    {{--</tr>--}}
+
+                                                @endif
+                                            @endforeach
+                                            </tbody>
+
                                             <tbody id="newRow">
-                                            <tr>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <select name="meter_id" class="form-control customer">
-                                                            <option value="0">Meter</option>
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Start Reading" class="startReading form-control"></td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="End Reading" class="endReading form-control"></td>
-                                                <td><input type="text" value="0.00" placeholder="Net Reading" class="netReading form-control" disabled>
-                                                    <input type="hidden" value="0.00" placeholder="Net Reading" class="netReading form-control" ></td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Purchases" class="purchases form-control">
-                                                    <input type="hidden" onfocus="this.value=''" value="0.00" placeholder="Total Row Sale" class="totalRow form-control">
-                                                </td>
-                                                <td><input type="text" onfocus="this.value=''" value="0.00" placeholder="Sales" class="sales form-control" disabled>
-                                                    <input type="hidden" onfocus="this.value=''" value="0.00" placeholder="Sales" class="sales form-control">
-                                                </td>
-                                                <td><input type="text" placeholder="Net Description" class="Description form-control"></td>
-                                                <td><input class=" btn btn-success addRow" id="addRow" type="button" value="+" /></td>
-                                            </tr>
+                                            @foreach($meter_details as $details)
+                                            @if(is_null($details->deleted_at))
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <select name="meter_id" class="form-control meter_id">
+                                                                <option value="0" readonly disabled selected>Meter</option>
+                                                                @foreach($meter_readers as $reader)
+                                                                    <option value="{{ $reader->id }}" {{ ($reader->id == $details->meter_reader_id) ? 'selected':'' }}>{{ $reader->Name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->startReading }}" placeholder="Start Reading" class="startReading form-control"></td>
+                                                    <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->endReading }}" placeholder="End Reading" class="endReading form-control"></td>
+                                                    <td><input type="text" value="{{ $details->netReading }}" placeholder="Net Reading" class="netReading form-control" disabled>
+                                                        <input type="hidden" value="{{ $details->netReading }}" placeholder="Net Reading" class="netReading form-control" ></td>
+                                                    <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Purchases }}" placeholder="Purchases" class="purchases form-control">
+                                                        <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Sales }}" placeholder="Total Row Sale" class="totalRow form-control">
+                                                        <input type="hidden" value="{{ $details->id }}" placeholder="" class="detail_id form-control">
+                                                    </td>
+                                                    <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Sales }}" placeholder="Sales" class="sales form-control" disabled>
+                                                        <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Sales }}" placeholder="Sales" class="sales form-control">
+                                                    </td>
+                                                    <td><input type="text" value="{{ $details->Description }}" placeholder="Net Description" class="Description form-control"></td>
+                                                    <td><input class=" btn btn-success addRow" id="addRow" type="button" value="+" /></td>
+                                                </tr>
+                                            @endif
+                                            @endforeach
                                             </tbody>
                                         </table>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-8">
+                                            <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
 
                                         </div>
 
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <p>Start Pad: <input type="text" value="0.00" class="form-control "></p>
+                                                    <p>Start Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->startPad }}" class="form-control startPad"></p>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <p>End Pad: <input type="text" value="0.00" class="form-control "></p>
+                                                    <p>End Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->endPad }}" class="form-control endPad"></p>
                                                 </div>
                                             </div>
 
-                                            <p>Total Meter Reading Sale: <input type="text" value="0.00" class="form-control totalSale"></p>
+                                            <p>Total Meter Reading Sale: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->totalMeterSale }}" class="form-control totalSale" disabled>
+                                                <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->totalMeterSale }}" class="form-control totalSale">
+                                            </p>
 
-                                            <p>Total Pad Sale: <input type="text" value="200" class="form-control tatalPad" disabled>
-                                                <input type="hidden" value="20" class="form-control tatalPad">
+                                            <p>Total Pad Sale: <input type="text" value="{{ $meter_details[0]->meter_reading->totalPadSale }}" class="form-control totalPad" disabled>
+                                                <input type="hidden" value="{{ $meter_details[0]->meter_reading->totalPadSale }}" class="form-control totalPad">
                                             </p>
 
 
-                                            <p>Difference: <input type="text" value="0.00" class="form-control balance" disabled>
-                                                <input type="hidden" value="0.00" class="form-control balance">
+                                            <p>Difference: <input type="text" value="{{ $meter_details[0]->meter_reading->saleDifference }}" class="form-control balance" disabled>
+                                                <input type="hidden" value="{{ $meter_details[0]->meter_reading->saleDifference }}" class="form-control balance">
                                             </p>
 
 
@@ -129,7 +168,7 @@
 
                                 </div>
                                 <div class="form-actions">
-                                    <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Update Meter Reading</button>
+                                    <button type="button" class="btn btn-success" id="showModel"> <i class="fa fa-check"></i> Update</button>
                                     <button type="button" class="btn btn-inverse">Cancel</button>
                                 </div>
                             </form>
@@ -157,14 +196,214 @@
     <!-- footer -->
     <!-- ============================================================== -->
 
+    <div class="modal fade" id="updateMessage" tabindex="-1" role="dialog" aria-labelledby="modalForm">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="message-texta" class="control-label">Update Note:</label>
+                            <textarea class="form-control" id="UpdateDescription" placeholder="Update Note"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <input class="btn btn-info" id="submit"  type="button" value="Update Purchase">
+                    {{--                    <button type="button" class="btn btn-info">Send message</button>--}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="ShowUpdates" tabindex="-1" role="dialog" aria-labelledby="modalForm">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table color-bordered-table success-bordered-table">
+                        <thead>
+                        <tr>
+
+                            <th>User Name</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        @foreach($update_notes as $note)
+                            <tr>
+                                <td>
+                                    {{ $note->user->name }}
+                                </td>
+                                <td>{{ $note->Description }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+
+                    {{--                    <button type="button" class="btn btn-info">Send message</button>--}}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function () {
+
+            $('#showUpdateModel').click(function () {
+                $('#ShowUpdates').modal();
+            });
+
+            $('#showModel').click(function () {
+                $('#updateMessage').modal();
+            });
+
+            /////////////// Add Record //////////////////////
+            $('#submit').click(function () {
+
+                $('#submit').text('please wait...');
+                $('#submit').attr('disabled',true);
+
+                var meter_id = $('.meter_id').val();
+                //alert(supplierNew);
+                if (meter_id != null)
+                {
+                    var insert = [], orderItem = [], nonArrayData = "";
+                    $('#newRow tr').each(function () {
+                        var currentRow = $(this).closest("tr");
+                        if (validateRow(currentRow)) {
+                            orderItem =
+                                {
+                                    meter_id: currentRow.find('.meter_id').val(),
+                                    detail_id: currentRow.find('.detail_id').val(),
+                                    startReading: currentRow.find('.startReading').val(),
+                                    endReading: currentRow.find('.endReading').val(),
+                                    netReading: currentRow.find('.netReading').val(),
+                                    purchases: currentRow.find('.purchases').val(),
+                                    sales: currentRow.find('.sales').val(),
+                                    Description: currentRow.find('.Description').val(),
+                                };
+                            insert.push(orderItem);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+
+                    });
+                    var Id = $('#id').val();
+                    let details = {
+                        Id:Id,
+                        meterReadingDate: $('#meterReadingDate').val(),
+                        startPad: $('.startPad').val(),
+                        endPad: $('.endPad').val(),
+                        totalSale: $('.totalSale').val(),
+                        totalPad: $('.totalPad').val(),
+                        balance: $('.balance').val(),
+                        UpdateDescription: $('#UpdateDescription').val(),
+                        orders: insert,
+                    }
+                    // var Datas = {Data: details}
+                    // console.log(Datas);
+                    if (insert.length > 0) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+                        var Datas = {Data: details};
+                        console.log(Datas);
+                        $.ajax({
+                            url: "{{ URL('meterReadingUpdate') }}/" + Id,
+                            type: "post",
+                            data: Datas,
+                            success: function (result) {
+                                if (result !== "Failed") {
+                                    details = [];
+                                    //console.log(result);
+                                    alert("Data Inserted Successfully");
+                                    //window.location.href = "{{ route('sales.index') }}";
+                                } else {
+                                    alert(result);
+                                }
+                            },
+                            error: function (errormessage) {
+                                alert(errormessage);
+                            }
+                        });
+                    } else
+                    {
+                        alert('Please Add item to list');
+                        $('#submit').text('Save');
+                        $('#submit').attr('disabled',false);
+                    }
+                }
+                else
+                {
+                    alert('Select Meter first')
+                    $('#submit').text('Save');
+                    $('#submit').attr('disabled',false);
+                }
+
+            });
+            //////// end of submit Records /////////////////
+
+
+
+/////////////////// change date //////////////////////////
+            $('#meterReadingDate').change(function () {
+                // alert($(this).val());
+
+                // var Id = 0;
+                var Id = $(this).val();
+
+                $.ajax({
+                    // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url: "{{ URL('getSalesByDate') }}/" + Id,
+                    type: "get",
+                    dataType: "json",
+                    statusCode: {
+                        500: function() {
+                            alert("No Data Available On same Date");
+                            $('.startPad').val('');
+                            $('.endPad').val('');
+                            $('.totalPad').val('');
+                        }
+                    },
+                    success: function (result) {
+                        if (result !== "Failed") {
+                            console.log(result);
+                            $('.startPad').val(result.firstPad);
+                            $('.endPad').val(result.lastPad);
+                            $('.totalPad').val((result.total));
+
+                        }
+                    },
+//                                error: function (errormessage) {
+//                                    alert(errormessage);
+//                                }
+                });
+            });
+
+
+
 
             // ///////////////////// Add new Row //////////////////////
             $(document).on("click",'.addRow', function () {
 
                 var currentRow = $(this).closest("tr");
-
+                if (validateRow(currentRow))
                 {
                     $('.addRow').removeAttr("value", "");
                     $('.addRow').attr("value", "X");
@@ -173,12 +412,12 @@
 
                     var html = '';
                     html += '<tr>';
-                    html += '<td><select name="meter_id" class="meter_id form-control"> <option value="2">Meter</option> </select></td>';
-                    html += '<td><input type="text" onfocus="this.value=\'\'" value="0.00" placeholder="Start Reading" class="startReading form-control"></td>';
-                    html += '<td><input type="text" onfocus="this.value=\'\'" value="0.00" placeholder="End Reading" class="endReading form-control"></td>';
+                    html += '<td><select name="meter_id" class="meter_id form-control"><option value="0" readonly disabled selected>Meter</option>@foreach($meter_readers as $reader)<option value="{{ $reader->id }}">{{ $reader->Name }}</option>@endforeach</select></td>';
+                    html += '<td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Start Reading" class="startReading form-control"></td>';
+                    html += '<td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="End Reading" class="endReading form-control"></td>';
                     html += '<td><input type="text" value="0.00" placeholder="Net Reading" class="netReading form-control" disabled><input type="hidden" value="0.00" placeholder="Net Reading" class="netReading form-control" ></td>';
-                    html += '<td><input type="text" onfocus="this.value=\'\'" value="0.00" placeholder="Purchases" class="purchases form-control"><input type="hidden" onfocus="this.value=\'\'" value="0.00" placeholder="Total Row Sale" class="totalRow form-control"></td>';
-                    html += '<td><input type="text" onfocus="this.value=\'\'" value="0.00" placeholder="Sales" class="sales form-control" disabled><input type="hidden" onfocus="this.value=\'\'" value="0.00" placeholder="Sales" class="sales form-control"></td>';
+                    html += '<td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Purchases" class="purchases form-control"><input type="hidden" onfocus="this.value=\'\'" value="0.00" placeholder="Total Row Sale" class="totalRow form-control"></td>';
+                    html += '<td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Sales" class="sales form-control" disabled><input type="hidden" onfocus="this.value=\'\'" value="0.00" placeholder="Sales" class="sales form-control"></td>';
                     html += '<td><input type="text" placeholder="Net Description" class="Description form-control"></td>';
                     html += '<td><input class="btn btn-success addRow" id="addRow" type="button" value="+" /></td>';
                     html += '</tr>';
@@ -191,130 +430,15 @@
             $(document).on("click",'.remove', function () {
                 var Current = $(this).closest('tr');
                 Current.remove();
+                CountTotal()
             });
             // /////////////end remove row //////////////
 
-
-            //// accept Only Numbers /////////////////////
-
-
-            //////// end Accept only Number ////////////////////
         });
-
-
-        //////////////////////// Add quantity ///////////
-        $(document).on("keyup",'.startReading', function () {
-            var Currentrow = $(this).closest("tr");
-            var startReading = $(this).val();
-            if (parseInt(startReading) >= 0)
-            {
-                var sum1 = parseFloat(Currentrow.find('.endReading').val()) - parseInt(startReading);
-                // var sum = parseInt(sum1) - parseFloat(Currentrow.find('.purchases').val());
-                //alert(Total);
-                Currentrow.find('.netReading').val(sum1);
-                // Currentrow.find('.sales').val(sum) ;
-                Currentrow.find('.totalRow').val(sum1) ;
-                var pur = Currentrow.find('.purchases').val();
-                pchase(pur, Currentrow);
-                CountTotal()
-
-            }
-        });
-        ///////// end of add quantity ///////////////////
-
-        //////////////////////// Add quantity ///////////
-        $(document).on("keyup",'.endReading', function () {
-            var Currentrow = $(this).closest("tr");
-            var endReading = $(this).val();
-            if (parseInt(endReading) >= 0)
-            {
-                var sum1 = parseInt(endReading) - parseFloat(Currentrow.find('.startReading').val())
-                //var sum = parseInt(sum1) - parseFloat(Currentrow.find('.purchases').val());
-                //alert(Total);
-                Currentrow.find('.netReading').val(sum1);
-                //Currentrow.find('.sales').val(sum) ;
-                Currentrow.find('.totalRow').val(sum1) ;
-                var pur = Currentrow.find('.purchases').val();
-                pchase(pur, Currentrow);
-                CountTotal()
-            }
-        });
-        ///////// end of add quantity ///////////////////
-
-        //////////////////////// Add quantity ///////////
-        $(document).on("keyup",'.purchases', function () {
-            var Currentrow = $(this).closest("tr");
-            var purchases = $(this).val();
-            if (parseInt(purchases) >= 0)
-            {
-                var sum = parseFloat(Currentrow.find('.totalRow').val()) - parseInt(purchases);
-                //alert(Total);
-                Currentrow.find('.sales').val(sum) ;
-                CountTotal()
-            }
-        });
-        ///////// end of add quantity ///////////////////
-
-        //////////////////////// Add quantity ///////////
-        $(document).on("keyup",'.sales', function () {
-            var Currentrow = $(this).closest("tr");
-            var sales = $(this).val();
-            if (parseInt(sales) >= 0)
-            {
-                var sum = parseInt(sales) - parseFloat(Currentrow.find('.purchases').val());
-                //alert(Total);
-                Currentrow.find('.netDifference').val(sum);
-                CountTotal()
-            }
-        });
-        ///////// end of add quantity ///////////////////
-
-
-        //////////// tatal  /////////////////
-        function CountTotal() {
-            var Totalvalue = 0;
-            var Gtotal = 0;
-            $('#newRow tr').each(function () {
-                if ($(this).find(".sales").val().trim() !== ""){
-                    Gtotal = parseFloat(Gtotal) + parseFloat($(this).find(".sales").val());
-                }
-                else {
-                    Gtotal = parseFloat(Gtotal);
-                }
-            });
-
-            $('.totalSale').val((Gtotal.toFixed(2)));
-            var Input = parseFloat(Gtotal - $('.tatalPad').val());
-            $('.balance').val((Input.toFixed(2)));
-
-        }
-        //////////////// end of total  /////////////
-
-        //////////// tatal  /////////////////
-        function pchase(pur, Currentrow) {
-            var sum = parseFloat(Currentrow.find('.totalRow').val()) - parseInt(pur);
-            //alert(Total);
-            Currentrow.find('.sales').val(sum) ;
-            CountTotal()
-        }
-        //////////////// end of total  /////////////
-
-        //////////////balance ////////////////////
-        // $(document).on("keyup",'.tatalPad',function () {
-        //     var GTotal = $('.totalSale').val();
-        //     var Input = parseFloat(GTotal - $('.tatalPad').val());
-        //     var rr= $('.balance').val((Input.toFixed(2)));
-        // });
-        ////////////// balance end ///////////////////////
-
-
-
-
-
 
     </script>
 
-    {{--    <script src="{{ asset('admin_assets/assets/dist/invoice/invoice.js') }}"></script>--}}
+    <script src="{{ asset('admin_assets/assets/dist/invoice/meterReading.js') }}"></script>
 
 
 @endsection

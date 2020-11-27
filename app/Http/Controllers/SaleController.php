@@ -71,9 +71,29 @@ class SaleController extends Controller
         // $customers = Customer::with('vehicles')->find($id);
 
 
-        $salesByDate['totalSale'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->sum('grandTotal');
-        $salesByDate['firstPad'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->first()->sale_details->first()->PadNumber;
-        $salesByDate['lastPad'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->last()->sale_details->last()->PadNumber;
+        $salesData = Sale::with('sale_details')->where('SaleDate', $id)->get();
+        if ($salesData != null)
+        {
+
+            $salesByDate['total'] = 0;
+            foreach ($salesData as $data){
+                $salesByDate['total'] += $data->sale_details[0]->Quantity;
+            }
+            //$salesByDate['sale_details'] = $salesData->first()->sale_details->sum('Quantity');
+            //$salesByDate['sale_details'] = $salesData->first()->sale_details->sum('Quantity');
+            $salesByDate['firstPad'] = $salesData->first()->first()->sale_details->first()->PadNumber;
+            $salesByDate['lastPad'] = $salesData->last()->sale_details->last()->PadNumber;
+        }
+        else
+        {
+            $salesByDate['sale_details'] = 0;
+            $salesByDate['firstPad'] = 0;
+            $salesByDate['lastPad'] = 0;
+        }
+
+//        $salesByDate['totalSale'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->sum('grandTotal');
+//        $salesByDate['firstPad'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->first()->sale_details->first()->PadNumber;
+//        $salesByDate['lastPad'] = Sale::with('sale_details')->where('SaleDate', $id)->get()->last()->sale_details->last()->PadNumber;
 //        $salesByDate1['firstPadSale'] = Sale::with('sale_details')->where('SaleDate', $id)->first();
 //        $salesByDate1['firstPadSale2'] = $salesByDate1['firstPadSale']->sale_details1->first();
 //        $salesByDate1['firstPad'] = $salesByDate1['firstPadSale2']->PadNumber;

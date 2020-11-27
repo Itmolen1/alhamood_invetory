@@ -166,7 +166,7 @@ class SaleRepository implements ISaleRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $update_notes = UpdateNote::with('company','user')->where('RelationId',$Id)->get();
+        $update_notes = UpdateNote::with('company','user')->where(['RelationId' => $Id, 'RelationTable' => 'sales'])->get();
         //dd($update_notes[0]->Description);
         $customers = Customer::all();
         $products = Product::all();

@@ -169,7 +169,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $update_notes = UpdateNote::with('company','user')->where('RelationId',$Id)->get();
+        $update_notes = UpdateNote::with('company','user')->where(['RelationId' => $Id, 'RelationTable' => 'expenses'])->get();
         $suppliers = Supplier::all();
         $employees = Employee::all();
         $expense_categories = ExpenseCategory::all();

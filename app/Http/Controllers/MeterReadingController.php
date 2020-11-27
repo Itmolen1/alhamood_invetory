@@ -29,57 +29,30 @@ class MeterReadingController extends Controller
         return $this->meterReadingRepository->create();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
-        //
+        return $this->meterReadingRepository->store($request);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\MeterReading  $meterReading
-     * @return \Illuminate\Http\Response
-     */
-    public function show(MeterReading $meterReading)
+    public function show($Id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\MeterReading  $meterReading
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(MeterReading $meterReading)
+
+    public function edit($Id)
     {
-        //
+        return $this->meterReadingRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\MeterReading  $meterReading
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, MeterReading $meterReading)
+
+    public function meterReadingUpdate(Request $request, $Id)
     {
-        //
+        return $this->meterReadingRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\MeterReading  $meterReading
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(MeterReading $meterReading)
     {
         //

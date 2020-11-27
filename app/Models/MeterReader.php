@@ -25,4 +25,9 @@ class MeterReader extends Model
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
     }
+
+    public function meter_reading_detail()
+    {
+        return $this->hasMany('App\Models\MeterReadingDetail');
+    }
 }
