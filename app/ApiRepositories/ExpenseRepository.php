@@ -4,143 +4,138 @@
 namespace App\ApiRepositories;
 
 
-use App\ApiRepositories\Interfaces\IPurchaseRepositoryInterface;
-use App\Http\Requests\PurchaseRequest;
-use App\Http\Resources\Purchase\PurchaseResource;
+use App\ApiRepositories\Interfaces\IExpenseRepositoryInterface;
+use App\Http\Requests\ExpenseRequest;
+use App\Http\Resources\Expense\ExpenseResource;
+use App\Models\Expense;
+use App\Models\ExpenseDetail;
 use App\Models\FileUpload;
 use App\Models\Product;
-use App\Models\Purchase;
-use App\Models\PurchaseDetail;
 use App\Models\Supplier;
-use App\Models\update_note;
 use App\Models\UpdateNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PDF;
 
-class PurchaseRepository implements IPurchaseRepositoryInterface
+class ExpenseRepository implements IExpenseRepositoryInterface
 {
 
     public function all()
     {
-        return PurchaseResource::collection(Purchase::with('user','purchase_details')->get()->sortDesc());
+        return ExpenseResource::collection(Expense::with('user','expense_details')->get()->sortDesc());
     }
 
     public function paginate($page_no, $page_size)
     {
-        return PurchaseResource::Collection(Purchase::all()->sortDesc()->forPage($page_no,$page_size));
+        return ExpenseResource::Collection(Expense::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function insert(Request $request)
     {
-        $invoice = new Purchase();
-        $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
-        $newInvoiceID = 'PUR-00'.($lastInvoiceID + 1);
+        $expense = new Expense();
+        $lastExpenseID = $expense->orderByDesc('id')->pluck('id')->first();
+        $newExpenseID = 'EXP-00'.($lastExpenseID + 1);
 
-        $purchase_detail=$request->purchase_detail;
+        $expense_detail=$request->expense_detail;
 
         $userId = Auth::id();
-        $purchase = new Purchase();
-        $purchase->PurchaseNumber=$newInvoiceID;
-        $purchase->supplier_id=$request->supplier_id;
-        $purchase->employee_id=$request->employee_id;
-        $purchase->PurchaseDate=$request->PurchaseDate;
-        $purchase->DueDate=$request->DueDate;
-        $purchase->referenceNumber=$request->referenceNumber;
-        $purchase->Total=$request->Total;
-        $purchase->subTotal=$request->subTotal;
-        $purchase->totalVat=$request->totalVat;
-        $purchase->grandTotal=$request->grandTotal;
-        $purchase->Description=$request->Description;
-        $purchase->TermsAndCondition=$request->TermsAndCondition;
-        $purchase->supplierNote=$request->supplierNote;
-        $purchase->IsNeedStampOrSignature=$request->IsNeedStampOrSignature;
-        $purchase->createdDate=date('Y-m-d h:i:s');
-        $purchase->isActive=1;
-        $purchase->user_id = $userId ?? 0;
-        $purchase->save();
-        $purchase_id = $purchase->id;
+        $expense = new Expense();
+        $expense->expenseNumber=$newExpenseID;
+        $expense->user_id = $userId ?? 0;
+        $expense->company_id = 0;
+        $expense->employee_id=$request->employee_id;
+        $expense->supplier_id=$request->supplier_id;
+        $expense->expenseDate=$request->expenseDate;
+        $expense->referenceNumber=$request->referenceNumber;
+        $expense->Total=$request->Total;
+        $expense->subTotal=$request->subTotal;
+        $expense->totalVat=$request->totalVat;
+        $expense->grandTotal=$request->grandTotal;
+        $expense->Description=$request->Description;
+        $expense->termsAndCondition=$request->termsAndCondition;
+        $expense->supplierNote=$request->supplierNote;
+        $expense->createdDate=date('Y-m-d h:i:s');
+        $expense->isActive=1;
 
-        foreach ($purchase_detail as $purchase_item)
+        $expense->save();
+        $expense_id = $expense->id;
+
+        foreach ($expense_detail as $expense_item)
         {
-            $data=PurchaseDetail::create([
-                'purchase_id'=>$purchase_id,
-                'PadNumber'=>$purchase_item['PadNumber'],
-                'product_id'=>$purchase_item['product_id'],
-                'Price'=>$purchase_item['Price'],
-                'Quantity'=>$purchase_item['Quantity'],
-                'rowTotal'=>$purchase_item['rowTotal'],
-                'VAT'=>$purchase_item['VAT'],
-                'rowVatAmount'=>$purchase_item['rowVatAmount'],
-                'rowSubTotal'=>$purchase_item['rowSubTotal'],
-                'Description'=>$purchase_item['Description'],
+            $data=ExpenseDetail::create([
+                'expense_id'=>$expense_id,
+                'expense_category_id'=>$expense_item['expense_category_id'],
+                'expenseDate'=>$expense_item['expenseDate'],
+                'PadNumber'=>$expense_item['PadNumber'],
+                'Description'=>$expense_item['Description'],
+                'Total'=>$expense_item['Total'],
+                'VAT'=>$expense_item['VAT'],
+                'rowVatAmount'=>$expense_item['rowVatAmount'],
+                'rowSubTotal'=>$expense_item['rowSubTotal'],
             ]);
         }
-        $Response = PurchaseResource::collection(Purchase::where('id',$purchase->id)->with('user','supplier','purchase_details')->get());
+        $Response = ExpenseResource::collection(Expense::where('id',$expense->id)->with('user','supplier','expense_details')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
         //return new PurchaseResource(Purchase::find($purchase->id));
     }
 
-    public function update(PurchaseRequest $purchaseRequest, $Id)
+    public function update(ExpenseRequest $expenseRequest, $Id)
     {
         $userId = Auth::id();
-        $purchaseRequest['user_id']=$userId ?? 0;
+        $expenseRequest['user_id']=$userId ?? 0;
 
-        $purchase_detail=$purchaseRequest->purchase_detail;
+        $expense_detail=$expenseRequest->expense_detail;
 
-        $purchase = Purchase::findOrFail($Id);
-        $purchase->supplier_id=$purchaseRequest->supplier_id;
-        $purchase->employee_id=$purchaseRequest->employee_id;
-        $purchase->PurchaseDate=$purchaseRequest->PurchaseDate;
-        $purchase->DueDate=$purchaseRequest->DueDate;
-        $purchase->referenceNumber=$purchaseRequest->referenceNumber;
-        $purchase->Total=$purchaseRequest->Total;
-        $purchase->subTotal=$purchaseRequest->subTotal;
-        $purchase->totalVat=$purchaseRequest->totalVat;
-        $purchase->grandTotal=$purchaseRequest->grandTotal;
-        $purchase->Description=$purchaseRequest->Description;
-        $purchase->TermsAndCondition=$purchaseRequest->TermsAndCondition;
-        $purchase->supplierNote=$purchaseRequest->supplierNote;
-        $purchase->IsNeedStampOrSignature=$purchaseRequest->IsNeedStampOrSignature;
-        $purchase->update();
+        $expense = Expense::findOrFail($Id);
+        $expense->employee_id=$expenseRequest->employee_id;
+        $expense->supplier_id=$expenseRequest->supplier_id;
+        $expense->expenseDate=$expenseRequest->expenseDate;
+        $expense->referenceNumber=$expenseRequest->referenceNumber;
+        $expense->Total=$expenseRequest->Total;
+        $expense->subTotal=$expenseRequest->subTotal;
+        $expense->totalVat=$expenseRequest->totalVat;
+        $expense->grandTotal=$expenseRequest->grandTotal;
+        $expense->Description=$expenseRequest->Description;
+        $expense->termsAndCondition=$expenseRequest->termsAndCondition;
+        $expense->supplierNote=$expenseRequest->supplierNote;
+        $expense->update();
 
         $update_note = new UpdateNote();
-        $update_note->RelationTable = 'purchases';
+        $update_note->RelationTable = 'expenses';
         $update_note->RelationId = $Id;
-        $update_note->Description = $purchaseRequest->update_note;
+        $update_note->Description = $expenseRequest->update_note;
         $update_note->user_id = $userId;
         $update_note->save();
 
-        DB::table('purchase_details')->where([['purchase_id', $Id]])->delete();
+        DB::table('expense_details')->where([['expense_id', $Id]])->delete();
 
-        if(!empty($purchase_detail))
+        if(!empty($expense_detail))
         {
-            foreach ($purchase_detail as $purchase_item)
+            foreach ($expense_detail as $expense_item)
             {
-                $data=PurchaseDetail::create([
-                    'purchase_id'=>$Id,
-                    'PadNumber'=>$purchase_item['PadNumber'],
-                    'product_id'=>$purchase_item['product_id'],
-                    'Price'=>$purchase_item['Price'],
-                    'Quantity'=>$purchase_item['Quantity'],
-                    'rowTotal'=>$purchase_item['rowTotal'],
-                    'VAT'=>$purchase_item['VAT'],
-                    'rowVatAmount'=>$purchase_item['rowVatAmount'],
-                    'rowSubTotal'=>$purchase_item['rowSubTotal'],
-                    'Description'=>$purchase_item['Description'],
+                $data=ExpenseDetail::create([
+                    'expense_id'=>$Id,
+                    'expense_category_id'=>$expense_item['expense_category_id'],
+                    'expenseDate'=>$expense_item['expenseDate'],
+                    'PadNumber'=>$expense_item['PadNumber'],
+                    'Description'=>$expense_item['Description'],
+                    'Total'=>$expense_item['Total'],
+                    'VAT'=>$expense_item['VAT'],
+                    'rowVatAmount'=>$expense_item['rowVatAmount'],
+                    'rowSubTotal'=>$expense_item['rowSubTotal'],
                 ]);
             }
         }
-        $Response = PurchaseResource::collection(Purchase::where('id',$Id)->with('user','supplier','purchase_details')->get());
+        $Response = ExpenseResource::collection(Expense::where('id',$Id)->with('user','supplier','expense_details')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
     }
 
     public function getById($Id)
     {
-        $Response = PurchaseResource::collection(Purchase::where('id',$Id)->with('user','supplier','purchase_details','update_notes','documents')->get());
+        $Response = ExpenseResource::collection(Expense::where('id',$Id)->with('user','supplier','expense_details','update_notes','documents')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
     }
@@ -154,40 +149,40 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         $userId = Auth::id();
         $request['user_id']=$userId ?? 0;
-        $update = Purchase::find($Id);
+        $update = Expense::find($Id);
         $update->user_id=$userId;
         $update->save();
-        $purchase = Purchase::withoutTrashed()->find($Id);
-        if($purchase->trashed())
+        $expense = Expense::withoutTrashed()->find($Id);
+        if($expense->trashed())
         {
-            return new PurchaseResource(Purchase::onlyTrashed()->find($Id));
+            return new ExpenseResource(Expense::onlyTrashed()->find($Id));
         }
         else
         {
-            DB::table('purchase_details')->where([['purchase_id', $Id]])->update(['deleted_at' =>date('Y-m-d h:i:s')]);
-            $purchase->delete();
-            return new PurchaseResource(Purchase::onlyTrashed()->find($Id));
+            DB::table('expense_details')->where([['expense_id', $Id]])->update(['deleted_at' =>date('Y-m-d h:i:s')]);
+            $expense->delete();
+            return new ExpenseResource(Expense::onlyTrashed()->find($Id));
         }
     }
 
     public function restore($Id)
     {
-        $supplier = Purchase::onlyTrashed()->find($Id);
+        $supplier = Expense::onlyTrashed()->find($Id);
         if (!is_null($supplier))
         {
             $supplier->restore();
-            return new PurchaseResource(Purchase::find($Id));
+            return new ExpenseResource(Expense::find($Id));
         }
-        return new PurchaseResource(Purchase::find($Id));
+        return new ExpenseResource(Expense::find($Id));
     }
 
     public function trashed()
     {
-        $supplier = Purchase::onlyTrashed()->get();
-        return PurchaseResource::collection($supplier);
+        $supplier = Expense::onlyTrashed()->get();
+        return ExpenseResource::collection($supplier);
     }
 
-    public function PurchaseDocumentsUpload(Request $request)
+    public function ExpenseDocumentsUpload(Request $request)
     {
         try
         {
@@ -197,12 +192,12 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                 foreach($request->file('document') as $document)
                 {
                     $extension = $document->getClientOriginalExtension();
-                    $filename=uniqid('purchase_doc_'.$request->id.'_').'.'.$extension;
+                    $filename=uniqid('expense_doc_'.$request->id.'_').'.'.$extension;
                     $document->storeAs('document/',$filename,'public');
 
                     $file_upload = new FileUpload();
                     $file_upload->Title = $filename;
-                    $file_upload->RelationTable = 'purchases';
+                    $file_upload->RelationTable = 'expenses';
                     $file_upload->RelationId = $request->id;
                     $file_upload->user_id = $userId;
                     $file_upload->save();
@@ -223,7 +218,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         $data=$this->getById($id);
         //echo "<pre>";print_r($data);die;
-        if(!empty($data['purchase_details']))
+        if(!empty($data['expense_details']))
         {
             $company_title='WATAN PHARMA LLP.';
             $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
@@ -245,18 +240,18 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
             $pdf::SetXY(25,12);
             $pdf::MultiCell(134, 5, $company_address, 0, 'C', 0, 2, '', '', true, 0);
-            $pdf::MultiCell(44, 5, $data['PurchaseNumber'], 0, 'R', 0, 2, '', '', true, 0);
+            $pdf::MultiCell(44, 5, $data['expenseNumber'], 0, 'R', 0, 2, '', '', true, 0);
 
             $pdf::SetXY(25,16);
             $pdf::MultiCell(147, 5, $company_mobile, 0, 'C', 0, 2, '', '', true, 0);
 
             $pdf::SetXY(25,20);
             $pdf::MultiCell(107, 5, $company_email, 0, 'C', 0, 2, '', '', true, 0);
-            $pdf::MultiCell(71, 5, 'Date : '.date('d-m-Y', strtotime($data['PurchaseDate'])), 0, 'R', 0, 2, '', '', true, 0);
+            $pdf::MultiCell(71, 5, 'Date : '.date('d-m-Y', strtotime($data['expenseDate'])), 0, 'R', 0, 2, '', '', true, 0);
 
             $pdf::SetXY(25,24);
             $pdf::MultiCell(106, 5, 'TRN : 100330389600003', 0, 'C', 0, 2, '', '', true, 0);
-            $pdf::MultiCell(72, 5, 'Due Date : '.date('d-m-Y', strtotime($data['DueDate'])), 0, 'R', 0, 2, '', '', true, 0);
+            $pdf::MultiCell(72, 5, 'Due Date : '.date('d-m-Y', strtotime($data['expenseDate'])), 0, 'R', 0, 2, '', '', true, 0);
 
             $pdf::SetXY(28,28);
             $pdf::Image('https://watanpharma.com/images/logo-1.png', 15, 5, 40, 18, 'PNG', '', '', true, 300, '', false, false, 0, false, false, false);
@@ -266,9 +261,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $pdf::SetXY(25,35);
             $pdf::writeHTML("<hr>", true, false, false, false, '');
 
-            $row=$data['purchase_details'];
+            $row=$data['expense_details'];
             $pdf::SetFont('times', '', 15);
-            $html='<u><b>PURCHASE INVOICE</b></u>';
+            $html='<u><b>Expense Voucher</b></u>';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
             $created_by=isset($data['user']['name'])?$data['user']['name']:'N.A.';
@@ -318,17 +313,17 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 //                if($row[$i]['deleted_at']=='1970-01-01T08:00:00.000000Z')
 //                {
 
-                    $html .='<tr>
+                $html .='<tr>
                     <td align="center" width="30">'.($sn+1).'</td>
-                    <td align="left" width="190">'.$row[$i]['product']['Name'].'</td>
+                    <td align="left" width="190">'.$row[$i]['PadNumber'].'</td>
                     <td align="left" width="70">'.$row[$i]['PadNumber'].'</td>
                     <td align="center" width="50">'.'N.A.'.'</td>
-                    <td align="center" width="55">'.number_format($row[$i]['Price'],2,'.',',').'</td>
-                    <td align="center" width="50">'.number_format($row[$i]['Quantity'],2,'.',',').'</td>
-                    <td align="center" width="35">'.number_format($row[$i]['VAT'],2,'.',',').'</td>
+                    <td align="center" width="55">'.number_format($row[$i]['Total'],2,'.',',').'</td>
+                    <td align="center" width="50">'.number_format($row[$i]['VAT'],2,'.',',').'</td>
+                    <td align="center" width="35">'.number_format($row[$i]['rowVatAmount'],2,'.',',').'</td>
                     <td align="right" width="80">'.number_format($row[$i]['rowSubTotal'],2,'.',',').'</td>
                     </tr>';
-                    $sn++;
+                $sn++;
                 //}
             }
             $pdf::SetFillColor(255, 0, 0);
@@ -344,8 +339,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $vendor_note=isset($data['supplierNote'])?$data['supplierNote']:'N.A.';
             $html.= '
                 <tr color="black">
-                    <td width="220" colspan="2" rowspan="2" style="border: 1px solid black;">'.$data['TermsAndCondition'].'</td>
-                    <td width="175" colspan="4" rowspan="2" style="border: 1px solid black;">'.$data['supplierNote'].'</td>
+                    <td width="220" colspan="2" rowspan="2" style="border: 1px solid black;">'.$terms_condition.'</td>
+                    <td width="175" colspan="4" rowspan="2" style="border: 1px solid black;">'.$vendor_note.'</td>
                     <td width="85" colspan="2" align="right" style="border: 1px solid black;">VAT (5%)</td>
                     <td width="80" align="right" style="border: 1px solid black;">'.number_format($data['totalVat'],2,'.',',').'</td>
                 </tr>';
@@ -371,10 +366,10 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
             $pdf::lastPage();
             $time=time();
-            $fileLocation = storage_path().'/app/public/purchase_order_files/';
+            $fileLocation = storage_path().'/app/public/expense_files/';
             $fileNL = $fileLocation.'//'.$time.'.pdf';
             $pdf::Output($fileNL, 'F');
-            $url=url('/').'/storage/purchase_order_files/'.$time.'.pdf';
+            $url=url('/').'/storage/expense_files/'.$time.'.pdf';
             //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;

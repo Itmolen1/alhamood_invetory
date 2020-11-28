@@ -42,6 +42,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Customer', 'api\CustomerController');
     Route::get('/Customer/paginate/{page_no}/{page_size}','api\CustomerController@paginate');
 
+    Route::apiResource('/Company', 'api\CompanyController');
+    Route::get('/Company/paginate/{page_no}/{page_size}','api\CompanyController@paginate');
+
+    Route::apiResource('/ExpenseCategory', 'api\ExpenseCategory');
+    Route::get('/ExpenseCategory/paginate/{page_no}/{page_size}','api\ExpenseCategory@paginate');
+
     Route::apiResource('/Supplier', 'api\SupplierController');
     Route::get('/Supplier/paginate/{page_no}/{page_size}','api\SupplierController@paginate');
 
@@ -54,11 +60,20 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Employee', 'api\EmployeeController');
     Route::get('/Employee/paginate/{page_no}/{page_size}','api\EmployeeController@paginate');
 
+    Route::apiResource('/Meter', 'api\MeterReaderController');
+    Route::get('/Meter/paginate/{page_no}/{page_size}','api\MeterReaderController@paginate');
+
     Route::apiResource('/Purchase', 'api\PurchaseController');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');
-    Route::get('/getPurchaseOrderBaseLists', 'api\PurchaseController@BaseList');
+    Route::get('/getPurchaseBaseList', 'api\PurchaseController@BaseList');
     Route::post('PurchaseDocumentsUpload', 'api\PurchaseController@PurchaseDocumentsUpload');
     Route::get('/Purchase/print/{Id}', 'api\PurchaseController@print');
+
+    Route::apiResource('/Expense', 'api\ExpenseController');
+    Route::get('/Expense/paginate/{page_no}/{page_size}','api\ExpenseController@paginate');
+    Route::get('/getExpenseBaseList', 'api\ExpenseController@BaseList');
+    Route::post('ExpenseDocumentsUpload', 'api\ExpenseController@ExpenseDocumentsUpload');
+    Route::get('/Expense/print/{Id}', 'api\ExpenseController@print');
 });
 
 
