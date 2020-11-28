@@ -28,8 +28,11 @@ class MeterReading extends Model
 
     public function meter_reading_details()
     {
-        return $this->hasMany('App\Models\MeterReadingDetail');
+        return $this->hasMany('App\Models\MeterReadingDetail','meter_reading_id')->withTrashed();
     }
 
-
+    public function update_notes()
+    {
+        return $this->hasMany('App\Models\UpdateNote','RelationId')->where('RelationTable','=','meter_readings');
+    }
 }

@@ -63,6 +63,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Meter', 'api\MeterReaderController');
     Route::get('/Meter/paginate/{page_no}/{page_size}','api\MeterReaderController@paginate');
 
+    Route::apiResource('/Country', 'api\CountryController');
+    Route::get('/Country/paginate/{page_no}/{page_size}','api\CountryController@paginate');
+
+    Route::apiResource('/State', 'api\StateController');
+    Route::get('/State/paginate/{page_no}/{page_size}','api\StateController@paginate');
+
     Route::apiResource('/Purchase', 'api\PurchaseController');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');
     Route::get('/getPurchaseBaseList', 'api\PurchaseController@BaseList');
@@ -74,6 +80,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/getExpenseBaseList', 'api\ExpenseController@BaseList');
     Route::post('ExpenseDocumentsUpload', 'api\ExpenseController@ExpenseDocumentsUpload');
     Route::get('/Expense/print/{Id}', 'api\ExpenseController@print');
+
+    Route::apiResource('/MeterReading', 'api\MeterReadingController');
+    Route::get('/MeterReading/paginate/{page_no}/{page_size}','api\MeterReadingController@paginate');
+    Route::get('/getMeterReadingBaseList', 'api\MeterReadingController@BaseList');
 });
 
 
