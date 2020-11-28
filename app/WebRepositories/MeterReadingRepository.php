@@ -39,9 +39,10 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
 //        $salesByDate['lastPad'] = Sale::with('sale_details')->where('SaleDate', date('Y-m-d'))->get()->last()->sale_details->last()->PadNumber;
 
         $salesData = Sale::with('sale_details')->where('SaleDate', date('Y-m-d'))->get();
-        if ($salesData != null)
+        $total = 0;
+        if ($salesData->first() != null)
         {
-            $total = 0;
+
             foreach ($salesData as $data){
                 $total += $data->sale_details[0]->Quantity;
              }
