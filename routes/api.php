@@ -69,6 +69,18 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/State', 'api\StateController');
     Route::get('/State/paginate/{page_no}/{page_size}','api\StateController@paginate');
 
+    Route::apiResource('/City', 'api\CityController');
+    Route::get('/City/paginate/{page_no}/{page_size}','api\CityController@paginate');
+
+    Route::apiResource('/Region', 'api\RegionController');
+    Route::get('/Region/paginate/{page_no}/{page_size}','api\RegionController@paginate');
+
+    Route::apiResource('/CustomerAdvance', 'api\CustomerAdvanceController');
+    Route::get('/CustomerAdvance/paginate/{page_no}/{page_size}','api\CustomerAdvanceController@paginate');
+
+    Route::apiResource('/SupplierAdvance', 'api\SupplierAdvanceController');
+    Route::get('/SupplierAdvance/paginate/{page_no}/{page_size}','api\SupplierAdvanceController@paginate');
+
     Route::apiResource('/Purchase', 'api\PurchaseController');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');
     Route::get('/getPurchaseBaseList', 'api\PurchaseController@BaseList');
