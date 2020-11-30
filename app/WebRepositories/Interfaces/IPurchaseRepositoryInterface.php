@@ -30,4 +30,6 @@ interface IPurchaseRepositoryInterface
 
     public function invoiceNumber();
 
+    public function PadNumber();
+
 }

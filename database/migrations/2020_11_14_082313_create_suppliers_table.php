@@ -24,6 +24,7 @@ class CreateSuppliersTable extends Migration
             $table->string('fileUpload')->nullable();
             $table->string('Phone')->nullable();
             $table->string('Mobile')->nullable();
+            $table->string('Email')->nullable();
             $table->string('Address')->nullable();
             $table->string('postCode')->nullable();
             $table->date('registrationDate')->default(now());

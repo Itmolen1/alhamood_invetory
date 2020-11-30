@@ -24,6 +24,7 @@ class CreateCustomersTable extends Migration
             $table->string('fileUpload')->nullable();
             $table->string('Phone')->nullable();
             $table->string('Mobile')->nullable();
+            $table->string('Email')->nullable();
             $table->string('Address')->nullable();
             $table->string('imageUrl')->nullable();
             $table->string('postCode')->nullable();

@@ -40,7 +40,6 @@ class MeterReadingController extends Controller
         //
     }
 
-
     public function edit($Id)
     {
         return $this->meterReadingRepository->edit($Id);

@@ -140,8 +140,8 @@
                     {{--<li class="border-bottom">--}}
                         {{--<a href="#"> Voucher Approval</a>--}}
                     {{--</li>--}}
-                    <li class="border-bottom"><a href="{{ url('loan') }}">Add Loan</a></li>
-                    <li><a href="{{ url('loan/index') }}">Manage Loan</a></li>
+                    <li class="border-bottom"><a href="{{ route('loans.create') }}">Add Loan</a></li>
+                    <li><a href="{{ route('loans.index') }}">Manage Loan</a></li>
                 </ul>
             </li>
 

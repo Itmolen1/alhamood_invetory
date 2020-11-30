@@ -75,6 +75,12 @@ route::resource('meter_readings','MeterReadingController');
 route::post('meterReadingUpdate/{Id}','MeterReadingController@meterReadingUpdate');
 
 
+/////// loan ///////////////
+route::resource('loans','LoanController');
+route::get('customerRemaining/{Id}','LoanController@customerRemaining');
+route::get('employeeRemaining/{Id}','LoanController@employeeRemaining');
+
+
 
 
 
@@ -95,15 +101,15 @@ route::post('meterReadingUpdate/{Id}','MeterReadingController@meterReadingUpdate
 
 
 //route::view('add_meter','admin.meter.create');
+//
+//route::view('meterReading1','admin.meterReading.create');
+//route::view('meterReading/index','admin.meterReading.index');
+//route::view('meterReading/edit','admin.meterReading.edit');
 
-route::view('meterReading1','admin.meterReading.create');
-route::view('meterReading/index','admin.meterReading.index');
-route::view('meterReading/edit','admin.meterReading.edit');
-
-
-route::view('loan','admin.loan.create');
-route::view('loan/edit','admin.loan.edit');
-route::view('loan/index','admin.loan.index');
+//
+//route::view('loan','admin.loan.create');
+//route::view('loan/edit','admin.loan.edit');
+//route::view('loan/index','admin.loan.index');
 
 route::view('welcome','welcome');
 

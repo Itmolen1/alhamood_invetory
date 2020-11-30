@@ -32,11 +32,12 @@ class SaleRepository implements ISaleRepositoryInterface
     {
         // TODO: Implement create() method.
         $saleNo = $this->invoiceNumber();
+        $PadNumber = $this->PadNumber();
         $customers = Customer::all();
         $products = Product::all();
         $salesRecords = Sale::with('sale_details.vehicle','customer')->orderBy('id', 'desc')->skip(0)->take(3)->get();
         //dd($salesRecords);
-        return view('admin.sale.create',compact('customers','saleNo','products','salesRecords'));
+        return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','PadNumber'));
     }
 
     public function store(Request $request)
@@ -197,5 +198,15 @@ class SaleRepository implements ISaleRepositoryInterface
         $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
         $newInvoiceID = 'INV-00'.($lastInvoiceID + 1);
         return $newInvoiceID;
+    }
+
+    public function PadNumber()
+    {
+        // TODO: Implement PadNumber() method.
+
+        $PadNumber = new SaleDetail();
+        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $newPad = ($lastPad + 1);
+        return $newPad;
     }
 }

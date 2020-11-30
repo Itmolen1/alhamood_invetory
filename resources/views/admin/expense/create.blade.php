@@ -134,7 +134,7 @@
                                             <tbody id="newRow">
                                             <tr>
                                                 <td> <input type="date" value="{{ date('Y-m-d') }}" name="expenseDetailDate" id="expenseDetailDate" class="form-control expenseDetailDate" placeholder=""></td>
-                                                <td><input type="text" placeholder="Pad Number" name="padNumber" class="padNumber form-control"></td>
+                                                <td><input type="text" placeholder="" value="{{ $PadNumber }}" name="padNumber" class="padNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="customer" class="form-control expense_category_id">
@@ -270,7 +270,7 @@
                         orders: insert,
                     }
                     // var Datas = {Data: details}
-                    // console.log(Datas);
+                    //console.log(Datas);
                     if (insert.length > 0) {
                         $.ajaxSetup({
                             headers: {
@@ -278,7 +278,7 @@
                             }
                         });
                         var Datas = {Data: details};
-                        console.log(Datas);
+                       // console.log(Datas);
                         $.ajax({
                             url: "{{ route('expenses.store') }}",
                             type: "post",

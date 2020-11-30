@@ -1,19 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rizwanafridi
- * Date: 11/23/20
- * Time: 14:11
- */
+
 
 namespace App\WebRepositories\Interfaces;
 
 
 use Illuminate\Http\Request;
 
-interface ISaleRepositoryInterface
+interface ILoanRepositoryInterface
 {
-
     public function index();
 
     public function create();
@@ -32,8 +26,7 @@ interface ISaleRepositoryInterface
 
     public function trashed();
 
-    public function invoiceNumber();
+    public function customerRemaining($Id);
 
-    public function PadNumber();
-
+    public function employeeRemaining($Id);
 }

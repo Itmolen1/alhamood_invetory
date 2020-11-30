@@ -30,10 +30,11 @@ class ExpensesRepository implements IExpensesRepositoryInterface
     {
         // TODO: Implement create() method.
         $expenseNo = $this->invoiceNumber();
+        $PadNumber = $this->PadNumber();
         $suppliers = Supplier::all();
         $employees = Employee::all();
         $expense_categories = ExpenseCategory::all();
-        return view('admin.expense.create',compact('suppliers','expenseNo','employees','expense_categories'));
+        return view('admin.expense.create',compact('suppliers','expenseNo','employees','expense_categories','PadNumber'));
     }
 
     public function store(ExpenseRequest $expenseRequest)
@@ -199,5 +200,15 @@ class ExpensesRepository implements IExpensesRepositoryInterface
         $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
         $newInvoiceID = 'EXP-00'.($lastInvoiceID + 1);
         return $newInvoiceID;
+    }
+
+    public function PadNumber()
+    {
+        // TODO: Implement PadNumber() method.
+
+        $PadNumber = new ExpenseDetail();
+        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $newPad = ($lastPad + 1);
+        return $newPad;
     }
 }

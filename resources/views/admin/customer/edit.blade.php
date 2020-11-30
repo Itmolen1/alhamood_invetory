@@ -138,16 +138,23 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6 ">
+                                        <div class="col-md-4 ">
                                             <div class="form-group">
                                                 <label>Mobile</label>
                                                 <input type="text" name="Mobile" value="{{ $customer->Mobile }}" placeholder="Mobile" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Phone</label>
                                                 <input type="text" name="Phone" value="{{ $customer->Phone }}" placeholder="Phone" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="text" name="Email" value="{{ $customer->Email }}" placeholder="Email" class="form-control">
                                             </div>
                                         </div>
                                     </div>

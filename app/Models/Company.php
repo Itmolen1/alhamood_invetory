@@ -159,5 +159,10 @@ class Company extends Model
     {
         return $this->hasMany('App\Models\MeterReadingDetail');
     }
-        
+
+    public function loans()
+    {
+        return $this->hasMany('App\Models\Loan');
+    }
+
 }

@@ -68,7 +68,8 @@
                                                 <th style="width: 150px">Purchases</th>
                                                 <th style="width: 150px">Sales</th>
                                                 <th>Description</th>
-                                                <th>Action</th>
+                                                <th> <span class="actionText">Action</span> <input class=" btn btn-default addRow AddrowHead" id="addRow" type="button" value="+" /></th>
+                                                
                                             </tr>
                                             </thead>
 
@@ -124,7 +125,7 @@
                                                         <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Sales }}" placeholder="Sales" class="sales form-control">
                                                     </td>
                                                     <td><input type="text" value="{{ $details->Description }}" placeholder="Net Description" class="Description form-control"></td>
-                                                    <td><input class=" btn btn-success addRow" id="addRow" type="button" value="+" /></td>
+                                                    <td><input class=" btn btn-danger remove" id="remove" type="button" value="X" /></td>
                                                 </tr>
                                             @endif
                                             @endforeach
@@ -333,7 +334,7 @@
                                     details = [];
                                     //console.log(result);
                                     alert("Data Inserted Successfully");
-                                    //window.location.href = "{{ route('sales.index') }}";
+                                    window.location.href = "{{ route('meter_readings.index') }}";
                                 } else {
                                     alert(result);
                                 }
@@ -409,6 +410,8 @@
                     $('.addRow').attr("value", "X");
                     $('.addRow').removeClass('btn-success').addClass('btn-danger');
                     $('.addRow').removeClass('addRow').addClass('remove');
+                    $('.AddrowHead').hide();
+                    $('.actionText').show();
 
                     var html = '';
                     html += '<tr>';

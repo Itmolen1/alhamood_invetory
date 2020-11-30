@@ -24,7 +24,7 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active">Loans</li>
                         </ol>
-                        <a href="{{ url('loan') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New Loan</button></a>
+                        <a href="{{ route('loans.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Create New</button></a>
                     </div>
                 </div>
             </div>
@@ -49,22 +49,49 @@
                                         <th>Date</th>
                                         <th>loan</th>
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <th width="100">Action</th>
                                     </tr>
                                     </thead>
 
                                     <tbody>
 
-                                    <tr>
-                                        <td>Michael Bruce</td>
-                                        <td>Javascript Developer</td>
-                                        <td>29</td>
-                                        <td>2011/06/27</td>
-                                        <td>2011/06/27</td>
-                                        <td>
-                                            <a href="{{url('loan/edit')}}">Edit</a>
-                                        </td>
-                                    </tr>
+                                    @foreach($loans as $loan)
+                                        <tr>
+                                            <td>
+                                                @if(!empty($loan->customer_id))
+                                                    {{ $loan->customer->Name }}
+                                                    @else
+                                                    {{ $loan->employee->Name }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($loan->isPay == true)
+                                                    Loan Payment
+                                                @else
+                                                    Loan Return
+                                                @endif
+                                            </td>
+                                            <td>{{ $loan->loanDate }}</td>
+                                            <td>{{ $loan->payLoan }}</td>
+                                            <td>
+                                                @if($loan->isActive == true)
+                                                    Active
+                                                @else
+                                                    UnActive
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <form action="{{ route('loans.destroy',$loan->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a href="{{ route('loans.edit', $loan->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
+                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+
                                     </tbody>
                                 </table>
                             </div>

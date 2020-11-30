@@ -28,6 +28,7 @@ use App\WebRepositories\Interfaces\IExpenseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseDetailsRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpensesRepositoryInterface;
+use App\WebRepositories\Interfaces\ILoanRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReaderRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingRepositoryInterface;
@@ -44,6 +45,7 @@ use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\WebRepositories\Interfaces\IUnitRepositoryInterface;
 use App\WebRepositories\Interfaces\IUserRepositoryInterface;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
+use App\WebRepositories\LoanRepository;
 use App\WebRepositories\MeterReaderRepository;
 use App\WebRepositories\MeterReadingDetailRepository;
 use App\WebRepositories\MeterReadingRepository;
@@ -98,6 +100,7 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IMeterReaderRepositoryInterface::class, MeterReaderRepository::class);
         $this->app->bind(IMeterReadingRepositoryInterface::class, MeterReadingRepository::class);
         $this->app->bind(IMeterReadingDetailRepositoryInterface::class, MeterReadingDetailRepository::class);
+        $this->app->bind(ILoanRepositoryInterface::class,LoanRepository::class);
     }
 
     /**

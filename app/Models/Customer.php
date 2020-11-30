@@ -51,4 +51,9 @@ class Customer extends Model
     {
         return $this->hasMany('App\Models\Sale');
     }
+
+    public function loans()
+    {
+        return $this->hasMany('App\Models\Loan');
+    }
 }

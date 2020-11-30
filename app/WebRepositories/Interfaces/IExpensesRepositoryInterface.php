@@ -28,4 +28,6 @@ interface IExpensesRepositoryInterface
     public function trashed();
 
     public function invoiceNumber();
+
+    public function PadNumber();
 }

@@ -85,7 +85,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration date</label>
-                                                <input type="date" name="registrationDate" class="form-control" placeholder="dd/mm/yyyy">
+                                                <input type="date" name="registrationDate" value="{{date('Y-m-d')}}" class="form-control" placeholder="dd/mm/yyyy">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -140,16 +140,23 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6 ">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Mobile</label>
                                                 <input type="text" name="Mobile" placeholder="Mobile" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Phone</label>
                                                 <input type="text" name="Phone" placeholder="Phone" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="text" name="Email" placeholder="Email" class="form-control">
                                             </div>
                                         </div>
                                     </div>

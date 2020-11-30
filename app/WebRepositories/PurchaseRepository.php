@@ -28,9 +28,10 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         // TODO: Implement create() method.
         $purchaseNo = $this->invoiceNumber();
+        $PadNumber = $this->PadNumber();
         $suppliers = Supplier::all();
         $products = Product::all();
-        return view('admin.purchase.create',compact('suppliers','purchaseNo','products'));
+        return view('admin.purchase.create',compact('suppliers','purchaseNo','products','PadNumber'));
     }
 
     public function store(PurchaseRequest $purchaseRequest)
@@ -202,5 +203,15 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
         $newInvoiceID = 'PUR-00'.($lastInvoiceID + 1);
         return $newInvoiceID;
+    }
+
+    public function PadNumber()
+    {
+        // TODO: Implement PadNumber() method.
+
+        $PadNumber = new PurchaseDetail();
+        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $newPad = ($lastPad + 1);
+        return $newPad;
     }
 }

@@ -188,4 +188,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\MeterReadingDetail');
     }
 
+    public function loans()
+    {
+        return $this->hasMany('App\Models\Loan');
+    }
+
 }

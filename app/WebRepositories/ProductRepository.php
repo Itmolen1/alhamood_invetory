@@ -92,5 +92,5 @@ class ProductRepository implements IProductRepositoryInterface
         // TODO: Implement productDetails() method.
         $data = Product::with('unit')->find($Id);
         return response()->json($data);
-    }
+    }   
 }
