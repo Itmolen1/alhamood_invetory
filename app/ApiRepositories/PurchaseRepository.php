@@ -24,7 +24,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function all()
     {
-        return PurchaseResource::collection(Purchase::with('user','purchase_details')->get()->sortDesc());
+        return PurchaseResource::collection(Purchase::with('purchase_details')->get()->sortDesc());
     }
 
     public function paginate($page_no, $page_size)

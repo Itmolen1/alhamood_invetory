@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('UserDetail/{id}', 'api\UserController@UserDetail');
     Route::delete('UserDelete/{id}', 'api\UserController@destroy');
     Route::post('UserUpdateProfilePicture', 'api\UserController@UserUpdateProfilePicture');
+    Route::get('AllUsers/', 'api\UserController@AllUsers');
 
     Route::get('/Employee/restore/{Id}', 'EmployeeController@restore');
     Route::get('/EmployeeTrashed', 'EmployeeController@trash');
@@ -35,6 +36,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::apiResource('/Driver', 'api\DriverController');
     Route::get('/Driver/paginate/{page_no}/{page_size}','api\DriverController@paginate');
+    Route::get('/DriverActivateDeactivate/{id}','api\DriverController@DriverActivateDeactivate');
 
     Route::apiResource('/Vehicle', 'api\VehicleController');
     Route::get('/Vehicle/paginate/{page_no}/{page_size}','api\VehicleController@paginate');
@@ -80,6 +82,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::apiResource('/SupplierAdvance', 'api\SupplierAdvanceController');
     Route::get('/SupplierAdvance/paginate/{page_no}/{page_size}','api\SupplierAdvanceController@paginate');
+
+    Route::apiResource('/Loan', 'api\LoanController');
+    Route::get('/Loan/paginate/{page_no}/{page_size}','api\LoanController@paginate');
 
     Route::apiResource('/Purchase', 'api\PurchaseController');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');

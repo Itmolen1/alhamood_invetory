@@ -4,11 +4,10 @@
 namespace App\ApiRepositories\Interfaces;
 
 
-use App\Http\Requests\BankRequest;
-use App\Http\Requests\DriverRequest;
+use App\Http\Requests\LoanRequest;
 use Illuminate\Http\Request;
 
-interface IDriverRepositoryInterface
+interface ILoanRepositoryInterface
 {
     public  function all();
 
@@ -16,11 +15,9 @@ interface IDriverRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(DriverRequest $driverRequest,$Id);
+    public  function update(LoanRequest $loanRequest,$Id);
 
     public  function getById($Id);
 
     public  function delete(Request $request,$Id);
-
-    public  function ActivateDeactivate($Id);
 }

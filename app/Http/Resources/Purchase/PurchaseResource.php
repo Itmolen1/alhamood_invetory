@@ -5,6 +5,7 @@ namespace App\Http\Resources\Purchase;
 use App\Http\Resources\FileUpload\FileUploadResource;
 use App\Http\Resources\PurchaseDetail\PurchaseDetailResource;
 use App\Http\Resources\UpdateNote\UpdateNoteResource;
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PurchaseResource extends JsonResource
@@ -35,6 +36,7 @@ class PurchaseResource extends JsonResource
             'updated_at'=>$this->updated_at->diffForHumans(),
             'user'=>$this->user,
             'supplier'=>$this->supplier,
+            //'user'=>UserResource::collection($this->whenLoaded('user')),
             'purchase_details'=>PurchaseDetailResource::collection($this->whenLoaded('purchase_details')),
             'update_notes'=>UpdateNoteResource::collection($this->whenLoaded('update_notes')),
             'documents'=>FileUploadResource::collection($this->whenLoaded('documents')),

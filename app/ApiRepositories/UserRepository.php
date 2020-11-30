@@ -26,7 +26,7 @@ class UserRepository implements IUserRepositoryInterface
 
     public function all()
     {
-        // TODO: Implement all() method.
+        return UserResource::collection(User::all()->sortDesc());
     }
 
     public function update(Request $request)

@@ -61,4 +61,9 @@ class UserController extends Controller
     {
         return $this->IUserRepository->UserUpdateProfilePicture($request);
     }
+
+    public function AllUsers()
+    {
+        return $this->IUserRepository->all();
+    }
 }
