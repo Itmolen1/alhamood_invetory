@@ -31,27 +31,26 @@ class UserRepository implements IUserRepositoryInterface
 
     public function update(Request $request)
     {
-        $users = new User();
         try
         {
-            $user = User::find($request->id);
-            if(is_null($user))
+            $user = Auth::guard('api')->user();
+            if($user)
+            {
+                $user->name=$request->name;
+                $user->dateOfBirth=$request->dateOfBirth;
+                $user->contactNumber=$request->contactNumber;
+                $user->address=$request->address;
+                $user->gender_Id=$request->gender_Id;
+                $user->region_Id=$request->region_Id;
+                $user->save();
+                $userId = Auth::id();
+                $users = new UserResource(User::all()->where('id', $userId)->first());
+                return $this->userResponse->Success($users);
+            }
+            else
             {
                 return $this->userResponse->Failed($user = (object)[],'Not Found.');
             }
-            $users->where('id', $request->id)->update(
-                [
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'dateOfBirth' =>$request->dateOfBirth,
-                    'contactNumber' =>$request->contactNumber,
-                    'address' =>$request->address,
-                    'gender_Id' =>$request->gender_Id,
-                    'region_Id' =>$request->region_Id,
-                ]);
-
-            $users = new UserResource(User::all()->where('id', $request->id)->first());
-            return $this->userResponse->Success($users);
         }
         catch (Exception $exception)
         {
@@ -97,35 +96,32 @@ class UserRepository implements IUserRepositoryInterface
 
     public function changePassword(Request $request)
     {
-        $users = new User();
         try
         {
-            $credentials = $request->only(['email','currentPassword']);
-            //$valid_user= DB::table('users')->select('id')->where([['email',$credentials['email']],['password',bcrypt($credentials['currentPassword'])]])->first();
-            if (Auth::guard('client')->attempt($credentials))
+            $data = $request->all();
+            $user = Auth::guard('api')->user();
+            if( isset($data['currentPassword']) && !empty($data['currentPassword']) && $data['currentPassword'] !== "" && $data['currentPassword'] !=='undefined')
+            {
+                $check  = Auth::guard('web')->attempt([
+                    'email' => $user->email,
+                    'password' => $data['currentPassword']
+                ]);
+                if($check && isset($data['password']) && !empty($data['password']) && $data['password'] !== "" && $data['password'] !=='undefined')
+                {
+                    $user->password = bcrypt($data['password']);
+                    $user->token()->revoke();
+                    $accessToken = $user->createToken('MyApp')->accessToken;
+                    $user->save();
+                    return $this->userResponse->Success(['Token'=>$accessToken]);
+                }
+                else
+                {
+                    return $this->userResponse->Failed($user = (object)[],"Invalid Credentials.");
+                }
+            }
+            else
             {
                 return $this->userResponse->Failed($user = (object)[],"Invalid Credentials.");
-            }
-            else
-            {
-                echo "coming inside else";
-            }
-            die;
-            $user = User::find($request->id);
-            if(is_null($user))
-            {
-                return $this->userResponse->Failed($user = (object)[],'Not Found.');
-            }
-            $users=DB::table('users')->where([['email',$request->email],['password',$request->password]]);
-
-            if ($user->where(['email' => request('email'), 'password' => request('currentPassword')]))
-            {
-                $users->where('id', $request->id)->update(['password' => bcrypt($request['password'])]);
-                return $this->userResponse->Success('Password Update successfully');
-            }
-            else
-            {
-                return $this->userResponse->Success($request->id.'Current Password missed matched'.bcrypt($request->currentPassword));
             }
         }
         catch (Exception $exception)

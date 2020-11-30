@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Expense extends Model
 {
-        use HasFactory;
-        use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
-
-        protected $guarded=[];
-        protected $primaryKey = 'id';
-        protected $table = 'expenses';
+    protected $guarded=[];
+    protected $primaryKey = 'id';
+    protected $table = 'expenses';
 
     public function user()
     {
@@ -31,9 +30,18 @@ class Expense extends Model
          return $this->belongsTo('App\Models\Supplier','supplier_id','id');
     }
 
-
     public function expense_details()
     {
-        return $this->hasMany('App\Models\ExpenseDetail');
+        return $this->hasMany('App\Models\ExpenseDetail','expense_id')->withTrashed();
+    }
+
+    public function update_notes()
+    {
+        return $this->hasMany('App\Models\UpdateNote','RelationId')->where('RelationTable','=','expenses');
+    }
+
+    public function documents()
+    {
+        return $this->hasMany('App\Models\FileUpload','RelationId')->where('RelationTable','=','expenses');
     }
 }
