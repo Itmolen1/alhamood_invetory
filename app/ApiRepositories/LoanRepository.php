@@ -96,4 +96,19 @@ class LoanRepository implements ILoanRepositoryInterface
         $loan = Loan::onlyTrashed()->get();
         return LoanResource::collection($loan);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $loan = Loan::find($Id);
+        if($loan->isActive==1)
+        {
+            $loan->isActive=0;
+        }
+        else
+        {
+            $loan->isActive=1;
+        }
+        $loan->update();
+        return new LoanResource(Loan::find($Id));
+    }
 }

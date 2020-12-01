@@ -121,4 +121,22 @@ class CountryController extends Controller
         $trashed = $this->countryRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $country = Country::find($Id);
+            if(is_null($country))
+            {
+                return $this->userResponse->Failed($country = (object)[],'Not Found.');
+            }
+            $result=$this->countryRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

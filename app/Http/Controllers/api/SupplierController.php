@@ -120,4 +120,22 @@ class SupplierController extends Controller
         $trashed = $this->supplierRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $supplier = Supplier::find($Id);
+            if(is_null($supplier))
+            {
+                return $this->userResponse->Failed($supplier = (object)[],'Not Found.');
+            }
+            $result=$this->supplierRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

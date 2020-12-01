@@ -154,4 +154,22 @@ class PurchaseController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $purchase = Purchase::find($Id);
+            if(is_null($purchase))
+            {
+                return $this->userResponse->Failed($purchase = (object)[],'Not Found.');
+            }
+            $result=$this->purchaseRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

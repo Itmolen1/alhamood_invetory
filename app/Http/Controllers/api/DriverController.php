@@ -121,7 +121,7 @@ class DriverController extends Controller
         return $this->userResponse->Success($trashed);
     }
 
-    public function DriverActivateDeactivate($Id)
+    public function ActivateDeactivate($Id)
     {
         try
         {

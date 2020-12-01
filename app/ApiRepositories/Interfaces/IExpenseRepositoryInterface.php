@@ -24,4 +24,6 @@ interface IExpenseRepositoryInterface
     public  function ExpenseDocumentsUpload(Request $request);
 
     public  function print($Id);
+
+    public  function ActivateDeactivate($Id);
 }

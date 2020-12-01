@@ -121,4 +121,22 @@ class StateController extends Controller
         $trashed = $this->stateRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $state = State::find($Id);
+            if(is_null($state))
+            {
+                return $this->userResponse->Failed($state = (object)[],'Not Found.');
+            }
+            $result=$this->stateRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

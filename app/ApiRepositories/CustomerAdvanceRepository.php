@@ -95,4 +95,19 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
         $customer_advance = CustomerAdvance::onlyTrashed()->get();
         return CustomerAdvanceResource::collection($customer_advance);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $customer_advance = CustomerAdvance::find($Id);
+        if($customer_advance->isActive==1)
+        {
+            $customer_advance->isActive=0;
+        }
+        else
+        {
+            $customer_advance->isActive=1;
+        }
+        $customer_advance->update();
+        return new CustomerAdvanceResource(CustomerAdvance::find($Id));
+    }
 }

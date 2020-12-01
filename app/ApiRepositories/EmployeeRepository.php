@@ -95,4 +95,19 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
         $employee = Employee::onlyTrashed()->get();
         return EmployeeResource::collection($employee);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $employee = Employee::find($Id);
+        if($employee->isActive==1)
+        {
+            $employee->isActive=0;
+        }
+        else
+        {
+            $employee->isActive=1;
+        }
+        $employee->update();
+        return new EmployeeResource(Employee::find($Id));
+    }
 }

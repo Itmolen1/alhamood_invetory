@@ -119,4 +119,22 @@ class MeterReaderController extends Controller
         $trashed = $this->meterReaderRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $meter = MeterReader::find($Id);
+            if(is_null($meter))
+            {
+                return $this->userResponse->Failed($bank = (object)[],'Not Found.');
+            }
+            $result=$this->meterReaderRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

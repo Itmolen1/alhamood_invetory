@@ -121,4 +121,22 @@ class CustomerAdvanceController extends Controller
         $trashed = $this->customerAdvanceRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $customer_advance = CustomerAdvance::find($Id);
+            if(is_null($customer_advance))
+            {
+                return $this->userResponse->Failed($customer_advance = (object)[],'Not Found.');
+            }
+            $result=$this->customerAdvanceRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

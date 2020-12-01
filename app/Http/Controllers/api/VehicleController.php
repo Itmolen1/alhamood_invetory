@@ -120,4 +120,22 @@ class VehicleController extends Controller
         $trashed = $this->vehicleRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $vehicle = Vehicle::find($Id);
+            if(is_null($vehicle))
+            {
+                return $this->userResponse->Failed($vehicle = (object)[],'Not Found.');
+            }
+            $result=$this->vehicleRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

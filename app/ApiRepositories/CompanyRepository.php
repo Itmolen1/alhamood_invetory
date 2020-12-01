@@ -90,4 +90,19 @@ class CompanyRepository implements ICompanyRepositoryInterface
         $company = Company::onlyTrashed()->get();
         return CompanyResource::collection($company);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $company = Company::find($Id);
+        if($company->isActive==1)
+        {
+            $company->isActive=0;
+        }
+        else
+        {
+            $company->isActive=1;
+        }
+        $company->update();
+        return new CompanyResource(Company::find($Id));
+    }
 }

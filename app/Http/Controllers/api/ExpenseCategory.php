@@ -118,4 +118,22 @@ class ExpenseCategory extends Controller
         $trashed = $this->expenseCategoryRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $expense_category = \App\Models\ExpenseCategory::find($Id);
+            if(is_null($expense_category))
+            {
+                return $this->userResponse->Failed($expense_category = (object)[],'Not Found.');
+            }
+            $result=$this->expenseCategoryRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

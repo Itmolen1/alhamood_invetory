@@ -219,6 +219,21 @@ class UserRepository implements IUserRepositoryInterface
         }
     }
 
+    public function ActivateDeactivate($Id)
+    {
+        $user = User::find($Id);
+        if($user->isActive==1)
+        {
+            $user->isActive=0;
+        }
+        else
+        {
+            $user->isActive=1;
+        }
+        $user->update();
+        return new UserResource(User::find($Id));
+    }
+
     public function restore($Id)
     {
         // TODO: Implement restore() method.

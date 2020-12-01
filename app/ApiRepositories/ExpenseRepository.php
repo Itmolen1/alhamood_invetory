@@ -31,6 +31,21 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         return ExpenseResource::Collection(Expense::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
+    public function ActivateDeactivate($Id)
+    {
+        $expense = Expense::find($Id);
+        if($expense->isActive==1)
+        {
+            $expense->isActive=0;
+        }
+        else
+        {
+            $expense->isActive=1;
+        }
+        $expense->update();
+        return new ExpenseResource(Expense::find($Id));
+    }
+
     public function insert(Request $request)
     {
         $expense = new Expense();

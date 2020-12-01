@@ -85,4 +85,19 @@ class ExpenseCategoryRepository implements IExpenseCategoryRepositoryInterface
         $expense_category = ExpenseCategory::onlyTrashed()->get();
         return ExpenseCategoryResource::collection($expense_category);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $expense_category = ExpenseCategory::find($Id);
+        if($expense_category->isActive==1)
+        {
+            $expense_category->isActive=0;
+        }
+        else
+        {
+            $expense_category->isActive=1;
+        }
+        $expense_category->update();
+        return new ExpenseCategoryResource(ExpenseCategory::find($Id));
+    }
 }

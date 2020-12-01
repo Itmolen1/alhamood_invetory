@@ -96,4 +96,19 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         $supplier_advance = SupplierAdvance::onlyTrashed()->get();
         return SupplierAdvanceResource::collection($supplier_advance);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $supplier_advance = SupplierAdvance::find($Id);
+        if($supplier_advance->isActive==1)
+        {
+            $supplier_advance->isActive=0;
+        }
+        else
+        {
+            $supplier_advance->isActive=1;
+        }
+        $supplier_advance->update();
+        return new SupplierAdvanceResource(SupplierAdvance::find($Id));
+    }
 }

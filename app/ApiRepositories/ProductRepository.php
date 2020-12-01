@@ -87,4 +87,19 @@ class ProductRepository implements IProductRepositoryInterface
         $product = Product::onlyTrashed()->get();
         return ProductResource::collection($product);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $product = Product::find($Id);
+        if($product->isActive==1)
+        {
+            $product->isActive=0;
+        }
+        else
+        {
+            $product->isActive=1;
+        }
+        $product->update();
+        return new ProductResource(Product::find($Id));
+    }
 }

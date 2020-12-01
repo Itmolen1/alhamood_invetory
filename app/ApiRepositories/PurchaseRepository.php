@@ -32,6 +32,21 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         return PurchaseResource::Collection(Purchase::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
+    public function ActivateDeactivate($Id)
+    {
+        $purchase = Purchase::find($Id);
+        if($purchase->isActive==1)
+        {
+            $purchase->isActive=0;
+        }
+        else
+        {
+            $purchase->isActive=1;
+        }
+        $purchase->update();
+        return new PurchaseResource(Purchase::find($Id));
+    }
+
     public function insert(Request $request)
     {
         $invoice = new Purchase();

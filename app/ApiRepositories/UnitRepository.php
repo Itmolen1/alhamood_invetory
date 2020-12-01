@@ -85,4 +85,19 @@ class UnitRepository implements IUnitRepositoryInterface
         $unit = Unit::onlyTrashed()->get();
         return UnitResource::collection($unit);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $unit = Unit::find($Id);
+        if($unit->isActive==1)
+        {
+            $unit->isActive=0;
+        }
+        else
+        {
+            $unit->isActive=1;
+        }
+        $unit->update();
+        return new UnitResource(Unit::find($Id));
+    }
 }

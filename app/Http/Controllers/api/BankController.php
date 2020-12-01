@@ -120,4 +120,22 @@ class BankController extends Controller
         $trashed = $this->bankRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $bank = Bank::find($Id);
+            if(is_null($bank))
+            {
+                return $this->userResponse->Failed($bank = (object)[],'Not Found.');
+            }
+            $result=$this->bankRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

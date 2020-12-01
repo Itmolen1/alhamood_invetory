@@ -24,4 +24,6 @@ interface IPurchaseRepositoryInterface
     public  function PurchaseDocumentsUpload(Request $request);
 
     public  function print($Id);
+
+    public  function ActivateDeactivate($Id);
 }

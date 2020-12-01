@@ -98,4 +98,19 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer = Customer::onlyTrashed()->get();
         return CustomerResource::collection($customer);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $customer = Customer::find($Id);
+        if($customer->isActive==1)
+        {
+            $customer->isActive=0;
+        }
+        else
+        {
+            $customer->isActive=1;
+        }
+        $customer->update();
+        return new CustomerResource(Customer::find($Id));
+    }
 }

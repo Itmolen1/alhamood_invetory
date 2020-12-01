@@ -120,4 +120,22 @@ class LoanController extends Controller
         $trashed = $this->loanRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $loan = Loan::find($Id);
+            if(is_null($loan))
+            {
+                return $this->userResponse->Failed($loan = (object)[],'Not Found.');
+            }
+            $result=$this->loanRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

@@ -34,4 +34,6 @@ interface IUserRepositoryInterface
     public function trashed();
 
     public function logout(Request $request);
+
+    public  function ActivateDeactivate($Id);
 }

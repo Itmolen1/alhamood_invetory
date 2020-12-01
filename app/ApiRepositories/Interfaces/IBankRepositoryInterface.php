@@ -21,4 +21,6 @@ interface IBankRepositoryInterface
 
     public  function delete(Request $request,$Id);
 
+    public  function ActivateDeactivate($Id);
+
 }

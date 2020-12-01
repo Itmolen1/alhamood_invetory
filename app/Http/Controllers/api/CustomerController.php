@@ -120,4 +120,22 @@ class CustomerController extends Controller
         $trashed = $this->customerRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $customer = Customer::find($Id);
+            if(is_null($customer))
+            {
+                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
+            }
+            $result=$this->customerRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

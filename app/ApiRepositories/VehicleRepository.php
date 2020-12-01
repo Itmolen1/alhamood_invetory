@@ -89,4 +89,19 @@ class VehicleRepository implements IVehicleRepositoryInterface
         $vehicle = Vehicle::onlyTrashed()->get();
         return VehicleResource::collection($vehicle);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $vehicle = Vehicle::find($Id);
+        if($vehicle->isActive==1)
+        {
+            $vehicle->isActive=0;
+        }
+        else
+        {
+            $vehicle->isActive=1;
+        }
+        $vehicle->update();
+        return new VehicleResource(Vehicle::find($Id));
+    }
 }
