@@ -38,6 +38,7 @@
                             <li class="border-bottom"><a href="{{ route('customers.index') }}">Manage Customers</a></li>
                             <li class="border-bottom"><a href="{{ route('customer_advances.create') }}">Add Advances</a></li>
                             <li><a href="{{ route('customer_advances.index') }}">Manage Advances</a></li>
+                            <li><a href="{{ route('customer_prices.index') }}">Manage Prices</a></li>
                         </ul>
                     </li>
 

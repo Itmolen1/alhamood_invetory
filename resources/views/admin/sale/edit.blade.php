@@ -124,14 +124,15 @@
                                                             <input type="hidden" placeholder="Single Row Vat" value="{{ $sale_details[0]->rowVatAmount }}" class="singleRowVat form-control">
                                                             <input type="hidden" onClick="this.select();"  placeholder="detail_Id" value="{{ $details->id }}" class="detail_Id form-control">
                                                         </td>
-                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Price }}" placeholder="Price" class="price form-control"></td>
+                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" id="Rate" value="{{ $details->Price }}" placeholder="Price" class="price form-control"></td>
                                                         <td>
-                                                            <div class="form-group">
+                                                            <input type="text" onClick="this.setSelectionRange(0, this.value.length)" id="VAT" value="{{ $details->VAT }}" placeholder="VAT" class="VAT form-control">
+                                                           {{--  <div class="form-group">
                                                                 <select name="VAT" class="form-control VAT">
                                                                     <option value="0" {{ ($details->VAT == 0) ? 'selected':'' }}>0.00</option>
                                                                     <option value="5" {{ ($details->VAT == 5) ? 'selected':'' }}>5.00</option>
                                                                 </select>
-                                                            </div>
+                                                            </div> --}}
                                                         </td>
                                                         <td><input type="hidden" placeholder="Total" value="{{ $details->rowSubTotal }}" class="rowTotal form-control">
                                                             <input type="text" placeholder="Total" class="rowTotal form-control" value="{{ $details->rowSubTotal }}" disabled="disabled">
@@ -445,6 +446,7 @@
 
 
                 $('.customer_id').change(function () {
+                    $('.quantity').val('');
                     //alert();
                     var Id = 0;
                     Id = $(this).val();
@@ -459,7 +461,8 @@
                             success: function (result) {
                                 if (result !== "Failed") {
                                     console.log(result);
-
+                                     $('#Rate').val(result.customer_prices[0].Rate);
+                                    $('#VAT').val(result.customer_prices[0].VAT);
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
                                     if (result.vehicles.length > 0)

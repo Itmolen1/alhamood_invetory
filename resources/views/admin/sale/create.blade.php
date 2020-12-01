@@ -101,13 +101,10 @@
                                                     <input type="hidden" placeholder="Total" class="total form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                                 </td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" class="price form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" id="Rate" class="price form-control"></td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="VAT" class="form-control VAT">
-                                                            <option value="0">0.00</option>
-                                                            <option value="5">5.00</option>
-                                                        </select>
+                                                        <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="VAT" id="VAT" class="VAT form-control">
                                                     </div>
                                                 </td>
                                                 <td><input type="hidden" placeholder="Total" class="rowTotal form-control">
@@ -380,6 +377,7 @@
 
                 $('.customer_id').change(function () {
                     //alert();
+                    $('.quantity').val('');
                     var Id = 0;
                     Id = $(this).val();
 
@@ -393,6 +391,10 @@
                             success: function (result) {
                                 if (result !== "Failed") {
                                     console.log(result);
+                                    //console.log(result.customer_prices[0].Rate);
+                                    $('#Rate').val(result.customer_prices[0].Rate);
+                                    $('#VAT').val(result.customer_prices[0].VAT);
+
 
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
@@ -406,6 +408,7 @@
                                         vehicleDetails += '<option value="0">No Data</option>';
                                     }
                                     $("#vehicle").append(vehicleDetails);
+
 
 
                                 } else {

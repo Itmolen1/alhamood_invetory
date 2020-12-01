@@ -7,6 +7,7 @@ use App\WebRepositories\CityRepository;
 use App\WebRepositories\CompanyRepository;
 use App\WebRepositories\CountryRepository;
 use App\WebRepositories\CustomerAdvanceRepository;
+use App\WebRepositories\CustomerPricesRepository;
 use App\WebRepositories\CustomerRepository;
 use App\WebRepositories\DriverRepository;
 use App\WebRepositories\EmployeeRepository;
@@ -20,6 +21,7 @@ use App\WebRepositories\Interfaces\ICityRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
 use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
+use App\WebRepositories\Interfaces\ICustomerPricesRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\WebRepositories\Interfaces\IDriverRepositoryInterface;
 use App\WebRepositories\Interfaces\IEmployeeRepositoryInterface;
@@ -101,6 +103,7 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IMeterReadingRepositoryInterface::class, MeterReadingRepository::class);
         $this->app->bind(IMeterReadingDetailRepositoryInterface::class, MeterReadingDetailRepository::class);
         $this->app->bind(ILoanRepositoryInterface::class,LoanRepository::class);
+        $this->app->bind(ICustomerPricesRepositoryInterface::class, CustomerPricesRepository::class);
     }
 
     /**

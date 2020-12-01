@@ -56,4 +56,9 @@ class Customer extends Model
     {
         return $this->hasMany('App\Models\Loan');
     }
+
+    public function customer_prices()
+    {
+        return $this->hasMany('App\Models\CustomerPrice');
+    }
 }

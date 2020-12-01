@@ -33,9 +33,9 @@ class SaleRepository implements ISaleRepositoryInterface
         // TODO: Implement create() method.
         $saleNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $customers = Customer::all();
+        $customers = Customer::with('customer_prices')->get();
         $products = Product::all();
-        $salesRecords = Sale::with('sale_details.vehicle','customer')->orderBy('id', 'desc')->skip(0)->take(3)->get();
+        $salesRecords = Sale::with('sale_details.vehicle','customer.customer_prices')->orderBy('id', 'desc')->skip(0)->take(3)->get();
         //dd($salesRecords);
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','PadNumber'));
     }
@@ -171,7 +171,7 @@ class SaleRepository implements ISaleRepositoryInterface
         //dd($update_notes[0]->Description);
         $customers = Customer::all();
         $products = Product::all();
-        $sale_details = SaleDetail::withTrashed()->with('sale.customer','user','product.unit','vehicle')->where('sale_id', $Id)->get();
+        $sale_details = SaleDetail::withTrashed()->with('sale.customer.customer_prices','user','product.unit','vehicle')->where('sale_id', $Id)->get();
         return view('admin.sale.edit',compact('sale_details','customers','products','update_notes'));
     }
 

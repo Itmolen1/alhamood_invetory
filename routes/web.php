@@ -66,6 +66,7 @@ route::resource('sales','SaleController');
 route::post('salesUpdate/{Id}','SaleController@salesUpdate');
 route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehicle');
 route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
+route::resource('customer_prices','CustomerPriceController');
 
 
 
