@@ -86,4 +86,19 @@ class CountryRepository implements ICountryRepositoryInterface
         $country = Country::onlyTrashed()->get();
         return CountryResource::collection($country);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $country = Country::find($Id);
+        if($country->isActive==1)
+        {
+            $country->isActive=0;
+        }
+        else
+        {
+            $country->isActive=1;
+        }
+        $country->update();
+        return new CountryResource(Country::find($Id));
+    }
 }

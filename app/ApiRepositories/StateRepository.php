@@ -26,22 +26,22 @@ class StateRepository implements IStateRepositoryInterface
     public function insert(Request $request)
     {
         $userId = Auth::id();
-        $country = new State();
-        $country->Name=$request->Name;
-        $country->country_id=$request->country_id;
-        $country->createdDate=date('Y-m-d h:i:s');
-        $country->isActive=1;
-        $country->user_id = $userId ?? 0;
-        $country->save();
-        return new StateResource(State::find($country->id));
+        $state = new State();
+        $state->Name=$request->Name;
+        $state->country_id=$request->country_id;
+        $state->createdDate=date('Y-m-d h:i:s');
+        $state->isActive=1;
+        $state->user_id = $userId ?? 0;
+        $state->save();
+        return new StateResource(State::find($state->id));
     }
 
     public function update(StateRequest $stateRequest, $Id)
     {
         $userId = Auth::id();
-        $country = State::find($Id);
+        $state = State::find($Id);
         $stateRequest['user_id']=$userId ?? 0;
-        $country->update($stateRequest->all());
+        $state->update($stateRequest->all());
         return new StateResource(State::find($Id));
     }
 
@@ -57,25 +57,24 @@ class StateRepository implements IStateRepositoryInterface
         $update = State::find($Id);
         $update->user_id=$userId;
         $update->save();
-        $country = State::withoutTrashed()->find($Id);
-        if($country->trashed())
+        $state = State::withoutTrashed()->find($Id);
+        if($state->trashed())
         {
             return new StateResource(State::onlyTrashed()->find($Id));
         }
         else
         {
-            $country->delete();
+            $state->delete();
             return new StateResource(State::onlyTrashed()->find($Id));
-
         }
     }
 
     public function restore($Id)
     {
-        $country = State::onlyTrashed()->find($Id);
-        if (!is_null($country))
+        $state = State::onlyTrashed()->find($Id);
+        if (!is_null($state))
         {
-            $country->restore();
+            $state->restore();
             return new StateResource(State::find($Id));
         }
         return new StateResource(State::find($Id));
@@ -83,7 +82,22 @@ class StateRepository implements IStateRepositoryInterface
 
     public function trashed()
     {
-        $country = State::onlyTrashed()->get();
-        return StateResource::collection($country);
+        $state = State::onlyTrashed()->get();
+        return StateResource::collection($state);
+    }
+
+    public function ActivateDeactivate($Id)
+    {
+        $state = State::find($Id);
+        if($state->isActive==1)
+        {
+            $state->isActive=0;
+        }
+        else
+        {
+            $state->isActive=1;
+        }
+        $state->update();
+        return new StateResource(State::find($Id));
     }
 }

@@ -90,4 +90,19 @@ class BankRepository implements IBankRepositoryInterface
         $bank = Bank::onlyTrashed()->get();
         return BankResource::collection($bank);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $bank = Bank::find($Id);
+        if($bank->isActive==1)
+        {
+            $bank->isActive=0;
+        }
+        else
+        {
+            $bank->isActive=1;
+        }
+        $bank->update();
+        return new BankResource(Bank::find($Id));
+    }
 }

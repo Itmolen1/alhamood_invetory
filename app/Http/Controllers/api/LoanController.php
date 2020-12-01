@@ -2,30 +2,29 @@
 
 namespace App\Http\Controllers\api;
 
-use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
+use App\ApiRepositories\Interfaces\ILoanRepositoryInterface;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\LoanRequest;
 use App\MISC\ServiceResponse;
-use App\Models\Customer;
+use App\Models\Loan;
 use Illuminate\Http\Request;
-use mysql_xdevapi\Exception;
 
-class CustomerController extends Controller
+class LoanController extends Controller
 {
-    private $customerRepository;
+    private $loanRepository;
     private $userResponse;
 
-    public function __construct(ServiceResponse $serviceResponse, ICustomerRepositoryInterface $customerRepository)
+    public function __construct(ServiceResponse $serviceResponse, ILoanRepositoryInterface $loanRepository)
     {
         $this->userResponse=$serviceResponse;
-        $this->customerRepository=$customerRepository;
+        $this->loanRepository=$loanRepository;
     }
 
     public function index()
     {
         try
         {
-            return $this->userResponse->Success($this->customerRepository->all());
+            return $this->userResponse->Success($this->loanRepository->all());
         }
         catch (Exception $ex)
         {
@@ -37,7 +36,7 @@ class CustomerController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->customerRepository->paginate($page_no,$page_size));
+            return $this->userResponse->Success($this->loanRepository->paginate($page_no,$page_size));
         }
         catch(Exception $ex)
         {
@@ -47,19 +46,19 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        return $this->customerRepository->insert($request);
+        return $this->loanRepository->insert($request);
     }
 
     public function show($id)
     {
         try
         {
-            $customer = Customer::find($id);
-            if(is_null($customer))
+            $loan = Loan::find($id);
+            if(is_null($loan))
             {
-                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
+                return $this->userResponse->Failed($loan = (object)[],'Not Found.');
             }
-            return $this->userResponse->Success($customer);
+            return $this->userResponse->Success($loan);
         }
         catch(Exception $ex)
         {
@@ -67,16 +66,17 @@ class CustomerController extends Controller
         }
     }
 
-    public function update(CustomerRequest $customerRequest, $id)
+    public function update(LoanRequest $loanRequest, $id)
     {
         try
         {
-            $customer = Customer::find($id);
-            if(is_null($customer))
+            $loan = Loan::find($id);
+            if(is_null($loan))
             {
-                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
+                return $this->userResponse->Failed($loan = (object)[],'Not Found.');
             }
-            return $this->customerRepository->update($customerRequest,$id);
+            $result = $this->loanRepository->update($loanRequest,$id);
+            return $this->userResponse->Success($result);
         }
         catch(Exception $ex)
         {
@@ -88,13 +88,13 @@ class CustomerController extends Controller
     {
         try
         {
-            $customer = Customer::find($Id);
-            if(is_null($customer))
+            $loan = Loan::find($Id);
+            if(is_null($loan))
             {
-                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
+                return $this->userResponse->Failed($loan = (object)[],'Not Found.');
             }
-            $customer = $this->customerRepository->delete($request,$Id);
-            return $this->userResponse->Success($customer);
+            $loan = $this->loanRepository->delete($request,$Id);
+            return $this->userResponse->Success($loan);
         }
         catch (Exception $exception)
         {
@@ -105,7 +105,7 @@ class CustomerController extends Controller
     public function restore($Id)
     {
         try {
-            $restore = Customer::withTrashed()->where('Id', $Id)->restore();
+            $restore = Loan::withTrashed()->where('Id', $Id)->restore();
             return $this->userResponse->Success($restore);
 
         }
@@ -117,7 +117,7 @@ class CustomerController extends Controller
 
     public  function  trash()
     {
-        $trashed = $this->customerRepository->trashed();
+        $trashed = $this->loanRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
 
@@ -125,12 +125,12 @@ class CustomerController extends Controller
     {
         try
         {
-            $customer = Customer::find($Id);
-            if(is_null($customer))
+            $loan = Loan::find($Id);
+            if(is_null($loan))
             {
-                return $this->userResponse->Failed($customer = (object)[],'Not Found.');
+                return $this->userResponse->Failed($loan = (object)[],'Not Found.');
             }
-            $result=$this->customerRepository->ActivateDeactivate($Id);
+            $result=$this->loanRepository->ActivateDeactivate($Id);
             return $this->userResponse->Success($result);
         }
         catch (Exception $exception)

@@ -4,10 +4,10 @@
 namespace App\ApiRepositories\Interfaces;
 
 
-use App\Http\Requests\CustomerRequest;
+use App\Http\Requests\LoanRequest;
 use Illuminate\Http\Request;
 
-interface ICustomerRepositoryInterface
+interface ILoanRepositoryInterface
 {
     public  function all();
 
@@ -15,7 +15,7 @@ interface ICustomerRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(CustomerRequest $customerRequest,$Id);
+    public  function update(LoanRequest $loanRequest,$Id);
 
     public  function getById($Id);
 

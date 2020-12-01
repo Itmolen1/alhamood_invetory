@@ -120,4 +120,22 @@ class CompanyController extends Controller
         $trashed = $this->companyRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $company = Company::find($Id);
+            if(is_null($company))
+            {
+                return $this->userResponse->Failed($company = (object)[],'Not Found.');
+            }
+            $result=$this->companyRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

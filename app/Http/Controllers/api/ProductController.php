@@ -120,4 +120,22 @@ class ProductController extends Controller
         $trashed = $this->productRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $product = Product::find($Id);
+            if(is_null($product))
+            {
+                return $this->userResponse->Failed($product = (object)[],'Not Found.');
+            }
+            $result=$this->productRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

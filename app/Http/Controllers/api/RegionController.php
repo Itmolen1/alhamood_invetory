@@ -121,4 +121,22 @@ class RegionController extends Controller
         $trashed = $this->regionRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $region = Region::find($Id);
+            if(is_null($region))
+            {
+                return $this->userResponse->Failed($region = (object)[],'Not Found.');
+            }
+            $result=$this->regionRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

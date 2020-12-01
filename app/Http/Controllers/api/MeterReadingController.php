@@ -46,21 +46,21 @@ class MeterReadingController extends Controller
 
     public function store(Request $request)
     {
-        $expense=$this->meterReadingRepository->insert($request);
-        return $this->userResponse->Success($expense);
+        $meter_reading=$this->meterReadingRepository->insert($request);
+        return $this->userResponse->Success($meter_reading);
     }
 
     public function show($id)
     {
         try
         {
-            $expense = MeterReading::find($id);
-            if(is_null($expense))
+            $meter_reading = MeterReading::find($id);
+            if(is_null($meter_reading))
             {
-                return $this->userResponse->Failed($expense = (object)[],'Not Found.');
+                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
             }
-            $expense = $this->meterReadingRepository->getById($id);
-            return $this->userResponse->Success($expense);
+            $meter_reading = $this->meterReadingRepository->getById($id);
+            return $this->userResponse->Success($meter_reading);
         }
         catch(Exception $ex)
         {
@@ -73,13 +73,13 @@ class MeterReadingController extends Controller
     {
         try
         {
-            $expense = MeterReading::find($id);
-            if(is_null($expense))
+            $meter_reading = MeterReading::find($id);
+            if(is_null($meter_reading))
             {
-                return $this->userResponse->Failed($expense = (object)[],'Not Found.');
+                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
             }
-            $expense = $this->meterReadingRepository->update($meterReadingRequest,$id);
-            return $this->userResponse->Success($expense);
+            $meter_reading = $this->meterReadingRepository->update($meterReadingRequest,$id);
+            return $this->userResponse->Success($meter_reading);
         }
         catch(Exception $ex)
         {
@@ -91,13 +91,13 @@ class MeterReadingController extends Controller
     {
         try
         {
-            $expense = MeterReading::find($Id);
-            if(is_null($expense))
+            $meter_reading = MeterReading::find($Id);
+            if(is_null($meter_reading))
             {
-                return $this->userResponse->Failed($expense = (object)[],'Not Found.');
+                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
             }
-            $expense = $this->meterReadingRepository->delete($request,$Id);
-            return $this->userResponse->Success($expense);
+            $meter_reading = $this->meterReadingRepository->delete($request,$Id);
+            return $this->userResponse->Success($meter_reading);
         }
         catch (Exception $exception)
         {
@@ -128,5 +128,23 @@ class MeterReadingController extends Controller
     {
         $data = $this->meterReadingRepository->BaseList();
         return $this->userResponse->Success($data);
+    }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $meter_reading = MeterReading::find($Id);
+            if(is_null($meter_reading))
+            {
+                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
+            }
+            $result=$this->meterReadingRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
     }
 }

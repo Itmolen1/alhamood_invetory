@@ -120,4 +120,22 @@ class DriverController extends Controller
         $trashed = $this->driverRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $driver = Driver::find($Id);
+            if(is_null($driver))
+            {
+                return $this->userResponse->Failed($driver = (object)[],'Not Found.');
+            }
+            $result=$this->driverRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

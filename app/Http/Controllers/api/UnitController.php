@@ -120,4 +120,22 @@ class UnitController extends Controller
         $trashed = $this->unitRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $unit = Unit::find($Id);
+            if(is_null($unit))
+            {
+                return $this->userResponse->Failed($unit = (object)[],'Not Found.');
+            }
+            $result=$this->unitRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

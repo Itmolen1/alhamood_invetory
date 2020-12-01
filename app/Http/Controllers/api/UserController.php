@@ -6,6 +6,7 @@ use App\ApiRepositories\Interfaces\IUserRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\MISC\ServiceResponse;
+use App\Models\User;
 use Illuminate\Http\Request;
 use mysql_xdevapi\Exception;
 
@@ -60,5 +61,28 @@ class UserController extends Controller
     public function UserUpdateProfilePicture(Request $request)
     {
         return $this->IUserRepository->UserUpdateProfilePicture($request);
+    }
+
+    public function AllUsers()
+    {
+        return $this->IUserRepository->all();
+    }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $user = User::find($Id);
+            if(is_null($user))
+            {
+                return $this->userResponse->Failed($user = (object)[],'Not Found.');
+            }
+            $result=$this->IUserRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
     }
 }

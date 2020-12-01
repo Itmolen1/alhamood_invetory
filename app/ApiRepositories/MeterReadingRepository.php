@@ -28,6 +28,21 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
         return MeterReadingResource::Collection(MeterReading::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
+    public function ActivateDeactivate($Id)
+    {
+        $meter_reading = MeterReading::find($Id);
+        if($meter_reading->isActive==1)
+        {
+            $meter_reading->isActive=0;
+        }
+        else
+        {
+            $meter_reading->isActive=1;
+        }
+        $meter_reading->update();
+        return new MeterReadingResource(MeterReading::find($Id));
+    }
+
     public function insert(Request $request)
     {
         $meter_reading_details=$request->meter_reading_details;

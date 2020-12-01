@@ -120,4 +120,22 @@ class EmployeeController extends Controller
         $trashed = $this->employeeRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $employee = Employee::find($Id);
+            if(is_null($employee))
+            {
+                return $this->userResponse->Failed($employee = (object)[],'Not Found.');
+            }
+            $result=$this->employeeRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

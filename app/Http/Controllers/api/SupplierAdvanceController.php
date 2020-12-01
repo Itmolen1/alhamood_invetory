@@ -121,4 +121,22 @@ class SupplierAdvanceController extends Controller
         $trashed = $this->supplierAdvanceRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $supplier_advance = SupplierAdvance::find($Id);
+            if(is_null($supplier_advance))
+            {
+                return $this->userResponse->Failed($supplier_advance = (object)[],'Not Found.');
+            }
+            $result=$this->supplierAdvanceRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

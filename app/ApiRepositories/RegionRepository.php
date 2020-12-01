@@ -86,4 +86,19 @@ class RegionRepository implements IRegionRepositoryInterface
         $region = Region::onlyTrashed()->get();
         return RegionResource::collection($region);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $region = Region::find($Id);
+        if($region->isActive==1)
+        {
+            $region->isActive=0;
+        }
+        else
+        {
+            $region->isActive=1;
+        }
+        $region->update();
+        return new RegionResource(Region::find($Id));
+    }
 }

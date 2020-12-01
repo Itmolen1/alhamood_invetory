@@ -21,4 +21,6 @@ interface IDriverRepositoryInterface
     public  function getById($Id);
 
     public  function delete(Request $request,$Id);
+
+    public  function ActivateDeactivate($Id);
 }

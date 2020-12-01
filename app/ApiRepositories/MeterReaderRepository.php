@@ -87,4 +87,19 @@ class MeterReaderRepository implements IMeterReaderRepositoryInterface
         $meter = MeterReader::onlyTrashed()->get();
         return MeterReaderResource::collection($meter);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $meter = MeterReader::find($Id);
+        if($meter->isActive==1)
+        {
+            $meter->isActive=0;
+        }
+        else
+        {
+            $meter->isActive=1;
+        }
+        $meter->update();
+        return new MeterReaderResource(MeterReader::find($Id));
+    }
 }

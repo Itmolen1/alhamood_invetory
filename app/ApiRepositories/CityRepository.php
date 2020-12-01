@@ -86,4 +86,19 @@ class CityRepository implements ICityRepositoryInterface
         $city = City::onlyTrashed()->get();
         return CityResource::collection($city);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $city = City::find($Id);
+        if($city->isActive==1)
+        {
+            $city->isActive=0;
+        }
+        else
+        {
+            $city->isActive=1;
+        }
+        $city->update();
+        return new CityResource(City::find($Id));
+    }
 }

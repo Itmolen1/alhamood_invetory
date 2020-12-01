@@ -121,4 +121,22 @@ class CityController extends Controller
         $trashed = $this->cityRepository->trashed();
         return $this->userResponse->Success($trashed);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $city = City::find($Id);
+            if(is_null($city))
+            {
+                return $this->userResponse->Failed($city = (object)[],'Not Found.');
+            }
+            $result=$this->cityRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

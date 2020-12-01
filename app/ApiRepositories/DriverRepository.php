@@ -89,4 +89,19 @@ class DriverRepository implements IDriverRepositoryInterface
         $driver = Driver::onlyTrashed()->get();
         return DriverResource::collection($driver);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $driver = Driver::find($Id);
+        if($driver->isActive==1)
+        {
+            $driver->isActive=0;
+        }
+        else
+        {
+            $driver->isActive=1;
+        }
+        $driver->update();
+        return new DriverResource(Driver::find($Id));
+    }
 }

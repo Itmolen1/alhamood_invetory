@@ -154,4 +154,22 @@ class ExpenseController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        try
+        {
+            $expense = Expense::find($Id);
+            if(is_null($expense))
+            {
+                return $this->userResponse->Failed($expense = (object)[],'Not Found.');
+            }
+            $result=$this->expenseRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

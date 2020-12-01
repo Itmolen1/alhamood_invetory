@@ -26,7 +26,7 @@ class UserRepository implements IUserRepositoryInterface
 
     public function all()
     {
-        // TODO: Implement all() method.
+        return UserResource::collection(User::all()->sortDesc());
     }
 
     public function update(Request $request)
@@ -217,6 +217,21 @@ class UserRepository implements IUserRepositoryInterface
             $user->delete();
             return $this->userResponse->Delete();
         }
+    }
+
+    public function ActivateDeactivate($Id)
+    {
+        $user = User::find($Id);
+        if($user->isActive==1)
+        {
+            $user->isActive=0;
+        }
+        else
+        {
+            $user->isActive=1;
+        }
+        $user->update();
+        return new UserResource(User::find($Id));
     }
 
     public function restore($Id)

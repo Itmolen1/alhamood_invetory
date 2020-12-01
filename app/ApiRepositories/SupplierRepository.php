@@ -98,4 +98,19 @@ class SupplierRepository implements ISupplierRepositoryInterface
         $supplier = Supplier::onlyTrashed()->get();
         return SupplierResource::collection($supplier);
     }
+
+    public function ActivateDeactivate($Id)
+    {
+        $supplier = Supplier::find($Id);
+        if($supplier->isActive==1)
+        {
+            $supplier->isActive=0;
+        }
+        else
+        {
+            $supplier->isActive=1;
+        }
+        $supplier->update();
+        return new SupplierResource(Supplier::find($Id));
+    }
 }
