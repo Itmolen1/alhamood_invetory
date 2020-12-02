@@ -105,7 +105,6 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $regions = Region::with('city')->get();
         $supplier = Supplier::with('region')->find($Id);
         return view('admin.supplier.edit',compact('supplier','regions'));

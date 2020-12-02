@@ -107,13 +107,8 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group" id="paymentTermAll">
-                                                <label class="control-label">Payment Term</label>
-                                                <select class="form-control custom-select" data-placeholder="Choose a Category" name="paymentTerm" id="paymentTerm" tabindex="1">
-                                                    <option>--Select your Company Type--</option>
-                                                    <option value="Category 2">5 days</option>
-                                                    <option value="Category 3">10 days</option>
-                                                    <option value="Category 4">15 days</option>
-                                                </select>
+                                                <label class="control-label">Payment Term (In Days)</label>
+                                                <input type="number" name="paymentTerm" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->

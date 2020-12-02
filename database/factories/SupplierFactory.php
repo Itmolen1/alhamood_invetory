@@ -26,7 +26,7 @@ class SupplierFactory extends Factory
             'Representative' => $this->faker->name,
             'companyType' => $this->faker->name,
             'paymentType' => $this->faker->name,
-            'paymentTerm' => $this->faker->name,
+            'paymentTerm' => $this->faker->numberBetween(0,30),
             'Phone' => $this->faker->numberBetween(10000,122222),
             'Mobile' => $this->faker->numberBetween(10000,122222),
             'Address' => $this->faker->address,

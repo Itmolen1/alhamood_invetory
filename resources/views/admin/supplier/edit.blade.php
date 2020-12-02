@@ -107,11 +107,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group" id="paymentTermAll">
                                                 <label class="control-label">Payment Term</label>
-                                                <select class="form-control custom-select" data-placeholder="Choose a Category" id="paymentTerm" tabindex="1">
-                                                    <option value="5" {{ ($supplier->companyType == 5) ? 'selected':'' }}>5 days</option>
-                                                    <option value="10" {{ ($supplier->companyType == 10) ? 'selected':'' }}>10 days</option>
-                                                    <option value="15" {{ ($supplier->companyType == 15) ? 'selected':'' }}>15 days</option>
-                                                </select>
+                                                <input type="number" name="paymentTerm" value="{{ $supplier->paymentTerm }}" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
