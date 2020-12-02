@@ -29,6 +29,7 @@ use App\ApiRepositories\Interfaces\IMeterReadingRepositoryInterface;
 use App\ApiRepositories\Interfaces\IProductRepositoryInterface;
 use App\ApiRepositories\Interfaces\IPurchaseRepositoryInterface;
 use App\ApiRepositories\Interfaces\IRegionRepositoryInterface;
+use App\ApiRepositories\Interfaces\ISalesRepositoryInterface;
 use App\ApiRepositories\Interfaces\IStateRepositoryInterface;
 use App\ApiRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use App\ApiRepositories\Interfaces\ISupplierRepositoryInterface;
@@ -41,6 +42,7 @@ use App\ApiRepositories\MeterReadingRepository;
 use App\ApiRepositories\ProductRepository;
 use App\ApiRepositories\PurchaseRepository;
 use App\ApiRepositories\RegionRepository;
+use App\ApiRepositories\SalesRepository;
 use App\ApiRepositories\StateRepository;
 use App\ApiRepositories\SupplierAdvanceRepository;
 use App\ApiRepositories\SupplierRepository;
@@ -75,6 +77,7 @@ class ApiRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ICustomerAdvanceRepositoryInterface::class,CustomerAdvanceRepository::class);
         $this->app->bind(ISupplierAdvanceRepositoryInterface::class,SupplierAdvanceRepository::class);
         $this->app->bind(ILoanRepositoryInterface::class,LoanRepository::class);
+        $this->app->bind(ISalesRepositoryInterface::class,SalesRepository::class);
     }
     public function boot()
     {

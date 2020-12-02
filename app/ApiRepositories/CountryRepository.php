@@ -10,6 +10,7 @@ use App\Http\Resources\Country\CountryResource;
 use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CountryRepository implements ICountryRepositoryInterface
 {

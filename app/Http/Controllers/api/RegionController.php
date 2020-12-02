@@ -139,4 +139,10 @@ class RegionController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function get_detail_list()
+    {
+        $result=$this->regionRepository->get_detail_list();
+        return $this->userResponse->Success($result);
+    }
 }

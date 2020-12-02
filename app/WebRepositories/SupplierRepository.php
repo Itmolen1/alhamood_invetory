@@ -158,7 +158,6 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $regions = Region::with('city')->get();
         $payment_types = PaymentType::orderBy('id', 'asc')->skip(0)->take(2)->get();
         $company_types = CompanyType::all();
