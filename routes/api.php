@@ -90,6 +90,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Region', 'api\RegionController');
     Route::get('/Region/paginate/{page_no}/{page_size}','api\RegionController@paginate');
     Route::get('/Region/ActivateDeactivate/{id}','api\RegionController@ActivateDeactivate');
+    Route::get('get_detail_list','api\RegionController@get_detail_list');
 
     Route::apiResource('/CustomerAdvance', 'api\CustomerAdvanceController');
     Route::get('/CustomerAdvance/paginate/{page_no}/{page_size}','api\CustomerAdvanceController@paginate');
@@ -106,6 +107,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('PurchaseDocumentsUpload', 'api\PurchaseController@PurchaseDocumentsUpload');
     Route::get('/Purchase/print/{Id}', 'api\PurchaseController@print');
 
+    Route::apiResource('/Sales', 'api\SalesController');
+    Route::get('/Sales/paginate/{page_no}/{page_size}','api\SalesController@paginate');
+    Route::get('/getSalesBaseList', 'api\SalesController@BaseList');
+    Route::post('SalesDocumentsUpload', 'api\SalesController@SalesDocumentsUpload');
+    Route::get('/Sales/print/{Id}', 'api\SalesController@print');
+
     Route::apiResource('/Expense', 'api\ExpenseController');
     Route::get('/Expense/paginate/{page_no}/{page_size}','api\ExpenseController@paginate');
     Route::get('/getExpenseBaseList', 'api\ExpenseController@BaseList');
@@ -117,6 +124,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/getMeterReadingBaseList', 'api\MeterReadingController@BaseList');
 });
 
+//Route::fallback(function(){
+//    return response()->json([
+//        'message' => 'Page Not Found. If error persists, contact info@website.com'], 404);
+//});
 
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();

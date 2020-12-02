@@ -10,6 +10,7 @@ use App\Http\Resources\Region\RegionResource;
 use App\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RegionRepository implements IRegionRepositoryInterface
 {
@@ -100,5 +101,54 @@ class RegionRepository implements IRegionRepositoryInterface
         }
         $region->update();
         return new RegionResource(Region::find($Id));
+    }
+
+    public function get_detail_list()
+    {
+        $country = DB::table('countries')->select(
+            'id',
+            'Name'
+        )->where('deleted_at',NULL)->get();
+        $country = json_decode(json_encode($country), true);
+        //echo "<pre>";print_r($country);die;
+        for($i=0;$i<count($country);$i++)
+        {
+            $state = DB::table('states as s')->select(
+                's.id',
+                's.Name',
+                's.country_id',
+                'c.Name as country_name'
+            )->where([['s.deleted_at',NULL],['s.id',$country[$i]['id']]])->leftjoin('countries as c', 'c.id', '=', 's.id')->get();
+            $state = json_decode(json_encode($state), true);
+            //echo "<pre>";print_r($state);die;
+            for($j=0;$j<count($state);$j++)
+            {
+                $state_id_here=$state[$j]['id'];
+                $city = DB::table('cities as ct')->select(
+                    'ct.id',
+                    'ct.Name',
+                    'ct.state_id',
+                    's.Name as state_name'
+                )->where([['ct.deleted_at',NULL],['ct.state_id',$state_id_here]])
+                    ->leftjoin('states as s', 'ct.state_id', '=', 's.id')->get();
+                $city = json_decode(json_encode($city), true);
+                for($k=0;$k<count($city);$k++)
+                {
+                    $city_id_here=$city[$k]['id'];
+                    $region = DB::table('regions as region')->select(
+                        'region.id',
+                        'region.Name',
+                        'region.city_id',
+                        'city.Name as city_name'
+                    )->where([['region.deleted_at',NULL],['region.city_id',$city_id_here]])
+                        ->leftJoin('cities as city','region.city_id','=','city.id')->get();
+                    $region = json_decode(json_encode($region),true);
+                    $city[$k]['region']=$region;
+                }
+                $state[$j]['cities']=$city;
+            }
+            $country[$i]['states']=$state;
+        }
+        return $country;
     }
 }
