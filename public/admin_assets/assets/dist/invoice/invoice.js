@@ -175,3 +175,37 @@ $(document).on("keyup",'.cashPaid',function () {
     //var Value = parseFloat(Input) + parseFloat(GTotal);
     var rr= $('.balance').val((Input.toFixed(2)));
 });
+
+
+    function totalWithCustomer(vat, rate)
+    {
+                                    //var Currentrow = $(this).closest("tr");
+                                    var QTY = $('.quantity').val();
+                                    if (parseInt(QTY) >= 0)
+                                    {
+                                        var Total = parseInt(QTY) * parseFloat(rate);
+                                        //alert(Total);
+                                        $('.total').val(Total);
+                                    }
+                                    
+                                    Total = 0;
+                                    Total = $('.total').val();
+                                    //alert(Total);
+                                    if (parseInt(vat) === 0 && typeof (vat) != "undefined" && vat !== ""){
+                                        if (!isNaN(Total) && typeof (Total) != "undefined")
+                                        {
+                                            $('.rowTotal').val(parseFloat(Total).toFixed(2));
+                                            return;
+                                        }
+                                    }
+
+                                    if (!isNaN(Total) && Total !== "" && typeof (vat) != "undefined")
+                                    {
+                                        var InputVatValue = parseFloat((Total / 100) * vat);
+                                        var ValueWTV = parseFloat(InputVatValue) + parseFloat(Total);
+                                        $('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
+                                        $('.singleRowVat').val(parseFloat(InputVatValue).toFixed(2));
+                                    }
+
+                                    CountTotalVat();
+    }

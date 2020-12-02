@@ -35,4 +35,6 @@ class Sale extends Model
         {
             return $this->belongsTo('App\Models\Customer','customer_id','id');
         }
+
+
 }

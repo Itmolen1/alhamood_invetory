@@ -74,10 +74,10 @@
                                             <div class="form-group">
                                                 <label>Company Type</label>
                                                 <select class="form-control custom-select" name="companyType">
-                                                    <option value="transportation" {{ ($customer->companyType == "transportation") ? 'selected':'' }}>Transportation</option>
-                                                    <option value="construction" {{ ($customer->companyType == "construction") ? 'selected':'' }}>Construction</option>
-                                                    <option value="fuelTraders" {{ ($customer->companyType == "fuelTraders") ? 'selected':'' }}>Fuel traders</option>
-                                                    <option value="others" {{ ($customer->companyType == "others") ? 'selected':'' }}>Others</option>
+                                                    <option readonly disabled="" selected="">--Select your Company Type--</option>
+                                                    @foreach ($company_types as $company_type)
+                                                       <option value="{{ $company_type->id }}" {{ ($company_type->id == $customer->company_type_id) ? 'selected':'' }}>{{ $company_type->Name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -97,8 +97,10 @@
                                             <div class="form-group">
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select paymentType" name="paymentType">
-                                                    <option value="cash" {{ ($customer->companyType == "cash") ? 'selected':'' }}>cash</option>
-                                                    <option value="credit" {{ ($customer->companyType == "cash") ? 'selected':'' }}>Credit</option>
+                                                   <option readonly disabled="" selected="">--Select your Payment Type--</option>
+                                                    @foreach ($payment_types as $payment)
+                                                       <option value="{{ $payment->id }}" {{ ($payment->id == $customer->payment_type_id) ? 'selected':'' }}>{{ $payment->Name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -107,10 +109,12 @@
                                         <div class="col-md-6">
                                             <div class="form-group" id="paymentTermAll">
                                                 <label class="control-label">Payment Term</label>
-                                                <select class="form-control custom-select" data-placeholder="Choose a Category" id="paymentTerm" tabindex="1">
-                                                    <option value="5" {{ ($customer->companyType == 5) ? 'selected':'' }}>5 days</option>
-                                                    <option value="10" {{ ($customer->companyType == 10) ? 'selected':'' }}>10 days</option>
-                                                    <option value="15" {{ ($customer->companyType == 15) ? 'selected':'' }}>15 days</option>
+                                                <select class="form-control custom-select" id="paymentTerm" tabindex="1">
+                                                    <option readonly disabled="" selected="">--Select Payment Term--</option>
+                                                    @foreach ($payment_terms as $term)
+                                                       <option value="{{ $term->id }}" {{ ($term->id == $customer->payment_term_id) ? 'selected':'' }}>{{ $term->Name }}</option>
+                                                    @endforeach
+                                                </select>
                                                 </select>
                                             </div>
                                         </div>
@@ -188,14 +192,14 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>City</label>
-                                                <input type="text" name="City" id="city" value="{{ $customer->region->city->Name }}" placeholder="City" class="form-control">
+                                                <input type="text" name="City" id="city" value="{{ $customer->region->city->Name ?? "" }}" placeholder="City" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
-                                                <input type="text" name="State" id="state" value="{{ $customer->region->city->state->Name }}" PLACEHOLDER="State" class="form-control">
+                                                <input type="text" name="State" id="state" value="{{ $customer->region->city->state->Name ?? "" }}" PLACEHOLDER="State" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -212,7 +216,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
-                                                <input type="text" name="Country" id="country" value="{{ $customer->region->city->state->country->Name }}" PLACEHOLDER="Country" class="form-control">
+                                                <input type="text" name="Country" id="country" value="{{ $customer->region->city->state->country->Name ?? "" }}" PLACEHOLDER="Country" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -272,19 +276,22 @@
             // $('.c2').click(function () {
             //     $('#paymentTermAll').hide();
             // });
-            var cash = $('.paymentType').val();
+             var cash = $('.paymentType').val();
 
-            if (cash !== 'cash')
+            if (cash === '2')
             {
-                $('#paymentTermAll').show();
+                 $('#paymentTermAll').show();
             }
+            else
+            {
                 $('#paymentTermAll').hide();
+            }
 
         });
         $(document).on("change", '.paymentType', function () {
             var cash = $('.paymentType').val();
 
-            if (cash === 'credit'){
+            if (cash === '2'){
                 $('#paymentTermAll').show();
             }
             else

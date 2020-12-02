@@ -41,17 +41,17 @@
                             <h4 class="card-title">Banks</h4>
                             <h6 class="card-subtitle">All Banks</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="banks_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>Bank Name</th>
                                         <th>Branch</th>
-                                        <th>contact Number</th>
-                                        <th>Action</th>
+                                        <th>Contact Number</th>
+                                        <th width="100">IsActive</th>
+                                        <th width="100">Action</th>
                                     </tr>
                                     </thead>
-
-                                    <tbody>
+                                    {{-- <tbody>
                                     @foreach($banks as $bank)
                                         <tr>
                                             <td>{{ $bank->Name }}</td>
@@ -67,7 +67,7 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                    </tbody>
+                                    </tbody> --}}
                                 </table>
                             </div>
                         </div>
@@ -108,19 +108,60 @@
     </div>
 
     <script>
-        // var id;
-
-        $(document).on('click', '.delete', function(){
-            //  id = $(this).attr('id');
-            $('#confirmModal').modal('show');
+        $(document).ready(function () {
+            $('#banks_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('banks.index') }}",
+                },
+                columns:[
+                    {
+                        data: 'Name',
+                        name: 'Name'
+                    },
+                    {
+                        data: 'Branch',
+                        name: 'Branch'
+                    },
+                    {
+                        data: 'contactNumber',
+                        name: 'contactNumber'
+                    },
+                    {
+                        data: 'isActive',
+                        name: 'isActive',
+                        orderable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    },
+                    // {
+                    //     name: '',
+                    //     data: null,
+                    //     sortable: false,
+                    //     searchable: false,
+                    //     render: function (data) {
+                    //         var actions = '';
+                    //         actions += '<a href="/transaksi-masuk/tambah/:id"><span class="label label-primary">TAMBAH</span></a>';
+                    //         actions += '<a href="/transaksi-masuk/edit/:id"><span class="label label-warning">EDIT</span></a>';
+                    //         return actions.replace(/:id/g, data.id_produk);
+                    //     }
+                    // }
+                ]
+            });
         });
-
-        $('#ok_button').click(function(){
-
-            $('#ok_button').text('Deleting...');
-            window.location.reload();
-        });
-
+    </script>
+    <script>
+    function ConfirmDelete()
+    {
+     var result = confirm("Are you sure you want to delete?");
+     if (result) {
+        document.getElementById("deleteData").submit();
+     }
+    }
     </script>
 
 

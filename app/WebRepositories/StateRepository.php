@@ -35,9 +35,9 @@ class StateRepository implements IStatesRepositoryInterface
         $company_id = session('company_id');
         $state = [
             'Name' =>$stateRequest->Name,
-            'country_id' =>$stateRequest->country_id,
-            'user_id' =>$user_id,
-            'company_id' =>$company_id,
+            'country_id' =>$stateRequest->country_id ?? 0,
+            'user_id' =>$user_id ?? 0,
+            'company_id' =>$company_id ?? 0,
         ];
         State::create($state);
         return redirect()->route('states.index');
@@ -50,8 +50,8 @@ class StateRepository implements IStatesRepositoryInterface
         $user_id = session('user_id');
         $state->update([
             'Name' =>$request->Name,
-            'country_id' =>$request->country_id,
-            'user_id' =>$user_id,
+            'country_id' =>$request->country_id ?? 0,
+            'user_id' =>$user_id ?? 0,
         ]);
         return redirect()->route('states.index');
     }

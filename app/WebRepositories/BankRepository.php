@@ -15,8 +15,40 @@ class BankRepository implements IBankRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $banks = Bank::with('user','company')->get();
-        return view('admin.bank.index',compact('banks'));
+        // $banks = Bank::with('user','company')->get();
+        // return view('admin.bank.index',compact('banks'));
+        if(request()->ajax())
+        {
+            return datatables()->of(Bank::with('user','company')->latest()->get())
+               ->addColumn('action', function ($data) {
+                    $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button .= @csrf_field();
+                    $button .= @method_field('DELETE');
+                    $button .= '<a href="'.route('banks.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+                    $button .= '</form>';
+                    return $button;
+                })
+                ->addColumn('isActive', function($data) {
+                        if($data->isActive == true){
+                            $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }else{
+                            $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }
+                    })
+                ->rawColumns(['action','isActive'])
+                ->make(true);
+        }
+        return view('admin.bank.index');
     }
 
     public function create()

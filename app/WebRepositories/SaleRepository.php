@@ -23,9 +23,78 @@ class SaleRepository implements ISaleRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $sales = Sale::with('sale_details.product','customer')->get();
-        //dd($sales);
-        return view('admin.sale.index',compact('sales'));
+         // $sales = Sale::with('sale_details.product','sale_details.vehicle','customer')->get();
+         // dd($sales);
+        // return view('admin.sale.index',compact('sales'));
+        if(request()->ajax())
+        {
+            return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->latest()->get())
+               // ->addColumn('action', function ($data) {
+               //      $button = '<form action="'.route('sales.destroy', $data->id).'" method="POST"  id="deleteData">';
+               //      $button .= @csrf_field();
+               //      $button .= @method_field('DELETE');
+               //      $button .= '<a href="'.route('sales.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+               //      $button .= '&nbsp;&nbsp;';
+               //      $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+               //      $button .= '</form>';
+               //      return $button;
+               //  })
+                // ->addColumn('isActive', function($data) {
+                //         if($data->isActive == true){
+                //             $button = '<form action="'.route('roles.destroy', $data->id).'" method="POST"  id="deleteData">';
+                //             $button .= @csrf_field();
+                //             $button .= @method_field('PUT');
+                //             $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                //             return $button;
+                //         }else{
+                //             $button = '<form action="'.route('roles.destroy', $data->id).'" method="POST"  id="deleteData">';
+                //             $button .= @csrf_field();
+                //             $button .= @method_field('PUT');
+                //             $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                //             return $button;
+                //         }
+                //     })
+                ->addColumn('action', function ($data) {
+                    
+                    $button = '<a href="'.route('sales.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    return $button;
+                })
+                 ->addColumn('createdDate', function($data) {
+                        return $data->sale_details[0]->createdDate ?? "No date";
+                    })
+                 ->addColumn('PadNumber', function($data) {
+                        return $data->sale_details[0]->PadNumber ?? "No Pad";
+                    })
+                 ->addColumn('customer', function($data) {
+                        return $data->customer->Name ?? "No Name";
+                    })
+                 ->addColumn('registrationNumber', function($data) {
+                        return $data->sale_details[0]->vehicle->registrationNumber ?? "No Number";
+                    })
+                 ->addColumn('Product', function($data) {
+                        return $data->sale_details[0]->product->Name ?? "No product";
+                    })
+                  ->addColumn('Quantity', function($data) {
+                        return $data->sale_details[0]->Quantity ?? "No Quantity";
+                    })
+                   ->addColumn('Price', function($data) {
+                        return $data->sale_details[0]->Price ?? "No Quantity";
+                    })
+                ->rawColumns(
+                    [
+                    'action',
+                    // 'isActive',
+                    'createdDate',
+                    'PadNumber',
+                    'customer',
+                    'registrationNumber',
+                    'Product',
+                    'Quantity',
+                    'Price'
+                    ])
+                ->make(true);
+        }
+        return view('admin.sale.index');
     }
 
     public function create()
@@ -35,8 +104,8 @@ class SaleRepository implements ISaleRepositoryInterface
         $PadNumber = $this->PadNumber();
         $customers = Customer::with('customer_prices')->get();
         $products = Product::all();
-        $salesRecords = Sale::with('sale_details.vehicle','customer.customer_prices')->orderBy('id', 'desc')->skip(0)->take(3)->get();
-        //dd($salesRecords);
+        $salesRecords = Sale::with('sale_details.vehicle','customer')->orderBy('id', 'desc')->skip(0)->take(3)->get();
+        //dd($saleNo);
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','PadNumber'));
     }
 

@@ -47,4 +47,24 @@ class Supplier extends Model
         return $this->hasMany('App\Models\Expense');
     }
 
+    public function account_transaction()
+    {
+        return $this->hasOne('App\Models\AccountTransaction');
+    }
+
+    public function payment_type()
+    {
+        return $this->belongsTo('App\Models\PaymentType','payment_type_id','id');
+    }
+
+    public function company_type()
+    {
+        return $this->belongsTo('App\Models\CompanyType','company_type_id','id');
+    }
+
+    public function payment_term()
+    {
+        return $this->belongsTo('App\Models\PaymentTerm','payment_term_id','id');
+    }
+
 }

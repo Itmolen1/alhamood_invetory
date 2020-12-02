@@ -58,7 +58,7 @@
                                     @if(!empty($supplierAdvances))
                                     @foreach($supplierAdvances as $advance)
                                         <tr>
-                                            <td>{{ $advance->supplier->Name }}</td>
+                                            <td>{{ $advance->supplier->Name ?? '' }}</td>
                                             <td>{{ $advance->Amount }}</td>
                                             <td>{{ $advance->paymentType }}</td>
                                             <td>{{ $advance->registerDate }}</td>

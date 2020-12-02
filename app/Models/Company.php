@@ -170,4 +170,24 @@ class Company extends Model
         return $this->hasMany('App\Models\CustomerPrice');
     }
 
+    public function account_transaction()
+    {
+        return $this->hasOne('App\Models\AccountTransaction');
+    }
+
+    public function company_types()
+    {
+        $this->hasMany('App\Models\CompanyType');
+    }
+
+    public function payment_types()
+    {
+        $this->hasMany('App\Models\PaymentType');
+    }
+
+    public function payment_term()
+    {
+        $this->hasMany('App\Models\PaymentTerm');
+    }
+
 }

@@ -57,7 +57,7 @@
                                     <tbody>
                                     @foreach($customerAdvances as $advance)
                                         <tr>
-                                            <td>{{ $advance->customer->Name }}</td>
+                                            <td>{{ $advance->customer->Name ?? 'No data' }}</td>
                                             <td>{{ $advance->Amount }}</td>
                                             <td>{{ $advance->paymentType }}</td>
                                             <td>{{ $advance->registerDate }}</td>

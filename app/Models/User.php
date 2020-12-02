@@ -198,4 +198,23 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\CustomerPrice');
     }
 
+    public function account_transactions()
+    {
+        return $this->hasMany('App\Models\AccountTransaction');
+    }
+
+    public function company_types()
+    {
+        $this->hasMany('App\Models\CompanyType');
+    }
+
+    public function payment_types()
+    {
+        $this->hasMany('App\Models\PaymentType');
+    }
+
+    public function payment_term()
+    {
+        $this->hasMany('App\Models\PaymentTerm');
+    }
 }

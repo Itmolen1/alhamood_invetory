@@ -40,4 +40,10 @@ class SaleDetail extends Model
         {
             return $this->belongsTo('App\Models\Product','product_id','id');
         }
+        public function unit()
+        {
+            return $this->belongsTo('App\Models\Unit','unit_id','id');
+        }
+
+
 }

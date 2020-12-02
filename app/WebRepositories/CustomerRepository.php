@@ -8,6 +8,10 @@ use App\Http\Requests\CustomerRequest;
 use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Region;
+use App\Models\PaymentType;
+use App\Models\PaymentTerm;
+use App\Models\CompanyType;
+use App\Models\AccountTransaction;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -17,8 +21,47 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $customers = Customer::with('company','user')->get();
-        return view('admin.customer.index',compact('customers'));
+        // $customers = Customer::with('company','user')->get();
+        // return view('admin.customer.index',compact('customers'));
+        if(request()->ajax())
+        {
+            return datatables()->of(Customer::with('company','user','payment_type','company_type','payment_term')->latest()->get())
+               ->addColumn('action', function ($data) {
+                    $button = '<form action="'.route('customers.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button .= @csrf_field();
+                    $button .= @method_field('DELETE');
+                    $button .= '<a href="'.route('customers.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+                    $button .= '</form>';
+                    return $button;
+                })
+                ->addColumn('isActive', function($data) {
+                        if($data->isActive == true){
+                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }else{
+                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }
+                    })
+                 ->addColumn('paymentType', function($data) {
+                        return $data->payment_type->Name ?? "No Data";
+                    })
+                ->rawColumns([
+                    'action',
+                    'isActive',
+                     'paymentType'
+                ])
+                ->make(true);
+        }
+        return view('admin.customer.index');
 
     }
 
@@ -26,7 +69,10 @@ class CustomerRepository implements ICustomerRepositoryInterface
     {
         // TODO: Implement create() method.
         $regions = Region::with('city')->get();
-        return view('admin.customer.create',compact('regions'));
+        $payment_types = PaymentType::orderBy('id', 'asc')->skip(0)->take(2)->get();
+        $company_types = CompanyType::all();
+        $payment_terms = PaymentTerm::all();
+        return view('admin.customer.create',compact('regions','payment_types','company_types','payment_terms'));
 
     }
 
@@ -51,18 +97,25 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'Address' =>$customerRequest->Address,
             'Email' =>$customerRequest->Email,
             'postCode' =>$customerRequest->postCode,
-            'region_id' =>$customerRequest->region_id,
+            'region_id' =>$customerRequest->region_id ?? 0,
             'user_id' =>$user_id,
             'company_id' =>$company_id,
             'fileUpload' =>$filename,
             'Description' =>$customerRequest->Description,
             'registrationDate' =>$customerRequest->registrationDate,
             'TRNNumber' =>$customerRequest->TRNNumber,
-            'companyType' =>$customerRequest->companyType,
-            'paymentType' =>$customerRequest->paymentType,
-            'paymentTerm' =>$customerRequest->paymentTerm,
+            'payment_term_id' =>$customerRequest->paymentTerm ?? 0,
+            'company_type_id' =>$customerRequest->companyType ?? 0,
+            'payment_type_id' =>$customerRequest->paymentType ?? 0,
         ];
-        Customer::create($customer);
+        $customer = Customer::create($customer);
+        if ($customer) {
+            $account = new AccountTransaction([
+                'customer_id' => $customer->id,
+                'user_id' => $user_id,
+            ]);
+        }
+        $customer->account_transaction()->save($account);
         return redirect()->route('customers.index');
     }
 
@@ -86,7 +139,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'Phone' =>$request->Phone,
             'Address' =>$request->Address,
             'postCode' =>$request->postCode,
-            'region_id' =>$request->region_id,
+            'region_id' =>$request->region_id ?? 0,
             'Email' =>$request->Email,
             'user_id' =>$user_id,
 //            'company_id' =>$company_id,
@@ -94,9 +147,9 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'Description' =>$request->Description,
             'registrationDate' =>$request->registrationDate,
             'TRNNumber' =>$request->TRNNumber,
-            'companyType' =>$request->companyType,
-            'paymentType' =>$request->paymentType,
-            'paymentTerm' =>$request->paymentTerm,
+            'payment_term_id' =>$request->paymentTerm ?? 0,
+            'company_type_id' =>$request->companyType ?? 0,
+            'payment_type_id' =>$request->paymentType ?? 0,
 
         ]);
         return redirect()->route('customers.index');
@@ -113,8 +166,11 @@ class CustomerRepository implements ICustomerRepositoryInterface
     {
         // TODO: Implement edit() method.
         $regions = Region::with('city')->get();
-        $customer = Customer::with('region')->find($Id);
-        return view('admin.customer.edit',compact('customer','regions'));
+        $payment_types = PaymentType::orderBy('id', 'asc')->skip(0)->take(2)->get();
+        $company_types = CompanyType::all();
+        $payment_terms = PaymentTerm::all();
+        $customer = Customer::with('region','payment_type','company_type','payment_term')->find($Id);
+        return view('admin.customer.edit',compact('customer','regions','payment_types','company_types','payment_terms'));
     }
 
     public function delete(Request $request, $Id)

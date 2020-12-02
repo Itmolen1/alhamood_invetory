@@ -41,18 +41,19 @@
                             <h4 class="card-title">Sale</h4>
                             <h6 class="card-subtitle">All Sales</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="sales_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th style="width: 100px">Date</th>
                                         <th style="width: 150px">Pad #</th>
                                         <th style="width: 150px">Customer</th>
                                         <th style="width: 150px">Vehicle</th>
-                                        <th style="width: 150px">Product</th>
+                                        <th style="width: 100px">Product</th>
                                         <th>Quantity</th>
                                         <th>Unit Price</th>
                                         <th>VAT</th>
                                         <th>Amount</th>
+                                       {{--  <th>Paid</th> --}}
                                         <th>Paid</th>
                                         <th style="width: 40px">Action</th>
                                     </tr>
@@ -71,9 +72,9 @@
 {{--                                        <th>Action</th>--}}
 {{--                                    </tr>--}}
 {{--                                    </tfoot>--}}
-                                    <tbody>
+                                   {{--  <tbody>
                                     @foreach($sales as $sale)
-                                        <tr>
+                                        <tr> --}}
                                             {{--<td>--}}
 
                                                 {{--@if( $sale->updated_at->diffForHumans()  > '3 minutes ago')--}}
@@ -84,7 +85,7 @@
                                                     {{--{{ $sale->updated_at->diffForHumans() }}--}}
                                                 {{--@endif--}}
                                             {{--</td>--}}
-                                            <td>
+                                           {{--  <td>
                                                 @if(!empty($sale->sale_details[0]->createdDate))
                                                     {{ $sale->sale_details[0]->createdDate }}
                                                 @endif
@@ -110,8 +111,8 @@
                                                 @endif
                                             </td>
 
-                                            <td>{{ $sale->sale_details[0]->Quantity }}</td>
-                                            <td>{{ $sale->sale_details[0]->Price }}</td>
+                                            <td>{{ $sale->sale_details[0]->Quantity ?? 'No data' }}</td>
+                                            <td>{{ $sale->sale_details[0]->Price ?? 'No data' }}</td>
                                             <td>{{ $sale->totalVat }}</td>
                                             <td>{{ $sale->grandTotal }}</td>
                                             <td>{{ $sale->paidBalance }}</td>
@@ -120,7 +121,7 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                    </tbody>
+                                    </tbody> --}}
                                 </table>
                             </div>
                         </div>
@@ -132,63 +133,7 @@
             <!-- ============================================================== -->
             <!-- End PAge Content -->
             <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Right sidebar -->
-            <!-- ============================================================== -->
-            <!-- .right-sidebar -->
-            <div class="right-sidebar">
-                <div class="slimscrollright">
-                    <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span> </div>
-                    <div class="r-panel-body">
-                        <ul id="themecolors" class="m-t-20">
-                            <li><b>With Light sidebar</b></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme">1</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
-                            <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme">7</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme">10</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
-                            <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme working">12</a></li>
-                        </ul>
-                        <ul class="m-t-20 chatonline">
-                            <li><b>Chat option</b></li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/2.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Right sidebar -->
-            <!-- ============================================================== -->
+        
         </div>
         <!-- ============================================================== -->
         <!-- End Container fluid  -->
@@ -197,6 +142,80 @@
     <!-- ============================================================== -->
     <!-- End Page wrapper  -->
     <!-- ============================================================== -->
+
+    <script>
+       
+        $(document).ready(function () {
+            $('#sales_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('sales.index') }}",
+                },
+                columns:[
+                    {
+                        data: 'createdDate',
+                        name: 'createdDate'
+                    },
+                    {
+                        data: 'PadNumber',
+                        name: 'PadNumber'
+                    },
+                    {
+                        data: 'customer',
+                        name: 'customer'
+                    },
+                    {
+                        data: 'registrationNumber',
+                        name: 'registrationNumber'
+                    },
+                    {
+                        data: 'Product',
+                        name: 'Product'
+                    },
+                    {
+                        data: 'Quantity',
+                        name: 'Quantity'
+                    },
+                    {
+                        data: 'Price',
+                        name: 'Price'
+                    },
+                    {
+                        data: 'totalVat',
+                        name: 'totalVat'
+                    },
+                    {
+                        data: 'grandTotal',
+                        name: 'grandTotal'
+                    },
+                    {
+                        data: 'paidBalance',
+                        name: 'paidBalance'
+                    },
+                    // {
+                    //     data: 'isActive',
+                    //     name: 'isActive',
+                    //     orderable: false
+                    // },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    },
+                ]
+            });
+        });
+    </script>
+    <script>
+    function ConfirmDelete()
+    {
+     var result = confirm("Are you sure you want to delete?");
+     if (result) {
+        document.getElementById("deleteData").submit();
+     }
+    }
+    </script>
 
 
 @endsection

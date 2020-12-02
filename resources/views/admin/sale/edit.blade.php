@@ -446,7 +446,7 @@
 
 
                 $('.customer_id').change(function () {
-                    $('.quantity').val('');
+                    //$('.quantity').val('');
                     //alert();
                     var Id = 0;
                     Id = $(this).val();
@@ -475,6 +475,9 @@
                                         vehicleDetails += '<option value="0">No Data</option>';
                                     }
                                     $("#vehicle").append(vehicleDetails);
+                                    var rate = result.customer_prices[0].Rate;
+                                    var vat = result.customer_prices[0].VAT;
+                                    totalWithCustomer(vat, rate);
 
 
                                 } else {

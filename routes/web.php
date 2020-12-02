@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     route::resource('companies','CompanyController');
     route::get('/','AdminController@index');
-});
+
 
 Route::get('/admin','AdminController@index')->name('admin');
 route::get('/register','AdminController@register');
@@ -26,6 +26,10 @@ route::get('/register','AdminController@register');
 
 route::resource('customers','CustomerController');
 route::get('customerDetails/{id}','DriverController@customerDetails');
+route::resource('company_types','CompanyTypeController');
+route::resource('payment_types','PaymentTypeController');
+    route::resource('payment_terms','PaymentTermController');
+
 
 
 route::resource('suppliers','SupplierController');
@@ -81,7 +85,7 @@ route::resource('loans','LoanController');
 route::get('customerRemaining/{Id}','LoanController@customerRemaining');
 route::get('employeeRemaining/{Id}','LoanController@employeeRemaining');
 
-
+});
 
 
 

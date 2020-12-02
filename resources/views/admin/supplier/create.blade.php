@@ -55,7 +55,10 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Company Name</label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Customer Company Name">
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Supplier Company Name">
+                                                @if ($errors->has('Name'))
+                                                    <span class="text-danger">{{ $errors->first('Name') }}</span>
+                                                @endif
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -73,11 +76,10 @@
                                             <div class="form-group">
                                                 <label>Company Type</label>
                                                 <select class="form-control custom-select" name="companyType">
-                                                    <option>--Select your Company Type--</option>
-                                                    <option value="transportation">Transportation</option>
-                                                    <option value="construction">Construction</option>
-                                                    <option value="fuelTraders">Fuel traders</option>
-                                                    <option value="others">Others</option>
+                                                    <option readonly disabled="" selected="">--Select your Company Type--</option>
+                                                    @foreach ($company_types as $company_type)
+                                                        <option value="{{ $company_type->id }}">{{ $company_type->Name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -97,9 +99,10 @@
                                             <div class="form-group">
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select paymentType" name="paymentType">
-                                                    <option>--Select your Payment Type--</option>
-                                                    <option value="cash">cash</option>
-                                                    <option value="credit">Credit</option>
+                                                    <option readonly disabled="" selected="">--Select your Payment Type--</option>
+                                                    @foreach ($payment_types as $payment)
+                                                        <option value="{{ $payment->id }}">{{ $payment->Name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -108,11 +111,11 @@
                                         <div class="col-md-6">
                                             <div class="form-group" id="paymentTermAll">
                                                 <label class="control-label">Payment Term</label>
-                                                <select class="form-control custom-select" data-placeholder="Choose a Category" name="paymentTerm" id="paymentTerm" tabindex="1">
-                                                    <option>--Select your Company Type--</option>
-                                                    <option value="Category 2">5 days</option>
-                                                    <option value="Category 3">10 days</option>
-                                                    <option value="Category 4">15 days</option>
+                                                <select class="form-control custom-select" data-placeholder="" name="paymentTerm" id="paymentTerm" tabindex="1">
+                                                     <option readonly disabled="" selected="">--Select Payment Term Type--</option>
+                                                    @foreach ($payment_terms as $payment_term)
+                                                       <option value="{{ $payment_term->id }}">{{ $payment_term->Name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -280,7 +283,7 @@
         $(document).on("change", '.paymentType', function () {
             var cash = $('.paymentType').val();
 
-            if (cash === 'credit'){
+            if (cash === '2'){
                 $('#paymentTermAll').show();
             }
             else

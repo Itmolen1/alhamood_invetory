@@ -19,6 +19,7 @@ class CreatePurchaseDetailsTable extends Migration
             $table->unsignedBigInteger('user_id')->default(0);
             $table->unsignedBigInteger('company_id')->default(0);
             $table->unsignedBigInteger('product_id')->default(0);
+            $table->unsignedBigInteger('unit_id')->default(0);
             $table->date('createdDate')->default(date('Y-m-d'));
             $table->string('PadNumber')->nullable();
             $table->text('Description')->nullable();

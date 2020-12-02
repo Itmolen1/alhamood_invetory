@@ -66,8 +66,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Unit Selection</label>
-                                                <select class="form-control custom-select unit_id" name="unit_id" id="unit_id">
-                                                    <option>--Select Unit--</option>
+                                                <select class="form-control custom-select unit_id" name="unit_id" id="unit_id" required="">
+                                                    <option readonly disabled="" selected="">--Select Unit--</option>
                                                     @foreach($units as $unit)
                                                         <option value="{{ $unit->id }}">{{ $unit->Name }}</option>
                                                     @endforeach

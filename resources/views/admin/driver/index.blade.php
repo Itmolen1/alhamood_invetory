@@ -57,9 +57,9 @@
                                     @foreach($drivers as $driver)
                                         <tr>
                                             <td>{{ $driver->driverName }}</td>
-                                            <td>{{ $driver->customer->Name ? $driver->customer->Name:'No data'}}</td>
-                                            <td>{{ $driver->customer->Phone ? $driver->customer->Phone:'No data'}}</td>
-                                            <td>{{ $driver->customer->Mobile ? $driver->customer->Mobile:'No data'}}</td>
+                                            <td>{{ $driver->customer->Name ?? 'No data'}}</td>
+                                            <td>{{ $driver->customer->Phone ?? 'No data'}}</td>
+                                            <td>{{ $driver->customer->Mobile ?? 'No data'}}</td>
                                             <td>
                                                 @if($driver->isActive == true)
                                                     Active

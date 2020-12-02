@@ -30,7 +30,7 @@ class UserRepository implements IUserRepositoryInterface
             $filename = $userRequest->file('fileUpload')->storeAs('profile', $filename,'public');
 
         else
-            $filename = null;
+            $filename = 'admin_assets/assets/images/users/default.png';
 
         //dd($filename);
 
@@ -38,7 +38,7 @@ class UserRepository implements IUserRepositoryInterface
             'name' =>$userRequest->name,
             'email' =>$userRequest->email,
             'contactNumber' =>$userRequest->contactNumer,
-            'company_id' =>$userRequest->company_id,
+            'company_id' =>$userRequest->company_id ?? 0,
             'address' =>$userRequest->address,
             'imageUrl' =>$filename,
             'password' =>bcrypt($userRequest->password),
@@ -62,9 +62,9 @@ class UserRepository implements IUserRepositoryInterface
             $filename = $user->imageUrl;
 
         $user->name = $request->name;
-        $user->company_id = $request->company_id;
+        $user->company_id = $request->company_id ?? 0;
         $user->address = $request->address;
-        $user->imageUrl = $filename;
+        $user->imageUrl = $filename ?? null;
         $user->contactNumber = $request->contactNumber;
 
         $user->save();

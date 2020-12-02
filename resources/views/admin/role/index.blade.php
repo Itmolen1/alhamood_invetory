@@ -41,15 +41,17 @@
                             <h4 class="card-title">Role</h4>
                             <h6 class="card-subtitle">All Role</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="roles_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
+                                        <th width="100">Is Active</th>
+                                       {{--  <th>Is Active</th> --}}
                                         <th width="100">Action</th>
                                     </tr>
                                     </thead>
 
-                                    <tbody>
+                                  {{--   <tbody>
 
                                     @foreach($roles as $role)
                                         <tr>
@@ -65,9 +67,7 @@
                                         </tr>
 
                                     @endforeach
-
-
-                                    </tbody>
+                                    </tbody> --}}
                                 </table>
                             </div>
                         </div>
@@ -103,19 +103,54 @@
         </div>
     </div>
 
+   {{--  <div class="switchery-demo m-b-30">
+    <input type="checkbox" checked="" class="js-switch" data-color="#009efb" data-switchery="true" style="display: none;"></div> --}}
     <script>
-        var id;
-
-        $(document).on('click', '.delete', function(){
-            id = $(this).attr('id');
-            $('#confirmModal').modal('show');
+        $(document).ready(function () {
+            $('#roles_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('roles.index') }}",
+                },
+                columns:[
+                    {
+                        data: 'Name',
+                        name: 'Name'
+                    },
+                    {
+                        data: 'isActive',
+                        name: 'isActive',
+                        orderable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    },
+                    // {
+                    //     name: '',
+                    //     data: null,
+                    //     sortable: false,
+                    //     searchable: false,
+                    //     render: function (data) {
+                    //         var actions = '';
+                    //         actions += '<a href="/transaksi-masuk/tambah/:id"><span class="label label-primary">TAMBAH</span></a>';
+                    //         actions += '<a href="/transaksi-masuk/edit/:id"><span class="label label-warning">EDIT</span></a>';
+                    //         return actions.replace(/:id/g, data.id_produk);
+                    //     }
+                    // }
+                ]
+            });
         });
-
-        $('#ok_button').click(function(){
-
-            $('#ok_button').text('Deleting...');
-            window.location.reload();
-        });
-
+    </script>
+    <script>
+    function ConfirmDelete()
+    {
+     var result = confirm("Are you sure you want to delete?");
+     if (result) {
+        document.getElementById("deleteData").submit();
+     }
+    }
     </script>
 @endsection

@@ -23,7 +23,10 @@
                     <li class="border-bottom"><a href="{{ route('regions.index') }}">Regions list</a></li>
                     <li class="border-bottom"><a href="{{ route('units.index') }}">Units list</a></li>
                     <li class="border-bottom"><a href="{{ route('employees.index') }}">Employees list</a></li>
-                    <li><a href="{{ route('products.index') }}">Products list</a></li>
+                    <li class="border-bottom"><a href="{{ route('products.index') }}">Products list</a></li>
+                    <li class="border-bottom"><a href="{{ route('company_types.index') }}">Company Type list</a></li>
+                    <li class="border-bottom"><a href="{{ route('payment_types.index') }}">Payment Type list</a></li>
+                    <li><a href="{{ route('payment_terms.index') }}">Payment Terms list</a></li>
                     <!--  <li><a href="app-chat.html">Chat app</a></li> -->
 
                 </ul>

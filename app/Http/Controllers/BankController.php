@@ -24,7 +24,7 @@ class BankController extends Controller
 
     public function create()
     {
-        return $this->bankRepository->insert();
+        return $this->bankRepository->create();
     }
 
 

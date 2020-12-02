@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Region;
 use App\WebRepositories\Interfaces\IEmployeeRepositoryInterface;
 use Illuminate\Http\Request;
+use App\Models\AccountTransaction;
 
 class EmployeeRepository implements IEmployeeRepositoryInterface
 {
@@ -16,8 +17,47 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $employees = Employee::all();
-        return view('admin.employee.index',compact('employees'));
+        // $employees = Employee::all();
+        // return view('admin.employee.index',compact('employees'));
+        if(request()->ajax())
+        {
+            return datatables()->of(Employee::latest()->get())
+               ->addColumn('action', function ($data) {
+                    $button = '<form action="'.route('employees.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button .= @csrf_field();
+                    $button .= @method_field('DELETE');
+                    $button .= '<a href="'.route('employees.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+                    $button .= '</form>';
+                    return $button;
+                })
+                ->addColumn('isActive', function($data) {
+                        if($data->isActive == true){
+                            $button = '<form action="'.route('employees.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }else{
+                            $button = '<form action="'.route('employees.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }
+                    })
+                 // ->addColumn('state.Name', function($data) {
+                 //        return $data->state->Name ?? "No State";
+                 //    })
+                ->rawColumns([
+                    'action',
+                    'isActive',
+                    // 'state.Name'
+                ])
+                ->make(true);
+        }
+        return view('admin.employee.index');
     }
 
     public function create()
@@ -38,12 +78,19 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
             'emergencyContactNumber' => $employeeRequest->emergencyContactNumber,
             'passportNumber' => $employeeRequest->passportNumber,
             'Address' => $employeeRequest->Address,
-            'region_id' => $employeeRequest->region_id,
+            'region_id' => $employeeRequest->region_id ?? 0,
             'Description' => $employeeRequest->Description,
-            'user_id' => $user_id,
-            'company_id' => $company_id,
+            'user_id' => $user_id ?? 0,
+            'company_id' => $company_id ?? 0,
         ];
-        Employee::create($data);
+        $employee = Employee::create($data);
+        if ($employee) {
+            $account = new AccountTransaction([
+                'employee_id' => $employee->id ?? 0,
+                'user_id' => $user_id ?? 0,
+            ]);
+        }
+        $employee->account_transaction()->save($account);
         return redirect()->route('employees.index')->with('success','Record Inserted Successfully');
     }
 
@@ -59,10 +106,10 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
             'emergencyContactNumber' => $request->emergencyContactNumber,
             'passportNumber' => $request->passportNumber,
             'Address' => $request->Address,
-            'region_id' => $request->region_id,
+            'region_id' => $request->region_id ?? 0,
             'Description' => $request->Description,
-            'user_id' => $user_id,
-            'company_id' => $company_id,
+            'user_id' => $user_id ?? 0,
+            'company_id' => $company_id ?? 0,
         ]);
         return redirect()->route('employees.index')->with('update','Record Updated Successfully');
     }

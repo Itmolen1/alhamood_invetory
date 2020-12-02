@@ -41,16 +41,17 @@
                             <h4 class="card-title">City</h4>
                             <h6 class="card-subtitle">All Cities</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="city_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>State Name</th>
                                         <th>City</th>
-                                        <th>Action</th>
+                                        <th width="100px">IsActive</th>
+                                        <th width="70px">Action</th>
                                     </tr>
                                     </thead>
 
-                                    <tbody>
+                                    {{-- <tbody>
                                     @foreach($cities as $city)
                                         <tr>
                                             <td>
@@ -69,7 +70,7 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                    </tbody>
+                                    </tbody> --}}
                                 </table>
                             </div>
                         </div>
@@ -91,19 +92,45 @@
     <!-- End Page wrapper  -->
     <!-- ============================================================== -->
 
+   <script> 
+        $(document).ready(function () {
+            $('#city_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('cities.index') }}",
+                },
+                columns:[
+                    {
+                        data: 'state.Name',
+                        name: 'state.Name'
+                    },
+                    {
+                        data: 'Name',
+                        name: 'Name'
+                    },
+                    {
+                        data: 'isActive',
+                        name: 'isActive',
+                        orderable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    },
+                ]
+            });
+        });
+    </script>
     <script>
-        // var id;
-
-        $(document).on('click', '.insert', function(){
-            //  id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-        });
-
-        $('#ok_button').click(function(){
-
-            $('#ok_button').text('Inserting...');
-        });
-
+        function ConfirmDelete()
+        {
+         var result = confirm("Are you sure you want to delete?");
+         if (result) {
+            document.getElementById("deleteData").submit();
+         }
+        }
     </script>
 
 

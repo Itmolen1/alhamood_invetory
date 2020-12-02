@@ -35,4 +35,9 @@ class Employee extends Model
     {
         return $this->hasMany('App\Models\Loan');
     }
+
+    public function account_transaction()
+    {
+        return $this->hasOne('App\Models\AccountTransaction');
+    }
 }

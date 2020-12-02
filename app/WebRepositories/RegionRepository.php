@@ -36,9 +36,9 @@ class RegionRepository implements IRegionRepositoryInterface
         $company_id = session('company_id');
         $region = [
             'Name' =>$regionRequest->Name,
-            'city_id' =>$regionRequest->city_id,
-            'user_id' =>$user_id,
-            'company_id' =>$company_id,
+            'city_id' =>$regionRequest->city_id ?? 0,
+            'user_id' =>$user_id ?? 0,
+            'company_id' =>$company_id ?? 0,
         ];
         Region::create($region);
         return redirect()->route('regions.index');
@@ -51,8 +51,8 @@ class RegionRepository implements IRegionRepositoryInterface
         $user_id = session('user_id');
         $region->update([
             'Name' =>$request->Name,
-            'city_id' =>$request->city_id,
-            'user_id' =>$user_id,
+            'city_id' =>$request->city_id ?? 0,
+            'user_id' =>$user_id ?? 0,
         ]);
         return redirect()->route('regions.index');
     }
@@ -91,7 +91,7 @@ class RegionRepository implements IRegionRepositoryInterface
     public function locationDetails($id)
     {
         // TODO: Implement locationDetails() method.
-        $regions = Region::with('city.state.country'  )->find($id);
+        $regions = Region::with('city.state.country')->find($id);
         return response()->json($regions);
     }
 }

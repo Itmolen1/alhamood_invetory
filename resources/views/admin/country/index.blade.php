@@ -46,7 +46,7 @@
                                     <tr>
                                         <th>Country Name</th>
                                         <th>Country Code</th>
-                                        <th>Action</th>
+                                        <th width="100">Action</th>
                                     </tr>
                                     </thead>
 

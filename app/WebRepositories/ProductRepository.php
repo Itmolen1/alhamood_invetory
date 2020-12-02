@@ -35,9 +35,9 @@ class ProductRepository implements IProductRepositoryInterface
         $data =
             [
                 'Name' =>$productRequest->Name,
-                'unit_id' => $productRequest->unit_id,
-                'user_id' => $user_id,
-                'company_id' => $company_id,
+                'unit_id' => $productRequest->unit_id ?? 0,
+                'user_id' => $user_id ?? 0,
+                'company_id' => $company_id ?? 0,
             ];
         Product::create($data);
         return redirect()->route('products.index')->with('success','Record Inserted Successfully');
@@ -51,7 +51,7 @@ class ProductRepository implements IProductRepositoryInterface
         $data->update([
             'Name' => $request->Name,
             'user_id' => $user_id,
-            'unit_id' => $request->unit_id,
+            'unit_id' => $request->unit_id ?? 0,
         ]);
         return redirect()->route('products.index')->with('update','Record Updated Successfully');
     }

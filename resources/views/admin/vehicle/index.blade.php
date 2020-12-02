@@ -55,9 +55,9 @@
                                     @foreach($vehicles as $vehicle)
                                         <tr>
                                             <td>{{ $vehicle->registrationNumber }}</td>
-                                            <td>{{ $vehicle->customer->Name ? $vehicle->customer->Name : 'No data'}}</td>
-                                            <td>{{ $vehicle->customer->Representative ? $vehicle->customer->Representative : 'No data'}}</td>
-                                            <td>{{ $vehicle->customer->Mobile ? $vehicle->customer->Mobile : 'No data'}}</td>
+                                            <td>{{ $vehicle->customer->Name ?? 'No data'}}</td>
+                                            <td>{{ $vehicle->customer->Representative ?? 'No data'}}</td>
+                                            <td>{{ $vehicle->customer->Mobile ?? 'No data'}}</td>
                                             <td>
                                                 @if($vehicle->isActive == true)
                                                     Active

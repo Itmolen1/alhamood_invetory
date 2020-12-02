@@ -41,19 +41,19 @@
                             <h4 class="card-title">Suppliers</h4>
                             <h6 class="card-subtitle">All Suppliers</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="suppliers_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Mobile</th>
-                                        <th>Payment type</th>
+                                         <th>Payment type</th>
                                         <th>Address</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
 
-                                    <tbody>
+                                   {{--  <tbody>
                                     @foreach($suppliers as $supplier)
                                         <tr>
                                             <td>{{ $supplier->Name }}</td>
@@ -78,7 +78,7 @@
                                         </tr>
                                     @endforeach
 
-                                    </tbody>
+                                    </tbody> --}}
                                 </table>
                             </div>
                         </div>
@@ -117,31 +117,53 @@
         </div>
     </div>
 
-    <script>
-        var id;
-
-        $(document).on('click', '.delete', function(){
-            id = $(this).attr('id');
-            $('#confirmModal').modal('show');
-        });
-
-        $('#ok_button').click(function(){
-            $.ajax({
-                url:"suppliers/destroy/"+id,
-                beforeSend:function(){
-                    $('#ok_button').text('Deleting...');
-                    //window.location.reload();
+   <script>
+        $(document).ready(function () {
+            $('#suppliers_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('suppliers.index') }}",
                 },
-                success:function(data)
-                {
-                    setTimeout(function(){
-                       // $('#confirmModal').modal('hide');
-                       // $('#user_table').DataTable().ajax.reload();
-                    }, 2000);
-                }
-            })
+                columns:[
+                    {
+                        data: 'Name',
+                        name: 'Name'
+                    },
+                    {
+                        data: 'Mobile',
+                        name: 'Mobile'
+                    },
+                    {
+                        data: 'paymentType',
+                        name: 'paymentType'
+                    },
+                    {
+                        data: 'Address',
+                        name: 'Address'
+                    },
+                    {
+                        data: 'isActive',
+                        name: 'isActive',
+                        orderable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    },
+                ]
+            });
         });
-
+    </script>
+    <script>
+        function ConfirmDelete()
+        {
+         var result = confirm("Are you sure you want to delete?");
+         if (result) {
+            document.getElementById("deleteData").submit();
+         }
+        }
     </script>
 
 

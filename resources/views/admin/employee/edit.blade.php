@@ -111,14 +111,14 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>City</label>
-                                                <input type="text" name="City" id="city" value="{{ $employee->region->city->Name }}" placeholder="City" class="form-control">
+                                                <input type="text" name="City" id="city" value="{{ $employee->region->city->Name ?? "" }}" placeholder="City" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
-                                                <input type="text" name="State" id="state" value="{{ $employee->region->city->state->Name }}" PLACEHOLDER="State" class="form-control">
+                                                <input type="text" name="State" id="state" value="{{ $employee->region->city->state->Name ?? "" }}" PLACEHOLDER="State" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -135,7 +135,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Country</label>
-                                                <input type="text" name="Country" id="country" value="{{ $employee->region->city->state->country->Name }}" PLACEHOLDER="Country" class="form-control">
+                                                <input type="text" name="Country" id="country" value="{{ $employee->region->city->state->country->Name ?? "" }}" PLACEHOLDER="Country" class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->

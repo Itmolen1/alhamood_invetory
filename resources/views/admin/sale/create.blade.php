@@ -138,11 +138,27 @@
                                                     <tbody>
                                                     @foreach($salesRecords as $records)
                                                         <tr id="rowData" style="background: #1285ff;color: white;font-size: 12px">
-                                                            <td>{{ $records->sale_details[0]->PadNumber }}</td>
-                                                            <td>{{ $records->customer->Name }}</td>
-                                                            <td>{{ $records->sale_details[0]->vehicle->registrationNumber }}</td>
-                                                            <td>{{ $records->sale_details[0]->Quantity }}</td>
-                                                            <td>{{ $records->sale_details[0]->Price }}</td>
+                                                            <td>
+                                                                @if (!empty($records->sale_details[0]->PadNumber))
+                                                                     {{ $records->sale_details[0]->PadNumber }}
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $records->customer->Name ?? "" }}</td>
+                                                            <td>
+                                                                @if (!empty($records->sale_details[0]->vehicle->registrationNumber))
+                                                                    {{ $records->sale_details[0]->vehicle->registrationNumber }}
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if (!empty($records->sale_details[0]->Quantity))
+                                                                    {{ $records->sale_details[0]->Quantity }}
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if (!empty($records->sale_details[0]->Price))
+                                                                       {{ $records->sale_details[0]->Price }}
+                                                                @endif
+                                                             </td>
                                                             <td>{{ $records->grandTotal }}</td>
                                                             <td>{{ $records->paidBalance }}</td>
                                                             <td>{{ $records->updated_at->diffForHumans() }}</td>
@@ -377,7 +393,7 @@
 
                 $('.customer_id').change(function () {
                     //alert();
-                    $('.quantity').val('');
+                    //$('.quantity').val('');
                     var Id = 0;
                     Id = $(this).val();
 
@@ -409,8 +425,11 @@
                                     }
                                     $("#vehicle").append(vehicleDetails);
 
+                                    var rate = result.customer_prices[0].Rate;
+                                    var vat = result.customer_prices[0].VAT;
+                                    totalWithCustomer(vat, rate);
 
-
+                                    
                                 } else {
                                     alert(result);
                                 }
@@ -425,6 +444,9 @@
             });
             ////////////// end of customer select ////////////////
         });
+
+
+    
 
 
 

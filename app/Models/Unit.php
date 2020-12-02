@@ -31,4 +31,15 @@ class Unit extends Model
         return $this->hasMany('App\Models\Product');
     }
 
+    public function sale_details()
+    {
+        return $this->hasMany('App\Models\SaleDetail');
+    }
+
+    public function purchase_details()
+    {
+        return $this->hasMany('App\Models\PurchaseDetail');
+    }
+
+
 }

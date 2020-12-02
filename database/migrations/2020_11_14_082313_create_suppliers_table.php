@@ -17,9 +17,6 @@ class CreateSuppliersTable extends Migration
             $table->bigIncrements('id');
             $table->string('Name');
             $table->string('Representative')->nullable();
-            $table->string('companyType')->nullable();
-            $table->string('paymentType')->nullable();
-            $table->string('paymentTerm')->nullable();
             $table->string('TRNNumber')->nullable();
             $table->string('fileUpload')->nullable();
             $table->string('Phone')->nullable();
@@ -31,6 +28,9 @@ class CreateSuppliersTable extends Migration
             $table->text('Description')->nullable();
             $table->text('updateDescription')->nullable();
             $table->unsignedBigInteger('user_id')->default(0);
+            $table->unsignedBigInteger('payment_type_id')->default(0);
+            $table->unsignedBigInteger('company_type_id')->default(0);
+            $table->unsignedBigInteger('payment_term_id')->default(0);
             $table->unsignedBigInteger('company_id')->default(0);
             $table->unsignedBigInteger('region_id')->default(0);
             $table->timestamp('createdDate')->useCurrent();

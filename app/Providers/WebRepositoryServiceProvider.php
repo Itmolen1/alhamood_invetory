@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\WebRepositories\BankRepository;
 use App\WebRepositories\CityRepository;
 use App\WebRepositories\CompanyRepository;
+use App\WebRepositories\CompanyTypeRepository;
 use App\WebRepositories\CountryRepository;
 use App\WebRepositories\CustomerAdvanceRepository;
 use App\WebRepositories\CustomerPricesRepository;
@@ -19,6 +20,7 @@ use App\WebRepositories\ExpensesRepository;
 use App\WebRepositories\Interfaces\IBankRepositoryInterface;
 use App\WebRepositories\Interfaces\ICityRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
+use App\WebRepositories\Interfaces\ICompanyTypeRepositoryInterface;
 use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerPricesRepositoryInterface;
@@ -34,6 +36,8 @@ use App\WebRepositories\Interfaces\ILoanRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReaderRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingRepositoryInterface;
+use App\WebRepositories\Interfaces\IPaymentTermRepositoryInterface;
+use App\WebRepositories\Interfaces\IPaymentTypeRepositoryInterface;
 use App\WebRepositories\Interfaces\IProductRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IPurchaseRepositoryInterface;
@@ -51,6 +55,8 @@ use App\WebRepositories\LoanRepository;
 use App\WebRepositories\MeterReaderRepository;
 use App\WebRepositories\MeterReadingDetailRepository;
 use App\WebRepositories\MeterReadingRepository;
+use App\WebRepositories\PaymentTermRepository;
+use App\WebRepositories\PaymentTypeRepository;
 use App\WebRepositories\ProductRepository;
 use App\WebRepositories\PurchaseDetailRepository;
 use App\WebRepositories\PurchaseRepository;
@@ -104,6 +110,9 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IMeterReadingDetailRepositoryInterface::class, MeterReadingDetailRepository::class);
         $this->app->bind(ILoanRepositoryInterface::class,LoanRepository::class);
         $this->app->bind(ICustomerPricesRepositoryInterface::class, CustomerPricesRepository::class);
+        $this->app->bind(ICompanyTypeRepositoryInterface::class, CompanyTypeRepository::class);
+        $this->app->bind(IPaymentTypeRepositoryInterface::class, PaymentTypeRepository::class);
+        $this->app->bind(IPaymentTermRepositoryInterface::class,PaymentTermRepository::class);
     }
 
     /**

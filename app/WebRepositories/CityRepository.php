@@ -15,10 +15,43 @@ class CityRepository implements ICityRepositoryInterface
 
     public function index()
     {
-        // TODO: Implement index() method.
-        $cities = City::with('user','state')->get();
-        //dd($states[0]->country->id);
-        return view('admin.city.index',compact('cities'));
+        // $cities = City::with('user','state')->get();
+        // return view('admin.city.index',compact('cities'));
+        if(request()->ajax())
+        {
+            return datatables()->of(City::with('user','state')->latest()->get())
+               ->addColumn('action', function ($data) {
+                    $button = '<form action="'.route('cities.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button .= @csrf_field();
+                    $button .= @method_field('DELETE');
+                    $button .= '<a href="'.route('cities.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+                    $button .= '</form>';
+                    return $button;
+                })
+                ->addColumn('isActive', function($data) {
+                        if($data->isActive == true){
+                            $button = '<form action="'.route('cities.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }else{
+                            $button = '<form action="'.route('cities.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button .= @csrf_field();
+                            $button .= @method_field('PUT');
+                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            return $button;
+                        }
+                    })
+                 ->addColumn('state.Name', function($data) {
+                        return $data->state->Name ?? "No State";
+                    })
+                ->rawColumns(['action','isActive','state.Name'])
+                ->make(true);
+        }
+        return view('admin.city.index');
     }
 
     public function create()
@@ -35,9 +68,9 @@ class CityRepository implements ICityRepositoryInterface
         $company_id = session('company_id');
         $city = [
             'Name' =>$cityRequest->Name,
-            'state_id' =>$cityRequest->state_id,
-            'user_id' =>$user_id,
-            'company_id' =>$company_id,
+            'state_id' =>$cityRequest->state_id ?? 0,
+            'user_id' =>$user_id ?? 0,
+            'company_id' =>$company_id ?? 0,
         ];
         City::create($city);
         return redirect()->route('cities.index');
@@ -51,8 +84,8 @@ class CityRepository implements ICityRepositoryInterface
         $user_id = session('user_id');
         $city->update([
             'Name' =>$request->Name,
-            'state_id' =>$request->state_id,
-            'user_id' =>$user_id,
+            'state_id' =>$request->state_id ?? 0,
+            'user_id' =>$user_id ?? 0,
         ]);
         return redirect()->route('cities.index');
     }
