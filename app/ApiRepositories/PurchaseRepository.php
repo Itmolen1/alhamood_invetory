@@ -12,7 +12,6 @@ use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
 use App\Models\Supplier;
-use App\Models\update_note;
 use App\Models\UpdateNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +28,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return PurchaseResource::Collection(Purchase::all()->sortDesc()->forPage($page_no,$page_size));
+        return PurchaseResource::Collection(Purchase::with('purchase_details')->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function ActivateDeactivate($Id)
@@ -162,7 +161,11 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function BaseList()
     {
-        return array('products'=>Product::select('id','Name')->orderBy('id','desc')->get(),'supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get());
+        $product = DB::table('products as p')->select(
+            'p.id',
+            'p.Name',
+        )->where([['p.deleted_at',NULL]])->get();
+        return array('products'=>$product,'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
     }
 
     public function delete(Request $request, $Id)

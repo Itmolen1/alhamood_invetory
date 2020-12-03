@@ -29,8 +29,8 @@ class CompanyFactory extends Factory
             'Address' => $this->faker->address,
             'postCode' => $this->faker->postcode,
             'Description' => $this->faker->text,
-            'user_id' => $this->faker->numberBetween(0,3),
-            'region_id' => $this->faker->numberBetween(0,3),
+            'user_id' => $this->faker->numberBetween(1,3),
+            'region_id' => $this->faker->numberBetween(1,3),
         ];
     }
 }

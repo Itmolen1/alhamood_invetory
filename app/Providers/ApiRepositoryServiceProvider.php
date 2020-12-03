@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\ApiRepositories\CityRepository;
 use App\ApiRepositories\CompanyRepository;
+use App\ApiRepositories\CompanyTypeRepository;
 use App\ApiRepositories\CountryRepository;
 use App\ApiRepositories\CustomerAdvanceRepository;
 use App\ApiRepositories\CustomerRepository;
@@ -16,6 +17,7 @@ use App\ApiRepositories\ExpenseRepository;
 use App\ApiRepositories\Interfaces\IBankRepositoryInterface;
 use App\ApiRepositories\Interfaces\ICityRepositoryInterface;
 use App\ApiRepositories\Interfaces\ICompanyRepositoryInterface;
+use App\ApiRepositories\Interfaces\ICompanyTypeRepositoryInterface;
 use App\ApiRepositories\Interfaces\ICountryRepositoryInterface;
 use App\ApiRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
@@ -26,6 +28,8 @@ use App\ApiRepositories\Interfaces\IExpenseRepositoryInterface;
 use App\ApiRepositories\Interfaces\ILoanRepositoryInterface;
 use App\ApiRepositories\Interfaces\IMeterReaderRepositoryInterface;
 use App\ApiRepositories\Interfaces\IMeterReadingRepositoryInterface;
+use App\ApiRepositories\Interfaces\IPaymentTermRepositoryInterface;
+use App\ApiRepositories\Interfaces\IPaymentTypeRepositoryInterface;
 use App\ApiRepositories\Interfaces\IProductRepositoryInterface;
 use App\ApiRepositories\Interfaces\IPurchaseRepositoryInterface;
 use App\ApiRepositories\Interfaces\IRegionRepositoryInterface;
@@ -39,6 +43,8 @@ use App\ApiRepositories\Interfaces\IVehicleRepositoryInterface;
 use App\ApiRepositories\LoanRepository;
 use App\ApiRepositories\MeterReaderRepository;
 use App\ApiRepositories\MeterReadingRepository;
+use App\ApiRepositories\PaymentTermRepository;
+use App\ApiRepositories\PaymentTypeRepository;
 use App\ApiRepositories\ProductRepository;
 use App\ApiRepositories\PurchaseRepository;
 use App\ApiRepositories\RegionRepository;
@@ -78,6 +84,9 @@ class ApiRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ISupplierAdvanceRepositoryInterface::class,SupplierAdvanceRepository::class);
         $this->app->bind(ILoanRepositoryInterface::class,LoanRepository::class);
         $this->app->bind(ISalesRepositoryInterface::class,SalesRepository::class);
+        $this->app->bind(ICompanyTypeRepositoryInterface::class,CompanyTypeRepository::class);
+        $this->app->bind(IPaymentTypeRepositoryInterface::class,PaymentTypeRepository::class);
+        $this->app->bind(IPaymentTermRepositoryInterface::class,PaymentTermRepository::class);
     }
     public function boot()
     {

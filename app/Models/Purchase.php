@@ -21,6 +21,11 @@ class Purchase extends Model
         return $this->belongsTo('App\Models\User','user_id','id');
     }
 
+    public function api_user()
+    {
+        return $this->belongsTo('App\Models\User','user_id','id')->withTrashed();
+    }
+
     public function company()
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
@@ -29,6 +34,11 @@ class Purchase extends Model
     public function supplier()
     {
         return $this->belongsTo('App\Models\Supplier','supplier_id','id');
+    }
+
+    public function api_supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier','supplier_id','id')->withTrashed();
     }
 
     public function purchase_details()

@@ -138,4 +138,10 @@ class SupplierController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function BaseList()
+    {
+        $data = $this->supplierRepository->BaseList();
+        return $this->userResponse->Success($data);
+    }
 }

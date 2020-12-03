@@ -22,7 +22,7 @@ class PaymentTermFactory extends Factory
     public function definition()
     {
         return [
-            'Name' => $this->faker->name,
+            'Name' => $this->faker->numberBetween(1,30),
             'user_id' => $this->faker->numberBetween(1,3),
             'company_id' => $this->faker->numberBetween(1,3),
         ];

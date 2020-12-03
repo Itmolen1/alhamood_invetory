@@ -51,6 +51,18 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/Company/paginate/{page_no}/{page_size}','api\CompanyController@paginate');
     Route::get('/Company/ActivateDeactivate/{id}','api\CompanyController@ActivateDeactivate');
 
+    Route::apiResource('/CompanyType', 'api\CompanyTypeController');
+    Route::get('/CompanyType/paginate/{page_no}/{page_size}','api\CompanyTypeController@paginate');
+    Route::get('/CompanyType/ActivateDeactivate/{id}','api\CompanyTypeController@ActivateDeactivate');
+
+    Route::apiResource('/PaymentType', 'api\PaymentTypeController');
+    Route::get('/PaymentType/paginate/{page_no}/{page_size}','api\PaymentTypeController@paginate');
+    Route::get('/PaymentType/ActivateDeactivate/{id}','api\PaymentTypeController@ActivateDeactivate');
+
+    Route::apiResource('/PaymentTerm', 'api\PaymentTermController');
+    Route::get('/PaymentTerm/paginate/{page_no}/{page_size}','api\PaymentTermController@paginate');
+    Route::get('/PaymentTerm/ActivateDeactivate/{id}','api\PaymentTermController@ActivateDeactivate');
+
     Route::apiResource('/ExpenseCategory', 'api\ExpenseCategory');
     Route::get('/ExpenseCategory/paginate/{page_no}/{page_size}','api\ExpenseCategory@paginate');
     Route::get('/ExpenseCategory/ActivateDeactivate/{id}','api\ExpenseCategory@ActivateDeactivate');
@@ -58,6 +70,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Supplier', 'api\SupplierController');
     Route::get('/Supplier/paginate/{page_no}/{page_size}','api\SupplierController@paginate');
     Route::get('/Supplier/ActivateDeactivate/{id}','api\SupplierController@ActivateDeactivate');
+    Route::get('/SupplierBaseList', 'api\SupplierController@BaseList');
 
     Route::apiResource('/Unit', 'api\UnitController');
     Route::get('/Unit/paginate/{page_no}/{page_size}','api\UnitController@paginate');
@@ -90,7 +103,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Region', 'api\RegionController');
     Route::get('/Region/paginate/{page_no}/{page_size}','api\RegionController@paginate');
     Route::get('/Region/ActivateDeactivate/{id}','api\RegionController@ActivateDeactivate');
-    Route::get('get_detail_list','api\RegionController@get_detail_list');
+    Route::get('get_all_country','api\RegionController@get_detail_list');
 
     Route::apiResource('/CustomerAdvance', 'api\CustomerAdvanceController');
     Route::get('/CustomerAdvance/paginate/{page_no}/{page_size}','api\CustomerAdvanceController@paginate');

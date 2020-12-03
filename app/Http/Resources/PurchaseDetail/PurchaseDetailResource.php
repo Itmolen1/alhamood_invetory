@@ -27,7 +27,8 @@ class PurchaseDetailResource extends JsonResource
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
-            'product'=>$this->product,
+            //'product'=>$this->product,
+            'api_product'=>new ProductResource($this->api_product),
         ];
     }
 }

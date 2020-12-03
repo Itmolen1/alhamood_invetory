@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Http\Resources\Unit\UnitResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
@@ -20,6 +21,7 @@ class ProductResource extends JsonResource
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
+            //'unit'=>UnitResource::collection($this->unit),
         ];
     }
 }

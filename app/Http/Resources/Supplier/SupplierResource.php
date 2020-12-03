@@ -12,9 +12,6 @@ class SupplierResource extends JsonResource
             'id' => $this->id,
             'Name' => $this->Name,
             'Representative' => $this->Representative,
-            'companyType' => $this->companyType,
-            'paymentType' => $this->paymentType,
-            'paymentTerm' => $this->paymentTerm,
             'TRNNumber' => $this->TRNNumber,
             'fileUpload' => $this->fileUpload,
             'Phone' => $this->Phone,
@@ -28,10 +25,13 @@ class SupplierResource extends JsonResource
             'user_id'=>$this->user_id,
             'company_id'=>$this->company_id,
             'region_id'=>$this->region_id ,
-            'user'=>$this->user,
+            'api_user'=>$this->api_user,
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
+            'api_payment_type'=>$this->api_payment_type,
+            'api_company_type'=>$this->api_company_type,
+            'api_payment_term'=>$this->api_payment_term,
         ];
     }
 }

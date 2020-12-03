@@ -22,9 +22,9 @@ class ExpenseFactory extends Factory
     public function definition()
     {
         return [
-            'supplier_id' =>$this->faker->numberBetween(0,3),
-            'user_id' =>$this->faker->numberBetween(0,3),
-            'company_id' =>$this->faker->numberBetween(0,3),
+            'supplier_id' =>$this->faker->numberBetween(1,3),
+            'user_id' =>$this->faker->numberBetween(1,3),
+            'company_id' =>$this->faker->numberBetween(1,3),
             'Total' => $this->faker->numberBetween(1000, 100000),
             'subTotal' => $this->faker->numberBetween(1000, 100000),
             'totalVat' => $this->faker->numberBetween(1000, 100000),

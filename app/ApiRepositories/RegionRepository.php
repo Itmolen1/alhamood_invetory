@@ -110,7 +110,6 @@ class RegionRepository implements IRegionRepositoryInterface
             'Name'
         )->where('deleted_at',NULL)->get();
         $country = json_decode(json_encode($country), true);
-        //echo "<pre>";print_r($country);die;
         for($i=0;$i<count($country);$i++)
         {
             $state = DB::table('states as s')->select(
@@ -120,7 +119,6 @@ class RegionRepository implements IRegionRepositoryInterface
                 'c.Name as country_name'
             )->where([['s.deleted_at',NULL],['s.id',$country[$i]['id']]])->leftjoin('countries as c', 'c.id', '=', 's.id')->get();
             $state = json_decode(json_encode($state), true);
-            //echo "<pre>";print_r($state);die;
             for($j=0;$j<count($state);$j++)
             {
                 $state_id_here=$state[$j]['id'];
