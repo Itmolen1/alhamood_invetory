@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources\PaymentTerm;
 
-use App\Http\Resources\Unit\UnitResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class PaymentTermResource extends JsonResource
 {
     public function toArray($request)
     {
@@ -14,14 +13,11 @@ class ProductResource extends JsonResource
             'Name' => $this->Name,
             'Description' => $this->Description,
             'user_id'=>$this->user_id,
-            'user'=>$this->user,
-            'unit_id'=>$this->unit_id,
-            'unit'=>$this->unit,
             'company_id'=>$this->company_id,
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
-            //'unit'=>UnitResource::collection($this->unit),
+            'user'=>$this->user,
         ];
     }
 }

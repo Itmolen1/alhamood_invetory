@@ -29,9 +29,9 @@ class SupplierRepository implements ISupplierRepositoryInterface
         $supplier = new Supplier();
         $supplier->Name=$request->Name;
         $supplier->Representative=$request->Representative;
-        $supplier->companyType=$request->companyType;
-        $supplier->paymentType=$request->paymentType;
-        $supplier->paymentTerm=$request->paymentTerm;
+        $supplier->company_type_id=$request->company_type_id;
+        $supplier->payment_type_id=$request->payment_type_id;
+        $supplier->payment_term_id=$request->payment_term_id;
         $supplier->TRNNumber=$request->TRNNumber;
         $supplier->fileUpload=$request->fileUpload;
         $supplier->Phone=$request->Phone;
