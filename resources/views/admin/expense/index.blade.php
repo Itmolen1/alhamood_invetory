@@ -61,9 +61,9 @@
                                         <td>
                                                 {{ $expense->expense_details[0]->expenseDate }}
                                         </td>
-                                        <td>{{ $expense->expense_details[0]->PadNumber }}</td>
-                                        <td>{{ $expense->expense_details[0]->expense_category->Name }}</td>
-                                        <td>{{ $expense->expense_details[0]->Description }}</td>
+                                        <td>{{ $expense->expense_details[0]->PadNumber ?? ''}}</td>
+                                        <td>{{ $expense->expense_details[0]->expense_category->Name ?? '' }}</td>
+                                        <td>{{ $expense->expense_details[0]->Description ?? '' }}</td>
                                         <td>{{ $expense->subTotal}}</td>
                                         <td>{{ $expense->totalVat}}</td>
                                         <td>{{ $expense->grandTotal }}</td>

@@ -26,9 +26,9 @@ class Product extends Model
         return $this->belongsTo('App\Models\Company','company_id','id');
     }
 
-    public function unit()
+    public function units()
     {
-        return $this->belongsTo('App\Models\Unit','unit_id','id');
+        return $this->hasMany('App\Models\Unit');
     }
 
     public function sale_Details()

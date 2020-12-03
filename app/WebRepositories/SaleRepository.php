@@ -11,6 +11,7 @@ namespace App\WebRepositories;
 
 use App\Models\Customer;
 use App\Models\Product;
+use App\Models\Unit;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\UpdateNote;
@@ -147,6 +148,7 @@ class SaleRepository implements ISaleRepositoryInterface
                 $data =  SaleDetail::create([
                     "product_id"        => $detail['product_id'],
                     "vehicle_id"        => $detail['vehicle_id'],
+                    "unit_id"        => $detail['unit_id'],
                     "Quantity"        => $detail['Quantity'],
                     "Price"        => $detail['Price'],
                     "rowTotal"        => $detail['rowTotal'],
@@ -208,6 +210,7 @@ class SaleRepository implements ISaleRepositoryInterface
                 $saleDetails = SaleDetail::create([
                     //"Id" => $detail['Id'],
                     "product_id"        => $detail['product_id'],
+                    "unit_id"        => $detail['unit_id'],
                     "vehicle_id"        => $detail['vehicle_id'],
                     "Quantity"        => $detail['Quantity'],
                     "Price"        => $detail['Price'],
@@ -240,8 +243,9 @@ class SaleRepository implements ISaleRepositoryInterface
         //dd($update_notes[0]->Description);
         $customers = Customer::all();
         $products = Product::all();
-        $sale_details = SaleDetail::withTrashed()->with('sale.customer.customer_prices','user','product.unit','vehicle')->where('sale_id', $Id)->get();
-        return view('admin.sale.edit',compact('sale_details','customers','products','update_notes'));
+        $units = Unit::all();
+        $sale_details = SaleDetail::withTrashed()->with('sale.customer.customer_prices','user','product','unit','vehicle')->where('sale_id', $Id)->get();
+        return view('admin.sale.edit',compact('sale_details','customers','products','update_notes','units'));
     }
 
     public function delete(Request $request, $Id)

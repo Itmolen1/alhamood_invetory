@@ -26,7 +26,7 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                            <li class="breadcrumb-item active">unit</li>
+                            <li class="breadcrumb-item active">Unit</li>
                         </ol>
                         <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-eye"></i> List</button>
                     </div>
@@ -54,19 +54,32 @@
                                     <hr>
                                     <div class="row p-t-20">
                                         <!--/span-->
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Unit Name</label>
-                                                <input type="text" id="Name" name="Name" value="{{ $unit->Name }}" class="form-control" placeholder="Country Name">
+                                                <input type="text" id="Name" name="Name" value="{{ $unit->Name }}" class="form-control" placeholder="Unit Name">
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                 @endif
                                             </div>
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Product Selection </label>
+                                                <select class="form-control custom-select product_id" name="product_id" id="product_id">
+                                                    <option>--Select Product--</option>
+                                                    @foreach($products as $product)
+                                                        <option value="{{ $product->id }}" {{ ($product->id == $unit->product_id) ? 'selected':'' }}>{{ $product->Name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <!--/row-->
 
                                     <div class="form-actions">
-                                        <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Update Record</button>
+                                        <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Update</button>
                                         <button type="button" class="btn btn-inverse">Cancel</button>
                                     </div>
                                 </div>

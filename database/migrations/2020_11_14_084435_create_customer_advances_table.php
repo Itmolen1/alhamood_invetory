@@ -31,6 +31,7 @@ class CreateCustomerAdvancesTable extends Migration
             $table->date('registerDate')->default(now());
             $table->timestamp('createdDate')->useCurrent();
             $table->boolean('isActive')->default(true);
+            $table->boolean('isPushed')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

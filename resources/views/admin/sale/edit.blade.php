@@ -74,10 +74,10 @@
                                                     <tr style="text-decoration: line-through; color:red">
                                                         <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->createdDate }}" placeholder=""></td>
                                                         <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="customer" value="{{ $details->sale->customer->Name }}" id="" name="" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="vehicle" value="{{ $details->vehicle->registrationNumber }}" id="" name="" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="Product" value="{{ $details->product->Name }}" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="Quantity" value="{{ $details->Quantity }}" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="customer" value="{{ $details->sale->customer->Name ?? '' }}" id="" name="" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="vehicle" value="{{ $details->vehicle->registrationNumber ?? '' }}" id="" name="" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="Product" value="{{ $details->product->Name  ?? '' }}" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="Quantity" value="{{ $details->Quantity  ?? '' }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Price" value="{{ $details->Price }}" class="form-control"></td>
                                                         <td><input type="text" placeholder="vat" value="{{ $details->VAT }}" class="form-control" disabled>
                                                         <td><input type="text" placeholder="Total" value="{{ $details->rowSubTotal }}" class="form-control" disabled="disabled"></td>
@@ -119,9 +119,18 @@
                                                                 </select>
                                                             </div>
                                                         </td>
+                                                         <td hidden="">
+                                                    <div class="form-group">
+                                                        <select name="unit" id="unit" class="form-control unit_id">
+                                                            @foreach ($units as $unit)
+                                                            <option class="opt" value="{{ $unit->id }}" {{ ($unit->id == $details->unit_id) ? 'selected':'' }}>{{ $unit->Name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        </div>
+                                                    </td>
                                                         <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Quantity }}" placeholder="Quantity" class="quantity form-control">
-                                                            <input type="hidden" placeholder="Total" value="{{ $sale_details[0]->rowTotal }}" class="total form-control">
-                                                            <input type="hidden" placeholder="Single Row Vat" value="{{ $sale_details[0]->rowVatAmount }}" class="singleRowVat form-control">
+                                                            <input type="hidden" placeholder="Total" value="{{ $sale_details[0]->rowTotal ?? 0 }}" class="total form-control">
+                                                            <input type="hidden" placeholder="Single Row Vat" value="{{ $sale_details[0]->rowVatAmount ?? 0 }}" class="singleRowVat form-control">
                                                             <input type="hidden" onClick="this.select();"  placeholder="detail_Id" value="{{ $details->id }}" class="detail_Id form-control">
                                                         </td>
                                                         <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" id="Rate" value="{{ $details->Price }}" placeholder="Price" class="price form-control"></td>
@@ -148,7 +157,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $sale_details[0]->sale->Description }}</textarea>
+                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $sale_details[0]->sale->Description ?? '' }}</textarea>
                                                 <input type="file">
                                                 <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
                                             </div>
@@ -156,19 +165,19 @@
 
                                         <div class="col-md-4">
 
-                                            <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $sale_details[0]->sale->totalVat }}" disabled="">
-                                                <input type="hidden" class="form-control TotalVat" value="{{ $sale_details[0]->sale->totalVat }}">
+                                            <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $sale_details[0]->sale->totalVat ?? 0 }}" disabled="">
+                                                <input type="hidden" class="form-control TotalVat" value="{{ $sale_details[0]->sale->totalVat ?? '' }}">
                                             </p>
 
 
-                                            <p>Grand Total: <input type="text" class="form-control GTotal" value="{{ $sale_details[0]->sale->grandTotal }}" disabled>
-                                                <input type="hidden" class="form-control GTotal" value="{{ $sale_details[0]->sale->grandTotal }}" >
+                                            <p>Grand Total: <input type="text" class="form-control GTotal" value="{{ $sale_details[0]->sale->grandTotal ?? 0 }}" disabled>
+                                                <input type="hidden" class="form-control GTotal" value="{{ $sale_details[0]->sale->grandTotal ?? '' }}" >
                                             </p>
 
-                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $sale_details[0]->sale->paidBalance }}"></p>
+                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $sale_details[0]->sale->paidBalance ?? 0 }}"></p>
 
-                                            <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $sale_details[0]->sale->remainingBalance }}" disabled="disabled">
-                                                <input type="hidden" class="form-control balance" value="{{ $sale_details[0]->sale->remainingBalance }}">
+                                            <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $sale_details[0]->sale->remainingBalance ?? 0 }}" disabled="disabled">
+                                                <input type="hidden" class="form-control balance" value="{{ $sale_details[0]->sale->remainingBalance ?? 0 }}">
                                             </p>
 
 
@@ -250,7 +259,7 @@
                         @foreach($update_notes as $note)
                             <tr>
                                 <td>
-                                    {{ $note->user->name }}
+                                    {{ $note->user->name ?? '' }}
                                 </td>
                                 <td>{{ $note->Description }}</td>
                             </tr>
@@ -340,6 +349,7 @@
                                         {
                                             id: currentRow.find('.detail_Id').val(),
                                             product_id: currentRow.find('.product').val(),
+                                            unit_id: currentRow.find('.unit_id').val(),
                                             vehicle_id: currentRow.find('.vehicle_id').val(),
                                             Quantity: currentRow.find('.quantity').val(),
                                             Price: currentRow.find('.price').val(),
@@ -494,6 +504,50 @@
             });
             ////////////// end of customer select ////////////////
         });
+
+        /////////// product select //////////////
+        $(document).on("change", '.product', function () {
+            var currentRow = $(this).closest('tr');
+            var productId = $(this).val();
+            productInfoId(productId, currentRow);
+            //currentRow.find('.quantity').val('');
+        });
+
+        function productInfoId(Id, currentRow) {
+            if (Id > 0)
+            {
+                $.ajax({
+                    url: "{{ URL('productsDetails') }}/" + Id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result !== "Failed") {
+                            console.log(result);
+                                    $("#unit").html('');
+                                    var unitDetails = '';
+                                    if (result.units.length > 0)
+                                    {
+                                        for (var i = 0; i < result.units.length; i++) {
+                                            unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
+                                        }
+                                    }
+                                    else {
+                                        unitDetails += '<option value="0">No Data</option>';
+                                    }
+                                    $("#unit").append(unitDetails);
+                             // currentRow.find('.unit').val(result.unit.Name);
+                        } else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+            CountTotalVat();
+        }
+        ////////////////////////// end of products select //////////
 
 
 

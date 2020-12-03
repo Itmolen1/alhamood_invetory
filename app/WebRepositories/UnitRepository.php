@@ -6,6 +6,7 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\UnitRequest;
 use App\Models\Unit;
+use App\Models\Product;
 use App\WebRepositories\Interfaces\IUnitRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -15,13 +16,15 @@ class UnitRepository implements IUnitRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $units = Unit::with('user','company')->get();
+        $units = Unit::with('user','company','product')->get();
         return view('admin.unit.index',compact('units'));
     }
 
     public function create()
     {
         // TODO: Implement create() method.
+        $products = Product::all();
+        return view('admin.unit.create',compact('products'));
     }
 
     public function store(UnitRequest $unitRequest)
@@ -31,6 +34,7 @@ class UnitRepository implements IUnitRepositoryInterface
         $company_id = session('company_id');
         $unit = [
             'Name' => $unitRequest->Name,
+            'product_id' => $unitRequest->product_id,
             'user_id' => $user_id,
             'company_id' => $company_id,
         ];
@@ -45,6 +49,7 @@ class UnitRepository implements IUnitRepositoryInterface
         $user_id = session('user_id');
         $unit->update([
             'Name' => $request->Name,
+            'product_id' => $request->product_id,
             'user_id' => $user_id,
         ]);
         return redirect()->route('units.index')->with('update','Record Updated Successfully');
@@ -58,8 +63,9 @@ class UnitRepository implements IUnitRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $unit = Unit::find($Id);
-        return view('admin.unit.edit',compact('unit'));
+        $products = Product::all();
+        $unit = Unit::with('product')->find($Id);
+        return view('admin.unit.edit',compact('unit','products'));
     }
 
     public function delete(Request $request, $Id)

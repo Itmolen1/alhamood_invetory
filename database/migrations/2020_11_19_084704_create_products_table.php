@@ -20,7 +20,6 @@ class CreateProductsTable extends Migration
             $table->text('updateDescription')->nullable();
             $table->unsignedBigInteger('user_id')->default(0);
             $table->unsignedBigInteger('company_id')->default(0);
-            $table->unsignedBigInteger('unit_id')->default(0);
             $table->timestamp('createdDate')->useCurrent();
             $table->boolean('isActive')->default(true);
             $table->softDeletes();

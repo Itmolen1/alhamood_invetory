@@ -57,9 +57,9 @@
                                         <tr>
                                             <td>{{ $reading->readingDate }}</td>
                                             {{--<td>{{ $reading->totalPurchases }}</td>--}}
-                                            <td>{{ $reading->totalMeterSale }}</td>
-                                            <td>{{ $reading->totalPadSale }}</td>
-                                            <td>{{ $reading->saleDifference }}</td>
+                                            <td>{{ $reading->totalMeterSale ?? '' }}</td>
+                                            <td>{{ $reading->totalPadSale ?? '' }}</td>
+                                            <td>{{ $reading->saleDifference ?? '' }}</td>
                                             <td>
                                                 <form action="{{ route('meter_readings.destroy',$reading->id) }}" method="POST">
                                                     @csrf

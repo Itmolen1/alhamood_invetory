@@ -74,7 +74,7 @@
                                                     <div class="form-group">
                                                             <label class="control-label">Due date</label>
                                                             <input type="date" name="DueDate" id="DueDate" value="{{ date('Y-m-d') }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
-                                                        <input type="hidden" class="form-control PurchaseNumber" name="PurchaseNumber" id="PurchaseNumber" value="{{ $purchaseNo }}" placeholder="">
+                                                        <input type="hidden" class="form-control PurchaseNumber" name="PurchaseNumber" id="PurchaseNumber" value="{{ $purchaseNo ?? 0 }}" placeholder="">
                                                     </div>
                                                 </div>
                                             </div>
@@ -132,7 +132,7 @@
                                             <tbody id="newRow">
                                             <tr>
                                                 <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ date('Y-m-d') }}" placeholder=""></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" value="{{ $PadNumber }}" name="PadNumber" class="PadNumber form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" value="{{ $PadNumber ?? 0 }}" name="PadNumber" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="product" class="form-control product">
@@ -143,7 +143,13 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="text" placeholder="Unit" class="unit form-control"></td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <select name="unit" id="unit" class="form-control unit_id">
+                                                            <option class="opt" value="0">Unit</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
                                                 <td><input type="text" placeholder="Description" class="description form-control"></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
@@ -237,6 +243,7 @@
                             orderItem =
                                 {
                                     product_id: currentRow.find('.product').val(),
+                                    unit_id: currentRow.find('.unit_id').val(),
                                     Quantity: currentRow.find('.quantity').val(),
                                     Price: currentRow.find('.price').val(),
                                     rowTotal: currentRow.find('.total').val(),
@@ -391,7 +398,20 @@
                     success: function (result) {
                         if (result !== "Failed") {
                             //console.log(result);
-                             currentRow.find('.unit').val(result.unit.Name);
+
+                                    $("#unit").html('');
+                                    var unitDetails = '';
+                                    if (result.units.length > 0)
+                                    {
+                                        for (var i = 0; i < result.units.length; i++) {
+                                            unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
+                                        }
+                                    }
+                                    else {
+                                        unitDetails += '<option value="0">No Data</option>';
+                                    }
+                                    $("#unit").append(unitDetails);
+                             // currentRow.find('.unit').val(result.unit.Name);
                         } else {
                             alert(result);
                         }

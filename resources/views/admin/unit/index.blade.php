@@ -24,7 +24,7 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active">Unit</li>
                         </ol>
-                       <button type="button" class="btn btn-info d-lg-block m-l-15 insert"><i class="fa fa-plus-circle"></i> Create New</button>
+                       <a href="{{ route('units.create') }}"><button type="button" class="btn btn-info d-lg-block m-l-15 insert"><i class="fa fa-plus-circle"></i> Create New</button></a>
                     </div>
                 </div>
             </div>
@@ -44,6 +44,7 @@
                                 <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>Product Name</th>
                                         <th>Unit Name</th>
                                         <th width="100">Action</th>
                                     </tr>
@@ -52,6 +53,7 @@
                                     <tbody>
                                     @foreach($units as $unit)
                                         <tr>
+                                            <td>{{ $unit->product->Name ?? "No data" }}</td>
                                             <td>{{ $unit->Name }}</td>
                                             <td>
                                                 <form action="{{ route('units.destroy',$unit->id) }}" method="POST">
@@ -84,41 +86,6 @@
     <!-- ============================================================== -->
     <!-- End Page wrapper  -->
     <!-- ============================================================== -->
-
-    <div id="confirmModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <form action="{{ route('units.store') }}" method="post">
-            @csrf
-                <div class="modal-content">
-                    <div class="modal-header" style="text-align: center !important;">
-
-                        <h2 class="modal-title" >Create Unit Record</h2>
-                    </div>
-                    <div class="modal-body">
-
-                        <div class="row p-t-20">
-                            <!--/span-->
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">Unit Name</label>
-                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Unit Name">
-                                    @if ($errors->has('Name'))
-                                        <span class="text-danger">{{ $errors->first('Name') }}</span>
-                                    @endif
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" name="ok_button" id="ok_button" class="btn btn-danger">Save</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script>
         // var id;

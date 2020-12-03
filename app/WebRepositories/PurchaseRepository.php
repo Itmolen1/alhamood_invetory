@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
+use App\Models\Unit;
 use App\Models\Supplier;
 use App\Models\UpdateNote;
 use App\WebRepositories\Interfaces\IPurchaseRepositoryInterface;
@@ -46,7 +47,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $user_id = session('user_id');
             $company_id = session('company_id');
             $purchase = new Purchase();
-            $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber'];
+            $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber']; 
             $purchase->referenceNumber = $purchaseRequest->Data['referenceNumber'];
             $purchase->PurchaseDate = $purchaseRequest->Data['PurchaseDate'];
             $purchase->DueDate =  $purchaseRequest->Data['DueDate'];
@@ -73,6 +74,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
                 $data =  PurchaseDetail::create([
                     "product_id"        => $detail['product_id'],
+                    "unit_id"        => $detail['unit_id'],
                     "Quantity"        => $detail['Quantity'],
                     "Price"        => $detail['Price'],
                     "rowTotal"        => $detail['rowTotal'],
@@ -143,6 +145,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                 $purchaseDetails = PurchaseDetail::create([
                     //"Id" => $detail['Id'],
                     "product_id"        => $detail['product_id'],
+                    "unit_id"        => $detail['unit_id'],
                     "Quantity"        => $detail['Quantity'],
                     "Price"        => $detail['Price'],
                     "rowTotal"        => $detail['rowTotal'],
@@ -176,8 +179,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         //dd($update_notes[0]->Description);
         $suppliers = Supplier::all();
         $products = Product::all();
-        $purchase_details = PurchaseDetail::withTrashed()->with('purchase.supplier','user','product.unit')->where('purchase_id', $Id)->get();
-        return view('admin.purchase.edit',compact('purchase_details','suppliers','products','update_notes'));
+        $units = Unit::all();
+        $purchase_details = PurchaseDetail::withTrashed()->with('purchase.supplier','user','product','unit')->where('purchase_id', $Id)->get();
+        return view('admin.purchase.edit',compact('purchase_details','suppliers','products','update_notes','units'));
     }
 
     public function delete(Request $request, $Id)

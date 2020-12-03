@@ -117,21 +117,21 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Expense date</label>
-                                                <input type="date" name="expenseDate" id="expenseDate" class="form-control" value="{{ $expense_details[0]->expense->expenseDate }}" placeholder="dd/mm/yyyy">
+                                                <input type="date" name="expenseDate" id="expenseDate" class="form-control" value="{{ $expense_details[0]->expense->expenseDate ?? '' }}" placeholder="dd/mm/yyyy">
                                             </div>
                                             <div class="row">
 
                                                 <div class="col-md 12" hidden>
                                                     <div class="form-group">
                                                         <label class="control-label">Expense Number</label>
-                                                        <input type="text" class="form-control expenseNumber" name="expenseNumber" value="{{ $expense_details[0]->expense->expenseNumber }}" id="expenseNumber" placeholder="">
+                                                        <input type="text" class="form-control expenseNumber" name="expenseNumber" value="{{ $expense_details[0]->expense->expenseNumber ?? '' }}" id="expenseNumber" placeholder="">
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label class="control-label">Reference Number</label>
-                                                        <input type="text" class="form-control" id="referenceNumber" value="{{ $expense_details[0]->expense->referenceNumber }}"  name="referenceNumber" placeholder="Reference Number">
+                                                        <input type="text" class="form-control" id="referenceNumber" value="{{ $expense_details[0]->expense->referenceNumber ?? '' }}"  name="referenceNumber" placeholder="Reference Number">
                                                     </div>
                                                 </div>
 
@@ -162,11 +162,11 @@
                                                     <tr style="text-decoration: line-through; color:red">
                                                         <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->expenseDate }}" placeholder=""></td>
                                                         <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="expense_category" value="{{ $details->expense_category->Name }}" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="expense_category" value="{{ $details->expense_category->Name ?? 0 }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Description" value="{{ $details->Description }}" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="Total" value="{{ $details->Total }}" class="form-control"></td>
-                                                        <td><input type="text" placeholder="vat" value="{{ $details->VAT }}" class="form-control" disabled>
-                                                        <td><input type="text" placeholder="rowSubTotal" value="{{ $details->rowSubTotal }}" class="form-control" disabled="disabled"></td>
+                                                        <td><input type="text" placeholder="Total" value="{{ $details->Total ?? 0 }}" class="form-control"></td>
+                                                        <td><input type="text" placeholder="vat" value="{{ $details->VAT ?? 0 }}" class="form-control" disabled>
+                                                        <td><input type="text" placeholder="rowSubTotal" value="{{ $details->rowSubTotal ?? 0 }}" class="form-control" disabled="disabled"></td>
                                                     </tr>
                                                 @endif
                                             @endforeach
@@ -218,7 +218,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="mainDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $expense_details[0]->expense->Description }}</textarea>
+                                                <textarea name="" id="mainDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $expense_details[0]->expense->Description ?? 0 }}</textarea>
                                                 <input type="file">
                                                 <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
                                             </div>
@@ -226,19 +226,19 @@
 
                                         <div class="col-md-4">
 
-                                            <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat }}" disabled="">
-                                                <input type="hidden" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat }}" >
+                                            <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat ?? 0 }}" disabled="">
+                                                <input type="hidden" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat ?? 0 }}" >
                                             </p>
 
 
-                                            <p>Grand Total: <input type="text" value="{{ $expense_details[0]->expense->grandTotal }}" class="form-control GTotal" disabled>
-                                                <input type="hidden" vvalue="{{ $expense_details[0]->expense->grandTotal }}" class="form-control GTotal">
+                                            <p>Grand Total: <input type="text" value="{{ $expense_details[0]->expense->grandTotal ?? 0 }}" class="form-control GTotal" disabled>
+                                                <input type="hidden" vvalue="{{ $expense_details[0]->expense->grandTotal ?? 0 }}" class="form-control GTotal">
                                             </p>
 
-                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $expense_details[0]->expense->paidBalance }}" class="form-control cashPaid"></p>
+                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $expense_details[0]->expense->paidBalance  ?? 0 }}" class="form-control cashPaid"></p>
 
-                                            <p>Balance: <input type="text" value="{{ $expense_details[0]->expense->remainingBalance }}" class="form-control balance" disabled>
-                                                <input type="hidden" value="{{ $expense_details[0]->expense->remainingBalance }}" class="form-control balance">
+                                            <p>Balance: <input type="text" value="{{ $expense_details[0]->expense->remainingBalance ?? 0 }}" class="form-control balance" disabled>
+                                                <input type="hidden" value="{{ $expense_details[0]->expense->remainingBalance ?? 0 }}" class="form-control balance">
                                             </p>
 
 
@@ -315,7 +315,7 @@
                         @foreach($update_notes as $note)
                             <tr>
                                 <td>
-                                    {{ $note->user->name }}
+                                    {{ $note->user->name ?? '' }}
                                 </td>
                                 <td>{{ $note->Description }}</td>
                             </tr>

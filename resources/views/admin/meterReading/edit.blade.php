@@ -77,13 +77,13 @@
                                             @foreach($meter_details as $details)
                                                 @if(!is_null($details->deleted_at))
                                                     <tr style="text-decoration: line-through; color:red">
-                                                    <td><input type="text" value="{{ $details->meter_reader->Name }}" class="form-control"></td>
-                                                    <td><input type="text" value="{{ $details->startReading }}" class="form-control"></td>
-                                                    <td><input type="text" value="{{ $details->endReading }}" class="form-control"></td>
-                                                    <td><input type="text" value="{{ $details->netReading }}" class="form-control"></td>
-                                                    <td><input type="text" value="{{ $details->Purchases }}" class="form-control"></td>
-                                                    <td><input type="text" value="{{ $details->Sales }}" class="form-control"></td>
-                                                    <td><input type="text" value="{{ $details->Description }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->meter_reader->Name ?? 0 }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->startReading ?? 0 }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->endReading ?? 0 }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->netReading ?? 0 }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->Purchases ?? 0 }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->Sales ?? 0 }}" class="form-control"></td>
+                                                    <td><input type="text" value="{{ $details->Description ?? "" }}" class="form-control"></td>
                                                         <td><input class=" btn btn-danger" type="button" value="Deleted" /></td>
                                                     </tr>
 
@@ -142,24 +142,24 @@
                                         <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <p>Start Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->startPad }}" class="form-control startPad"></p>
+                                                    <p>Start Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->startPad ?? 0 }}" class="form-control startPad"></p>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <p>End Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->endPad }}" class="form-control endPad"></p>
+                                                    <p>End Pad: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->endPad ?? 0 }}" class="form-control endPad"></p>
                                                 </div>
                                             </div>
 
-                                            <p>Total Meter Reading Sale: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->totalMeterSale }}" class="form-control totalSale" disabled>
-                                                <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->totalMeterSale }}" class="form-control totalSale">
+                                            <p>Total Meter Reading Sale: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->totalMeterSale ?? 0 }}" class="form-control totalSale" disabled>
+                                                <input type="hidden" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $meter_details[0]->meter_reading->totalMeterSale ?? 0 }}" class="form-control totalSale">
                                             </p>
 
-                                            <p>Total Pad Sale: <input type="text" value="{{ $meter_details[0]->meter_reading->totalPadSale }}" class="form-control totalPad" disabled>
-                                                <input type="hidden" value="{{ $meter_details[0]->meter_reading->totalPadSale }}" class="form-control totalPad">
+                                            <p>Total Pad Sale: <input type="text" value="{{ $meter_details[0]->meter_reading->totalPadSale ?? 0 }}" class="form-control totalPad" disabled>
+                                                <input type="hidden" value="{{ $meter_details[0]->meter_reading->totalPadSale ?? 0 }}" class="form-control totalPad">
                                             </p>
 
 
-                                            <p>Difference: <input type="text" value="{{ $meter_details[0]->meter_reading->saleDifference }}" class="form-control balance" disabled>
-                                                <input type="hidden" value="{{ $meter_details[0]->meter_reading->saleDifference }}" class="form-control balance">
+                                            <p>Difference: <input type="text" value="{{ $meter_details[0]->meter_reading->saleDifference ?? 0 }}" class="form-control balance" disabled>
+                                                <input type="hidden" value="{{ $meter_details[0]->meter_reading->saleDifference ?? 0 }}" class="form-control balance">
                                             </p>
 
 
@@ -243,7 +243,7 @@
                         @foreach($update_notes as $note)
                             <tr>
                                 <td>
-                                    {{ $note->user->name }}
+                                    {{ $note->user->name ?? '' }}
                                 </td>
                                 <td>{{ $note->Description }}</td>
                             </tr>

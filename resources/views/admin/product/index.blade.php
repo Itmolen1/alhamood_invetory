@@ -45,7 +45,6 @@
                                     <thead>
                                     <tr>
                                         <th>Product Name</th>
-                                        <th>Unit Name</th>
                                         <th width="100">Action</th>
                                     </tr>
                                     </thead>
@@ -54,11 +53,6 @@
                                     @foreach($products as $product)
                                         <tr>
                                             <td>{{ $product->Name }}</td>
-                                            <td>
-                                                @if(!empty($product->unit->Name))
-                                                   {{ $product->unit->Name }}
-                                                    @endif
-                                            </td>
                                             <td>
                                                 <form action="{{ route('products.destroy',$product->id) }}" method="POST">
                                                     @csrf

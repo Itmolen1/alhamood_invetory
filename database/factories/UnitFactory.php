@@ -25,6 +25,7 @@ class UnitFactory extends Factory
             'Name' => $this->faker->name,
             'company_id' => $this->faker->numberBetween(1,3),
             'user_id' => $this->faker->numberBetween(1,3),
+            'product_id' => $this->faker->numberBetween(1,3),
         ];
     }
 }

@@ -16,15 +16,14 @@ class ProductRepository implements IProductRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $products = Product::with('user','company','unit')->get();
+        $products = Product::with('user','company')->get();
         return view('admin.product.index',compact('products'));
     }
 
     public function create()
     {
         // TODO: Implement create() method.
-        $units = Unit::all();
-        return view('admin.product.create',compact('units'));
+        return view('admin.product.create');
     }
 
     public function store(ProductRequest $productRequest)
@@ -35,7 +34,6 @@ class ProductRepository implements IProductRepositoryInterface
         $data =
             [
                 'Name' =>$productRequest->Name,
-                'unit_id' => $productRequest->unit_id ?? 0,
                 'user_id' => $user_id ?? 0,
                 'company_id' => $company_id ?? 0,
             ];
@@ -51,7 +49,6 @@ class ProductRepository implements IProductRepositoryInterface
         $data->update([
             'Name' => $request->Name,
             'user_id' => $user_id,
-            'unit_id' => $request->unit_id ?? 0,
         ]);
         return redirect()->route('products.index')->with('update','Record Updated Successfully');
     }
@@ -64,9 +61,8 @@ class ProductRepository implements IProductRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
-        $units = Unit::all();
-        $product = Product::with('unit')->find($Id);
-        return view('admin.product.edit',compact('units','product'));
+        $product = Product::find($Id);
+        return view('admin.product.edit',compact('product'));
     }
 
     public function delete(Request $request, $Id)
@@ -90,7 +86,7 @@ class ProductRepository implements IProductRepositoryInterface
     public function productDetails($Id)
     {
         // TODO: Implement productDetails() method.
-        $data = Product::with('unit')->find($Id);
+        $data = Product::with('units')->find($Id);
         return response()->json($data);
     }   
 }

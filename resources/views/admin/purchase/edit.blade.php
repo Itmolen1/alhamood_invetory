@@ -60,7 +60,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <input type="hidden" value="{{ $purchase_details[0]->purchase->id }}" name="id" id="id">
+                                            <input type="hidden" value="{{ $purchase_details[0]->purchase->id ?? 0 }}" name="id" id="id">
                                         </div>
                                         <!--/span-->
                                         <div class="col-md-6">
@@ -68,14 +68,14 @@
                                                 <div class="col-md 6">
                                                     <div class="form-group">
                                                         <label class="control-label">purchase date</label>
-                                                        <input type="date" name="PurchaseDate" id="PurchaseDate" value="{{ $purchase_details[0]->purchase->PurchaseDate }}" class="form-control PurchaseDate" placeholder="dd/mm/yyyy">
+                                                        <input type="date" name="PurchaseDate" id="PurchaseDate" value="{{ $purchase_details[0]->purchase->PurchaseDate ?? 0 }}" class="form-control PurchaseDate" placeholder="dd/mm/yyyy">
                                                     </div>
                                                 </div>
                                                 <div class="col-md 6">
                                                     <div class="form-group">
                                                             <label class="control-label">Due date</label>
-                                                            <input type="date" name="DueDate" id="DueDate" value="{{ $purchase_details[0]->purchase->DueDate }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
-                                                            <input type="hidden" class="form-control PurchaseNumber" value="{{ $purchase_details[0]->purchase->PurchaseNumber }}"  name="PurchaseNumber" id="PurchaseNumber" value="" placeholder="">
+                                                            <input type="date" name="DueDate" id="DueDate" value="{{ $purchase_details[0]->purchase->DueDate ?? 0 }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
+                                                            <input type="hidden" class="form-control PurchaseNumber" value="{{ $purchase_details[0]->purchase->PurchaseNumber ?? 0 }}"  name="PurchaseNumber" id="PurchaseNumber" value="" placeholder="">
                                                     </div>
                                                 </div>
                                             </div>
@@ -90,7 +90,7 @@
                                             <ul class="feeds p-b-20">
                                                 <li>Address <span class="text-muted" id="Address">
                                                          @if(!empty($purchase_details[0]->purchase->supplier->Address))
-                                                            {{ $purchase_details[0]->purchase->supplier->Address }}
+                                                            {{ $purchase_details[0]->purchase->supplier->Address  }}
                                                         @else
                                                             No TRN
                                                         @endif
@@ -125,7 +125,7 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label class="control-label">Reference Number</label>
-                                                        <input type="text" class="form-control referenceNumber" value="{{ $purchase_details[0]->purchase->referenceNumber }}" name="referenceNumber" id="referenceNumber" placeholder="Reference Number">
+                                                        <input type="text" class="form-control referenceNumber" value="{{ $purchase_details[0]->purchase->referenceNumber ?? 0 }}" name="referenceNumber" id="referenceNumber" placeholder="Reference Number">
                                                     </div>
                                                 </div>
 
@@ -161,9 +161,9 @@
                                                     <tr style="text-decoration: line-through; color:red">
                                                         <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->createdDate }}" placeholder=""></td>
                                                         <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="Product" value="{{ $details->product->Name }}" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="Unit" value="{{ $details->product->unit->Name }}" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="Description" value="{{ $details->Description }}" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="Product" value="{{ $details->product->Name ?? '' }}" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="Unit" value="{{ $details->unit->Name ?? '' }}" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="Description" value="{{ $details->Description ?? '' }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Quantity" value="{{ $details->Quantity }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Price" value="{{ $details->Price }}" class="form-control"></td>
                                                         <td><input type="text" placeholder="Total" value="{{ $details->rowTotal }}" class="form-control" disabled></td>
@@ -190,7 +190,15 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="text" placeholder="Unit" value="{{ $details->product->unit->Name }}" class="unit form-control"></td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <select name="unit" id="unit" class="form-control unit_id">
+                                                            @foreach ($units as $unit)
+                                                            <option class="opt" value="{{ $unit->id }}" {{ ($unit->id == $details->unit_id) ? 'selected':'' }}>{{ $unit->Name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </td>
                                                 <td><input type="text" placeholder="Description" value="{{ $details->Description }}"  class="description form-control"></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Quantity }}"  placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="{{ $details->rowVatAmount }}"  class="singleRowVat form-control">
@@ -221,7 +229,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="PurchaseDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $purchase_details[0]->purchase->supplierNote }}</textarea>
+                                                <textarea name="" id="PurchaseDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $purchase_details[0]->purchase->supplierNote ?? '' }}</textarea>
                                                 <input type="file">
                                                 <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
                                             </div>
@@ -229,19 +237,19 @@
 
                                         <div class="col-md-4">
 
-                                            <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $purchase_details[0]->purchase->totalVat }}" disabled="">
-                                                <input type="hidden" class="form-control TotalVat" value="{{ $purchase_details[0]->purchase->totalVat }}">
+                                            <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $purchase_details[0]->purchase->totalVat ?? 0 }}" disabled="">
+                                                <input type="hidden" class="form-control TotalVat" value="{{ $purchase_details[0]->purchase->totalVat ?? 0 }}">
                                             </p>
 
 
-                                            <p>Grand Total: <input type="text" class="form-control GTotal" value="{{ $purchase_details[0]->purchase->grandTotal }}" disabled>
-                                                <input type="hidden" class="form-control GTotal" value="{{ $purchase_details[0]->purchase->grandTotal }}" >
+                                            <p>Grand Total: <input type="text" class="form-control GTotal" value="{{ $purchase_details[0]->purchase->grandTotal ?? 0 }}" disabled>
+                                                <input type="hidden" class="form-control GTotal" value="{{ $purchase_details[0]->purchase->grandTotal ?? 0 }}" >
                                             </p>
 
-                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $purchase_details[0]->purchase->paidBalance }}"></p>
+                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $purchase_details[0]->purchase->paidBalance ?? 0 }}"></p>
 
-                                            <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $purchase_details[0]->purchase->remainingBalance }}" disabled="disabled">
-                                                <input type="hidden" class="form-control balance" value="{{ $purchase_details[0]->purchase->remainingBalance }}">
+                                            <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $purchase_details[0]->purchase->remainingBalance ?? 0 }}" disabled="disabled">
+                                                <input type="hidden" class="form-control balance" value="{{ $purchase_details[0]->purchase->remainingBalance ?? 0 }}">
                                             </p>
 
 
@@ -320,7 +328,7 @@
                         @foreach($update_notes as $note)
                             <tr>
                                 <td>
-                                    {{ $note->user->name }}
+                                    {{ $note->user->name ?? '' }}
                                 </td>
                                 <td>{{ $note->Description }}</td>
                             </tr>
@@ -365,6 +373,7 @@
                                     {
                                         id: currentRow.find('.detail_Id').val(),
                                         product_id: currentRow.find('.product').val(),
+                                        unit_id: currentRow.find('.unit_id').val(),
                                         Quantity: currentRow.find('.quantity').val(),
                                         Price: currentRow.find('.price').val(),
                                         rowTotal: currentRow.find('.total').val(),
@@ -521,8 +530,20 @@
                     dataType: "json",
                     success: function (result) {
                         if (result !== "Failed") {
-                            //console.log(result);
-                            currentRow.find('.unit').val(result.unit.Name);
+                            console.log(result);
+                                    $("#unit").html('');
+                                    var unitDetails = '';
+                                    if (result.units.length > 0)
+                                    {
+                                        for (var i = 0; i < result.units.length; i++) {
+                                            unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
+                                        }
+                                    }
+                                    else {
+                                        unitDetails += '<option value="0">No Data</option>';
+                                    }
+                                    $("#unit").append(unitDetails);
+                             // currentRow.find('.unit').val(result.unit.Name);
                         } else {
                             alert(result);
                         }

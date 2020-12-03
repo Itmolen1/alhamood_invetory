@@ -49,7 +49,7 @@
                             <form action="#">
                                 <div class="form-body">
 
-                                    <input type="hidden" name="SaleNumber" id="SaleNumber" value="{{ $saleNo }}">
+                                    <input type="hidden" name="SaleNumber" id="SaleNumber" value="{{ $saleNo ?? "" }}">
                                     <div class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
@@ -69,7 +69,7 @@
                                             <tbody id="newRow">
                                             <tr>
                                                 <td> <input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber }}" class="PadNumber form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="customer" class="form-control customer_id select2" id="customer_id">
@@ -94,6 +94,13 @@
                                                             @foreach($products as $product)
                                                                 <option value="{{ $product->id }}">{{ $product->Name }}</option>
                                                             @endforeach
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td hidden="">
+                                                    <div class="form-group">
+                                                        <select name="unit" id="unit" class="form-control unit_id">
+                                                            <option class="opt" value="0">Unit</option>
                                                         </select>
                                                     </div>
                                                 </td>
@@ -284,6 +291,7 @@
                                 orderItem =
                                     {
                                         product_id: currentRow.find('.product_id').val(),
+                                        unit_id: currentRow.find('.unit_id').val(),
                                         vehicle_id: currentRow.find('.vehicle_id').val(),
                                         Quantity: currentRow.find('.quantity').val(),
                                         Price: currentRow.find('.price').val(),
@@ -443,6 +451,51 @@
 
             });
             ////////////// end of customer select ////////////////
+
+              /////////// product select //////////////
+        $(document).on("change", '.product_id', function () {
+            var currentRow = $(this).closest('tr');
+            var productId = $(this).val();
+            productInfoId(productId, currentRow);
+            //currentRow.find('.quantity').val('');
+        });
+
+            function productInfoId(Id, currentRow) {
+            if (Id > 0)
+            {
+                $.ajax({
+                    url: "{{ URL('productsDetails') }}/" + Id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result !== "Failed") {
+                            //console.log(result);
+
+                                    $("#unit").html('');
+                                    var unitDetails = '';
+                                    if (result.units.length > 0)
+                                    {
+                                        for (var i = 0; i < result.units.length; i++) {
+                                            unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
+                                        }
+                                    }
+                                    else {
+                                        unitDetails += '<option value="0">No Data</option>';
+                                    }
+                                    $("#unit").append(unitDetails);
+                             // currentRow.find('.unit').val(result.unit.Name);
+                        } else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+            CountTotalVat();
+        }
+        ////////////////////////// end of products select //////////
         });
 
 
