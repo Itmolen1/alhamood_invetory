@@ -21,6 +21,11 @@ class Company extends Model
         return $this->belongsTo('App\Models\User','user_id','id');
     }
 
+    public function api_user()
+    {
+        return $this->belongsTo('App\Models\User','user_id','id')->withTrashed();
+    }
+
     public function users()
     {
         return $this->hasMany('App\Models\User');

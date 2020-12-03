@@ -22,10 +22,10 @@ class SaleDetailFactory extends Factory
     public function definition()
     {
         return [
-            'sale_id' => $this->faker->numberBetween(0,3),
-            'user_id' => $this->faker->numberBetween(0,3),
-            'company_id' => $this->faker->numberBetween(0,3),
-            'product_id' => $this->faker->numberBetween(0,3),
+            'sale_id' => $this->faker->numberBetween(1,3),
+            'user_id' => $this->faker->numberBetween(1,3),
+            'company_id' => $this->faker->numberBetween(1,3),
+            'product_id' => $this->faker->numberBetween(1,3),
             'Quantity' => $this->faker->numberBetween(10,100),
             'Price' => $this->faker->numberBetween(10,100),
             'rowTotal' => $this->faker->numberBetween(10,100),

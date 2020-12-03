@@ -22,10 +22,10 @@ class SupplierAdvanceFactory extends Factory
     public function definition()
     {
         return [
-            'supplier_id' => $this->faker->numberBetween(0,3),
-            'user_id' => $this->faker->numberBetween(0,3),
-            'company_id' => $this->faker->numberBetween(0,3),
-            'receiptNumber' => $this->faker->numberBetween(0,3),
+            'supplier_id' => $this->faker->numberBetween(1,3),
+            'user_id' => $this->faker->numberBetween(1,3),
+            'company_id' => $this->faker->numberBetween(1,3),
+            'receiptNumber' => $this->faker->numberBetween(1,3),
             'paymentType' => $this->faker->name,
             'Amount' => $this->faker->numberBetween(12,2222),
             'receiverName' => $this->faker->name,

@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Supplier', 'api\SupplierController');
     Route::get('/Supplier/paginate/{page_no}/{page_size}','api\SupplierController@paginate');
     Route::get('/Supplier/ActivateDeactivate/{id}','api\SupplierController@ActivateDeactivate');
+    Route::get('/SupplierBaseList', 'api\SupplierController@BaseList');
 
     Route::apiResource('/Unit', 'api\UnitController');
     Route::get('/Unit/paginate/{page_no}/{page_size}','api\UnitController@paginate');

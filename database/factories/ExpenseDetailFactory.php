@@ -22,10 +22,10 @@ class ExpenseDetailFactory extends Factory
     public function definition()
     {
         return [
-            'expense_id' => $this->faker->numberBetween(0,3),
-            'user_id' => $this->faker->numberBetween(0,3),
-            'company_id' => $this->faker->numberBetween(0,3),
-            'expense_category_id' => $this->faker->numberBetween(0,3),
+            'expense_id' => $this->faker->numberBetween(1,3),
+            'user_id' => $this->faker->numberBetween(1,3),
+            'company_id' => $this->faker->numberBetween(1,3),
+            'expense_category_id' => $this->faker->numberBetween(1,3),
             'Total' => $this->faker->numberBetween(10,100),
             'Vat' => $this->faker->numberBetween(10,100),
             'rowVatAmount' => $this->faker->numberBetween(10,100),

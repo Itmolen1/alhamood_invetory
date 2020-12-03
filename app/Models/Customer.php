@@ -22,6 +22,11 @@ class Customer extends Model
         return $this->belongsTo('App\Models\User','user_id','id');
     }
 
+    public function api_user()
+    {
+        return $this->belongsTo('App\Models\User','user_id','id')->withTrashed();
+    }
+
     public function company()
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
@@ -80,5 +85,20 @@ class Customer extends Model
     public function payment_term()
     {
         return $this->belongsTo('App\Models\PaymentTerm','payment_term_id','id');
+    }
+
+    public function api_payment_type()
+    {
+        return $this->belongsTo('App\Models\PaymentType','payment_type_id','id')->withTrashed();
+    }
+
+    public function api_company_type()
+    {
+        return $this->belongsTo('App\Models\CompanyType','company_type_id','id')->withTrashed();
+    }
+
+    public function api_payment_term()
+    {
+        return $this->belongsTo('App\Models\PaymentTerm','payment_term_id','id')->withTrashed();
     }
 }

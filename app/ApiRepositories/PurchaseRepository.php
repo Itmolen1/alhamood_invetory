@@ -161,7 +161,11 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function BaseList()
     {
-        return array('products'=>Product::select('id','Name')->orderBy('id','desc')->get(),'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
+        $product = DB::table('products as p')->select(
+            'p.id',
+            'p.Name',
+        )->where([['p.deleted_at',NULL]])->get();
+        return array('products'=>$product,'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
     }
 
     public function delete(Request $request, $Id)

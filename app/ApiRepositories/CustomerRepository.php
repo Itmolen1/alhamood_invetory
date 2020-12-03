@@ -29,9 +29,9 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer = new Customer();
         $customer->Name=$request->Name;
         $customer->Representative=$request->Representative;
-        $customer->companyType=$request->companyType;
-        $customer->paymentType=$request->paymentType;
-        $customer->paymentTerm=$request->paymentTerm;
+        $customer->company_type_id=$request->company_type_id;
+        $customer->payment_type_id=$request->payment_type_id;
+        $customer->payment_term_id=$request->payment_term_id;
         $customer->TRNNumber=$request->TRNNumber;
         $customer->fileUpload=$request->fileUpload;
         $customer->Phone=$request->Phone;

@@ -7,15 +7,20 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\Http\Requests\SupplierRequest;
 use App\Http\Resources\Supplier\SupplierResource;
+use App\Models\Company;
+use App\Models\PaymentTerm;
+use App\Models\PaymentType;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SupplierRepository implements ISupplierRepositoryInterface
 {
     public function all()
     {
-        return SupplierResource::collection(Supplier::all()->sortDesc());
+        //return SupplierResource::collection(Supplier::all()->sortDesc());
+        return SupplierResource::collection(Supplier::withTrashed()->get()->sortDesc());
     }
 
     public function paginate($page_no, $page_size)
@@ -112,5 +117,57 @@ class SupplierRepository implements ISupplierRepositoryInterface
         }
         $supplier->update();
         return new SupplierResource(Supplier::find($Id));
+    }
+
+    public function BaseList()
+    {
+        return array('company'=>Company::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'payment_term'=>PaymentTerm::select('id','Name')->orderBy('id','desc')->get(),'area_detail'=>$this->get_detail_list());
+    }
+
+    public function get_detail_list()
+    {
+        $country = DB::table('countries')->select(
+            'id',
+            'Name'
+        )->where('deleted_at',NULL)->get();
+        $country = json_decode(json_encode($country), true);
+        for($i=0;$i<count($country);$i++)
+        {
+            $state = DB::table('states as s')->select(
+                's.id',
+                's.Name',
+                's.country_id',
+                'c.Name as country_name'
+            )->where([['s.deleted_at',NULL],['s.id',$country[$i]['id']]])->leftjoin('countries as c', 'c.id', '=', 's.id')->get();
+            $state = json_decode(json_encode($state), true);
+            for($j=0;$j<count($state);$j++)
+            {
+                $state_id_here=$state[$j]['id'];
+                $city = DB::table('cities as ct')->select(
+                    'ct.id',
+                    'ct.Name',
+                    'ct.state_id',
+                    's.Name as state_name'
+                )->where([['ct.deleted_at',NULL],['ct.state_id',$state_id_here]])
+                    ->leftjoin('states as s', 'ct.state_id', '=', 's.id')->get();
+                $city = json_decode(json_encode($city), true);
+                for($k=0;$k<count($city);$k++)
+                {
+                    $city_id_here=$city[$k]['id'];
+                    $region = DB::table('regions as region')->select(
+                        'region.id',
+                        'region.Name',
+                        'region.city_id',
+                        'city.Name as city_name'
+                    )->where([['region.deleted_at',NULL],['region.city_id',$city_id_here]])
+                        ->leftJoin('cities as city','region.city_id','=','city.id')->get();
+                    $region = json_decode(json_encode($region),true);
+                    $city[$k]['region']=$region;
+                }
+                $state[$j]['cities']=$city;
+            }
+            $country[$i]['states']=$state;
+        }
+        return $country;
     }
 }

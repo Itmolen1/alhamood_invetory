@@ -16,7 +16,7 @@ class BankResource extends JsonResource
             'contactNumber' => $this->contactNumber,
             'Address' => $this->Address,
             'user_id'=>$this->user_id,
-            'user'=>$this->user,
+            'api_user'=>$this->api_user,
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),

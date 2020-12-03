@@ -17,7 +17,7 @@ class CompanyTypeResource extends JsonResource
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
-            'user'=>$this->user,
+            'api_user'=>$this->api_user,
         ];
     }
 }
