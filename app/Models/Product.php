@@ -31,6 +31,11 @@ class Product extends Model
         return $this->hasMany('App\Models\Unit');
     }
 
+    public function api_units()
+    {
+        return $this->hasMany('App\Models\Unit')->withTrashed();
+    }
+
     public function sale_Details()
     {
         return $this->hasMany('App\Models\SaleDetail');

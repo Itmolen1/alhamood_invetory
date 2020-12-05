@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\SalesDetail;
 
+use App\Http\Resources\Product\ProductResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SalesDetailResource extends JsonResource
@@ -26,7 +27,7 @@ class SalesDetailResource extends JsonResource
             'isActive'=>$this->isActive,
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
-            'product'=>$this->product,
+            'api_product'=>new ProductResource($this->api_product),
         ];
     }
 }

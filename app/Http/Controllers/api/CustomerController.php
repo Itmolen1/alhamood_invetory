@@ -138,4 +138,10 @@ class CustomerController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function BaseList()
+    {
+        $data = $this->customerRepository->BaseList();
+        return $this->userResponse->Success($data);
+    }
 }
