@@ -14,7 +14,15 @@ class BankRequest extends FormRequest
     public function rules()
     {
         return [
-            'Name'=>'required'
+            'Name'=>'required|unique:banks'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'Name.unique' => 'Already Exist.',
+            'Name.required' => 'Name Cannot be empty.',
         ];
     }
 }

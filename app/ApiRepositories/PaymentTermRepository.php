@@ -23,12 +23,12 @@ class PaymentTermRepository implements IPaymentTermRepositoryInterface
         return PaymentTermResource::Collection(PaymentTerm::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(PaymentTermRequest $paymentTermRequest)
     {
         $userId = Auth::id();
         $payment_term = new PaymentTerm();
-        $payment_term->Name=$request->Name;
-        $payment_term->Description=$request->Description;
+        $payment_term->Name=$paymentTermRequest->Name;
+        $payment_term->Description=$paymentTermRequest->Description;
         $payment_term->createdDate=date('Y-m-d h:i:s');
         $payment_term->isActive=1;
         $payment_term->user_id = $userId ?? 0;
@@ -36,12 +36,12 @@ class PaymentTermRepository implements IPaymentTermRepositoryInterface
         return new PaymentTermResource(PaymentTerm::find($payment_term->id));
     }
 
-    public function update(PaymentTermRequest $paymentTermRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $payment_term = PaymentTerm::find($Id);
-        $paymentTermRequest['user_id']=$userId ?? 0;
-        $payment_term->update($paymentTermRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $payment_term->update($request->all());
         return new PaymentTermResource(PaymentTerm::find($Id));
     }
 

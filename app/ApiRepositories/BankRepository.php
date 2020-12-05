@@ -24,28 +24,28 @@ class BankRepository implements IBankRepositoryInterface
         return BankResource::Collection(Bank::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(BankRequest $bankRequest)
     {
         $userId = Auth::id();
         $bank = new Bank();
-        $bank->Name=$request->Name;
-        $bank->Branch=$request->Branch;
-        $bank->Description=$request->Description;
-        $bank->updateDescription=$request->updateDescription;
-        $bank->contactNumber=$request->contactNumber;
-        $bank->Address=$request->Address;
+        $bank->Name=$bankRequest->Name;
+        $bank->Branch=$bankRequest->Branch;
+        $bank->Description=$bankRequest->Description;
+        $bank->updateDescription=$bankRequest->updateDescription;
+        $bank->contactNumber=$bankRequest->contactNumber;
+        $bank->Address=$bankRequest->Address;
         $bank->IsActive=1;
         $bank->user_id = $userId ?? 0;
         $bank->save();
         return new BankResource(Bank::find($bank->id));
     }
 
-    public function update(BankRequest $bankRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $bank = Bank::find($Id);
-        $bankRequest['user_id']=$userId ?? 0;
-        $bank->update($bankRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $bank->update($request->all());
         return new BankResource(Bank::find($Id));
     }
 

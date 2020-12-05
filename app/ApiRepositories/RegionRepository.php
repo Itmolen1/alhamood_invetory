@@ -24,12 +24,12 @@ class RegionRepository implements IRegionRepositoryInterface
         return RegionResource::Collection(Region::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(RegionRequest $regionRequest)
     {
         $userId = Auth::id();
         $region = new Region();
-        $region->Name=$request->Name;
-        $region->city_id=$request->city_id;
+        $region->Name=$regionRequest->Name;
+        $region->city_id=$regionRequest->city_id;
         $region->createdDate=date('Y-m-d h:i:s');
         $region->isActive=1;
         $region->user_id = $userId ?? 0;
@@ -37,12 +37,12 @@ class RegionRepository implements IRegionRepositoryInterface
         return new RegionResource(Region::find($region->id));
     }
 
-    public function update(RegionRequest $regionRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $region = Region::find($Id);
-        $regionRequest['user_id']=$userId ?? 0;
-        $region->update($regionRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $region->update($request->all());
         return new RegionResource(Region::find($Id));
     }
 

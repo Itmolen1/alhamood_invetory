@@ -23,12 +23,12 @@ class StateRepository implements IStateRepositoryInterface
         return StateResource::Collection(State::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(StateRequest $stateRequest)
     {
         $userId = Auth::id();
         $state = new State();
-        $state->Name=$request->Name;
-        $state->country_id=$request->country_id;
+        $state->Name=$stateRequest->Name;
+        $state->country_id=$stateRequest->country_id;
         $state->createdDate=date('Y-m-d h:i:s');
         $state->isActive=1;
         $state->user_id = $userId ?? 0;
@@ -36,12 +36,12 @@ class StateRepository implements IStateRepositoryInterface
         return new StateResource(State::find($state->id));
     }
 
-    public function update(StateRequest $stateRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $state = State::find($Id);
-        $stateRequest['user_id']=$userId ?? 0;
-        $state->update($stateRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $state->update($request->all());
         return new StateResource(State::find($Id));
     }
 

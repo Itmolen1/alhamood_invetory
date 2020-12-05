@@ -13,9 +13,9 @@ interface IBankRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(Request $request);
+    public  function insert(BankRequest $bankRequest);
 
-    public  function update(BankRequest $bankRequest,$Id);
+    public  function update(Request $request,$Id);
 
     public  function getBankById($Id);
 

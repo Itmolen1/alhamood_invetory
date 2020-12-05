@@ -7,6 +7,7 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\Http\Requests\SupplierRequest;
 use App\Http\Resources\Supplier\SupplierResource;
+use App\Models\AccountTransaction;
 use App\Models\Company;
 use App\Models\CompanyType;
 use App\Models\PaymentTerm;
@@ -29,39 +30,50 @@ class SupplierRepository implements ISupplierRepositoryInterface
         return SupplierResource::Collection(Supplier::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(SupplierRequest $supplierRequest)
     {
         $userId = Auth::id();
         $supplier = new Supplier();
-        $supplier->Name=$request->Name;
-        $supplier->Representative=$request->Representative;
-        $supplier->company_type_id=$request->company_type_id;
-        $supplier->payment_type_id=$request->payment_type_id;
-        $supplier->payment_term_id=$request->payment_term_id;
-        $supplier->TRNNumber=$request->TRNNumber;
-        $supplier->fileUpload=$request->fileUpload;
-        $supplier->Phone=$request->Phone;
-        $supplier->Mobile=$request->Mobile;
-        $supplier->Email=$request->Email;
-        $supplier->Address=$request->Address;
-        $supplier->postCode=$request->postCode;
-        $supplier->registrationDate=$request->registrationDate;
-        $supplier->Description=$request->Description;
-        //$supplier->company_id=$request->company_id;
-        $supplier->region_id=$request->region_id;
+        $supplier->Name=$supplierRequest->Name;
+        $supplier->Representative=$supplierRequest->Representative;
+        $supplier->company_type_id=$supplierRequest->company_type_id;
+        $supplier->payment_type_id=$supplierRequest->payment_type_id;
+        $supplier->payment_term_id=$supplierRequest->payment_term_id;
+        $supplier->TRNNumber=$supplierRequest->TRNNumber;
+        $supplier->fileUpload=$supplierRequest->fileUpload;
+        $supplier->Phone=$supplierRequest->Phone;
+        $supplier->Mobile=$supplierRequest->Mobile;
+        $supplier->Email=$supplierRequest->Email;
+        $supplier->Address=$supplierRequest->Address;
+        $supplier->postCode=$supplierRequest->postCode;
+        $supplier->registrationDate=$supplierRequest->registrationDate;
+        $supplier->Description=$supplierRequest->Description;
+        //$supplier->company_id=$supplierRequest->company_id;
+        $supplier->region_id=$supplierRequest->region_id;
         $supplier->createdDate=date('Y-m-d h:i:s');
         $supplier->isActive=1;
         $supplier->user_id = $userId ?? 0;
         $supplier->save();
+
+        //create account for newly added customer
+        $account_transaction = new AccountTransaction();
+        $account_transaction->Credit=0.00;
+        $account_transaction->Debit=0.00;
+        $account_transaction->supplier_id=$supplier->id;
+        $account_transaction->user_id=$userId ?? 0;
+        $account_transaction->Description='account created';
+        $account_transaction->createdDate=date('Y-m-d h:i:s');
+        $account_transaction->save();
+
         return new SupplierResource(Supplier::find($supplier->id));
     }
 
-    public function update(SupplierRequest $supplierRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $supplier = Supplier::find($Id);
-        $supplierRequest['user_id']=$userId ?? 0;
-        $supplier->update($supplierRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $supplier->update($request->all());
         return new SupplierResource(Supplier::find($Id));
     }
 

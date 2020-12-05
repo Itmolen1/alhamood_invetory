@@ -7,6 +7,7 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\IEmployeeRepositoryInterface;
 use App\Http\Requests\EmployeeRquest;
 use App\Http\Resources\Employee\EmployeeResource;
+use App\Models\AccountTransaction;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,35 +24,46 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
         return EmployeeResource::Collection(Employee::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(EmployeeRquest $employeeRquest)
     {
         $userId = Auth::id();
         $employee = new Employee();
-        $employee->Name=$request->Name;
-        $employee->Mobile=$request->Mobile;
-        $employee->emergencyContactNumber=$request->emergencyContactNumber;
-        $employee->identityNumber=$request->identityNumber;
-        $employee->passportNumber=$request->passportNumber;
-        $employee->Address=$request->Address;
-        $employee->driverLicenceNumber=$request->driverLicenceNumber;
-        $employee->driverLicenceExpiry=$request->driverLicenceExpiry;
-        $employee->startOfJob=$request->startOfJob;
-        $employee->DOB=$request->DOB;
-        $employee->Description=$request->Description;
+        $employee->Name=$employeeRquest->Name;
+        $employee->Mobile=$employeeRquest->Mobile;
+        $employee->emergencyContactNumber=$employeeRquest->emergencyContactNumber;
+        $employee->identityNumber=$employeeRquest->identityNumber;
+        $employee->passportNumber=$employeeRquest->passportNumber;
+        $employee->Address=$employeeRquest->Address;
+        $employee->driverLicenceNumber=$employeeRquest->driverLicenceNumber;
+        $employee->driverLicenceExpiry=$employeeRquest->driverLicenceExpiry;
+        $employee->startOfJob=$employeeRquest->startOfJob;
+        $employee->DOB=$employeeRquest->DOB;
+        $employee->Description=$employeeRquest->Description;
         //$employee->company_id=$request->company_id;
         $employee->createdDate=date('Y-m-d h:i:s');
         $employee->isActive=1;
         $employee->user_id = $userId ?? 0;
         $employee->save();
+
+        //create account for newly added customer
+        $account_transaction = new AccountTransaction();
+        $account_transaction->Credit=0.00;
+        $account_transaction->Debit=0.00;
+        $account_transaction->employee_id=$employee->id;
+        $account_transaction->user_id=$userId ?? 0;
+        $account_transaction->Description='account created';
+        $account_transaction->createdDate=date('Y-m-d h:i:s');
+        $account_transaction->save();
+
         return new EmployeeResource(Employee::find($employee->id));
     }
 
-    public function update(EmployeeRquest $employeeRquest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $employee = Employee::find($Id);
-        $employeeRquest['user_id']=$userId ?? 0;
-        $employee->update($employeeRquest->all());
+        $request['user_id']=$userId ?? 0;
+        $employee->update($request->all());
         return new EmployeeResource(Employee::find($Id));
     }
 

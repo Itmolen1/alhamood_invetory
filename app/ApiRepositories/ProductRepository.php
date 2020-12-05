@@ -23,14 +23,14 @@ class ProductRepository implements IProductRepositoryInterface
         return ProductResource::Collection(Product::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(ProductRequest $productRequest)
     {
         $userId = Auth::id();
         $product = new Product();
-        $product->Name=$request->Name;
-        $product->Description=$request->Description;
-        $product->company_id=$request->company_id;
-        $product->unit_id=$request->unit_id;
+        $product->Name=$productRequest->Name;
+        $product->Description=$productRequest->Description;
+        $product->company_id=$productRequest->company_id;
+        $product->unit_id=$productRequest->unit_id;
         $product->createdDate=date('Y-m-d h:i:s');
         $product->isActive=1;
         $product->user_id = $userId ?? 0;
@@ -38,12 +38,12 @@ class ProductRepository implements IProductRepositoryInterface
         return new ProductResource(Product::find($product->id));
     }
 
-    public function update(ProductRequest $productRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $product = Product::find($Id);
-        $productRequest['user_id']=$userId ?? 0;
-        $product->update($productRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $product->update($request->all());
         return new ProductResource(Product::find($Id));
     }
 

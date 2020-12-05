@@ -45,9 +45,9 @@ class BankController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(BankRequest $bankRequest)
     {
-        return $this->bankRepository->insert($request);
+        return $this->bankRepository->insert($bankRequest);
     }
 
     public function show($id)
@@ -67,7 +67,7 @@ class BankController extends Controller
         }
     }
 
-    public function update(BankRequest $bankRequest,$id)
+    public function update(Request $request,$id)
     {
         try
         {
@@ -76,7 +76,7 @@ class BankController extends Controller
             {
                 return $this->userResponse->Failed($product = (object)[],'Not Found.');
             }
-            return $this->bankRepository->update($bankRequest,$id);
+            return $this->bankRepository->update($request,$id);
         }
         catch(Exception $ex)
         {

@@ -13,9 +13,9 @@ interface ICompanyRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(Request $request);
+    public  function insert(CompanyRequest $companyRequest);
 
-    public  function update(CompanyRequest $companyRequest,$Id);
+    public  function update(Request $request,$Id);
 
     public  function getById($Id);
 

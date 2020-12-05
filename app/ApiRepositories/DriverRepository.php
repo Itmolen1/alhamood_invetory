@@ -24,14 +24,14 @@ class DriverRepository implements IDriverRepositoryInterface
         return DriverResource::Collection(Driver::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(DriverRequest $driverRequest)
     {
         $userId = Auth::id();
         $driver = new Driver();
-        $driver->driverName=$request->driverName;
-        $driver->Description=$request->Description;
-        $driver->customer_id=$request->customer_id;
-        $driver->company_id=$request->company_id;
+        $driver->driverName=$driverRequest->driverName;
+        $driver->Description=$driverRequest->Description;
+        $driver->customer_id=$driverRequest->customer_id;
+        $driver->company_id=$driverRequest->company_id;
         $driver->createdDate=date('Y-m-d h:i:s');
         $driver->isActive=1;
         $driver->user_id = $userId ?? 0;
@@ -39,12 +39,12 @@ class DriverRepository implements IDriverRepositoryInterface
         return new DriverResource(Driver::find($driver->id));
     }
 
-    public function update(DriverRequest $driverRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $driver = Driver::find($Id);
-        $driverRequest['user_id']=$userId ?? 0;
-        $driver->update($driverRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $driver->update($request->all());
         return new DriverResource(Driver::find($Id));
     }
 

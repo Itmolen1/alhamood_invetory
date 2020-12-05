@@ -13,9 +13,9 @@ interface IStateRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(Request $request);
+    public  function insert(StateRequest $stateRequest);
 
-    public  function update(StateRequest $stateRequest,$Id);
+    public  function update(Request $request,$Id);
 
     public  function getById($Id);
 

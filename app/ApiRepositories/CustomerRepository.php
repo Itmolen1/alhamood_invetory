@@ -7,6 +7,7 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\Customer\CustomerResource;
+use App\Models\AccountTransaction;
 use App\Models\CompanyType;
 use App\Models\Customer;
 use App\Models\PaymentTerm;
@@ -27,39 +28,50 @@ class CustomerRepository implements ICustomerRepositoryInterface
         return CustomerResource::Collection(Customer::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(Request $request)
+    public function insert(CustomerRequest $customerRequest)
     {
         $userId = Auth::id();
         $customer = new Customer();
-        $customer->Name=$request->Name;
-        $customer->Representative=$request->Representative;
-        $customer->company_type_id=$request->company_type_id;
-        $customer->payment_type_id=$request->payment_type_id;
-        $customer->payment_term_id=$request->payment_term_id;
-        $customer->TRNNumber=$request->TRNNumber;
-        $customer->fileUpload=$request->fileUpload;
-        $customer->Phone=$request->Phone;
-        $customer->Mobile=$request->Mobile;
-        $customer->Email=$request->Email;
-        $customer->Address=$request->Address;
-        $customer->postCode=$request->postCode;
-        $customer->registrationDate=$request->registrationDate;
-        $customer->Description=$request->Description;
-        $customer->company_id=$request->company_id;
-        $customer->region_id=$request->region_id;
+        $customer->Name=$customerRequest->Name;
+        $customer->Representative=$customerRequest->Representative;
+        $customer->company_type_id=$customerRequest->company_type_id;
+        $customer->payment_type_id=$customerRequest->payment_type_id;
+        $customer->payment_term_id=$customerRequest->payment_term_id;
+        $customer->TRNNumber=$customerRequest->TRNNumber;
+        $customer->fileUpload=$customerRequest->fileUpload;
+        $customer->Phone=$customerRequest->Phone;
+        $customer->Mobile=$customerRequest->Mobile;
+        $customer->Email=$customerRequest->Email;
+        $customer->Address=$customerRequest->Address;
+        $customer->postCode=$customerRequest->postCode;
+        $customer->registrationDate=$customerRequest->registrationDate;
+        $customer->Description=$customerRequest->Description;
+        $customer->company_id=$customerRequest->company_id;
+        $customer->region_id=$customerRequest->region_id;
         $customer->createdDate=date('Y-m-d h:i:s');
         $customer->isActive=1;
         $customer->user_id = $userId ?? 0;
         $customer->save();
+
+        //create account for newly added customer
+        $account_transaction = new AccountTransaction();
+        $account_transaction->Credit=0.00;
+        $account_transaction->Debit=0.00;
+        $account_transaction->customer_id=$customer->id;
+        $account_transaction->user_id=$userId ?? 0;
+        $account_transaction->Description='account created';
+        $account_transaction->createdDate=date('Y-m-d h:i:s');
+        $account_transaction->save();
+
         return new CustomerResource(Customer::find($customer->id));
     }
 
-    public function update(CustomerRequest $customerRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $customer = Customer::find($Id);
-        $customerRequest['user_id']=$userId ?? 0;
-        $customer->update($customerRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $customer->update($request->all());
         return new CustomerResource(Customer::find($Id));
     }
 

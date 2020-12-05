@@ -13,9 +13,9 @@ interface ICustomerRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(Request $request);
+    public  function insert(CustomerRequest $customerRequest);
 
-    public  function update(CustomerRequest $customerRequest,$Id);
+    public  function update(Request $request,$Id);
 
     public  function getById($Id);
 
