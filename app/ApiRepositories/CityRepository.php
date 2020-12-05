@@ -23,12 +23,12 @@ class CityRepository implements ICityRepositoryInterface
         return CityResource::Collection(City::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(CityRequest $cityRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $city = new City();
-        $city->Name=$cityRequest->Name;
-        $city->state_id=$cityRequest->state_id;
+        $city->Name=$request->Name;
+        $city->state_id=$request->state_id;
         $city->createdDate=date('Y-m-d h:i:s');
         $city->isActive=1;
         $city->user_id = $userId ?? 0;
@@ -36,12 +36,12 @@ class CityRepository implements ICityRepositoryInterface
         return new CityResource(City::find($city->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(CityRequest $cityRequest, $Id)
     {
         $userId = Auth::id();
         $city = City::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $city->update($request->all());
+        $cityRequest['user_id']=$userId ?? 0;
+        $city->update($cityRequest->all());
         return new CityResource(City::find($Id));
     }
 

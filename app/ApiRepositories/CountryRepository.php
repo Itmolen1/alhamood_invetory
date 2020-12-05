@@ -24,12 +24,12 @@ class CountryRepository implements ICountryRepositoryInterface
         return CountryResource::Collection(Country::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(CountryRequest $countryRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $country = new Country();
-        $country->Name=$countryRequest->Name;
-        $country->shortForm=$countryRequest->shortForm;
+        $country->Name=$request->Name;
+        $country->shortForm=$request->shortForm;
         $country->createdDate=date('Y-m-d h:i:s');
         $country->isActive=1;
         $country->user_id = $userId ?? 0;
@@ -37,12 +37,12 @@ class CountryRepository implements ICountryRepositoryInterface
         return new CountryResource(Country::find($country->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(CountryRequest $countryRequest, $Id)
     {
         $userId = Auth::id();
         $country = Country::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $country->update($request->all());
+        $countryRequest['user_id']=$userId ?? 0;
+        $country->update($countryRequest->all());
         return new CountryResource(Country::find($Id));
     }
 

@@ -14,7 +14,7 @@ class BankRequest extends FormRequest
     public function rules()
     {
         return [
-            'Name'=>'required|unique:banks'
+            'Name'=>'required'
         ];
     }
 

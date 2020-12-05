@@ -14,7 +14,7 @@ class ExpenseCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'Name' => 'required|unique:expense_categories'
+            'Name' => 'required'
         ];
     }
 

@@ -13,9 +13,9 @@ interface IVehicleRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(VehicleRequest $bankRequest);
+    public  function insert(Request $request);
 
-    public  function update(Request $request,$Id);
+    public  function update(VehicleRequest $bankRequest,$Id);
 
     public  function getById($Id);
 

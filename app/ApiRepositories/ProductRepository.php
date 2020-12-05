@@ -30,7 +30,7 @@ class ProductRepository implements IProductRepositoryInterface
         $product->Name=$productRequest->Name;
         $product->Description=$productRequest->Description;
         $product->company_id=$productRequest->company_id;
-        $product->unit_id=$productRequest->unit_id;
+        //$product->unit_id=$productRequest->unit_id;
         $product->createdDate=date('Y-m-d h:i:s');
         $product->isActive=1;
         $product->user_id = $userId ?? 0;

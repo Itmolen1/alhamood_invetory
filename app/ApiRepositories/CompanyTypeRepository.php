@@ -23,12 +23,12 @@ class CompanyTypeRepository implements ICompanyTypeRepositoryInterface
         return CompanyTypeResource::Collection(CompanyType::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(CompanyTypeRequest $companyTypeRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $company_type = new CompanyType();
-        $company_type->Name=$companyTypeRequest->Name;
-        $company_type->Description=$companyTypeRequest->Description;
+        $company_type->Name=$request->Name;
+        $company_type->Description=$request->Description;
         $company_type->createdDate=date('Y-m-d h:i:s');
         $company_type->isActive=1;
         $company_type->user_id = $userId ?? 0;
@@ -36,12 +36,12 @@ class CompanyTypeRepository implements ICompanyTypeRepositoryInterface
         return new CompanyTypeResource(CompanyType::find($company_type->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(CompanyTypeRequest $companyTypeRequest, $Id)
     {
         $userId = Auth::id();
         $company_type = CompanyType::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $company_type->update($request->all());
+        $companyTypeRequest['user_id']=$userId ?? 0;
+        $company_type->update($companyTypeRequest->all());
         return new CompanyTypeResource(CompanyType::find($Id));
     }
 

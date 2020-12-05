@@ -13,9 +13,9 @@ interface ISupplierRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(SupplierRequest $supplierRequest);
+    public  function insert(Request $request);
 
-    public  function update(Request $request,$Id);
+    public  function update(SupplierRequest $supplierRequest,$Id);
 
     public  function getById($Id);
 

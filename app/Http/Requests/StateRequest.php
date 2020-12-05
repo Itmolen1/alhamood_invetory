@@ -14,7 +14,7 @@ class StateRequest extends FormRequest
     public function rules()
     {
         return [
-            'Name' => 'required|unique:states'
+            'Name' => 'required'
         ];
     }
 

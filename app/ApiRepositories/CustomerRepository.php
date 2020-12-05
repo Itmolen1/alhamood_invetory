@@ -28,26 +28,26 @@ class CustomerRepository implements ICustomerRepositoryInterface
         return CustomerResource::Collection(Customer::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(CustomerRequest $customerRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $customer = new Customer();
-        $customer->Name=$customerRequest->Name;
-        $customer->Representative=$customerRequest->Representative;
-        $customer->company_type_id=$customerRequest->company_type_id;
-        $customer->payment_type_id=$customerRequest->payment_type_id;
-        $customer->payment_term_id=$customerRequest->payment_term_id;
-        $customer->TRNNumber=$customerRequest->TRNNumber;
-        $customer->fileUpload=$customerRequest->fileUpload;
-        $customer->Phone=$customerRequest->Phone;
-        $customer->Mobile=$customerRequest->Mobile;
-        $customer->Email=$customerRequest->Email;
-        $customer->Address=$customerRequest->Address;
-        $customer->postCode=$customerRequest->postCode;
-        $customer->registrationDate=$customerRequest->registrationDate;
-        $customer->Description=$customerRequest->Description;
-        $customer->company_id=$customerRequest->company_id;
-        $customer->region_id=$customerRequest->region_id;
+        $customer->Name=$request->Name;
+        $customer->Representative=$request->Representative;
+        $customer->company_type_id=$request->company_type_id;
+        $customer->payment_type_id=$request->payment_type_id;
+        $customer->payment_term_id=$request->payment_term_id;
+        $customer->TRNNumber=$request->TRNNumber;
+        $customer->fileUpload=$request->fileUpload;
+        $customer->Phone=$request->Phone;
+        $customer->Mobile=$request->Mobile;
+        $customer->Email=$request->Email;
+        $customer->Address=$request->Address;
+        $customer->postCode=$request->postCode;
+        $customer->registrationDate=$request->registrationDate;
+        $customer->Description=$request->Description;
+        $customer->company_id=$request->company_id;
+        $customer->region_id=$request->region_id;
         $customer->createdDate=date('Y-m-d h:i:s');
         $customer->isActive=1;
         $customer->user_id = $userId ?? 0;
@@ -66,12 +66,12 @@ class CustomerRepository implements ICustomerRepositoryInterface
         return new CustomerResource(Customer::find($customer->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(CustomerRequest $customerRequest, $Id)
     {
         $userId = Auth::id();
         $customer = Customer::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $customer->update($request->all());
+        $customerRequest['user_id']=$userId ?? 0;
+        $customer->update($customerRequest->all());
         return new CustomerResource(Customer::find($Id));
     }
 

@@ -24,14 +24,14 @@ class VehicleRepository implements IVehicleRepositoryInterface
         return VehicleResource::Collection(Vehicle::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(VehicleRequest $vehicleRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $vehicle = new Vehicle();
-        $vehicle->registrationNumber=$vehicleRequest->registrationNumber;
-        $vehicle->Description=$vehicleRequest->Description;
-        $vehicle->customer_id=$vehicleRequest->customer_id;
-        $vehicle->company_id=$vehicleRequest->company_id;
+        $vehicle->registrationNumber=$request->registrationNumber;
+        $vehicle->Description=$request->Description;
+        $vehicle->customer_id=$request->customer_id;
+        $vehicle->company_id=$request->company_id;
         $vehicle->createdDate=date('Y-m-d h:i:s');
         $vehicle->isActive=1;
         $vehicle->user_id = $userId ?? 0;
@@ -39,12 +39,12 @@ class VehicleRepository implements IVehicleRepositoryInterface
         return new VehicleResource(Vehicle::find($vehicle->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(VehicleRequest $vehicleRequest, $Id)
     {
         $userId = Auth::id();
         $vehicle = Vehicle::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $vehicle->update($request->all());
+        $vehicleRequest['user_id']=$userId ?? 0;
+        $vehicle->update($vehicleRequest->all());
         return new VehicleResource(Vehicle::find($Id));
     }
 

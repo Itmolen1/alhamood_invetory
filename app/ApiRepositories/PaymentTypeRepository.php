@@ -23,12 +23,12 @@ class PaymentTypeRepository implements IPaymentTypeRepositoryInterface
         return PaymentTypeResource::Collection(PaymentType::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(PaymentTypeRequest $paymentTypeRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $payment_type = new PaymentType();
-        $payment_type->Name=$paymentTypeRequest->Name;
-        $payment_type->Description=$paymentTypeRequest->Description;
+        $payment_type->Name=$request->Name;
+        $payment_type->Description=$request->Description;
         $payment_type->createdDate=date('Y-m-d h:i:s');
         $payment_type->isActive=1;
         $payment_type->user_id = $userId ?? 0;
@@ -36,12 +36,12 @@ class PaymentTypeRepository implements IPaymentTypeRepositoryInterface
         return new PaymentTypeResource(PaymentType::find($payment_type->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(PaymentTypeRequest $paymentTypeRequest, $Id)
     {
         $userId = Auth::id();
         $payment_type = PaymentType::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $payment_type->update($request->all());
+        $paymentTypeRequest['user_id']=$userId ?? 0;
+        $payment_type->update($paymentTypeRequest->all());
         return new PaymentTypeResource(PaymentType::find($Id));
     }
 

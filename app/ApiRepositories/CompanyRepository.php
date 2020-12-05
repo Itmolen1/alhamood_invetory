@@ -24,17 +24,17 @@ class CompanyRepository implements ICompanyRepositoryInterface
         return CompanyResource::Collection(Company::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(CompanyRequest $companyRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $company = new Company();
-        $company->Name=$companyRequest->Name;
-        $company->Representative=$companyRequest->Representative;
-        $company->Phone=$companyRequest->Phone;
-        $company->Mobile=$companyRequest->Mobile;
-        $company->Address=$companyRequest->Address;
-        $company->postCode=$companyRequest->postCode;
-        $company->Description=$companyRequest->Description;
+        $company->Name=$request->Name;
+        $company->Representative=$request->Representative;
+        $company->Phone=$request->Phone;
+        $company->Mobile=$request->Mobile;
+        $company->Address=$request->Address;
+        $company->postCode=$request->postCode;
+        $company->Description=$request->Description;
         $company->createdDate=date('Y-m-d h:i:s');
         $company->isActive=1;
         $company->user_id = $userId ?? 0;
@@ -53,12 +53,12 @@ class CompanyRepository implements ICompanyRepositoryInterface
         return new CompanyResource(Company::find($company->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(CompanyRequest $companyRequest, $Id)
     {
         $userId = Auth::id();
         $company = Company::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $company->update($request->all());
+        $companyRequest['user_id']=$userId ?? 0;
+        $company->update($companyRequest->all());
         return new CompanyResource(Company::find($Id));
     }
 

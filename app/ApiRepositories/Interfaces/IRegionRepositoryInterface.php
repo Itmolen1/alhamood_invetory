@@ -13,9 +13,9 @@ interface IRegionRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(RegionRequest $regionRequest);
+    public  function insert(Request $request);
 
-    public  function update(Request $request,$Id);
+    public  function update(RegionRequest $regionRequest,$Id);
 
     public  function getById($Id);
 

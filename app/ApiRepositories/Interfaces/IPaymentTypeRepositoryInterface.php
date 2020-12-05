@@ -13,9 +13,9 @@ interface IPaymentTypeRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(PaymentTypeRequest $paymentTypeRequest);
+    public  function insert(Request $request);
 
-    public  function update(Request $request,$Id);
+    public  function update(PaymentTypeRequest $paymentTypeRequest,$Id);
 
     public  function getById($Id);
 

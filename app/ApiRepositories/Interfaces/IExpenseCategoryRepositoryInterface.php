@@ -13,9 +13,9 @@ interface IExpenseCategoryRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(ExpenseCategoryRequest $expenseCategoryRequest);
+    public  function insert(Request $request);
 
-    public  function update(Request $request,$Id);
+    public  function update(ExpenseCategoryRequest $expenseCategoryRequest,$Id);
 
     public  function getById($Id);
 

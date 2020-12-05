@@ -23,12 +23,12 @@ class ExpenseCategoryRepository implements IExpenseCategoryRepositoryInterface
         return ExpenseCategoryResource::Collection(ExpenseCategory::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(ExpenseCategoryRequest $expenseCategoryRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $expense_category = new ExpenseCategory();
-        $expense_category->Name=$expenseCategoryRequest->Name;
-        $expense_category->Description=$expenseCategoryRequest->Description;
+        $expense_category->Name=$request->Name;
+        $expense_category->Description=$request->Description;
         $expense_category->createdDate=date('Y-m-d h:i:s');
         $expense_category->isActive=1;
         $expense_category->user_id = $userId ?? 0;
@@ -36,12 +36,12 @@ class ExpenseCategoryRepository implements IExpenseCategoryRepositoryInterface
         return new ExpenseCategoryResource(ExpenseCategory::find($expense_category->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(ExpenseCategoryRequest $expenseCategoryRequest, $Id)
     {
         $userId = Auth::id();
         $expense_category = ExpenseCategory::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $expense_category->update($request->all());
+        $expenseCategoryRequest['user_id']=$userId ?? 0;
+        $expense_category->update($expenseCategoryRequest->all());
         return new ExpenseCategoryResource(ExpenseCategory::find($Id));
     }
 

@@ -23,12 +23,12 @@ class UnitRepository implements IUnitRepositoryInterface
         return UnitResource::Collection(Unit::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(UnitRequest $unitRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $unit = new Unit();
-        $unit->Name=$unitRequest->Name;
-        $unit->company_id=$unitRequest->company_id;
+        $unit->Name=$request->Name;
+        $unit->company_id=$request->company_id;
         $unit->createdDate=date('Y-m-d h:i:s');
         $unit->isActive=1;
         $unit->user_id = $userId ?? 0;
@@ -36,12 +36,12 @@ class UnitRepository implements IUnitRepositoryInterface
         return new UnitResource(Unit::find($unit->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(UnitRequest $unitRequest, $Id)
     {
         $userId = Auth::id();
         $unit = Unit::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $unit->update($request->all());
+        $unitRequest['user_id']=$userId ?? 0;
+        $unit->update($unitRequest->all());
         return new UnitResource(Unit::find($Id));
     }
 

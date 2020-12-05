@@ -13,9 +13,9 @@ interface IProductRepositoryInterface
 
     public  function paginate($page_no,$page_size);
 
-    public  function insert(ProductRequest $productRequest);
+    public  function insert(Request $request);
 
-    public  function update(Request $request,$Id);
+    public  function update(ProductRequest $productRequest,$Id);
 
     public  function getById($Id);
 

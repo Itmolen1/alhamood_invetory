@@ -30,26 +30,26 @@ class SupplierRepository implements ISupplierRepositoryInterface
         return SupplierResource::Collection(Supplier::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(SupplierRequest $supplierRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $supplier = new Supplier();
-        $supplier->Name=$supplierRequest->Name;
-        $supplier->Representative=$supplierRequest->Representative;
-        $supplier->company_type_id=$supplierRequest->company_type_id;
-        $supplier->payment_type_id=$supplierRequest->payment_type_id;
-        $supplier->payment_term_id=$supplierRequest->payment_term_id;
-        $supplier->TRNNumber=$supplierRequest->TRNNumber;
-        $supplier->fileUpload=$supplierRequest->fileUpload;
-        $supplier->Phone=$supplierRequest->Phone;
-        $supplier->Mobile=$supplierRequest->Mobile;
-        $supplier->Email=$supplierRequest->Email;
-        $supplier->Address=$supplierRequest->Address;
-        $supplier->postCode=$supplierRequest->postCode;
-        $supplier->registrationDate=$supplierRequest->registrationDate;
-        $supplier->Description=$supplierRequest->Description;
-        //$supplier->company_id=$supplierRequest->company_id;
-        $supplier->region_id=$supplierRequest->region_id;
+        $supplier->Name=$request->Name;
+        $supplier->Representative=$request->Representative;
+        $supplier->company_type_id=$request->company_type_id;
+        $supplier->payment_type_id=$request->payment_type_id;
+        $supplier->payment_term_id=$request->payment_term_id;
+        $supplier->TRNNumber=$request->TRNNumber;
+        $supplier->fileUpload=$request->fileUpload;
+        $supplier->Phone=$request->Phone;
+        $supplier->Mobile=$request->Mobile;
+        $supplier->Email=$request->Email;
+        $supplier->Address=$request->Address;
+        $supplier->postCode=$request->postCode;
+        $supplier->registrationDate=$request->registrationDate;
+        $supplier->Description=$request->Description;
+        //$supplier->company_id=$request->company_id;
+        $supplier->region_id=$request->region_id;
         $supplier->createdDate=date('Y-m-d h:i:s');
         $supplier->isActive=1;
         $supplier->user_id = $userId ?? 0;
@@ -68,12 +68,12 @@ class SupplierRepository implements ISupplierRepositoryInterface
         return new SupplierResource(Supplier::find($supplier->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(SupplierRequest $supplierRequest, $Id)
     {
         $userId = Auth::id();
         $supplier = Supplier::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $supplier->update($request->all());
+        $supplierRequest['user_id']=$userId ?? 0;
+        $supplier->update($supplierRequest->all());
         return new SupplierResource(Supplier::find($Id));
     }
 

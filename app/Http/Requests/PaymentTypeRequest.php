@@ -14,7 +14,7 @@ class PaymentTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'Name' => 'required|unique:payment_types'
+            'Name' => 'required'
         ];
     }
 
