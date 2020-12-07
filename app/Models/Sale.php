@@ -21,6 +21,11 @@ class Sale extends Model
         return $this->belongsTo('App\Models\User','user_id','id');
     }
 
+    public function api_user()
+    {
+        return $this->belongsTo('App\Models\User','user_id','id')->withTrashed();
+    }
+
     public function company()
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
@@ -34,6 +39,11 @@ class Sale extends Model
     public function customer()
     {
         return $this->belongsTo('App\Models\Customer','customer_id','id');
+    }
+
+    public function api_customer()
+    {
+        return $this->belongsTo('App\Models\Customer','customer_id','id')->withTrashed();
     }
 
     public function update_notes()

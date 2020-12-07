@@ -28,7 +28,7 @@ class SalesRepository implements ISalesRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return SalesResource::Collection(Sale::all()->sortDesc()->forPage($page_no,$page_size));
+        return SalesResource::Collection(Sale::with('sale_details','update_notes','documents')->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function insert(Request $request)
@@ -68,6 +68,7 @@ class SalesRepository implements ISalesRepositoryInterface
                 'PadNumber'=>$sale_item['PadNumber'],
                 'vehicle_id'=>$sale_item['vehicle_id'],
                 'product_id'=>$sale_item['product_id'],
+                'unit_id'=>$sale_item['unit_id'],
                 'Price'=>$sale_item['Price'],
                 'Quantity'=>$sale_item['Quantity'],
                 'rowTotal'=>$sale_item['rowTotal'],

@@ -40,7 +40,7 @@ class PaymentTypeRepository implements IPaymentTypeRepositoryInterface
     {
         $userId = Auth::id();
         $payment_type = PaymentType::find($Id);
-        $companyRequest['user_id']=$userId ?? 0;
+        $paymentTypeRequest['user_id']=$userId ?? 0;
         $payment_type->update($paymentTypeRequest->all());
         return new PaymentTypeResource(PaymentType::find($Id));
     }

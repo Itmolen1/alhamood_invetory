@@ -7,9 +7,14 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ICustomerRepositoryInterface;
 use App\Http\Requests\CustomerRequest;
 use App\Http\Resources\Customer\CustomerResource;
+use App\Models\AccountTransaction;
+use App\Models\CompanyType;
 use App\Models\Customer;
+use App\Models\PaymentTerm;
+use App\Models\PaymentType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CustomerRepository implements ICustomerRepositoryInterface
 {
@@ -36,6 +41,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer->fileUpload=$request->fileUpload;
         $customer->Phone=$request->Phone;
         $customer->Mobile=$request->Mobile;
+        $customer->Email=$request->Email;
         $customer->Address=$request->Address;
         $customer->postCode=$request->postCode;
         $customer->registrationDate=$request->registrationDate;
@@ -46,6 +52,17 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer->isActive=1;
         $customer->user_id = $userId ?? 0;
         $customer->save();
+
+        //create account for newly added customer
+        $account_transaction = new AccountTransaction();
+        $account_transaction->Credit=0.00;
+        $account_transaction->Debit=0.00;
+        $account_transaction->customer_id=$customer->id;
+        $account_transaction->user_id=$userId ?? 0;
+        $account_transaction->Description='account created';
+        $account_transaction->createdDate=date('Y-m-d h:i:s');
+        $account_transaction->save();
+
         return new CustomerResource(Customer::find($customer->id));
     }
 
@@ -61,6 +78,30 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function getById($Id)
     {
         return new CustomerResource(Customer::find($Id));
+    }
+
+    public function BaseList()
+    {
+        return array('company_type'=>CompanyType::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'payment_term'=>PaymentTerm::select('id','Name')->orderBy('id','desc')->get(),'area_detail'=>$this->get_detail_list());
+    }
+
+    public function get_detail_list()
+    {
+        $region = DB::table('regions as r')->select(
+            'r.id',
+            'r.Name',
+            'r.city_id',
+            'ct.Name as city_name',
+            'ct.state_id',
+            'st.Name as state_name',
+            'st.country_id',
+            'cnt.name as country_name',
+        )->where('r.deleted_at',NULL)
+            ->leftjoin('cities as ct', 'ct.id', '=', 'r.city_id')
+            ->leftjoin('states as st', 'st.id', '=', 'ct.state_id')
+            ->leftjoin('countries as cnt', 'cnt.id', '=', 'st.country_id')->get();
+        $region = json_decode(json_encode($region), true);
+        return $region;
     }
 
     public function delete(Request $request, $Id)

@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/Customer', 'api\CustomerController');
     Route::get('/Customer/paginate/{page_no}/{page_size}','api\CustomerController@paginate');
     Route::get('/Customer/ActivateDeactivate/{id}','api\CustomerController@ActivateDeactivate');
+    Route::get('/CustomerBaseList', 'api\CustomerController@BaseList');
 
     Route::apiResource('/Company', 'api\CompanyController');
     Route::get('/Company/paginate/{page_no}/{page_size}','api\CompanyController@paginate');

@@ -7,6 +7,7 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ICompanyRepositoryInterface;
 use App\Http\Requests\CompanyRequest;
 use App\Http\Resources\Company\CompanyResource;
+use App\Models\AccountTransaction;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,17 @@ class CompanyRepository implements ICompanyRepositoryInterface
         $company->isActive=1;
         $company->user_id = $userId ?? 0;
         $company->save();
+
+        //create account for newly added customer
+        $account_transaction = new AccountTransaction();
+        $account_transaction->Credit=0.00;
+        $account_transaction->Debit=0.00;
+        $account_transaction->company_id=$company->id;
+        $account_transaction->user_id=$userId ?? 0;
+        $account_transaction->Description='account created';
+        $account_transaction->createdDate=date('Y-m-d h:i:s');
+        $account_transaction->save();
+
         return new CompanyResource(Company::find($company->id));
     }
 

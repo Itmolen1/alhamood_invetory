@@ -15,6 +15,7 @@ class PurchaseDetailResource extends JsonResource
             'purchase_id' => $this->purchase_id,
             'product_id'=>$this->product_id,
             'company_id'=>$this->company_id,
+            'createdDate'=>$this->createdDate,
             'PadNumber'=>$this->PadNumber,
             'Description'=>$this->Description,
             'Quantity'=>$this->Quantity,

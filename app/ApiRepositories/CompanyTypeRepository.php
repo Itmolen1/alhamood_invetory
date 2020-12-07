@@ -40,7 +40,7 @@ class CompanyTypeRepository implements ICompanyTypeRepositoryInterface
     {
         $userId = Auth::id();
         $company_type = CompanyType::find($Id);
-        $companyRequest['user_id']=$userId ?? 0;
+        $companyTypeRequest['user_id']=$userId ?? 0;
         $company_type->update($companyTypeRequest->all());
         return new CompanyTypeResource(CompanyType::find($Id));
     }

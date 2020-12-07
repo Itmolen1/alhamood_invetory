@@ -7,6 +7,7 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\IEmployeeRepositoryInterface;
 use App\Http\Requests\EmployeeRquest;
 use App\Http\Resources\Employee\EmployeeResource;
+use App\Models\AccountTransaction;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +44,17 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
         $employee->isActive=1;
         $employee->user_id = $userId ?? 0;
         $employee->save();
+
+        //create account for newly added customer
+        $account_transaction = new AccountTransaction();
+        $account_transaction->Credit=0.00;
+        $account_transaction->Debit=0.00;
+        $account_transaction->employee_id=$employee->id;
+        $account_transaction->user_id=$userId ?? 0;
+        $account_transaction->Description='account created';
+        $account_transaction->createdDate=date('Y-m-d h:i:s');
+        $account_transaction->save();
+
         return new EmployeeResource(Employee::find($employee->id));
     }
 

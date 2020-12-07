@@ -6,6 +6,7 @@ namespace App\ApiRepositories;
 
 use App\ApiRepositories\Interfaces\IPurchaseRepositoryInterface;
 use App\Http\Requests\PurchaseRequest;
+use App\Http\Resources\Product\ProductResource;
 use App\Http\Resources\Purchase\PurchaseResource;
 use App\Models\FileUpload;
 use App\Models\Product;
@@ -28,7 +29,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return PurchaseResource::Collection(Purchase::with('purchase_details')->get()->sortDesc()->forPage($page_no,$page_size));
+        return PurchaseResource::Collection(Purchase::with('purchase_details','update_notes','documents')->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function ActivateDeactivate($Id)
@@ -82,6 +83,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                 'purchase_id'=>$purchase_id,
                 'PadNumber'=>$purchase_item['PadNumber'],
                 'product_id'=>$purchase_item['product_id'],
+                'unit_id'=>$purchase_item['unit_id'],
                 'Price'=>$purchase_item['Price'],
                 'Quantity'=>$purchase_item['Quantity'],
                 'rowTotal'=>$purchase_item['rowTotal'],
@@ -127,7 +129,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $update_note->user_id = $userId;
         $update_note->save();
 
-        DB::table('purchase_details')->where([['purchase_id', $Id]])->delete();
+        PurchaseDetail::where('purchase_id', array($Id))->delete();
+        //DB::table('purchase_details')->where([['purchase_id', $Id]])->delete();
 
         if(!empty($purchase_detail))
         {
@@ -137,6 +140,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     'purchase_id'=>$Id,
                     'PadNumber'=>$purchase_item['PadNumber'],
                     'product_id'=>$purchase_item['product_id'],
+                    'unit_id'=>$purchase_item['unit_id'],
                     'Price'=>$purchase_item['Price'],
                     'Quantity'=>$purchase_item['Quantity'],
                     'rowTotal'=>$purchase_item['rowTotal'],
@@ -161,11 +165,13 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function BaseList()
     {
-        $product = DB::table('products as p')->select(
-            'p.id',
-            'p.Name',
-        )->where([['p.deleted_at',NULL]])->get();
-        return array('products'=>$product,'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
+//        $product = DB::table('products as p')->select(
+//            'p.id',
+//            'p.Name',
+//            'u.id',
+//            'u.Name as unit_name',
+//        )->where([['p.deleted_at',NULL]])->get();
+        return array('products'=>ProductResource::collection(Product::all('id','Name','updated_at')->sortDesc()),'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
     }
 
     public function delete(Request $request, $Id)
