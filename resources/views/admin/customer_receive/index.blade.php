@@ -60,7 +60,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-1 all">
-                                            <input type="checkbox" class="form-control" name="chk[]" id="selectall">
+                                            <input type="checkbox" class="form-control" name="chk[]" value="0" id="selectall">
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -156,7 +156,7 @@
                                      <div class="row">
                                         <div class="col-md-4">
                                               <div class="form-group">
-                                           <input type="text" class="form-control" name="" id="" placeholder="Total Amount">
+                                           <input type="text" class="form-control" name="" id="price" placeholder="Total Amount">
                                           </div>
                                         </div>
                                         <div class="col-md-4">
@@ -204,6 +204,18 @@
  jQuery(function($) {
     $('body').on('click', '#selectall', function() {
         $('.singlechkbox').prop('checked', this.checked);
+
+          //   var totalPrice   = 0,
+          //   values       = [];
+              
+          // $('input[type=checkbox]').each( function() {
+          //   if( $(this).is(':checked') ) {
+          //     values.push($(this).val());
+          //     totalPrice += parseInt($(this).val());
+          //       }
+          //   });
+
+          // $("#price").val(totalPrice); 
     });
  
     $('body').on('click', '.singlechkbox', function() {
@@ -215,6 +227,11 @@
  
     });
  });
+
+
+
 </script>
+
+
 
 @endsection
