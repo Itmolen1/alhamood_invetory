@@ -399,7 +399,7 @@
                                     success: function (result) {
                                         if (result !== "Failed") {
                                             details = [];
-                                            //console.log(result);
+                                            console.log(result);
                                             alert("Data Inserted Successfully");
                                             window.location.href = "{{ route('sales.index') }}";
                                         } else {

@@ -69,7 +69,7 @@ class Customer extends Model
 
     public function account_transaction()
     {
-        return $this->hasOne('App\Models\AccountTransaction');
+        return $this->hasMany('App\Models\AccountTransaction');
     }
 
     public function payment_type()

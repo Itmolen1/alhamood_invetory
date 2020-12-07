@@ -17,7 +17,7 @@ class CreateAccountTransactionsTable extends Migration
             $table->bigIncrements('id');
             $table->decimal('Credit',10,2)->default('0');
             $table->decimal('Debit',10,2)->default('0');
-            $table->string('Differentiate')->nullable();
+            $table->decimal('Differentiate',10,2)->default('0');
             $table->string('referenceNumber')->nullable();
             $table->unsignedBigInteger('user_id')->default('0')->index();
             $table->unsignedBigInteger('customer_id')->default('0')->index();

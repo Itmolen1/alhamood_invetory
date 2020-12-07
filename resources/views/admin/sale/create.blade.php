@@ -332,7 +332,7 @@
                                 }
                             });
                             var Datas = {Data: details};
-                            console.log(Datas);
+                            //console.log(Datas);
                             $.ajax({
                                 url: "{{ route('sales.store') }}",
                                 type: "post",

@@ -85,6 +85,9 @@ route::resource('loans','LoanController');
 route::get('customerRemaining/{Id}','LoanController@customerRemaining');
 route::get('employeeRemaining/{Id}','LoanController@employeeRemaining');
 
+
+route::view('customer_receives','admin.customer_receive.index');
+
 });
 
 

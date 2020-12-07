@@ -81,14 +81,14 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Company Type</label>
-                                                <input type="text" class="form-control companyType" id="companyType" value="{{ $vehicle->customer->companyType }}" name="companyType" placeholder="Company type">
+                                                <input type="text" class="form-control companyType" id="companyType" value="{{ $vehicle->customer->companyType ?? ''}}" name="companyType" placeholder="Company type">
                                             </div>
                                         </div>
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration date</label>
-                                                <input type="date" class="form-control registrationDate" name="registrationDate" value="{{ $vehicle->customer->registrationDate }}"  id="registrationDate" placeholder="dd/mm/yyyy">
+                                                <input type="date" class="form-control registrationDate" name="registrationDate" value="{{ $vehicle->customer->registrationDate ?? '' }}"  id="registrationDate" placeholder="dd/mm/yyyy">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -99,7 +99,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Payment Type</label>
-                                                <input type="text" class="form-control paymentType" id="paymentType" value="{{ $vehicle->customer->paymentType }}"  name="paymentType" placeholder="Payment type">
+                                                <input type="text" class="form-control paymentType" id="paymentType" value="{{ $vehicle->customer->paymentType?? '' }}"  name="paymentType" placeholder="Payment type">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -107,7 +107,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Payment Term</label>
-                                                <input type="text" class="form-control paymentTerm" id="paymentTerm" value="{{ $vehicle->customer->paymentTerm }}"  name="paymentTerm" placeholder="Payment Term">
+                                                <input type="text" class="form-control paymentTerm" id="paymentTerm" value="{{ $vehicle->customer->paymentTerm?? '' }}"  name="paymentTerm" placeholder="Payment Term">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -120,7 +120,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">TRN Number</label>
-                                                <input type="text" name="TRNNumber" id="TRNNumber" value="{{ $vehicle->customer->TRNNumber }}"  class="form-control TRNNumber" placeholder="Enter TRN Number">
+                                                <input type="text" name="TRNNumber" id="TRNNumber" value="{{ $vehicle->customer->TRNNumber?? '' }}"  class="form-control TRNNumber" placeholder="Enter TRN Number">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -129,7 +129,10 @@
                                             <div class="form-group">
                                                 <label class="control-label">Upload File </label>
                                                <div id="img">
-                                                   <figure data-effect="pop"><img width="100" src="{{url('storage/'.$vehicle->customer->fileUpload)}}" /></figure>
+                                                @if (!empty($vehicle->customer->fileUpload))
+                                                    <figure data-effect="pop"><img width="100" src="{{url('storage/'.$vehicle->customer->fileUpload) }}" /></figure>
+                                                @endif
+                                                   
                                                </div>
                                             </div>
                                         </div>
@@ -143,7 +146,7 @@
                                         <div class="col-md-12 ">
                                             <div class="form-group">
                                                 <label>Street</label>
-                                                <input type="text" id="Address" value="{{ $vehicle->customer->Address }}"  class="form-control">
+                                                <input type="text" id="Address" value="{{ $vehicle->customer->Address ?? '' }}"  class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -168,7 +171,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Post Code</label>
-                                                <input type="text" id="postCode" value="{{ $vehicle->customer->postCode }}"  class="form-control">
+                                                <input type="text" id="postCode" value="{{ $vehicle->customer->postCode ?? '' }}"  class="form-control">
                                             </div>
                                         </div>
                                         <!--/span-->
