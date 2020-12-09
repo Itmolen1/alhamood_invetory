@@ -68,4 +68,9 @@ class PaymentReceiveController extends Controller
     {
         //
     }
+
+    public function customer_payments_push(Request $request, $Id)
+    {
+       return $this->paymentReceiveRepository->customer_payments_push($request, $Id);
+    }
 }

@@ -49,7 +49,7 @@
                                         <th>Payment Type</th>
                                         <th>Register Date</th>
                                         <th>Transfer Date</th>
-                                        <th width="100">Push Advance</th>
+                                        <th width="50px">Push Advance</th>
                                         <th width="100">Action</th>
                                     </tr>
                                     </thead>

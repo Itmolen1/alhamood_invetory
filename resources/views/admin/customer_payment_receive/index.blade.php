@@ -47,6 +47,7 @@
                                         <th>Customer</th>
                                         <th>Date</th>
                                         <th>Amount</th>
+                                        <th width="100">Push Payment</th>
                                         <th width="100">Action</th>
                                     </tr>
                                     </thead>
@@ -96,11 +97,11 @@
                         data: 'paidAmount',
                         name: 'paidAmount'
                     },
-                    // {
-                    //     data: 'isActive',
-                    //     name: 'isActive',
-                    //     orderable: false
-                    // },
+                    {
+                        data: 'push',
+                        name: 'push',
+                        orderable: false
+                    },
                     {
                         data: 'action',
                         name: 'action',

@@ -143,7 +143,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
             {
                 $accountTransaction = AccountTransaction::where(
                     [
-                        'customer_id'=> $advance->Amount,
+                        'customer_id'=> $advance->customer_id,
                     ])->get();
                 $totalDebit = $advance->customer_id;
                 $difference = $accountTransaction->last()->Differentiate - $advance->Amount;

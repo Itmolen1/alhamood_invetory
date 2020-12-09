@@ -88,6 +88,7 @@ route::get('employeeRemaining/{Id}','LoanController@employeeRemaining');
 
 
 route::resource('payment_receives','PaymentReceiveController');
+route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
 route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 //route::view('customer_receives','admin.customer_payment_receive.index');
 

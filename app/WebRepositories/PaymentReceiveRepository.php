@@ -31,10 +31,22 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                 ->addColumn('customer', function($data) {
                     return $data->customer->Name ?? "No Quantity";
                 })
+                ->addColumn('push', function($data) {
+                    if($data->isPushed == false){
+                        $button = '<form action="'. url('customer_payments_push',$data->id) .'" method="POST"  id="">';
+                        $button .= @csrf_field();
+                        $button .= @method_field('PUT');
+                        $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm()"><i style="font-size: 20px" class="fa fa-arrow-up"> Push</i></button>';
+                        return $button;
+                    }else{
+                        $button = '<button type="submit" class="btn btn-default btn-sm"><i style="font-size: 20px" class="fa fa-ban"> Pushed</i></button>';
+                        return $button;
+                    }
+                })
                 ->rawColumns(
                     [
                         'action',
-                        // 'isActive',
+                         'push',
                         'customer',
                     ])
                 ->make(true);
@@ -98,51 +110,52 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     "IsNeedStampOrSignature" => false,
                 ]);
             }
-            ////////////////// account section ////////////////
-            if ($paymentReceive)
-            {
-                $accountTransaction = AccountTransaction::where(
-                    [
-                        'customer_id'=> $request->Data['customer_id'],
-                        'createdDate' => date('Y-m-d'),
-                    ])->first();
-                if (!is_null($accountTransaction)) {
-                    if ($accountTransaction->createdDate != date('Y-m-d')) {
-                        $totalDebit = $request->Data['paidAmount'];
-                    }
-                    else
-                    {
-                        $totalDebit = $accountTransaction->Debit + $request->Data['paidAmount'];
-                    }
-                    $difference = $accountTransaction->Differentiate - $request->Data['paidAmount'];
-                }
-                else
-                {
-                    $accountTransaction = AccountTransaction::where(
-                        [
-                            'customer_id'=> $request->Data['customer_id'],
-                        ])->get();
-                    $totalDebit = $request->Data['paidAmount'];
-                    $difference = $accountTransaction->last()->Differentiate - $request->Data['paidAmount'];
-                }
-                $AccData =
-                    [
-                        'customer_id' => $request->Data['customer_id'],
-                        'Debit' => $totalDebit,
-                        'Differentiate' => $difference,
-                        'createdDate' => date('Y-m-d'),
-                        'user_id' => $user_id,
-                    ];
-                $AccountTransactions = AccountTransaction::updateOrCreate(
-                    [
-                        'createdDate'   => date('Y-m-d'),
-                        'customer_id'   => $request->Data['customer_id'],
-                    ],
-                    $AccData);
-                return Response()->json($AccountTransactions);
-                // return Response()->json("");
-            }
-            ////////////////// end of account section ////////////////
+            return Response()->json($sale);
+//            ////////////////// account section ////////////////
+//            if ($paymentReceive)
+//            {
+//                $accountTransaction = AccountTransaction::where(
+//                    [
+//                        'customer_id'=> $request->Data['customer_id'],
+//                        'createdDate' => date('Y-m-d'),
+//                    ])->first();
+//                if (!is_null($accountTransaction)) {
+//                    if ($accountTransaction->createdDate != date('Y-m-d')) {
+//                        $totalDebit = $request->Data['paidAmount'];
+//                    }
+//                    else
+//                    {
+//                        $totalDebit = $accountTransaction->Debit + $request->Data['paidAmount'];
+//                    }
+//                    $difference = $accountTransaction->Differentiate - $request->Data['paidAmount'];
+//                }
+//                else
+//                {
+//                    $accountTransaction = AccountTransaction::where(
+//                        [
+//                            'customer_id'=> $request->Data['customer_id'],
+//                        ])->get();
+//                    $totalDebit = $request->Data['paidAmount'];
+//                    $difference = $accountTransaction->last()->Differentiate - $request->Data['paidAmount'];
+//                }
+//                $AccData =
+//                    [
+//                        'customer_id' => $request->Data['customer_id'],
+//                        'Debit' => $totalDebit,
+//                        'Differentiate' => $difference,
+//                        'createdDate' => date('Y-m-d'),
+//                        'user_id' => $user_id,
+//                    ];
+//                $AccountTransactions = AccountTransaction::updateOrCreate(
+//                    [
+//                        'createdDate'   => date('Y-m-d'),
+//                        'customer_id'   => $request->Data['customer_id'],
+//                    ],
+//                    $AccData);
+//                return Response()->json($AccountTransactions);
+//                // return Response()->json("");
+//            }
+//            ////////////////// end of account section ////////////////
         }
     }
 
@@ -177,5 +190,64 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
     public function trashed()
     {
         // TODO: Implement trashed() method.
+    }
+
+    public function customer_payments_push(Request $request, $Id)
+    {
+        // TODO: Implement customer_advances_push() method.
+        $paymets = PaymentReceive::with('customer')->find($Id);
+        //dd($advance->Amount);
+
+        $user_id = session('user_id');
+        $paymets->update([
+            'isPushed' =>true,
+            'user_id' =>$user_id,
+        ]);
+        ////////////////// account section ////////////////
+        if ($paymets)
+        {
+            $accountTransaction = AccountTransaction::where(
+                [
+                    'customer_id'=> $paymets->customer_id,
+                    'createdDate' => date('Y-m-d'),
+                ])->first();
+            if (!is_null($accountTransaction)) {
+                if ($accountTransaction->createdDate != date('Y-m-d')) {
+                    $totalDebit = $paymets->paidAmount;
+                }
+                else
+                {
+                    $totalDebit = $accountTransaction->Debit + $paymets->paidAmount;
+                }
+                $difference = $accountTransaction->Differentiate - $paymets->paidAmount;
+            }
+            else
+            {
+                $accountTransaction = AccountTransaction::where(
+                    [
+                        'customer_id'=> $paymets->customer_id,
+                    ])->get();
+                $totalDebit = $paymets->customer_id;
+                $difference = $accountTransaction->last()->Differentiate - $paymets->paidAmount;
+            }
+            $AccData =
+                [
+                    'customer_id' => $paymets->customer_id,
+                    'Debit' => $totalDebit,
+                    'Differentiate' => $difference,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                ];
+            $AccountTransactions = AccountTransaction::updateOrCreate(
+                [
+                    'createdDate'   => date('Y-m-d'),
+                    'customer_id'   => $paymets->customer_id,
+                ],
+                $AccData);
+            //return Response()->json($AccountTransactions);
+            // return Response()->json("");
+        }
+        ////////////////// end of account section ////////////////
+        return redirect()->route('payment_receives.index')->with('pushed','Your Account Debit Successfully');
     }
 }

@@ -27,4 +27,6 @@ interface IPaymentReceiveRepositoryInterface
 
     public function trashed();
 
+    public function customer_payments_push(Request $request, $Id);
+
 }
