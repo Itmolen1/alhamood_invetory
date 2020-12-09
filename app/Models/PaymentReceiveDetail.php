@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Bank extends Model
+class PaymentReceiveDetail extends Model
 {
         use HasFactory;
         use SoftDeletes;
@@ -14,16 +14,11 @@ class Bank extends Model
 
         protected $guarded=[];
         protected $primaryKey = 'id';
-        protected $table = 'banks';
+        protected $table = 'payment_receive_details';
 
     public function user()
     {
         return $this->belongsTo('App\Models\User','user_id','id');
-    }
-
-    public function api_user()
-    {
-        return $this->belongsTo('App\Models\User','user_id','id')->withTrashed();
     }
 
     public function company()
@@ -31,18 +26,15 @@ class Bank extends Model
         return $this->belongsTo('App\Models\Company','company_id','id');
     }
 
-    public function customer_advances()
+    public function sale()
     {
-        return $this->hasMany('App\Models\CustomerAdvance');
+        return $this->belongsTo('App\Models\Sale','sale_id','id');
     }
 
-    public function supplier_advances()
+    public function payment_receive()
     {
-        return $this->hasMany('App\Models\SupplierAdvance');
+        return $this->belongsTo('App\Models\PaymentReceive','payment_receive_id','id');
     }
 
-    public function payment_receives()
-    {
-        return $this->hasMany('App\Models\PaymentReceive');
-    }
+
 }

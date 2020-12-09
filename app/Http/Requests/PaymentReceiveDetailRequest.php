@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CustomerAdvanceRequest extends FormRequest
+class PaymentReceiveDetailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class CustomerAdvanceRequest extends FormRequest
     public function rules()
     {
         return [
-            'receiptNumber' => 'required',
-            'paymentType' => 'required',
-            'amount' => 'required'
+            //
         ];
     }
 }

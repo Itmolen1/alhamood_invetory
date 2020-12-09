@@ -101,4 +101,9 @@ class Customer extends Model
     {
         return $this->belongsTo('App\Models\PaymentTerm','payment_term_id','id')->withTrashed();
     }
+
+    public function payment_receives()
+    {
+        return $this->hasMany('App\Models\PaymentReceive');
+    }
 }

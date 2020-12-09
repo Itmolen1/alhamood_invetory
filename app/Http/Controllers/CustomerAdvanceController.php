@@ -58,4 +58,9 @@ class CustomerAdvanceController extends Controller
     {
         return $this->customerAdvanceRepository->delete($request, $Id);
     }
+
+    public function customer_advances_push(Request $request,$Id)
+    {
+        return $this->customerAdvanceRepository->customer_advances_push($request, $Id);
+    }
 }

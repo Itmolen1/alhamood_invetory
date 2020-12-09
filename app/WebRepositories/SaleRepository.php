@@ -31,33 +31,9 @@ class SaleRepository implements ISaleRepositoryInterface
         if(request()->ajax())
         {
             return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->latest()->get())
-               // ->addColumn('action', function ($data) {
-               //      $button = '<form action="'.route('sales.destroy', $data->id).'" method="POST"  id="deleteData">';
-               //      $button .= @csrf_field();
-               //      $button .= @method_field('DELETE');
-               //      $button .= '<a href="'.route('sales.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
-               //      $button .= '&nbsp;&nbsp;';
-               //      $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
-               //      $button .= '</form>';
-               //      return $button;
-               //  })
-                // ->addColumn('isActive', function($data) {
-                //         if($data->isActive == true){
-                //             $button = '<form action="'.route('roles.destroy', $data->id).'" method="POST"  id="deleteData">';
-                //             $button .= @csrf_field();
-                //             $button .= @method_field('PUT');
-                //             $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
-                //             return $button;
-                //         }else{
-                //             $button = '<form action="'.route('roles.destroy', $data->id).'" method="POST"  id="deleteData">';
-                //             $button .= @csrf_field();
-                //             $button .= @method_field('PUT');
-                //             $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
-                //             return $button;
-                //         }
-                //     })
+
                 ->addColumn('action', function ($data) {
-                    
+
                     $button = '<a href="'.route('sales.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
                     return $button;
                 })
@@ -182,15 +158,39 @@ class SaleRepository implements ISaleRepositoryInterface
                     'customer_id'=> $request->Data['customer_id'],
                     'createdDate' => date('Y-m-d'),
                 ])->first();
-                if (!is_null($accountTransaction)) {
-                       if ($accountTransaction->createdDate != date('Y-m-d')) {
+                if (!is_null($accountTransaction))
+                {
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
                             $totalCredit = $request->Data['grandTotal'];
-                       }
-                       else
-                       {
-                         $totalCredit = $accountTransaction->Credit + $request->Data['grandTotal'];
-                       }
-                       $difference = $accountTransaction->Differentiate + $request->Data['grandTotal'];    
+                        } else {
+                            $totalCredit = $accountTransaction->Credit + $request->Data['grandTotal'];
+                        }
+                        $totalDebit = $accountTransaction->Debit;
+                        $difference = $accountTransaction->Differentiate + $request->Data['grandTotal'];
+                    }
+                    elseif($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'] )
+                    {
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalDebit = $request->Data['paidBalance'];
+                            $totalCredit = $request->Data['grandTotal'];
+                        } else {
+                            $totalDebit = $accountTransaction->Debit + $request->Data['paidBalance'];
+                            $totalCredit = $accountTransaction->Credit + $request->Data['grandTotal'];
+                        }
+                        $differenceValue = $accountTransaction->Differentiate - $request->Data['paidBalance'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+                    }
+                    else{
+
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalDebit = $request->Data['paidBalance'];
+                        } else {
+                            $totalDebit = $accountTransaction->Debit + $request->Data['paidBalance'];
+                        }
+                        $totalCredit = $accountTransaction->Credit;
+                        $difference = $accountTransaction->Differentiate - $request->Data['paidBalance'];
+                    }
                 }
                 else
                 {
@@ -198,13 +198,30 @@ class SaleRepository implements ISaleRepositoryInterface
                     [
                         'customer_id'=> $request->Data['customer_id'],
                     ])->get();
-                    $totalCredit = $request->Data['grandTotal'];
-                    $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+                        $totalCredit = $request->Data['grandTotal'];
+                        $totalDebit = $accountTransaction->last()->Debit;
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+                    }
+                    elseif($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'] )
+                    {
+
+                        $totalDebit = $request->Data['paidBalance'];
+                        $totalCredit = $request->Data['grandTotal'];
+                        $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+                    }
+                    else{
+                        $totalDebit = $request->Data['paidBalance'];
+                        $totalCredit = $accountTransaction->last()->Credit;
+                        $difference = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+                    }
                 }
                 $AccData =
                                    [
                                         'customer_id' => $request->Data['customer_id'],
                                         'Credit' => $totalCredit,
+                                        'Debit' => $totalDebit,
                                         'Differentiate' => $difference,
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
@@ -240,15 +257,33 @@ class SaleRepository implements ISaleRepositoryInterface
                 ])->get();
                if (!is_null($accountTransaction)) {
                             $lastAccountTransection = $accountTransaction->Last();
-                        if ($lastAccountTransection->customer_id != $saled->customer_id) 
+                        if ($lastAccountTransection->customer_id != $saled->customer_id)
                            {
-                                    $OldValue1 = $saled->customer->account_transaction->Last()->Credit - $saled->grandTotal;
-                                    $OldTotalCredit =  $OldValue1;
-                                    $OldValue = $saled->customer->account_transaction->Last()->Differentiate - $saled->grandTotal;
-                                    $OldDifference = $OldValue;
+                               if ($saled->paidBalance == 0 || $saled->paidBalance == 0.00) {
+                                   $OldValue1 = $saled->customer->account_transaction->Last()->Credit - $saled->grandTotal;
+                                   $OldTotalCredit = $OldValue1;
+                                   $OldTotalDebit = $saled->customer->account_transaction->Last()->Debit;
+                                   $OldValue = $saled->customer->account_transaction->Last()->Differentiate - $saled->grandTotal;
+                                   $OldDifference = $OldValue;
+                               }
+                               elseif ($saled->paidBalance > 0 AND $saled->paidBalance < $saled->grandTotal)
+                               {
+                                   $OldTotalDebit = $saled->customer->account_transaction->Last()->Debit - $saled->paidBalance;
+                                   $OldTotalCredit = $saled->customer->account_transaction->Last()->Credit - $saled->grandTotal;
+                                   $differenceValue = $saled->customer->account_transaction->Last()->Differentiate + $saled->paidBalance;
+                                   $OldDifference = $differenceValue - $saled->grandTotal;
+                               }
+                               else{
+                                   $OldValue1 = $saled->customer->account_transaction->Last()->Debit - $saled->paidBalance;
+                                   $OldTotalDebit = $OldValue1;
+                                   $OldTotalCredit = $saled->customer->account_transaction->Last()->Credit;
+                                   $OldValue = $saled->customer->account_transaction->Last()->Differentiate + $saled->paidBalance;
+                                   $OldDifference = $OldValue;
+                               }
                                     $OldAccData =
                                                [
                                                     'customer_id' => $saled->customer_id,
+                                                    'Debit' => $OldTotalDebit,
                                                     'Credit' => $OldTotalCredit,
                                                     'Differentiate' => $OldDifference,
                                                     'createdDate' => $saled->customer->account_transaction->Last()->createdDate,
@@ -258,28 +293,72 @@ class SaleRepository implements ISaleRepositoryInterface
                                                 'id'   => $saled->customer->account_transaction->Last()->id,
                                             ], $OldAccData);
 
-                                    $totalCredit =  $lastAccountTransection->Credit + $request->Data['grandTotal'];
-                                    $difference = $lastAccountTransection->Differentiate + $request->Data['grandTotal'];
+                                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+                                        $totalCredit = $lastAccountTransection->Credit + $request->Data['grandTotal'];
+                                        $totalDebit = $lastAccountTransection->Debit;
+                                        $difference = $lastAccountTransection->Differentiate + $request->Data['grandTotal'];
+                                    }
+                                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                                    {
+                                        $totalDebit = $lastAccountTransection->Debit - $request->Data['paidBalance'];
+                                        $totalCredit = $lastAccountTransection->Credit - $request->Data['grandTotal'];
+                                        $differenceValue = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
+                                        $difference = $differenceValue - $request->Data['grandTotal'];
+                                    }
+                                    else{
+                                        $totalDebit = $lastAccountTransection->Debit + $request->Data['paidBalance'];
+                                        $totalCredit = $lastAccountTransection->Credit;
+                                        $difference = $lastAccountTransection->Differentiate - $request->Data['paidBalance'];
+                                    }
                            }
                                 else
                                 {
-                                    if ($lastAccountTransection->createdDate != $saled->customer->account_transaction->last()->createdDate) 
-                                    {
-                                        $totalCredit = $request->Data['grandTotal'];
-                                    }
-                                        else
-                                        {
+                                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == "") {
+                                        //return Response()->json("success");
+                                        if ($lastAccountTransection->createdDate != $saled->customer->account_transaction->last()->createdDate) {
+                                            $totalCredit = $request->Data['grandTotal'];
+                                        } else {
                                             $value1 = $lastAccountTransection->Credit - $saled->grandTotal;
-                                            $totalCredit =  $value1 + $request->Data['grandTotal'];
+                                            $totalCredit = $value1 + $request->Data['grandTotal'];
                                         }
-                                    $value = $lastAccountTransection->Differentiate - $saled->grandTotal;
-                                    $difference = $value + $request->Data['grandTotal'];
+                                        $totalDebit = $lastAccountTransection->Debit;
+                                        $value = $lastAccountTransection->Differentiate - $saled->grandTotal;
+                                        $difference = $value + $request->Data['grandTotal'];
+//                                        return Response()->json($difference);
+                                    }
+                                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                                    {
+
+                                        if ($lastAccountTransection->createdDate != $saled->customer->account_transaction->last()->createdDate) {
+                                            $totalDebit = $request->Data['paidBalance'];
+                                            $totalCredit = $request->Data['grandTotal'];
+                                        } else {
+                                            $value1 = $lastAccountTransection->Debit - $saled->paidBalance;
+                                            $totalDebit = $value1 + $request->Data['paidBalance'];
+                                            $valueC = $lastAccountTransection->Debit - $saled->grandTotal;
+                                            $totalCredit = $valueC + $request->Data['grandTotal'];
+                                        }
+                                        $differenceValue = $lastAccountTransection->Differentiate - $request->Data['paidBalance'];
+                                        $difference = $differenceValue + $request->Data['grandTotal'];
+                                    }
+                                    else{
+                                        if ($lastAccountTransection->createdDate != $saled->customer->account_transaction->last()->createdDate) {
+                                            $totalDebit = $request->Data['paidBalance'];
+                                        } else {
+                                            $value1 = $lastAccountTransection->Debit - $saled->paidBalance;
+                                            $totalDebit = $value1 + $request->Data['paidBalance'];
+                                        }
+                                        $totalCredit = $lastAccountTransection->Credit;
+                                        $value = $lastAccountTransection->Differentiate + $saled->paidBalance;
+                                        $difference = $value - $request->Data['paidBalance'];
+                                    }
                                 }
 
                            $AccData =
                            [
                                 'customer_id' => $request->Data['customer_id'],
                                 'Credit' => $totalCredit,
+                                'Debit' => $totalDebit,
                                 'Differentiate' => $difference,
                                 'createdDate' => $lastAccountTransection->createdDate,
                                 'user_id' =>$user_id,
@@ -289,7 +368,7 @@ class SaleRepository implements ISaleRepositoryInterface
                             'id'   => $lastAccountTransection->id,
                         ], $AccData);
                             //return Response()->json($accountTransaction);
-               }             
+               }
             ////////////////// end of account section ////////////////
 
             if ($request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == 0) {
@@ -305,7 +384,7 @@ class SaleRepository implements ISaleRepositoryInterface
             {
                 $isPaid = false;
                 $partialPaid =true;
-            }   
+            }
 
             $saled->update(
                 [

@@ -124,7 +124,7 @@
                         <a href="#">Supplier Payment</a>
                     </li>
                     <li class="border-bottom">
-                        <a href="{{ url('customer_receives') }}">Customer Receive</a>
+                        <a href="{{ route('payment_receives.index') }}">Customer Receive</a>
                     </li>
                   <!--  <li class="border-bottom">
                         <a href="#">Cash Adjustment</a>

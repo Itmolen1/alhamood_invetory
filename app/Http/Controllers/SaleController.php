@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Sale;
 use App\WebRepositories\Interfaces\ISaleRepositoryInterface;
 use Carbon\Traits\Date;
@@ -64,6 +65,16 @@ class SaleController extends Controller
     public function destroy(Sale $sale)
     {
         //
+    }
+
+    public function customerSaleDetails($Id)
+    {
+        $sales = Sale::with('customer.vehicles','sale_details')
+                       ->where([
+                               'customer_id'=>$Id,
+                               'IsPaid'=> false,
+                           ])->get();
+        return response()->json($sales);
     }
 
     public function salesByDateDetails($id)

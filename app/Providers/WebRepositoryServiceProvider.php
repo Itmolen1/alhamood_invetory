@@ -36,6 +36,8 @@ use App\WebRepositories\Interfaces\ILoanRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReaderRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingRepositoryInterface;
+use App\WebRepositories\Interfaces\IPaymentReceiveDetailRepositoryInterface;
+use App\WebRepositories\Interfaces\IPaymentReceiveRepositoryInterface;
 use App\WebRepositories\Interfaces\IPaymentTermRepositoryInterface;
 use App\WebRepositories\Interfaces\IPaymentTypeRepositoryInterface;
 use App\WebRepositories\Interfaces\IProductRepositoryInterface;
@@ -55,6 +57,8 @@ use App\WebRepositories\LoanRepository;
 use App\WebRepositories\MeterReaderRepository;
 use App\WebRepositories\MeterReadingDetailRepository;
 use App\WebRepositories\MeterReadingRepository;
+use App\WebRepositories\PaymentReceiveDetailRepository;
+use App\WebRepositories\PaymentReceiveRepository;
 use App\WebRepositories\PaymentTermRepository;
 use App\WebRepositories\PaymentTypeRepository;
 use App\WebRepositories\ProductRepository;
@@ -113,6 +117,8 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ICompanyTypeRepositoryInterface::class, CompanyTypeRepository::class);
         $this->app->bind(IPaymentTypeRepositoryInterface::class, PaymentTypeRepository::class);
         $this->app->bind(IPaymentTermRepositoryInterface::class,PaymentTermRepository::class);
+        $this->app->bind(IPaymentReceiveRepositoryInterface::class, PaymentReceiveRepository::class);
+        $this->app->bind(IPaymentReceiveDetailRepositoryInterface::class, PaymentReceiveDetailRepository::class);
     }
 
     /**

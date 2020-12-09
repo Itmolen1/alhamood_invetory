@@ -35,4 +35,5 @@ class PaymentType extends Model
     {
         return $this->hasMany('App\Models\Supplier');
     }
+
 }

@@ -66,7 +66,7 @@
                                         <!--/span-->
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label class="control-label">Recept Numner</label>
+                                                    <label class="control-label">Receipt Number</label>
                                                     <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
                                                     @if ($errors->has('receiptNumber'))
                                                         <span class="text-danger">{{ $errors->first('receiptNumber') }}</span>
@@ -81,7 +81,7 @@
                                             <div class="form-group">
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option>--Select your Payment Type--</option>
+                                                    <option disabled readonly="" selected>--Select your Payment Type--</option>
                                                     <option value="bankTransfer">Bank Transfer</option>
                                                     <option id="cash" value="cash">Cash</option>
                                                     <option value="checkTransfer">Check Transfer</option>
@@ -93,7 +93,11 @@
                                             <div class="form-group">
                                                 <label class="control-label">Amount</label>
                                                 <input type="text" onkeyup="toWords($('.amount').val())" id="amount" name="amount" class="form-control amount" placeholder="Enter Amount">
+                                                @if ($errors->has('amount'))
+                                                    <span class="text-danger">{{ $errors->first('amount') }}</span>
+                                                @endif
                                             </div>
+
                                         </div>
                                         <!--/span-->
                                     </div>
@@ -115,7 +119,7 @@
                                             <div class="form-group">
                                                 <label>Bank Name</label>
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
-                                                    <option>--Select Bank Name--</option>
+                                                    <option selected readonly="" disabled>--Select Bank Name--</option>
                                                     @foreach($banks as $bank)
                                                         <option value="{{ $bank->id }}">{{ $bank->Name }}</option>
                                                     @endforeach

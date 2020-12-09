@@ -55,4 +55,9 @@ class Sale extends Model
     {
         return $this->hasMany('App\Models\FileUpload','RelationId')->where('RelationTable','=','sales');
     }
+
+    public function payment_receives()
+    {
+        return $this->hasMany('App\Models\PaymentReceive');
+    }
 }

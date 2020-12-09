@@ -49,8 +49,8 @@
                                         <th>Payment Type</th>
                                         <th>Register Date</th>
                                         <th>Transfer Date</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
+                                        <th width="100">Push Advance</th>
+                                        <th width="100">Action</th>
                                     </tr>
                                     </thead>
 
@@ -62,20 +62,29 @@
                                             <td>{{ $advance->paymentType }}</td>
                                             <td>{{ $advance->registerDate }}</td>
                                             <td>{{ $advance->TransferDate }}</td>
+
                                             <td>
-                                                @if($advance->isActive == true)
-                                                 Active
+                                                @if($advance->isPushed == false)
+                                                <form action="{{ url('customer_advances_push',$advance->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to push?')"><i style="font-size: 20px" class="fa fa-arrow-circle-o-up"></i> Push</button>
+                                                </form>
                                                 @else
-                                                    UnActive
+                                                    <button type="submit" class=" btn btn-default btn-sm" ><i style="font-size: 20px" class="fa fa-external-link"> Pushed</i> </button>
                                                 @endif
                                             </td>
                                             <td>
+                                                @if($advance->isPushed == false)
                                                 <form action="{{ route('customer_advances.destroy',$advance->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <a href="{{ route('customer_advances.edit', $advance->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
                                                     <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
                                                 </form>
+                                                @else
+                                                    <button type="submit" class=" btn btn-default btn-sm" ><i style="font-size: 20px" class="fa fa-ban"> No Action</i> </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

@@ -367,6 +367,11 @@
 
                             });
                             var Id = $('#id').val();
+                            var cashPaid = $('.cashPaid').val();
+                            if ( cashPaid === "")
+                            {
+                                cashPaid = 0
+                            }
                             let details = {
                                 Id: Id,
                                 SaleNumber: $('#SaleNumber').val(),
@@ -375,7 +380,7 @@
                                 subTotal: $('.rowTotal').val(),
                                 totalVat: $('.TotalVat').val(),
                                 grandTotal: $('.GTotal').val(),
-                                paidBalance: $('.cashPaid').val(),
+                                paidBalance: cashPaid,
                                 remainingBalance: $('#balance').val(),
                                 customer_id:$('#customer_id').val(),
                                 Description:$('#description').val(),
