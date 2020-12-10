@@ -69,16 +69,16 @@ class SalesController extends Controller
 
     }
 
-    public function update(SaleRequest $saleRequest, $id)
+    public function update(SaleRequest $saleRequest)
     {
         try
         {
-            $sales = Sale::find($id);
+            $sales = Sale::find($saleRequest->id);
             if(is_null($sales))
             {
                 return $this->userResponse->Failed($sales = (object)[],'Not Found.');
             }
-            $sales = $this->salesRepository->update($saleRequest,$id);
+            $sales = $this->salesRepository->update($saleRequest,$saleRequest->id);
             return $this->userResponse->Success($sales);
         }
         catch(Exception $ex)

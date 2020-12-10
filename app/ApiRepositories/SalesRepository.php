@@ -7,6 +7,7 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ISalesRepositoryInterface;
 use App\Http\Requests\SaleRequest;
 use App\Http\Resources\Sales\SalesResource;
+use App\Models\AccountTransaction;
 use App\Models\Customer;
 use App\Models\FileUpload;
 use App\Models\Product;
@@ -16,6 +17,7 @@ use App\Models\UpdateNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use PDF;
 
 class SalesRepository implements ISalesRepositoryInterface
@@ -33,18 +35,33 @@ class SalesRepository implements ISalesRepositoryInterface
 
     public function insert(Request $request)
     {
+        if ($request->paidBalance == 0.00 || $request->paidBalance == 0) {
+            $isPaid = false;
+            $partialPaid =false;
+        }
+        elseif($request->paidBalance >= $request->grandTotal)
+        {
+            $isPaid = true;
+            $partialPaid =false;
+        }
+        else
+        {
+            $isPaid = false;
+            $partialPaid =true;
+        }
+
         $invoice = new Sale();
         $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
         $newInvoiceID = 'INV-00'.($lastInvoiceID + 1);
 
-        $sale_details=$request->sale_details;
+        //$sale_details=$request->sale_details;
 
         $userId = Auth::id();
         $sales = new Sale();
         $sales->SaleNumber=$newInvoiceID;
         $sales->customer_id=$request->customer_id;
         $sales->SaleDate=$request->SaleDate;
-        $sales->DueDate=$request->DueDate;
+        //$sales->DueDate=$request->DueDate;
         $sales->referenceNumber=$request->referenceNumber;
         $sales->Total=$request->Total;
         $sales->subTotal=$request->subTotal;
@@ -55,29 +72,121 @@ class SalesRepository implements ISalesRepositoryInterface
         $sales->Description=$request->Description;
         $sales->TermsAndCondition=$request->TermsAndCondition;
         $sales->supplierNote=$request->supplierNote;
+        $sales->IsPaid=$isPaid;
+        $sales->IsPartialPaid=$partialPaid;
         $sales->createdDate=date('Y-m-d h:i:s');
         $sales->isActive=1;
         $sales->user_id = $userId ?? 0;
         $sales->save();
         $sales_id = $sales->id;
 
+        $sale_details=json_decode($_POST['sale_details']);
+
         foreach ($sale_details as $sale_item)
         {
             $data=SaleDetail::create([
                 'sale_id'=>$sales_id,
-                'PadNumber'=>$sale_item['PadNumber'],
-                'vehicle_id'=>$sale_item['vehicle_id'],
-                'product_id'=>$sale_item['product_id'],
-                'unit_id'=>$sale_item['unit_id'],
-                'Price'=>$sale_item['Price'],
-                'Quantity'=>$sale_item['Quantity'],
-                'rowTotal'=>$sale_item['rowTotal'],
-                'VAT'=>$sale_item['VAT'],
-                'rowVatAmount'=>$sale_item['rowVatAmount'],
-                'rowSubTotal'=>$sale_item['rowSubTotal'],
-                'Description'=>$sale_item['Description'],
+                'PadNumber'=>$sale_item->PadNumber,
+                'vehicle_id'=>$sale_item->vehicle_id,
+                'product_id'=>$sale_item->product_id,
+                'unit_id'=>$sale_item->unit_id,
+                'Price'=>$sale_item->Price,
+                'Quantity'=>$sale_item->Quantity,
+                'rowTotal'=>$sale_item->rowTotal,
+                'VAT'=>$sale_item->VAT,
+                'rowVatAmount'=>$sale_item->rowVatAmount,
+                'rowSubTotal'=>$sale_item->rowSubTotal,
+                'Description'=>$sale_item->Description,
             ]);
         }
+
+
+
+        ////////////////// account section ////////////////
+        if ($sales)
+        {
+            $accountTransaction = AccountTransaction::where(
+                [
+                    'customer_id'=> $request->customer_id,
+                    'createdDate' => date('Y-m-d'),
+                ])->first();
+            if (!is_null($accountTransaction))
+            {
+                if ($request->paidBalance == 0 || $request->paidBalance == 0.00) {
+                    if ($accountTransaction->createdDate != date('Y-m-d')) {
+                        $totalCredit = $request->grandTotal;
+                    } else {
+                        $totalCredit = $accountTransaction->Credit + $request->grandTotal;
+                    }
+                    $totalDebit = $accountTransaction->Debit;
+                    $difference = $accountTransaction->Differentiate + $request->grandTotal;
+                }
+                elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal )
+                {
+                    if ($accountTransaction->createdDate != date('Y-m-d')) {
+                        $totalDebit = $request->paidBalance;
+                        $totalCredit = $request->grandTotal;
+                    } else {
+                        $totalDebit = $accountTransaction->Debit + $request->paidBalance;
+                        $totalCredit = $accountTransaction->Credit + $request->grandTotal;
+                    }
+                    $differenceValue = $accountTransaction->Differentiate - $request->paidBalance;
+                    $difference = $differenceValue + $request->grandTotal;
+                }
+                else{
+
+                    if ($accountTransaction->createdDate != date('Y-m-d')) {
+                        $totalDebit = $request->paidBalance;
+                    } else {
+                        $totalDebit = $accountTransaction->Debit + $request->paidBalance;
+                    }
+                    $totalCredit = $accountTransaction->Credit;
+                    $difference = $accountTransaction->Differentiate - $request->paidBalance;
+                }
+            }
+            else
+            {
+                $accountTransaction = AccountTransaction::where(
+                    [
+                        'customer_id'=> $request->customer_id,
+                    ])->get();
+                if ($request->paidBalance == 0 || $request->paidBalance == 0.00) {
+                    $totalCredit = $request->grandTotal;
+                    $totalDebit = $accountTransaction->last()->Debit;
+                    $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                }
+                elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal )
+                {
+
+                    $totalDebit = $request->paidBalance;
+                    $totalCredit = $request->grandTotal;
+                    $differenceValue = $accountTransaction->last()->Differentiate - $request->paidBalance;
+                    $difference = $differenceValue + $request->grandTotal;
+                }
+                else{
+                    $totalDebit = $request->paidBalance;
+                    $totalCredit = $accountTransaction->last()->Credit;
+                    $difference = $accountTransaction->last()->Differentiate - $request->paidBalance;
+                }
+            }
+            $AccData =
+                [
+                    'customer_id' => $request->customer_id,
+                    'Credit' => $totalCredit,
+                    'Debit' => $totalDebit,
+                    'Differentiate' => $difference,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $userId,
+                ];
+            AccountTransaction::updateOrCreate(
+                [
+                    'createdDate'   => date('Y-m-d'),
+                    'customer_id'   => $request->customer_id,
+                ],
+                $AccData);
+        }
+        ////////////////// end of account section ////////////////
+
         $Response = SalesResource::collection(Sale::where('id',$sales->id)->with('user','customer','sale_details')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
@@ -88,12 +197,148 @@ class SalesRepository implements ISalesRepositoryInterface
         $userId = Auth::id();
         $saleRequest['user_id']=$userId ?? 0;
 
-        $sale_detail=$saleRequest->sale_details;
+        //$sale_detail=$saleRequest->sale_details;
 
         $sales = Sale::findOrFail($Id);
+
+        ////////////////// account section ////////////////
+        $accountTransaction = AccountTransaction::where(
+            [
+                'customer_id'=> $saleRequest->customer_id,
+            ])->get();
+        if (!is_null($accountTransaction)) {
+            $lastAccountTransaction = $accountTransaction->Last();
+            if ($lastAccountTransaction->customer_id != $sales->customer_id)
+            {
+                if ($sales->paidBalance == 0 || $sales->paidBalance == 0.00) {
+                    $OldValue1 = $sales->customer->account_transaction->Last()->Credit - $sales->grandTotal;
+                    $OldTotalCredit = $OldValue1;
+                    $OldTotalDebit = $sales->customer->account_transaction->Last()->Debit;
+                    $OldValue = $sales->customer->account_transaction->Last()->Differentiate - $sales->grandTotal;
+                    $OldDifference = $OldValue;
+                }
+                elseif ($sales->paidBalance > 0 AND $sales->paidBalance < $sales->grandTotal)
+                {
+                    $OldTotalDebit = $sales->customer->account_transaction->Last()->Debit - $sales->paidBalance;
+                    $OldTotalCredit = $sales->customer->account_transaction->Last()->Credit - $sales->grandTotal;
+                    $differenceValue = $sales->customer->account_transaction->Last()->Differentiate + $sales->paidBalance;
+                    $OldDifference = $differenceValue - $sales->grandTotal;
+                }
+                else{
+                    $OldValue1 = $sales->customer->account_transaction->Last()->Debit - $sales->paidBalance;
+                    $OldTotalDebit = $OldValue1;
+                    $OldTotalCredit = $sales->customer->account_transaction->Last()->Credit;
+                    $OldValue = $sales->customer->account_transaction->Last()->Differentiate + $sales->paidBalance;
+                    $OldDifference = $OldValue;
+                }
+                $OldAccData =
+                    [
+                        'customer_id' => $sales->customer_id,
+                        'Debit' => $OldTotalDebit,
+                        'Credit' => $OldTotalCredit,
+                        'Differentiate' => $OldDifference,
+                        'createdDate' => $sales->customer->account_transaction->Last()->createdDate,
+                        'user_id' =>$userId,
+                    ];
+                AccountTransaction::updateOrCreate([
+                    'id'   => $sales->customer->account_transaction->Last()->id,
+                ], $OldAccData);
+
+                if ($saleRequest->paidBalance == 0 || $saleRequest->paidBalance == 0.00) {
+                    $totalCredit = $lastAccountTransaction->Credit + $saleRequest->grandTotal;
+                    $totalDebit = $lastAccountTransaction->Debit;
+                    $difference = $lastAccountTransaction->Differentiate + $saleRequest->grandTotal;
+                }
+                elseif ($saleRequest->paidBalance > 0 AND $saleRequest->paidBalance < $saleRequest->grandTotal)
+                {
+                    $totalDebit = $lastAccountTransaction->Debit - $saleRequest->paidBalance;
+                    $totalCredit = $lastAccountTransaction->Credit - $saleRequest->grandTotal;
+                    $differenceValue = $accountTransaction->last()->Differentiate + $saleRequest->paidBalance;
+                    $difference = $differenceValue - $saleRequest->grandTotal;
+                }
+                else{
+                    $totalDebit = $lastAccountTransaction->Debit + $saleRequest->paidBalance;
+                    $totalCredit = $lastAccountTransaction->Credit;
+                    $difference = $lastAccountTransaction->Differentiate - $saleRequest->paidBalance;
+                }
+            }
+            else
+            {
+                if ($saleRequest->paidBalance == 0 || $saleRequest->paidBalance == 0.00 || $saleRequest->paidBalance == "") {
+
+                    if ($lastAccountTransaction->createdDate != $sales->customer->account_transaction->last()->createdDate) {
+                        $totalCredit = $saleRequest->grandTotal;
+                    } else {
+                        $value1 = $lastAccountTransaction->Credit - $sales->grandTotal;
+                        $totalCredit = $value1 + $saleRequest->grandTotal;
+                    }
+                    $totalDebit = $lastAccountTransaction->Debit;
+                    $value = $lastAccountTransaction->Differentiate - $sales->grandTotal;
+                    $difference = $value + $saleRequest->grandTotal;
+//                                        return Response()->json($difference);
+                }
+                elseif ($saleRequest->paidBalance > 0 AND $saleRequest->paidBalance < $saleRequest->grandTotal)
+                {
+
+                    if ($lastAccountTransaction->createdDate != $sales->customer->account_transaction->last()->createdDate) {
+                        $totalDebit = $saleRequest->paidBalance;
+                        $totalCredit = $saleRequest->grandTotal;
+                    } else {
+                        $value1 = $lastAccountTransaction->Debit - $sales->paidBalance;
+                        $totalDebit = $value1 + $saleRequest->paidBalance;
+                        $valueC = $lastAccountTransaction->Debit - $sales->grandTotal;
+                        $totalCredit = $valueC + $saleRequest->grandTotal;
+                    }
+                    $differenceValue = $lastAccountTransaction->Differentiate - $saleRequest->paidBalance;
+                    $difference = $differenceValue + $saleRequest->grandTotal;
+                }
+                else{
+                    if ($lastAccountTransaction->createdDate != $sales->customer->account_transaction->last()->createdDate) {
+                        $totalDebit = $saleRequest->paidBalance;
+                    } else {
+                        $value1 = $lastAccountTransaction->Debit - $sales->paidBalance;
+                        $totalDebit = $value1 + $saleRequest->paidBalance;
+                    }
+                    $totalCredit = $lastAccountTransaction->Credit;
+                    $value = $lastAccountTransaction->Differentiate + $sales->paidBalance;
+                    $difference = $value - $saleRequest->paidBalance;
+                }
+            }
+
+            $AccData =
+                [
+                    'customer_id' => $saleRequest->customer_id,
+                    'Credit' => $totalCredit,
+                    'Debit' => $totalDebit,
+                    'Differentiate' => $difference,
+                    'createdDate' => $lastAccountTransaction->createdDate,
+                    'user_id' =>$userId,
+                ];
+            AccountTransaction::updateOrCreate([
+                'createdDate'   => $lastAccountTransaction->createdDate,
+                'id'   => $lastAccountTransaction->id,
+            ], $AccData);
+        }
+        ////////////////// end of account section ////////////////
+
+        if ($saleRequest->paidBalance == 0.00 || $saleRequest->paidBalance == 0) {
+            $isPaid = false;
+            $partialPaid =false;
+        }
+        elseif($saleRequest->paidBalance >= $saleRequest->grandTotal)
+        {
+            $isPaid = true;
+            $partialPaid =false;
+        }
+        else
+        {
+            $isPaid = false;
+            $partialPaid =true;
+        }
+
         $sales->customer_id=$saleRequest->customer_id;
         $sales->SaleDate=$saleRequest->SaleDate;
-        $sales->DueDate=$saleRequest->DueDate;
+        //$sales->DueDate=$saleRequest->DueDate;
         $sales->referenceNumber=$saleRequest->referenceNumber;
         $sales->Total=$saleRequest->Total;
         $sales->subTotal=$saleRequest->subTotal;
@@ -104,6 +349,8 @@ class SalesRepository implements ISalesRepositoryInterface
         $sales->Description=$saleRequest->Description;
         $sales->TermsAndCondition=$saleRequest->TermsAndCondition;
         $sales->supplierNote=$saleRequest->supplierNote;
+        $sales->IsPaid=$isPaid;
+        $sales->IsPartialPaid=$partialPaid;
         $sales->update();
 
         $update_note = new UpdateNote();
@@ -115,22 +362,23 @@ class SalesRepository implements ISalesRepositoryInterface
 
         DB::table('sale_details')->where([['sale_id', $Id]])->delete();
 
+        $sale_detail=json_decode($_POST['sale_details']);
         if(!empty($sale_detail))
         {
             foreach ($sale_detail as $sale_item)
             {
                 $data=SaleDetail::create([
                     'sale_id'=>$Id,
-                    'PadNumber'=>$sale_item['PadNumber'],
-                    'vehicle_id'=>$sale_item['vehicle_id'],
-                    'product_id'=>$sale_item['product_id'],
-                    'Price'=>$sale_item['Price'],
-                    'Quantity'=>$sale_item['Quantity'],
-                    'rowTotal'=>$sale_item['rowTotal'],
-                    'VAT'=>$sale_item['VAT'],
-                    'rowVatAmount'=>$sale_item['rowVatAmount'],
-                    'rowSubTotal'=>$sale_item['rowSubTotal'],
-                    'Description'=>$sale_item['Description'],
+                    'PadNumber'=>$sale_item->PadNumber,
+                    'vehicle_id'=>$sale_item->vehicle_id,
+                    'product_id'=>$sale_item->product_id,
+                    'Price'=>$sale_item->Price,
+                    'Quantity'=>$sale_item->Quantity,
+                    'rowTotal'=>$sale_item->rowTotal,
+                    'VAT'=>$sale_item->VAT,
+                    'rowVatAmount'=>$sale_item->rowVatAmount,
+                    'rowSubTotal'=>$sale_item->rowSubTotal,
+                    'Description'=>$sale_item->Description,
                 ]);
             }
         }
@@ -148,7 +396,7 @@ class SalesRepository implements ISalesRepositoryInterface
 
     public function BaseList()
     {
-        return array('products'=>Product::select('id','Name')->orderBy('id','desc')->get(),'customer'=>Customer::select('id','Name')->orderBy('id','desc')->get());
+        return array('products'=>Product::select('id','Name')->with('api_units')->orderBy('id','desc')->get(),'customer'=>Customer::select('id','Name')->with('customer_prices','vehicles')->orderBy('id','desc')->get());
     }
 
     public function delete(Request $request, $Id)
@@ -304,7 +552,7 @@ class SalesRepository implements ISalesRepositoryInterface
 
                 $html .='<tr>
                     <td align="center" width="30">'.($sn+1).'</td>
-                    <td align="left" width="190">'.$row[$i]['product']['Name'].'</td>
+                    <td align="left" width="190">'.$row[$i]['api_product']['Name'].'</td>
                     <td align="left" width="70">'.$row[$i]['PadNumber'].'</td>
                     <td align="center" width="50">'.'N.A.'.'</td>
                     <td align="center" width="55">'.number_format($row[$i]['Price'],2,'.',',').'</td>
@@ -341,7 +589,7 @@ class SalesRepository implements ISalesRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, true, false, '');
 
-            $amount_in_words=$this->getUAECurrency($data['grandTotal']);
+            $amount_in_words=Str::getUAECurrency($data['grandTotal']);
             $pdf::Cell(95, 5, 'Amount in Words : '.$amount_in_words,'',0,'L');
             $pdf::Ln(6);
             $pdf::Ln(6);
@@ -382,38 +630,5 @@ class SalesRepository implements ISalesRepositoryInterface
         }
         $sales->update();
         return new SalesResource(Sale::find($Id));
-    }
-
-    function getUAECurrency(float $number)
-    {
-        $decimal = round($number - ($no = floor($number)), 2) * 100;
-        $hundred = null;
-        $digits_length = strlen($no);
-        $i = 0;
-        $str = array();
-        $words = array(0 => '', 1 => 'one', 2 => 'two',
-            3 => 'three', 4 => 'four', 5 => 'five', 6 => 'six',
-            7 => 'seven', 8 => 'eight', 9 => 'nine',
-            10 => 'ten', 11 => 'eleven', 12 => 'twelve',
-            13 => 'thirteen', 14 => 'fourteen', 15 => 'fifteen',
-            16 => 'sixteen', 17 => 'seventeen', 18 => 'eighteen',
-            19 => 'nineteen', 20 => 'twenty', 30 => 'thirty',
-            40 => 'forty', 50 => 'fifty', 60 => 'sixty',
-            70 => 'seventy', 80 => 'eighty', 90 => 'ninety');
-        $digits = array('', 'hundred','thousand','lakh', 'crore');
-        while( $i < $digits_length ) {
-            $divider = ($i == 2) ? 10 : 100;
-            $number = floor($no % $divider);
-            $no = floor($no / $divider);
-            $i += $divider == 10 ? 1 : 2;
-            if ($number) {
-                $plural = (($counter = count($str)) && $number > 9) ? 's' : null;
-                $hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
-                $str [] = ($number < 21) ? $words[$number].' '. $digits[$counter]. $plural.' '.$hundred:$words[floor($number / 10) * 10].' '.$words[$number % 10]. ' '.$digits[$counter].$plural.' '.$hundred;
-            } else $str[] = null;
-        }
-        $Rupees = implode('', array_reverse($str));
-        $paise = ($decimal > 0) ? "." . ($words[$decimal / 10] . " " . $words[$decimal % 10]) . ' Fils' : '';
-        return ($Rupees ? $Rupees . 'AED ' : '') . $paise;
     }
 }

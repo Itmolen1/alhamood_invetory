@@ -116,12 +116,14 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/Loan/paginate/{page_no}/{page_size}','api\LoanController@paginate');
 
     Route::apiResource('/Purchase', 'api\PurchaseController');
+    Route::post('/PurchaseUpdate', 'api\PurchaseController@update');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');
     Route::get('/getPurchaseBaseList', 'api\PurchaseController@BaseList');
     Route::post('PurchaseDocumentsUpload', 'api\PurchaseController@PurchaseDocumentsUpload');
     Route::get('/Purchase/print/{Id}', 'api\PurchaseController@print');
 
     Route::apiResource('/Sales', 'api\SalesController');
+    Route::post('/SalesUpdate', 'api\SalesController@update');
     Route::get('/Sales/paginate/{page_no}/{page_size}','api\SalesController@paginate');
     Route::get('/getSalesBaseList', 'api\SalesController@BaseList');
     Route::post('SalesDocumentsUpload', 'api\SalesController@SalesDocumentsUpload');

@@ -35,6 +35,11 @@ class SaleDetail extends Model
         return $this->belongsTo('App\Models\Vehicle','vehicle_id','id');
     }
 
+    public function api_vehicle()
+    {
+        return $this->belongsTo('App\Models\Vehicle','vehicle_id','id')->withTrashed();
+    }
+
     public function product()
     {
         return $this->belongsTo('App\Models\Product','product_id','id');

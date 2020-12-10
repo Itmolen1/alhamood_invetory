@@ -70,16 +70,16 @@ class PurchaseController extends Controller
 
     }
 
-    public function update(PurchaseRequest $purchaseRequest, $id)
+    public function update(PurchaseRequest $purchaseRequest)
     {
         try
         {
-            $employee = Purchase::find($id);
+            $employee = Purchase::find($purchaseRequest->id);
             if(is_null($employee))
             {
                 return $this->userResponse->Failed($employee = (object)[],'Not Found.');
             }
-            $purchase = $this->purchaseRepository->update($purchaseRequest,$id);
+            $purchase = $this->purchaseRepository->update($purchaseRequest,$purchaseRequest->id);
             return $this->userResponse->Success($purchase);
         }
         catch(Exception $ex)
