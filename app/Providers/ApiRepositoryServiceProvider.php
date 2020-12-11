@@ -28,6 +28,7 @@ use App\ApiRepositories\Interfaces\IExpenseRepositoryInterface;
 use App\ApiRepositories\Interfaces\ILoanRepositoryInterface;
 use App\ApiRepositories\Interfaces\IMeterReaderRepositoryInterface;
 use App\ApiRepositories\Interfaces\IMeterReadingRepositoryInterface;
+use App\ApiRepositories\Interfaces\IPaymentReceiveRepositoryInterface;
 use App\ApiRepositories\Interfaces\IPaymentTermRepositoryInterface;
 use App\ApiRepositories\Interfaces\IPaymentTypeRepositoryInterface;
 use App\ApiRepositories\Interfaces\IProductRepositoryInterface;
@@ -43,6 +44,7 @@ use App\ApiRepositories\Interfaces\IVehicleRepositoryInterface;
 use App\ApiRepositories\LoanRepository;
 use App\ApiRepositories\MeterReaderRepository;
 use App\ApiRepositories\MeterReadingRepository;
+use App\ApiRepositories\PaymentReceiveRepository;
 use App\ApiRepositories\PaymentTermRepository;
 use App\ApiRepositories\PaymentTypeRepository;
 use App\ApiRepositories\ProductRepository;
@@ -88,7 +90,9 @@ class ApiRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ICompanyTypeRepositoryInterface::class,CompanyTypeRepository::class);
         $this->app->bind(IPaymentTypeRepositoryInterface::class,PaymentTypeRepository::class);
         $this->app->bind(IPaymentTermRepositoryInterface::class,PaymentTermRepository::class);
+        $this->app->bind(IPaymentReceiveRepositoryInterface::class,PaymentReceiveRepository::class);
     }
+
     public function boot()
     {
         Str::macro('getUAECurrency',function (float $number){

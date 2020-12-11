@@ -46,7 +46,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer->postCode=$request->postCode;
         $customer->registrationDate=$request->registrationDate;
         $customer->Description=$request->Description;
-        $customer->company_id=$request->company_id;
+        //$customer->company_id=$request->company_id;
         $customer->region_id=$request->region_id;
         $customer->createdDate=date('Y-m-d h:i:s');
         $customer->isActive=1;

@@ -631,4 +631,14 @@ class SalesRepository implements ISalesRepositoryInterface
         $sales->update();
         return new SalesResource(Sale::find($Id));
     }
+
+    public function customerSaleDetails($Id)
+    {
+        $sales = Sale::with('customer.vehicles','sale_details')
+            ->where([
+                'customer_id'=>$Id,
+                'IsPaid'=> false,
+            ])->get();
+        return $sales;
+    }
 }

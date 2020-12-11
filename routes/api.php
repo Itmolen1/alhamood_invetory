@@ -128,8 +128,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/getSalesBaseList', 'api\SalesController@BaseList');
     Route::post('SalesDocumentsUpload', 'api\SalesController@SalesDocumentsUpload');
     Route::get('/Sales/print/{Id}', 'api\SalesController@print');
+    Route::get('/customerSaleDetails/{Id}', 'api\SalesController@customerSaleDetails');
 
     Route::apiResource('/Expense', 'api\ExpenseController');
+    Route::post('/ExpenseUpdate', 'api\ExpenseController@update');
     Route::get('/Expense/paginate/{page_no}/{page_size}','api\ExpenseController@paginate');
     Route::get('/getExpenseBaseList', 'api\ExpenseController@BaseList');
     Route::post('ExpenseDocumentsUpload', 'api\ExpenseController@ExpenseDocumentsUpload');
@@ -138,6 +140,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/MeterReading', 'api\MeterReadingController');
     Route::get('/MeterReading/paginate/{page_no}/{page_size}','api\MeterReadingController@paginate');
     Route::get('/getMeterReadingBaseList', 'api\MeterReadingController@BaseList');
+
+    Route::apiResource('/PaymentReceive', 'api\PaymentReceiveController');
+    Route::get('/PaymentReceive/paginate/{page_no}/{page_size}','api\PaymentReceiveController@paginate');
+    Route::get('/getPaymentReceiveBaseList', 'api\PaymentReceiveController@BaseList');
 });
 
 //Route::fallback(function(){

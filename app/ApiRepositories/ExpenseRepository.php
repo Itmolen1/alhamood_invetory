@@ -7,7 +7,9 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\IExpenseRepositoryInterface;
 use App\Http\Requests\ExpenseRequest;
 use App\Http\Resources\Expense\ExpenseResource;
+use App\Models\Employee;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\ExpenseDetail;
 use App\Models\FileUpload;
 use App\Models\Product;
@@ -28,7 +30,7 @@ class ExpenseRepository implements IExpenseRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return ExpenseResource::Collection(Expense::all()->sortDesc()->forPage($page_no,$page_size));
+        return ExpenseResource::Collection(Expense::with('user','expense_details','update_notes')->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function ActivateDeactivate($Id)
@@ -52,7 +54,7 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $lastExpenseID = $expense->orderByDesc('id')->pluck('id')->first();
         $newExpenseID = 'EXP-00'.($lastExpenseID + 1);
 
-        $expense_detail=$request->expense_detail;
+        //$expense_detail=$request->expense_detail;
 
         $userId = Auth::id();
         $expense = new Expense();
@@ -68,7 +70,7 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $expense->totalVat=$request->totalVat;
         $expense->grandTotal=$request->grandTotal;
         $expense->Description=$request->Description;
-        $expense->termsAndCondition=$request->termsAndCondition;
+        //$expense->termsAndCondition=$request->termsAndCondition;
         $expense->supplierNote=$request->supplierNote;
         $expense->createdDate=date('Y-m-d h:i:s');
         $expense->isActive=1;
@@ -76,18 +78,20 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $expense->save();
         $expense_id = $expense->id;
 
+        $expense_detail=json_decode($_POST['expense_detail']);
+
         foreach ($expense_detail as $expense_item)
         {
             $data=ExpenseDetail::create([
                 'expense_id'=>$expense_id,
-                'expense_category_id'=>$expense_item['expense_category_id'],
-                'expenseDate'=>$expense_item['expenseDate'],
-                'PadNumber'=>$expense_item['PadNumber'],
-                'Description'=>$expense_item['Description'],
-                'Total'=>$expense_item['Total'],
-                'VAT'=>$expense_item['VAT'],
-                'rowVatAmount'=>$expense_item['rowVatAmount'],
-                'rowSubTotal'=>$expense_item['rowSubTotal'],
+                'expense_category_id'=>$expense_item->expense_category_id,
+                'expenseDate'=>$expense_item->expenseDate,
+                'PadNumber'=>$expense_item->PadNumber,
+                'Description'=>$expense_item->Description,
+                'Total'=>$expense_item->Total,
+                'VAT'=>$expense_item->VAT,
+                'rowVatAmount'=>$expense_item->rowVatAmount,
+                'rowSubTotal'=>$expense_item->rowSubTotal,
             ]);
         }
         $Response = ExpenseResource::collection(Expense::where('id',$expense->id)->with('user','supplier','expense_details')->get());
@@ -101,7 +105,7 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $userId = Auth::id();
         $expenseRequest['user_id']=$userId ?? 0;
 
-        $expense_detail=$expenseRequest->expense_detail;
+        //$expense_detail=$expenseRequest->expense_detail;
 
         $expense = Expense::findOrFail($Id);
         $expense->employee_id=$expenseRequest->employee_id;
@@ -113,7 +117,7 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $expense->totalVat=$expenseRequest->totalVat;
         $expense->grandTotal=$expenseRequest->grandTotal;
         $expense->Description=$expenseRequest->Description;
-        $expense->termsAndCondition=$expenseRequest->termsAndCondition;
+        //$expense->termsAndCondition=$expenseRequest->termsAndCondition;
         $expense->supplierNote=$expenseRequest->supplierNote;
         $expense->update();
 
@@ -126,20 +130,22 @@ class ExpenseRepository implements IExpenseRepositoryInterface
 
         DB::table('expense_details')->where([['expense_id', $Id]])->delete();
 
+        $expense_detail=json_decode($_POST['expense_detail']);
+
         if(!empty($expense_detail))
         {
             foreach ($expense_detail as $expense_item)
             {
                 $data=ExpenseDetail::create([
                     'expense_id'=>$Id,
-                    'expense_category_id'=>$expense_item['expense_category_id'],
-                    'expenseDate'=>$expense_item['expenseDate'],
-                    'PadNumber'=>$expense_item['PadNumber'],
-                    'Description'=>$expense_item['Description'],
-                    'Total'=>$expense_item['Total'],
-                    'VAT'=>$expense_item['VAT'],
-                    'rowVatAmount'=>$expense_item['rowVatAmount'],
-                    'rowSubTotal'=>$expense_item['rowSubTotal'],
+                    'expense_category_id'=>$expense_item->expense_category_id,
+                    'expenseDate'=>$expense_item->expenseDate,
+                    'PadNumber'=>$expense_item->PadNumber,
+                    'Description'=>$expense_item->Description,
+                    'Total'=>$expense_item->Total,
+                    'VAT'=>$expense_item->VAT,
+                    'rowVatAmount'=>$expense_item->rowVatAmount,
+                    'rowSubTotal'=>$expense_item->rowSubTotal,
                 ]);
             }
         }
@@ -157,7 +163,7 @@ class ExpenseRepository implements IExpenseRepositoryInterface
 
     public function BaseList()
     {
-        return array('products'=>Product::select('id','Name')->orderBy('id','desc')->get(),'supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get());
+        return array('expense_category'=>ExpenseCategory::select('id','Name')->orderBy('id','desc')->get(),'employee'=>Employee::select('id','Name')->orderBy('id','desc')->get(),'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
     }
 
     public function delete(Request $request, $Id)

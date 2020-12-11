@@ -70,16 +70,16 @@ class ExpenseController extends Controller
 
     }
 
-    public function update(ExpenseRequest $expenseRequest, $id)
+    public function update(ExpenseRequest $expenseRequest)
     {
         try
         {
-            $expense = Expense::find($id);
+            $expense = Expense::find($expenseRequest->id);
             if(is_null($expense))
             {
                 return $this->userResponse->Failed($expense = (object)[],'Not Found.');
             }
-            $expense = $this->expenseRepository->update($expenseRequest,$id);
+            $expense = $this->expenseRepository->update($expenseRequest,$expenseRequest->id);
             return $this->userResponse->Success($expense);
         }
         catch(Exception $ex)
