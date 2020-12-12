@@ -91,9 +91,9 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $paymentReceive->company_id = $company_id;
             $paymentReceive->save();
             $paymentReceive = $paymentReceive->id;
+            $amount = 0;
             foreach($request->Data['orders'] as $detail)
             {
-                $amount = 0;
                 $amount += $detail['amountPaid'];
 
                 if ($amount <= $request->Data['paidAmount'])
@@ -105,7 +105,8 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                 else{
                     $isPaid = false;
                     $isPartialPaid = true;
-                    $totalAmount = $request->Data['paidAmount'];
+                    $totalAmount1 = $amount - $request->Data['paidAmount'];
+                    $totalAmount = $detail['amountPaid'] - $totalAmount1;
                 }
 
                 $data =  PaymentReceiveDetail::create([
@@ -129,7 +130,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     "IsNeedStampOrSignature" => false,
                 ]);
             }
-            return Response()->json($sale);
+            return Response()->json($amount);
 //            ////////////////// account section ////////////////
 //            if ($paymentReceive)
 //            {
