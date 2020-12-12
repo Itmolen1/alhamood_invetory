@@ -10,6 +10,7 @@ use App\Http\Resources\Bank\BankResource;
 use App\Models\Bank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class BankRepository implements IBankRepositoryInterface
 {
@@ -30,6 +31,7 @@ class BankRepository implements IBankRepositoryInterface
         $bank = new Bank();
         $bank->Name=$request->Name;
         $bank->Branch=$request->Branch;
+        $bank->company_id=Str::getCompany($userId);
         $bank->Description=$request->Description;
         $bank->updateDescription=$request->updateDescription;
         $bank->contactNumber=$request->contactNumber;

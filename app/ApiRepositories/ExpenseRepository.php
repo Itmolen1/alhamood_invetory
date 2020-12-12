@@ -18,6 +18,7 @@ use App\Models\UpdateNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use PDF;
 
 class ExpenseRepository implements IExpenseRepositoryInterface
@@ -74,6 +75,8 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $expense->supplierNote=$request->supplierNote;
         $expense->createdDate=date('Y-m-d h:i:s');
         $expense->isActive=1;
+        $expense->user_id = $userId ?? 0;
+        $expense->company_id=Str::getCompany($userId);
 
         $expense->save();
         $expense_id = $expense->id;
@@ -92,6 +95,8 @@ class ExpenseRepository implements IExpenseRepositoryInterface
                 'VAT'=>$expense_item->VAT,
                 'rowVatAmount'=>$expense_item->rowVatAmount,
                 'rowSubTotal'=>$expense_item->rowSubTotal,
+                'user_id'=>$userId,
+                'company_id'=>Str::getCompany($userId),
             ]);
         }
         $Response = ExpenseResource::collection(Expense::where('id',$expense->id)->with('user','supplier','expense_details')->get());

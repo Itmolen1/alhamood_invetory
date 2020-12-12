@@ -57,6 +57,7 @@ use App\ApiRepositories\SupplierRepository;
 use App\ApiRepositories\UnitRepository;
 use App\ApiRepositories\UserRepository;
 use App\ApiRepositories\VehicleRepository;
+use App\Models\User;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -125,6 +126,11 @@ class ApiRepositoryServiceProvider extends ServiceProvider
             $Rupees = implode('', array_reverse($str));
             $paise = ($decimal > 0) ? "." . ($words[$decimal / 10] . " " . $words[$decimal % 10]) . ' Fils' : '';
             return ($Rupees ? $Rupees . 'AED ' : '') . $paise;
+        });
+
+        Str::macro('getCompany',function ($userId){
+            $user = User::findOrFail($userId);
+            return $user->company_id;
         });
     }
 }

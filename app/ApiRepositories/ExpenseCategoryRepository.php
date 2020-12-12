@@ -10,6 +10,7 @@ use App\Http\Resources\ExpenseCategory\ExpenseCategoryResource;
 use App\Models\ExpenseCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ExpenseCategoryRepository implements IExpenseCategoryRepositoryInterface
 {
@@ -32,6 +33,7 @@ class ExpenseCategoryRepository implements IExpenseCategoryRepositoryInterface
         $expense_category->createdDate=date('Y-m-d h:i:s');
         $expense_category->isActive=1;
         $expense_category->user_id = $userId ?? 0;
+        $expense_category->company_id=Str::getCompany($userId);
         $expense_category->save();
         return new ExpenseCategoryResource(ExpenseCategory::find($expense_category->id));
     }

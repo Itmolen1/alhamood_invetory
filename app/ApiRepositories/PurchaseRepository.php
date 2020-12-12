@@ -57,6 +57,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         //$purchase_detail=$request->purchase_detail;
 
         $userId = Auth::id();
+        $company_id=Str::getCompany($userId);
         $purchase = new Purchase();
         $purchase->PurchaseNumber=$newInvoiceID;
         $purchase->supplier_id=$request->supplier_id;
@@ -75,6 +76,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $purchase->createdDate=date('Y-m-d h:i:s');
         $purchase->isActive=1;
         $purchase->user_id = $userId ?? 0;
+        $purchase->company_id=$company_id;
         $purchase->save();
         $purchase_id = $purchase->id;
 
@@ -95,6 +97,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                'rowVatAmount'=>$purchase_item->rowVatAmount,
                'rowSubTotal'=>$purchase_item->rowSubTotal,
                'Description'=>$purchase_item->Description,
+               'user_id'=>$userId,
+               'company_id'=>$company_id,
            ]);
        }
 

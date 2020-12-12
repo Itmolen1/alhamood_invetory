@@ -15,6 +15,7 @@ use App\Models\PaymentType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CustomerRepository implements ICustomerRepositoryInterface
 {
@@ -51,6 +52,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer->createdDate=date('Y-m-d h:i:s');
         $customer->isActive=1;
         $customer->user_id = $userId ?? 0;
+        $customer->company_id=Str::getCompany($userId);
         $customer->save();
 
         //create account for newly added customer

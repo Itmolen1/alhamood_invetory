@@ -10,6 +10,7 @@ use App\Http\Resources\CompanyType\CompanyTypeResource;
 use App\Models\CompanyType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CompanyTypeRepository implements ICompanyTypeRepositoryInterface
 {
@@ -32,6 +33,7 @@ class CompanyTypeRepository implements ICompanyTypeRepositoryInterface
         $company_type->createdDate=date('Y-m-d h:i:s');
         $company_type->isActive=1;
         $company_type->user_id = $userId ?? 0;
+        $company_type->company_id=Str::getCompany($userId);
         $company_type->save();
         return new CompanyTypeResource(CompanyType::find($company_type->id));
     }

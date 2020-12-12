@@ -57,6 +57,7 @@ class SalesRepository implements ISalesRepositoryInterface
         //$sale_details=$request->sale_details;
 
         $userId = Auth::id();
+        $company_id=Str::getCompany($userId);
         $sales = new Sale();
         $sales->SaleNumber=$newInvoiceID;
         $sales->customer_id=$request->customer_id;
@@ -77,6 +78,7 @@ class SalesRepository implements ISalesRepositoryInterface
         $sales->createdDate=date('Y-m-d h:i:s');
         $sales->isActive=1;
         $sales->user_id = $userId ?? 0;
+        $sales->company_id = $company_id ?? 0;
         $sales->save();
         $sales_id = $sales->id;
 
@@ -97,6 +99,8 @@ class SalesRepository implements ISalesRepositoryInterface
                 'rowVatAmount'=>$sale_item->rowVatAmount,
                 'rowSubTotal'=>$sale_item->rowSubTotal,
                 'Description'=>$sale_item->Description,
+                'user_id'=>$userId,
+                'company_id'=>$company_id,
             ]);
         }
 

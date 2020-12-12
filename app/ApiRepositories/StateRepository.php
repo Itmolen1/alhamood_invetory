@@ -10,6 +10,7 @@ use App\Http\Resources\State\StateResource;
 use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class StateRepository implements IStateRepositoryInterface
 {
@@ -32,6 +33,7 @@ class StateRepository implements IStateRepositoryInterface
         $state->createdDate=date('Y-m-d h:i:s');
         $state->isActive=1;
         $state->user_id = $userId ?? 0;
+        $state->company_id=Str::getCompany($userId);
         $state->save();
         return new StateResource(State::find($state->id));
     }

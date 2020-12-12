@@ -26,8 +26,8 @@ class BankFactory extends Factory
             'Branch' => $this->faker->address,
             'Description' => $this->faker->text,
             'Address' => $this->faker->address,
-            'user_id' => $this->faker->numberBetween(1.3),
-            'company_id' => $this->faker->numberBetween(1.3),
+            'user_id' => $this->faker->numberBetween(1,3),
+            'company_id' => $this->faker->numberBetween(1,3),
         ];
     }
 }

@@ -50,6 +50,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         $payment_receive->createdDate=date('Y-m-d h:i:s');
         $payment_receive->isActive=1;
         $payment_receive->user_id = $userId ?? 0;
+        $payment_receive->company_id=Str::getCompany($userId);
         $payment_receive->save();
         $payment_receive_id = $payment_receive->id;
 
@@ -60,11 +61,12 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $data=PaymentReceiveDetail::create([
                 'payment_receive_id'=>$payment_receive_id,
                 'amountPaid'=>$payment_item->amountPaid,
-                'user_id'=>$userId,
                 'sale_id'=>$payment_item->sale_id,
                 'paymentReceiveDetailDate'=>date('Y-m-d'),
                 'createdDate'=>date('Y-m-d'),
                 'isActive'=>1,
+                'user_id'=>$userId,
+                'company_id'=>Str::getCompany($userId),
             ]);
 
             $sale = Sale::find($payment_item->sale_id);

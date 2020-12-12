@@ -10,6 +10,7 @@ use App\Http\Resources\CustomerAdvance\CustomerAdvanceResource;
 use App\Models\CustomerAdvance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 {
@@ -42,6 +43,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
         $customer_advance->createdDate=date('Y-m-d h:i:s');
         $customer_advance->isActive=1;
         $customer_advance->user_id = $userId ?? 0;
+        $customer_advance->company_id=Str::getCompany($userId);
         $customer_advance->save();
         return new CustomerAdvanceResource(CustomerAdvance::find($customer_advance->id));
     }

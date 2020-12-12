@@ -14,6 +14,7 @@ use App\Models\UpdateNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class MeterReadingRepository implements IMeterReadingRepositoryInterface
 {
@@ -60,6 +61,7 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
         $meter_reading->createdDate=date('Y-m-d h:i:s');
         $meter_reading->isActive=1;
         $meter_reading->user_id = $userId ?? 0;
+        $meter_reading->company_id=Str::getCompany($userId);
         $meter_reading->save();
         $meter_reading_id = $meter_reading->id;
 

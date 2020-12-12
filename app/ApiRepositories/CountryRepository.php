@@ -11,6 +11,7 @@ use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CountryRepository implements ICountryRepositoryInterface
 {
@@ -33,6 +34,7 @@ class CountryRepository implements ICountryRepositoryInterface
         $country->createdDate=date('Y-m-d h:i:s');
         $country->isActive=1;
         $country->user_id = $userId ?? 0;
+        $country->company_id=Str::getCompany($userId);
         $country->save();
         return new CountryResource(Country::find($country->id));
     }
