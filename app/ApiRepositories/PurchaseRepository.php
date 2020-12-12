@@ -189,13 +189,15 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function BaseList()
     {
-//        $product = DB::table('products as p')->select(
-//            'p.id',
-//            'p.Name',
-//            'u.id',
-//            'u.Name as unit_name',
-//        )->where([['p.deleted_at',NULL]])->get();
-        return array('products'=>ProductResource::collection(Product::all('id','Name','updated_at')->sortDesc()),'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
+        return array('pad_number'=>$this->PadNumber(),'products'=>ProductResource::collection(Product::all('id','Name','updated_at')->sortDesc()),'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
+    }
+
+    public function PadNumber()
+    {
+        $PadNumber = new PurchaseDetail();
+        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $newPad = ($lastPad + 1);
+        return $newPad;
     }
 
     public function delete(Request $request, $Id)

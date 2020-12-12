@@ -400,7 +400,15 @@ class SalesRepository implements ISalesRepositoryInterface
 
     public function BaseList()
     {
-        return array('products'=>Product::select('id','Name')->with('api_units')->orderBy('id','desc')->get(),'customer'=>Customer::select('id','Name')->with('customer_prices','vehicles')->orderBy('id','desc')->get());
+        return array('pad_number'=>$this->PadNumber(),'products'=>Product::select('id','Name')->with('api_units')->orderBy('id','desc')->get(),'customer'=>Customer::select('id','Name')->with('customer_prices','vehicles')->orderBy('id','desc')->get());
+    }
+
+    public function PadNumber()
+    {
+        $PadNumber = new SaleDetail();
+        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $newPad = ($lastPad + 1);
+        return $newPad;
     }
 
     public function delete(Request $request, $Id)
