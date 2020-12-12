@@ -36,4 +36,9 @@ class ExpenseDetail extends Model
     {
         return $this->belongsTo('App\Models\ExpenseCategory','expense_category_id','id');
     }
+
+    public function api_expense_category()
+    {
+        return $this->belongsTo('App\Models\ExpenseCategory','expense_category_id','id')->withTrashed();
+    }
 }

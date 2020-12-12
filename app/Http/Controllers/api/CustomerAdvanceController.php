@@ -44,6 +44,12 @@ class CustomerAdvanceController extends Controller
         }
     }
 
+    public function BaseList()
+    {
+        $data = $this->customerAdvanceRepository->BaseList();
+        return $this->userResponse->Success($data);
+    }
+
     public function store(Request $request)
     {
         $result=$this->customerAdvanceRepository->insert($request);

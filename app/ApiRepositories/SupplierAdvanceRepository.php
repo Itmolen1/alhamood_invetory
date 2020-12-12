@@ -7,9 +7,12 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use App\Http\Requests\SupplierAdvanceRequest;
 use App\Http\Resources\SupplierAdvance\SupplierAdvanceResource;
+use App\Models\PaymentType;
+use App\Models\Supplier;
 use App\Models\SupplierAdvance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 {
@@ -20,7 +23,12 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return SupplierAdvanceResource::Collection(SupplierAdvance::all()->sortDesc()->forPage($page_no,$page_size));
+        return SupplierAdvanceResource::Collection(SupplierAdvance::with('api_supplier')->get()->sortDesc()->forPage($page_no,$page_size));
+    }
+
+    public function BaseList()
+    {
+        return array('supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get());
     }
 
     public function insert(Request $request)
@@ -43,6 +51,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         $supplier_advance->isActive=1;
         $supplier_advance->isActive=1;
         $supplier_advance->user_id = $userId ?? 0;
+        $supplier_advance->company_id=Str::getCompany($userId);
         $supplier_advance->save();
         return new SupplierAdvanceResource(SupplierAdvance::find($supplier_advance->id));
     }

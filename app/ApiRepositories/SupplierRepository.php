@@ -16,6 +16,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SupplierRepository implements ISupplierRepositoryInterface
 {
@@ -48,11 +49,11 @@ class SupplierRepository implements ISupplierRepositoryInterface
         $supplier->postCode=$request->postCode;
         $supplier->registrationDate=$request->registrationDate;
         $supplier->Description=$request->Description;
-        //$supplier->company_id=$request->company_id;
         $supplier->region_id=$request->region_id;
         $supplier->createdDate=date('Y-m-d h:i:s');
         $supplier->isActive=1;
         $supplier->user_id = $userId ?? 0;
+        $supplier->company_id=Str::getCompany($userId);
         $supplier->save();
 
         //create account for newly added customer

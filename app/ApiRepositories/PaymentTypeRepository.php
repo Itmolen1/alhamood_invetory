@@ -10,6 +10,7 @@ use App\Http\Resources\PaymentType\PaymentTypeResource;
 use App\Models\PaymentType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PaymentTypeRepository implements IPaymentTypeRepositoryInterface
 {
@@ -32,6 +33,7 @@ class PaymentTypeRepository implements IPaymentTypeRepositoryInterface
         $payment_type->createdDate=date('Y-m-d h:i:s');
         $payment_type->isActive=1;
         $payment_type->user_id = $userId ?? 0;
+        $payment_type->company_id=Str::getCompany($userId);
         $payment_type->save();
         return new PaymentTypeResource(PaymentType::find($payment_type->id));
     }

@@ -10,10 +10,10 @@ use App\Http\Resources\Vehicle\VehicleResource;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class VehicleRepository implements IVehicleRepositoryInterface
 {
-
     public function all()
     {
         return VehicleResource::collection(Vehicle::all()->sortDesc());
@@ -35,6 +35,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
         $vehicle->createdDate=date('Y-m-d h:i:s');
         $vehicle->isActive=1;
         $vehicle->user_id = $userId ?? 0;
+        $vehicle->company_id=Str::getCompany($userId);
         $vehicle->save();
         return new VehicleResource(Vehicle::find($vehicle->id));
     }

@@ -10,6 +10,7 @@ use App\Http\Resources\MeterReader\MeterReaderResource;
 use App\Models\MeterReader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class MeterReaderRepository implements IMeterReaderRepositoryInterface
 {
@@ -34,6 +35,7 @@ class MeterReaderRepository implements IMeterReaderRepositoryInterface
         $meter->createdDate=date('Y-m-d h:i:s');
         $meter->isActive=1;
         $meter->user_id = $userId ?? 0;
+        $meter->company_id=Str::getCompany($userId);
         $meter->save();
         return new MeterReaderResource(MeterReader::find($meter->id));
     }

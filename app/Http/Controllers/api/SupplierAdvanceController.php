@@ -44,6 +44,12 @@ class SupplierAdvanceController extends Controller
         }
     }
 
+    public function BaseList()
+    {
+        $data = $this->supplierAdvanceRepository->BaseList();
+        return $this->userResponse->Success($data);
+    }
+
     public function store(Request $request)
     {
         $result=$this->supplierAdvanceRepository->insert($request);

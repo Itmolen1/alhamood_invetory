@@ -6,6 +6,7 @@ use App\ApiRepositories\Interfaces\ISalesRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaleRequest;
 use App\MISC\ServiceResponse;
+use App\Models\Customer;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 
@@ -69,16 +70,16 @@ class SalesController extends Controller
 
     }
 
-    public function update(SaleRequest $saleRequest, $id)
+    public function update(SaleRequest $saleRequest)
     {
         try
         {
-            $sales = Sale::find($id);
+            $sales = Sale::find($saleRequest->id);
             if(is_null($sales))
             {
                 return $this->userResponse->Failed($sales = (object)[],'Not Found.');
             }
-            $sales = $this->salesRepository->update($saleRequest,$id);
+            $sales = $this->salesRepository->update($saleRequest,$saleRequest->id);
             return $this->userResponse->Success($sales);
         }
         catch(Exception $ex)
@@ -164,6 +165,24 @@ class SalesController extends Controller
                 return $this->userResponse->Failed($sales = (object)[],'Not Found.');
             }
             $result=$this->salesRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
+
+    public function customerSaleDetails($Id)
+    {
+        try
+        {
+            $customer = Customer::find($Id);
+            if(is_null($customer))
+            {
+                return $this->userResponse->Failed($customer = (object)[],'Customer Not Found.');
+            }
+            $result=$this->salesRepository->customerSaleDetails($Id);
             return $this->userResponse->Success($result);
         }
         catch (Exception $exception)

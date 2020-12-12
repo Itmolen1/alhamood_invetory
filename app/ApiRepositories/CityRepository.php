@@ -10,6 +10,7 @@ use App\Http\Resources\City\CityResource;
 use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CityRepository implements ICityRepositoryInterface
 {
@@ -32,6 +33,7 @@ class CityRepository implements ICityRepositoryInterface
         $city->createdDate=date('Y-m-d h:i:s');
         $city->isActive=1;
         $city->user_id = $userId ?? 0;
+        $city->company_id=Str::getCompany($userId);
         $city->save();
         return new CityResource(City::find($city->id));
     }

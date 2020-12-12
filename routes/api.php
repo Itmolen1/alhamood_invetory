@@ -107,27 +107,33 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('get_all_country','api\RegionController@get_detail_list');
 
     Route::apiResource('/CustomerAdvance', 'api\CustomerAdvanceController');
+    Route::get('/getCustomerAdvanceBaseList', 'api\CustomerAdvanceController@BaseList');
     Route::get('/CustomerAdvance/paginate/{page_no}/{page_size}','api\CustomerAdvanceController@paginate');
 
     Route::apiResource('/SupplierAdvance', 'api\SupplierAdvanceController');
+    Route::get('/getSupplierAdvanceBaseList', 'api\SupplierAdvanceController@BaseList');
     Route::get('/SupplierAdvance/paginate/{page_no}/{page_size}','api\SupplierAdvanceController@paginate');
 
     Route::apiResource('/Loan', 'api\LoanController');
     Route::get('/Loan/paginate/{page_no}/{page_size}','api\LoanController@paginate');
 
     Route::apiResource('/Purchase', 'api\PurchaseController');
+    Route::post('/PurchaseUpdate', 'api\PurchaseController@update');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');
     Route::get('/getPurchaseBaseList', 'api\PurchaseController@BaseList');
     Route::post('PurchaseDocumentsUpload', 'api\PurchaseController@PurchaseDocumentsUpload');
     Route::get('/Purchase/print/{Id}', 'api\PurchaseController@print');
 
     Route::apiResource('/Sales', 'api\SalesController');
+    Route::post('/SalesUpdate', 'api\SalesController@update');
     Route::get('/Sales/paginate/{page_no}/{page_size}','api\SalesController@paginate');
     Route::get('/getSalesBaseList', 'api\SalesController@BaseList');
     Route::post('SalesDocumentsUpload', 'api\SalesController@SalesDocumentsUpload');
     Route::get('/Sales/print/{Id}', 'api\SalesController@print');
+    Route::get('/customerSaleDetails/{Id}', 'api\SalesController@customerSaleDetails');
 
     Route::apiResource('/Expense', 'api\ExpenseController');
+    Route::post('/ExpenseUpdate', 'api\ExpenseController@update');
     Route::get('/Expense/paginate/{page_no}/{page_size}','api\ExpenseController@paginate');
     Route::get('/getExpenseBaseList', 'api\ExpenseController@BaseList');
     Route::post('ExpenseDocumentsUpload', 'api\ExpenseController@ExpenseDocumentsUpload');
@@ -136,6 +142,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/MeterReading', 'api\MeterReadingController');
     Route::get('/MeterReading/paginate/{page_no}/{page_size}','api\MeterReadingController@paginate');
     Route::get('/getMeterReadingBaseList', 'api\MeterReadingController@BaseList');
+
+    Route::apiResource('/PaymentReceive', 'api\PaymentReceiveController');
+    Route::get('/PaymentReceive/paginate/{page_no}/{page_size}','api\PaymentReceiveController@paginate');
+    Route::get('/getPaymentReceiveBaseList', 'api\PaymentReceiveController@BaseList');
 });
 
 //Route::fallback(function(){

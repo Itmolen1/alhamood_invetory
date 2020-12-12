@@ -11,6 +11,7 @@ use App\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class RegionRepository implements IRegionRepositoryInterface
 {
@@ -33,6 +34,7 @@ class RegionRepository implements IRegionRepositoryInterface
         $region->createdDate=date('Y-m-d h:i:s');
         $region->isActive=1;
         $region->user_id = $userId ?? 0;
+        $region->company_id=Str::getCompany($userId);
         $region->save();
         return new RegionResource(Region::find($region->id));
     }

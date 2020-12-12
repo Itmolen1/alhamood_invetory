@@ -11,6 +11,7 @@ use App\Models\AccountTransaction;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class EmployeeRepository implements IEmployeeRepositoryInterface
 {
@@ -43,6 +44,7 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
         $employee->createdDate=date('Y-m-d h:i:s');
         $employee->isActive=1;
         $employee->user_id = $userId ?? 0;
+        $employee->company_id=Str::getCompany($userId);
         $employee->save();
 
         //create account for newly added customer

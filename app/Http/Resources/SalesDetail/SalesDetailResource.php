@@ -3,6 +3,7 @@
 namespace App\Http\Resources\SalesDetail;
 
 use App\Http\Resources\Product\ProductResource;
+use App\Http\Resources\Vehicle\VehicleResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SalesDetailResource extends JsonResource
@@ -14,7 +15,7 @@ class SalesDetailResource extends JsonResource
             'sale_id' => $this->sale_id,
             'product_id'=>$this->product_id,
             'company_id'=>$this->company_id,
-            'vehicle_id'=>$this->vehicle_id,
+            //'vehicle_id'=>$this->vehicle_id,
             'PadNumber'=>$this->PadNumber,
             'Description'=>$this->Description,
             'Quantity'=>$this->Quantity,
@@ -28,6 +29,7 @@ class SalesDetailResource extends JsonResource
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
             'api_product'=>new ProductResource($this->api_product),
+            'api_vehicle'=>$this->api_vehicle,
         ];
     }
 }

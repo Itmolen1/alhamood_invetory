@@ -10,6 +10,7 @@ use App\Http\Resources\Unit\UnitResource;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UnitRepository implements IUnitRepositoryInterface
 {
@@ -32,6 +33,7 @@ class UnitRepository implements IUnitRepositoryInterface
         $unit->createdDate=date('Y-m-d h:i:s');
         $unit->isActive=1;
         $unit->user_id = $userId ?? 0;
+        $unit->company_id=Str::getCompany($userId);
         $unit->save();
         return new UnitResource(Unit::find($unit->id));
     }

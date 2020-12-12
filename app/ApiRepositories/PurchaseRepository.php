@@ -17,6 +17,7 @@ use App\Models\UpdateNote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use PDF;
 
 class PurchaseRepository implements IPurchaseRepositoryInterface
@@ -53,9 +54,10 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
         $newInvoiceID = 'PUR-00'.($lastInvoiceID + 1);
 
-        $purchase_detail=$request->purchase_detail;
+        //$purchase_detail=$request->purchase_detail;
 
         $userId = Auth::id();
+        $company_id=Str::getCompany($userId);
         $purchase = new Purchase();
         $purchase->PurchaseNumber=$newInvoiceID;
         $purchase->supplier_id=$request->supplier_id;
@@ -74,25 +76,47 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $purchase->createdDate=date('Y-m-d h:i:s');
         $purchase->isActive=1;
         $purchase->user_id = $userId ?? 0;
+        $purchase->company_id=$company_id;
         $purchase->save();
         $purchase_id = $purchase->id;
 
-        foreach ($purchase_detail as $purchase_item)
-        {
-            $data=PurchaseDetail::create([
-                'purchase_id'=>$purchase_id,
-                'PadNumber'=>$purchase_item['PadNumber'],
-                'product_id'=>$purchase_item['product_id'],
-                'unit_id'=>$purchase_item['unit_id'],
-                'Price'=>$purchase_item['Price'],
-                'Quantity'=>$purchase_item['Quantity'],
-                'rowTotal'=>$purchase_item['rowTotal'],
-                'VAT'=>$purchase_item['VAT'],
-                'rowVatAmount'=>$purchase_item['rowVatAmount'],
-                'rowSubTotal'=>$purchase_item['rowSubTotal'],
-                'Description'=>$purchase_item['Description'],
-            ]);
-        }
+        $purchase_detail=json_decode($_POST['pd']);
+       foreach ($purchase_detail as $purchase_item)
+       {
+        //var_dump($purchase_item);die;
+        //echo "here";die;
+           $data=PurchaseDetail::create([
+               'purchase_id'=>$purchase_id,
+               'PadNumber'=>$purchase_item->PadNumber,
+               'product_id'=>$purchase_item->product_id,
+               'unit_id'=>$purchase_item->unit_id,
+               'Price'=>$purchase_item->Price,
+               'Quantity'=>$purchase_item->Quantity,
+               'rowTotal'=>$purchase_item->rowTotal,
+               'VAT'=>$purchase_item->VAT,
+               'rowVatAmount'=>$purchase_item->rowVatAmount,
+               'rowSubTotal'=>$purchase_item->rowSubTotal,
+               'Description'=>$purchase_item->Description,
+               'user_id'=>$userId,
+               'company_id'=>$company_id,
+           ]);
+       }
+
+        //var_dump($purchase_item['PadNumber']);die;
+        // $data=PurchaseDetail::create([
+        //     'purchase_id'=>$purchase_id,
+        //     'PadNumber'=>$purchase_item['PadNumber'],
+        //     'product_id'=>$purchase_item['product_id'],
+        //     'unit_id'=>$purchase_item['unit_id'],
+        //     'Price'=>$purchase_item['Price'],
+        //     'Quantity'=>$purchase_item['Quantity'],
+        //     'rowTotal'=>$purchase_item['rowTotal'],
+        //     'VAT'=>$purchase_item['VAT'],
+        //     'rowVatAmount'=>$purchase_item['rowVatAmount'],
+        //     'rowSubTotal'=>$purchase_item['rowSubTotal'],
+        //     'Description'=>$purchase_item['Description'],
+        // ]);
+
         $Response = PurchaseResource::collection(Purchase::where('id',$purchase->id)->with('user','supplier','purchase_details')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
@@ -104,7 +128,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $userId = Auth::id();
         $purchaseRequest['user_id']=$userId ?? 0;
 
-        $purchase_detail=$purchaseRequest->purchase_detail;
+        //$purchase_detail=$purchaseRequest->purchase_detail;
 
         $purchase = Purchase::findOrFail($Id);
         $purchase->supplier_id=$purchaseRequest->supplier_id;
@@ -131,23 +155,23 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
         PurchaseDetail::where('purchase_id', array($Id))->delete();
         //DB::table('purchase_details')->where([['purchase_id', $Id]])->delete();
-
+        $purchase_detail=json_decode($_POST['pd']);
         if(!empty($purchase_detail))
         {
             foreach ($purchase_detail as $purchase_item)
             {
                 $data=PurchaseDetail::create([
                     'purchase_id'=>$Id,
-                    'PadNumber'=>$purchase_item['PadNumber'],
-                    'product_id'=>$purchase_item['product_id'],
-                    'unit_id'=>$purchase_item['unit_id'],
-                    'Price'=>$purchase_item['Price'],
-                    'Quantity'=>$purchase_item['Quantity'],
-                    'rowTotal'=>$purchase_item['rowTotal'],
-                    'VAT'=>$purchase_item['VAT'],
-                    'rowVatAmount'=>$purchase_item['rowVatAmount'],
-                    'rowSubTotal'=>$purchase_item['rowSubTotal'],
-                    'Description'=>$purchase_item['Description'],
+                    'PadNumber'=>$purchase_item->PadNumber,
+                    'product_id'=>$purchase_item->product_id,
+                    'unit_id'=>$purchase_item->unit_id,
+                    'Price'=>$purchase_item->Price,
+                    'Quantity'=>$purchase_item->Quantity,
+                    'rowTotal'=>$purchase_item->rowTotal,
+                    'VAT'=>$purchase_item->VAT,
+                    'rowVatAmount'=>$purchase_item->rowVatAmount,
+                    'rowSubTotal'=>$purchase_item->rowSubTotal,
+                    'Description'=>$purchase_item->Description,
                 ]);
             }
         }
@@ -165,13 +189,15 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function BaseList()
     {
-//        $product = DB::table('products as p')->select(
-//            'p.id',
-//            'p.Name',
-//            'u.id',
-//            'u.Name as unit_name',
-//        )->where([['p.deleted_at',NULL]])->get();
-        return array('products'=>ProductResource::collection(Product::all('id','Name','updated_at')->sortDesc()),'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
+        return array('pad_number'=>$this->PadNumber(),'products'=>ProductResource::collection(Product::all('id','Name','updated_at')->sortDesc()),'supplier'=>Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->orderBy('id','desc')->get());
+    }
+
+    public function PadNumber()
+    {
+        $PadNumber = new PurchaseDetail();
+        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $newPad = ($lastPad + 1);
+        return $newPad;
     }
 
     public function delete(Request $request, $Id)
@@ -344,7 +370,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
                     $html .='<tr>
                     <td align="center" width="30">'.($sn+1).'</td>
-                    <td align="left" width="190">'.$row[$i]['product']['Name'].'</td>
+                    <td align="left" width="190">'.$row[$i]['api_product']['Name'].'</td>
                     <td align="left" width="70">'.$row[$i]['PadNumber'].'</td>
                     <td align="center" width="50">'.'N.A.'.'</td>
                     <td align="center" width="55">'.number_format($row[$i]['Price'],2,'.',',').'</td>
@@ -381,7 +407,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, true, false, '');
 
-            $amount_in_words=$this->getUAECurrency($data['grandTotal']);
+            $amount_in_words=Str::getUAECurrency($data['grandTotal']);
             $pdf::Cell(95, 5, 'Amount in Words : '.$amount_in_words,'',0,'L');
             $pdf::Ln(6);
             $pdf::Ln(6);
@@ -395,6 +421,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
             $pdf::lastPage();
             $time=time();
+            if (!file_exists('/app/public/purchase_order_files/')) {
+                mkdir('/app/public/purchase_order_files/', 0777, true);
+            }
             $fileLocation = storage_path().'/app/public/purchase_order_files/';
             $fileNL = $fileLocation.'//'.$time.'.pdf';
             $pdf::Output($fileNL, 'F');
@@ -407,38 +436,5 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         {
             return $this->userResponse->Failed($purchase = (object)[],'Not Found.');
         }
-    }
-
-    function getUAECurrency(float $number)
-    {
-        $decimal = round($number - ($no = floor($number)), 2) * 100;
-        $hundred = null;
-        $digits_length = strlen($no);
-        $i = 0;
-        $str = array();
-        $words = array(0 => '', 1 => 'one', 2 => 'two',
-            3 => 'three', 4 => 'four', 5 => 'five', 6 => 'six',
-            7 => 'seven', 8 => 'eight', 9 => 'nine',
-            10 => 'ten', 11 => 'eleven', 12 => 'twelve',
-            13 => 'thirteen', 14 => 'fourteen', 15 => 'fifteen',
-            16 => 'sixteen', 17 => 'seventeen', 18 => 'eighteen',
-            19 => 'nineteen', 20 => 'twenty', 30 => 'thirty',
-            40 => 'forty', 50 => 'fifty', 60 => 'sixty',
-            70 => 'seventy', 80 => 'eighty', 90 => 'ninety');
-        $digits = array('', 'hundred','thousand','lakh', 'crore');
-        while( $i < $digits_length ) {
-            $divider = ($i == 2) ? 10 : 100;
-            $number = floor($no % $divider);
-            $no = floor($no / $divider);
-            $i += $divider == 10 ? 1 : 2;
-            if ($number) {
-                $plural = (($counter = count($str)) && $number > 9) ? 's' : null;
-                $hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
-                $str [] = ($number < 21) ? $words[$number].' '. $digits[$counter]. $plural.' '.$hundred:$words[floor($number / 10) * 10].' '.$words[$number % 10]. ' '.$digits[$counter].$plural.' '.$hundred;
-            } else $str[] = null;
-        }
-        $Rupees = implode('', array_reverse($str));
-        $paise = ($decimal > 0) ? "." . ($words[$decimal / 10] . " " . $words[$decimal % 10]) . ' Fils' : '';
-        return ($Rupees ? $Rupees . 'AED ' : '') . $paise;
     }
 }

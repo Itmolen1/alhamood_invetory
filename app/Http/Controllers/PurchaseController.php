@@ -49,6 +49,11 @@ class PurchaseController extends Controller
         return $this->purchaseRepository->edit($Id);
     }
 
+    public function print($id)
+    {
+        return $this->purchaseRepository->print($id);
+    }
+
     public function purchaseUpdate(Request $request, $Id)
     {
         return $this->purchaseRepository->update($request, $Id);

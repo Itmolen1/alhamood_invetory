@@ -10,6 +10,7 @@ use App\Http\Resources\Loan\LoanResource;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class LoanRepository implements ILoanRepositoryInterface
 {
@@ -43,6 +44,7 @@ class LoanRepository implements ILoanRepositoryInterface
         $loan->createdDate=date('Y-m-d h:i:s');
         $loan->isActive=1;
         $loan->user_id = $userId ?? 0;
+        $loan->company_id=Str::getCompany($userId);
         $loan->save();
         return new LoanResource(Loan::find($loan->id));
     }

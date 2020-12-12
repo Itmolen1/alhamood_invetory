@@ -33,7 +33,7 @@ class PaymentReceive extends Model
 
     public function payment_receive_details()
     {
-        return $this->hasMany('App\Models\PaymentReceiveDetail');
+        return $this->hasMany('App\Models\PaymentReceiveDetail','payment_receive_id');
     }
 
     public function bank()

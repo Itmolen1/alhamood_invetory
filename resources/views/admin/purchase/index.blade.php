@@ -3,6 +3,18 @@
 
 @section('content')
 
+    <script type="text/javascript">
+        function get_pdf(id)
+        {
+            $.ajax({
+                type : "GET",
+                url : "{{ URL('purchasePrint') }}/" + id,
+            }).done(function(data){
+                window.open(data,'_blank');
+            });
+        }
+    </script>
+
     <!-- ============================================================== -->
     <!-- Page wrapper  -->
     <!-- ============================================================== -->
@@ -81,6 +93,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <a href="{{ route('purchases.edit', $purchase->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
+                                                    <a href="javascript:void(0)"  onclick="return get_pdf({{$purchase->id}})"  class=" btn btn-secondary btn-sm"><i style="font-size: 20px" class="fa fa-file-pdf-o"></i></a>
                                                     <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
                                                 </form>
                                             </td>

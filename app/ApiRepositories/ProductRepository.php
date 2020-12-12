@@ -10,6 +10,7 @@ use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ProductRepository implements IProductRepositoryInterface
 {
@@ -23,27 +24,27 @@ class ProductRepository implements IProductRepositoryInterface
         return ProductResource::Collection(Product::all()->sortDesc()->forPage($page_no,$page_size));
     }
 
-    public function insert(ProductRequest $productRequest)
+    public function insert(Request $request)
     {
         $userId = Auth::id();
         $product = new Product();
-        $product->Name=$productRequest->Name;
-        $product->Description=$productRequest->Description;
-        $product->company_id=$productRequest->company_id;
-        //$product->unit_id=$productRequest->unit_id;
+        $product->Name=$request->Name;
+        $product->Description=$request->Description;
+        //$product->unit_id=$request->unit_id;
         $product->createdDate=date('Y-m-d h:i:s');
         $product->isActive=1;
         $product->user_id = $userId ?? 0;
+        $product->company_id=Str::getCompany($userId);
         $product->save();
         return new ProductResource(Product::find($product->id));
     }
 
-    public function update(Request $request, $Id)
+    public function update(ProductRequest $productRequest, $Id)
     {
         $userId = Auth::id();
         $product = Product::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $product->update($request->all());
+        $productRequest['user_id']=$userId ?? 0;
+        $product->update($productRequest->all());
         return new ProductResource(Product::find($Id));
     }
 

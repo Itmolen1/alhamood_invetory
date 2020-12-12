@@ -11,6 +11,7 @@ use App\Http\Resources\Driver\DriverResource;
 use App\Models\Driver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class DriverRepository implements IDriverRepositoryInterface
 {
@@ -35,6 +36,7 @@ class DriverRepository implements IDriverRepositoryInterface
         $driver->createdDate=date('Y-m-d h:i:s');
         $driver->isActive=1;
         $driver->user_id = $userId ?? 0;
+        $driver->company_id=Str::getCompany($userId);
         $driver->save();
         return new DriverResource(Driver::find($driver->id));
     }

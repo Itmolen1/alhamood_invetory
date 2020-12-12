@@ -24,6 +24,7 @@ class CustomerAdvanceResource extends JsonResource
             'registerDate' => $this->registerDate,
             'createdDate' => $this->createdDate,
             'isActive'=>$this->isActive,
+            'api_customer'=>$this->api_customer,
             //'deleted_at'=>$this->deleted_at,
             //'updated_at'=>$this->updated_at->diffForHumans(),
         ];

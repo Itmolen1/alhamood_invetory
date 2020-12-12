@@ -10,6 +10,7 @@ use App\Http\Resources\PaymentTerm\PaymentTermResource;
 use App\Models\PaymentTerm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PaymentTermRepository implements IPaymentTermRepositoryInterface
 {
@@ -32,6 +33,7 @@ class PaymentTermRepository implements IPaymentTermRepositoryInterface
         $payment_term->createdDate=date('Y-m-d h:i:s');
         $payment_term->isActive=1;
         $payment_term->user_id = $userId ?? 0;
+        $payment_term->company_id=Str::getCompany($userId);
         $payment_term->save();
         return new PaymentTermResource(PaymentTerm::find($payment_term->id));
     }
