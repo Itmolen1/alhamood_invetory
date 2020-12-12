@@ -154,6 +154,9 @@
                 </a>
 
                 <ul aria-expanded="false" class="collapse">
+                    <li  class="border-bottom">
+                        <a href="#">Customer Statement</a>
+                    </li>
                     <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Sales Reports</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
@@ -175,6 +178,9 @@
                     <li><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Accounts Reports</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
+                            <li  class="border-bottom">
+                                <a href="#">Customer Statement</a>
+                            </li>
                             <li  class="border-bottom">
                                 <a href="#">Cash Book</a>
                             </li>

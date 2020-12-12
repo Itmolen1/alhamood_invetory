@@ -35,15 +35,10 @@ class PaymentReceiveController extends Controller
         return $this->paymentReceiveRepository->getById($Id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PaymentReceive  $paymentReceive
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(PaymentReceive $paymentReceive)
+
+    public function edit($Id)
     {
-        //
+        return $this->paymentReceiveRepository->edit($Id);
     }
 
     /**

@@ -2,6 +2,14 @@ $(document).on("keypress",'.amount', function (event) {
     return isNumber(event, this)
 });
 
+$(document).on("keypress",'.totalSaleAmount', function (event) {
+    return isNumber(event, this)
+});
+
+$(document).on("keypress",'.amount', function (event) {
+    return isNumber(event, this)
+});
+
 ////////////////// accept number function ////////////////
 function isNumber(evt, element) {
     var charCode = (evt.which) ? evt.which : event.keyCode
@@ -11,7 +19,7 @@ function isNumber(evt, element) {
         return false;
     return true;
 }
-//////////////// end of accept number function ////////////// 
+//////////////// end of accept number function //////////////
 
 
 

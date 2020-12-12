@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'New Payment')
+@section('title', 'Edit Payment')
 
 @section('content')
 
@@ -26,7 +26,7 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                            <li class="breadcrumb-item active">New Payment</li>
+                            <li class="breadcrumb-item active">Edit Payment</li>
                         </ol>
                         <a href="" title=""><button type="button" class="btn btn-info d-lg-block m-l-15"><i class="fa fa-eye"></i> View List</button></a>
                     </div>
@@ -56,9 +56,8 @@
                                                 <select class="form-control custom-select select2 customer_id" name="customer_id" id="customer_id">
                                                     <option selected readonly disabled> ---- Select Customers ---- </option>
                                                     @foreach($customers as $customer)
-                                                        <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
+                                                        <option value="{{ $customer->id }}" {{ ($customer->id == $payment_receive->customer_id) ? 'selected':'' }}>{{ $customer->Name }}</option>
                                                     @endforeach
-
                                                 </select>
                                             </div>
                                         </div>
@@ -81,9 +80,24 @@
                                             </tr>
                                             </thead>
                                             <tbody id="sales" style="font-size: 12px">
-                                            <tr>
-                                                <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
-                                            </tr>
+                                            @if(!empty($payment_receive->payment_receive_details))
+                                            @foreach($payment_receive->payment_receive_details as $details)
+                                                <tr>
+                                                <td>{{ $details->sale->sale_details[0]->PadNumber ?? '' }}</td>
+                                                <td>{{ $details->sale->sale_details[0]->vehicle->registrationNumber ?? '' }}</td>
+                                                <td>{{ $details->sale->grandTotal ?? '' }}</td>
+                                                <td>{{ $details->sale->paidBalance ?? '' }}</td>
+                                                <td>{{ $details->sale->remainingBalance ?? '' }}</td>
+                                                <td>{{ $details->sale->sale_details[0]->createdDate ?? '' }}</td>
+                                                <td><input type="checkbox" class="singlechkbox" name="username" value="{{ $details->sale->paidBalance ?? 0 }}" checked /></td>
+                                                </tr>
+                                            @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
+                                                </tr>
+                                            @endif
+
 
                                             </tbody>
                                         </table>
@@ -95,10 +109,9 @@
                                             <div class="form-group">
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option disabled readonly="" selected>--Select your Payment Type--</option>
-                                                    <option value="bankTransfer">Bank Transfer</option>
-                                                    <option id="cash" value="cash">Cash</option>
-                                                    <option value="checkTransfer">Check Transfer</option>
+                                                    <option value="bankTransfer" {{ ($payment_receive->payment_type == "bankTransfer") ? "selected":"" }}>Bank Transfer</option>
+                                                    <option id="cash" value="cash" {{ ($payment_receive->cash == "bankTransfer") ? "selected":"" }}>Cash</option>
+                                                    <option value="checkTransfer" {{ ($payment_receive->cash == "checkTransfer") ? "selected":"" }}>Check Transfer</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -108,7 +121,7 @@
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
                                                     <option selected readonly="" disabled>--Select Bank Name--</option>
                                                     @foreach($banks as $bank)
-                                                        <option value="{{ $bank->id }}">{{ $bank->Name }}</option>
+                                                        <option value="{{ $bank->id }}" {{ ($bank->id == $payment_receive->bank_id ?? 0) ? 'selected':'' }}>{{ $bank->Name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -118,14 +131,14 @@
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
                                                 <label class="control-label">Account Number</label>
-                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control accountNumber" placeholder="Enter Account Number">
+                                                <input type="text" id="accountNumber" name="accountNumber" value="{{ $payment_receive->accountNumber }}" class="form-control accountNumber" placeholder="Enter Account Number">
                                             </div>
                                         </div>
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
                                                 <label class="control-label">Transfer Date</label>
-                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
+                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ $payment_receive->transferDate }}" class="form-control" placeholder="">
                                             </div>
                                         </div>
 
@@ -134,51 +147,52 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
+                                                <input type="text" id="receiptNumber" name="receiptNumber" value="{{ $payment_receive->receiptNumber }}" class="form-control" placeholder="Receipt Number">
                                                 @if ($errors->has('receiptNumber'))
                                                     <span class="text-danger">{{ $errors->first('receiptNumber') }}</span>
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Reference Number">
+                                            <input type="text" class="form-control" name="" id="referenceNumber" value="{{ $payment_receive->referenceNumber }}" placeholder="Reference Number">
+                                            <input type="hidden" value="{{ $payment_receive->id }}" name="Id" class="Id" id="Id">
                                         </div>
 
                                         <div class="col-md-4">
-                                            <input type="date" class="form-control" name="paymentReceiveDate" id="paymentReceiveDate" value="{{ date('Y-m-d') }}" placeholder="">
+                                            <input type="date" class="form-control" name="paymentReceiveDate" value="{{ $payment_receive->paymentReceiveDate }}" id="paymentReceiveDate"  placeholder="">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <textarea style="width: 100%" id="Description" name="Description" placeholder="Description"></textarea>
+                                            <textarea style="width: 100%" id="Description" name="Description" placeholder="Description">{{ $payment_receive->Description }}</textarea>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="" placeholder="Total Amount" disabled>
-                                                <input type="hidden" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="price" placeholder="Total Amount">
+                                                <input type="text" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $payment_receive->totalAmount }}" name="" id="" placeholder="Total Amount" disabled>
+                                                <input type="hidden" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $payment_receive->totalAmount }}" name="" id="price" placeholder="Total Amount">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paid Amount">
+                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $payment_receive->paidAmount }}" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paid Amount">
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <div class="form-group">
-                                                    <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
+                                                    <input type="text" id="SumOf" name="amountInWords" value="{{ $payment_receive->amountInWords }}" class="form-control SumOf" placeholder="Amount In words">
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" id="receiver" name="receiverName" class="form-control" placeholder="Enter Receiver Name">
+                                                <input type="text" id="receiver" name="receiverName" value="{{ $payment_receive->receiverName }}" class="form-control" placeholder="Enter Receiver Name">
                                             </div>
                                         </div>
                                     </div>
@@ -216,7 +230,14 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            $('.bankTransfer').hide();
+
+            var val = $('#paymentType').val();
+            if (val !== 'cash'){
+                $('.bankTransfer').show();
+            }
+            else {
+                $('.bankTransfer').hide();
+            }
 
         });
 
@@ -285,7 +306,10 @@
     <script>
 
         $(document).ready(function (){
-            $('.customer_id').change(function () {
+
+            $(document).on("change", '.customer_id', function () {
+                // alert();
+            // $('.customer_id').change(function () {
                 var Id = 0;
                 Id = $(this).val();
 
@@ -310,8 +334,7 @@
                                         salesDetails += '<td>' + result[i].paidBalance + '</td>';
                                         salesDetails += '<td>' + result[i].remainingBalance + '</td>';
                                         salesDetails += '<td>' + result[i].sale_details[0].createdDate + '<input type="hidden" class="sale_id" name="sale_id" value="' + result[i].id + '"/></td>';
-                                        var value = result[i].grandTotal - result[i].paidBalance;
-                                        salesDetails += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + value + '"/> </td>';
+                                        salesDetails += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + result[i].paidBalance + '"/> </td>';
 
                                     }
                                 }
@@ -415,7 +438,6 @@
 
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
-
 
 
 @endsection

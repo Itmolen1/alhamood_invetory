@@ -26,6 +26,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                 ->addColumn('action', function ($data) {
 
                     $button = '<a href="'.route('payment_receives.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                    $button .='&nbsp;';
                     return $button;
                 })
                 ->addColumn('customer', function($data) {
@@ -36,6 +37,8 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                         $button = '<form action="'. url('customer_payments_push',$data->id) .'" method="POST"  id="">';
                         $button .= @csrf_field();
                         $button .= @method_field('PUT');
+//                        $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+//                        $button .='&nbsp;';
                         $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm()"><i style="font-size: 20px" class="fa fa-arrow-up"> Push</i></button>';
                         return $button;
                     }else{
@@ -90,8 +93,23 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $paymentReceive = $paymentReceive->id;
             foreach($request->Data['orders'] as $detail)
             {
+                $amount = 0;
+                $amount += $detail['amountPaid'];
+
+                if ($amount <= $request->Data['paidAmount'])
+                {
+                    $isPaid = true;
+                    $isPartialPaid = false;
+                    $totalAmount = $detail['amountPaid'];
+                }
+                else{
+                    $isPaid = false;
+                    $isPartialPaid = true;
+                    $totalAmount = $request->Data['paidAmount'];
+                }
+
                 $data =  PaymentReceiveDetail::create([
-                    "amountPaid"        => $detail['amountPaid'],
+                    "amountPaid"        => $totalAmount,
                     "sale_id"        => $detail['sale_id'],
                     "company_id" => $company_id,
                     "user_id"      => $user_id,
@@ -99,12 +117,13 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     'createdDate' => date('Y-m-d')
                 ]);
 
+
                 $sale = Sale::find($detail['sale_id']);
                 $sale->update([
-                    "paidBalance"        => $detail['amountPaid'],
-                    "remainingBalance"   => 0,
-                    "IsPaid" => true,
-                    "IsPartialPaid" => false,
+                    "paidBalance"        => $totalAmount + $sale->paidBalance,
+                    "remainingBalance"   => $sale->remainingBalance - $totalAmount,
+                    "IsPaid" => $isPaid,
+                    "IsPartialPaid" => $isPartialPaid,
                     "IsReturn" => false,
                     "IsPartialReturn" => false,
                     "IsNeedStampOrSignature" => false,
@@ -175,6 +194,12 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
     public function edit($Id)
     {
         // TODO: Implement edit() method.
+        $customers = Customer::all();
+        $banks = Bank::all();
+        $payment_receive = PaymentReceive::with('user','company','customer','payment_receive_details.sale.sale_details')->find($Id);
+        //dd($payment_receive);
+        return view('admin.customer_payment_receive.edit',compact('payment_receive','customers','banks'));
+
     }
 
     public function delete(Request $request, $Id)
