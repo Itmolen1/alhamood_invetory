@@ -4,17 +4,16 @@
 namespace App\WebRepositories\Interfaces;
 
 
-use App\Http\Requests\PurchaseRequest;
 use Illuminate\Http\Request;
 
-interface IPurchaseRepositoryInterface
+interface ISupplierPaymentRepositoryInterface
 {
 
     public function index();
 
     public function create();
 
-    public function store(PurchaseRequest $purchaseRequest);
+    public function store(Request $request);
 
     public function update(Request $request, $Id);
 
@@ -28,10 +27,6 @@ interface IPurchaseRepositoryInterface
 
     public function trashed();
 
-    public function invoiceNumber();
-
-    public function PadNumber();
-
-    public function supplierSaleDetails($Id);
+    public function supplier_payments_push(Request $request, $Id);
 
 }

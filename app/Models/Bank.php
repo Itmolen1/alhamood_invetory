@@ -45,4 +45,9 @@ class Bank extends Model
     {
         return $this->hasMany('App\Models\PaymentReceive');
     }
+
+    public function supplier_payments()
+    {
+        return $this->hasMany('App\Models\SupplierPayment');
+    }
 }

@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Edit Payment')
+@section('title', 'New Payment')
 
 @section('content')
 
@@ -26,7 +26,7 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                            <li class="breadcrumb-item active">Edit Payment</li>
+                            <li class="breadcrumb-item active">New Payment</li>
                         </ol>
                         <a href="" title=""><button type="button" class="btn btn-info d-lg-block m-l-15"><i class="fa fa-eye"></i> View List</button></a>
                     </div>
@@ -53,11 +53,12 @@
                                         <div class="col-md-11">
                                             <div class="form-group">
                                                 {{--   <label>Select Customer</label> --}}
-                                                <select class="form-control custom-select select2 customer_id" name="customer_id" id="customer_id">
-                                                    <option selected readonly disabled> ---- Select Customers ---- </option>
-                                                    @foreach($customers as $customer)
-                                                        <option value="{{ $customer->id }}" {{ ($customer->id == $payment_receive->customer_id) ? 'selected':'' }}>{{ $customer->Name }}</option>
+                                                <select class="form-control custom-select select2 supplier_id" name="supplier_id" id="supplier_id">
+                                                    <option selected readonly disabled> ---- Select suppliers ---- </option>
+                                                    @foreach($suppliers as $supplier)
+                                                        <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>
                                                     @endforeach
+
                                                 </select>
                                             </div>
                                         </div>
@@ -70,7 +71,6 @@
                                             <thead>
                                             <tr>
                                                 <th>Invoice</th>
-                                                <th>Vehicle</th>
                                                 <th>Total</th>
                                                 <th>Paid</th>
                                                 <th>Balance</th>
@@ -79,25 +79,10 @@
 
                                             </tr>
                                             </thead>
-                                            <tbody id="sales" style="font-size: 12px">
-                                            @if(!empty($payment_receive->payment_receive_details))
-                                            @foreach($payment_receive->payment_receive_details as $details)
-                                                <tr>
-                                                <td>{{ $details->sale->sale_details[0]->PadNumber ?? '' }}</td>
-                                                <td>{{ $details->sale->sale_details[0]->vehicle->registrationNumber ?? '' }}</td>
-                                                <td>{{ $details->sale->grandTotal ?? '' }}</td>
-                                                <td>{{ $details->sale->paidBalance ?? '' }}</td>
-                                                <td>{{ $details->sale->remainingBalance ?? '' }}</td>
-                                                <td>{{ $details->sale->sale_details[0]->createdDate ?? '' }}</td>
-                                                <td><input type="checkbox" class="singlechkbox" name="username" value="{{ $details->sale->paidBalance ?? 0 }}" checked /></td>
-                                                </tr>
-                                            @endforeach
-                                            @else
-                                                <tr>
-                                                    <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
-                                                </tr>
-                                            @endif
-
+                                            <tbody id="purchases" style="font-size: 12px">
+                                            <tr>
+                                                <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
+                                            </tr>
 
                                             </tbody>
                                         </table>
@@ -109,9 +94,10 @@
                                             <div class="form-group">
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option value="bankTransfer" {{ ($payment_receive->payment_type == "bankTransfer") ? "selected":"" }}>Bank Transfer</option>
-                                                    <option id="cash" value="cash" {{ ($payment_receive->cash == "bankTransfer") ? "selected":"" }}>Cash</option>
-                                                    <option value="checkTransfer" {{ ($payment_receive->cash == "checkTransfer") ? "selected":"" }}>Check Transfer</option>
+                                                    <option disabled readonly="" selected>--Select your Payment Type--</option>
+                                                    <option value="bankTransfer">Bank Transfer</option>
+                                                    <option id="cash" value="cash">Cash</option>
+                                                    <option value="checkTransfer">Check Transfer</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -121,7 +107,7 @@
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
                                                     <option selected readonly="" disabled>--Select Bank Name--</option>
                                                     @foreach($banks as $bank)
-                                                        <option value="{{ $bank->id }}" {{ ($bank->id == $payment_receive->bank_id ?? 0) ? 'selected':'' }}>{{ $bank->Name }}</option>
+                                                        <option value="{{ $bank->id }}">{{ $bank->Name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -131,14 +117,14 @@
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
                                                 <label class="control-label">Account Number</label>
-                                                <input type="text" id="accountNumber" name="accountNumber" value="{{ $payment_receive->accountNumber }}" class="form-control accountNumber" placeholder="Enter Account Number">
+                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control accountNumber" placeholder="Enter Account Number">
                                             </div>
                                         </div>
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
                                                 <label class="control-label">Transfer Date</label>
-                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ $payment_receive->transferDate }}" class="form-control" placeholder="">
+                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
                                             </div>
                                         </div>
 
@@ -147,52 +133,51 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <input type="text" id="receiptNumber" name="receiptNumber" value="{{ $payment_receive->receiptNumber }}" class="form-control" placeholder="Receipt Number">
+                                                <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
                                                 @if ($errors->has('receiptNumber'))
                                                     <span class="text-danger">{{ $errors->first('receiptNumber') }}</span>
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="text" class="form-control" name="" id="referenceNumber" value="{{ $payment_receive->referenceNumber }}" placeholder="Reference Number">
-                                            <input type="hidden" value="{{ $payment_receive->id }}" name="Id" class="Id" id="Id">
+                                            <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Reference Number">
                                         </div>
 
                                         <div class="col-md-4">
-                                            <input type="date" class="form-control" name="paymentReceiveDate" value="{{ $payment_receive->paymentReceiveDate }}" id="paymentReceiveDate"  placeholder="">
+                                            <input type="date" class="form-control" name="paymentReceiveDate" id="paymentReceiveDate" value="{{ date('Y-m-d') }}" placeholder="">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <textarea style="width: 100%" id="Description" name="Description" placeholder="Description">{{ $payment_receive->Description }}</textarea>
+                                            <textarea style="width: 100%" id="Description" name="Description" placeholder="Description"></textarea>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $payment_receive->totalAmount }}" name="" id="" placeholder="Total Amount" disabled>
-                                                <input type="hidden" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $payment_receive->totalAmount }}" name="" id="price" placeholder="Total Amount">
+                                                <input type="text" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="" placeholder="Total Amount" disabled>
+                                                <input type="hidden" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="price" placeholder="Total Amount">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $payment_receive->paidAmount }}" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paid Amount">
+                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paid Amount">
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <div class="form-group">
-                                                    <input type="text" id="SumOf" name="amountInWords" value="{{ $payment_receive->amountInWords }}" class="form-control SumOf" placeholder="Amount In words">
+                                                    <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" id="receiver" name="receiverName" value="{{ $payment_receive->receiverName }}" class="form-control" placeholder="Enter Receiver Name">
+                                                <input type="text" id="receiver" name="receiverName" class="form-control" placeholder="Enter Receiver Name">
                                             </div>
                                         </div>
                                     </div>
@@ -230,14 +215,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-
-            var val = $('#paymentType').val();
-            if (val !== 'cash'){
-                $('.bankTransfer').show();
-            }
-            else {
-                $('.bankTransfer').hide();
-            }
+            $('.bankTransfer').hide();
 
         });
 
@@ -267,7 +245,7 @@
                 $('input[type=checkbox]').each( function() {
                     if( $(this).is(':checked') ) {
                         values.push($(this).val());
-                        totalPrice += parseInt($(this).val());
+                        totalPrice += parseFloat($(this).val());
                     }
                 });
                 $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
@@ -281,7 +259,7 @@
                     $('input[type=checkbox]').each( function() {
                         if( $(this).is(':checked') ) {
                             values.push($(this).val());
-                            totalPrice += parseInt($(this).val());
+                            totalPrice += parseFloat($(this).val());
                         }
                     });
                     $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
@@ -293,7 +271,7 @@
                     $('input[type=checkbox]').each( function() {
                         if( $(this).is(':checked') ) {
                             values.push($(this).val());
-                            totalPrice += parseInt($(this).val());
+                            totalPrice += parseFloat($(this).val());
                         }
                     });
                     $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
@@ -306,43 +284,40 @@
     <script>
 
         $(document).ready(function (){
-
-            $(document).on("change", '.customer_id', function () {
-                // alert();
-            // $('.customer_id').change(function () {
+            $('.supplier_id').change(function () {
                 var Id = 0;
                 Id = $(this).val();
 
                 if (Id > 0)
                 {
                     $.ajax({
-                        url: "{{ URL('customerSaleDetails') }}/" + Id,
+                        url: "{{ URL('supplierSaleDetails') }}/" + Id,
                         type: "get",
                         dataType: "json",
                         success: function (result) {
                             if (result !== "Failed") {
-                                //console.log(result);
-                                $("#sales").html('');
-                                var salesDetails = '';
+                                console.log(result);
+                                $("#purchases").html('');
+                                var Details = '';
                                 if (result.length > 0)
                                 {
                                     for (var i = 0; i < result.length; i++) {
-                                        salesDetails += '<tr>';
-                                        salesDetails += '<td>' + result[i].sale_details[0].PadNumber + '</td>';
-                                        salesDetails += '<td>' + result[i].customer.vehicles[0].registrationNumber + '</td>';
-                                        salesDetails += '<td>' + result[i].grandTotal + '</td>';
-                                        salesDetails += '<td>' + result[i].paidBalance + '</td>';
-                                        salesDetails += '<td>' + result[i].remainingBalance + '</td>';
-                                        salesDetails += '<td>' + result[i].sale_details[0].createdDate + '<input type="hidden" class="sale_id" name="sale_id" value="' + result[i].id + '"/></td>';
-                                        salesDetails += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + result[i].paidBalance + '"/> </td>';
+                                        Details += '<tr>';
+                                        Details += '<td>' + result[i].purchase_details[0].PadNumber + '</td>';
+                                        Details += '<td>' + result[i].grandTotal + '</td>';
+                                        Details += '<td>' + result[i].paidBalance + '</td>';
+                                        Details += '<td>' + result[i].remainingBalance + '</td>';
+                                        Details += '<td>' + result[i].purchase_details[0].createdDate + '<input type="hidden" class="purchase_id" name="purchase_id" value="' + result[i].id + '"/></td>';
+                                        var value = result[i].grandTotal - result[i].paidBalance;
+                                        Details += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + parseFloat(value).toFixed(2) + '"/> </td>';
 
                                     }
                                 }
                                 else {
-                                    salesDetails += '<td value="0" align="center" style="font-size: 16px" colspan="7">No Data</td>';
-                                    salesDetails += '</tr>';
+                                    Details += '<td value="0" align="center" style="font-size: 16px" colspan="7">No Data</td>';
+                                    Details += '</tr>';
                                 }
-                                $("#sales").append(salesDetails);
+                                $("#purchases").append(Details);
                             } else {
                                 alert(result);
                             }
@@ -373,7 +348,7 @@
                     chekedValue =
                         {
                             amountPaid: currentRow.find('.singlechkbox').val(),
-                            sale_id: currentRow.find('.sale_id').val(),
+                            purchase_id: currentRow.find('.purchase_id').val(),
                         };
                     insert.push(chekedValue);
                 })
@@ -383,7 +358,7 @@
                     bank_id = 0
                 }
                 let details = {
-                    'customer_id': $('#customer_id').val(),
+                    'supplier_id': $('#supplier_id').val(),
                     'totalAmount': $('#price').val(),
                     'payment_type': $('#paymentType').val(),
                     'bank_id': bank_id,
@@ -393,7 +368,7 @@
                     'receiptNumber': $('#receiptNumber').val(),
                     'receiverName': $('#receiver').val(),
                     'referenceNumber': $('#referenceNumber').val(),
-                    'paymentReceiveDate': $('#paymentReceiveDate').val(),
+                    'supplierPaymentDate': $('#paymentReceiveDate').val(),
                     'paidAmount': $('#paidAmount').val(),
                     'Description': $('#Description').val(),
                     orders: insert,
@@ -407,7 +382,7 @@
                     var Datas = {Data: details};
                     console.log(Datas);
                     $.ajax({
-                        url: "{{ route('payment_receives.store') }}",
+                        url: "{{ route('supplier_payments.store') }}",
                         type: "post",
                         data: Datas,
                         success: function (result) {
@@ -415,7 +390,7 @@
                                 details = [];
                                 console.log(result);
                                 alert("Data Inserted Successfully");
-                                window.location.href = "{{ route('payment_receives.index') }}";
+                                window.location.href = "{{ route('supplier_payments.index') }}";
 
                             } else {
                                 alert(result);
@@ -438,6 +413,7 @@
 
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
+
 
 
 @endsection

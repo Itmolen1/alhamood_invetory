@@ -51,7 +51,7 @@ class Supplier extends Model
 
     public function account_transaction()
     {
-        return $this->hasOne('App\Models\AccountTransaction');
+        return $this->hasMany('App\Models\AccountTransaction');
     }
 
     public function payment_type()
@@ -87,6 +87,11 @@ class Supplier extends Model
     public function api_payment_term()
     {
         return $this->belongsTo('App\Models\PaymentTerm','payment_term_id','id')->withTrashed();
+    }
+
+    public function supplier_payments()
+    {
+        return $this->hasMany('App\Models\SupplierPayment');
     }
 
 //    public function get_detail_list($region_id)

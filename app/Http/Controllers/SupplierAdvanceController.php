@@ -58,4 +58,9 @@ class SupplierAdvanceController extends Controller
     {
         return $this->supplierAdvanceRepository->delete($request, $Id);
     }
+
+    public function supplier_advances_push(Request $request, $Id)
+    {
+        return $this->supplierAdvanceRepository->supplier_advances_push($request, $Id);
+    }
 }

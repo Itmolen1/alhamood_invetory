@@ -49,6 +49,8 @@ use App\WebRepositories\Interfaces\ISaleDetailsRepositoryInterface;
 use App\WebRepositories\Interfaces\ISaleRepositoryInterface;
 use App\WebRepositories\Interfaces\IStatesRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
+use App\WebRepositories\Interfaces\ISupplierPaymentRepositoryDetailInterface;
+use App\WebRepositories\Interfaces\ISupplierPaymentRepositoryInterface;
 use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\WebRepositories\Interfaces\IUnitRepositoryInterface;
 use App\WebRepositories\Interfaces\IUserRepositoryInterface;
@@ -70,6 +72,8 @@ use App\WebRepositories\SaleDetailsRepository;
 use App\WebRepositories\SaleRepository;
 use App\WebRepositories\StateRepository;
 use App\WebRepositories\SupplierAdvanceRepository;
+use App\WebRepositories\SupplierPaymentDetailRepository;
+use App\WebRepositories\SupplierPaymentRepository;
 use App\WebRepositories\SupplierRepository;
 use App\WebRepositories\UnitRepository;
 use App\WebRepositories\UserRepository;
@@ -119,6 +123,8 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IPaymentTermRepositoryInterface::class,PaymentTermRepository::class);
         $this->app->bind(IPaymentReceiveRepositoryInterface::class, PaymentReceiveRepository::class);
         $this->app->bind(IPaymentReceiveDetailRepositoryInterface::class, PaymentReceiveDetailRepository::class);
+        $this->app->bind(ISupplierPaymentRepositoryInterface::class, SupplierPaymentRepository::class);
+        $this->app->bind(ISupplierPaymentRepositoryDetailInterface::class, SupplierPaymentDetailRepository::class);
     }
 
     /**

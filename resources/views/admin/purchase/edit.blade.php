@@ -391,6 +391,11 @@
 
                         });
                         var Id = $('#id').val();
+                        var cashPaid = $('.cashPaid').val();
+                        if ( cashPaid === "")
+                        {
+                            cashPaid = 0
+                        }
                         let details = {
                             Id: Id,
                             PurchaseNumber: $('#PurchaseNumber').val(),
@@ -401,7 +406,7 @@
                             subTotal: $('.rowTotal').val(),
                             totalVat: $('.TotalVat').val(),
                             grandTotal: $('.GTotal').val(),
-                            paidBalance: $('.cashPaid').val(),
+                            paidBalance: cashPaid,
                             remainingBalance: $('#balance').val(),
                             supplier_id: $('#supplier_id').val(),
                             supplierNote: $('#PurchaseDescription').val(),
@@ -425,7 +430,7 @@
                                 success: function (result) {
                                     if (result !== "Failed") {
                                         details = [];
-                                        //console.log(result);
+                                        console.log(result);
                                         alert("Data Inserted Successfully");
                                         window.location.href = "{{ route('purchases.index') }}";
                                     } else {

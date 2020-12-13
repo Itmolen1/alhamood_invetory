@@ -41,7 +41,7 @@
                             <h4 class="card-title">Supplier Advances</h4>
                             <h6 class="card-subtitle">All Suppliers</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="supplier_advances_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>Supplier Name</th>
@@ -49,39 +49,48 @@
                                         <th>Payment Type</th>
                                         <th>Register Date</th>
                                         <th>Transfer Date</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
+                                        <th>Push Advance</th>
+{{--                                        <th>Action</th>--}}
                                     </tr>
                                     </thead>
 
-                                    <tbody>
-                                    @if(!empty($supplierAdvances))
-                                    @foreach($supplierAdvances as $advance)
-                                        <tr>
-                                            <td>{{ $advance->supplier->Name ?? '' }}</td>
-                                            <td>{{ $advance->Amount }}</td>
-                                            <td>{{ $advance->paymentType }}</td>
-                                            <td>{{ $advance->registerDate }}</td>
-                                            <td>{{ $advance->TransferDate }}</td>
-                                            <td>
-                                                @if($advance->isActive == true)
-                                                    Active
-                                                @else
-                                                    UnActive
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <form action="{{ route('supplier_advances.destroy',$advance->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <a href="{{ route('supplier_advances.edit', $advance->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
-                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    @endif
-                                    </tbody>
+{{--                                    <tbody>--}}
+{{--                                    @if(!empty($supplierAdvances))--}}
+{{--                                    @foreach($supplierAdvances as $advance)--}}
+{{--                                        <tr>--}}
+{{--                                            <td>{{ $advance->supplier->Name ?? '' }}</td>--}}
+{{--                                            <td>{{ $advance->Amount }}</td>--}}
+{{--                                            <td>{{ $advance->paymentType }}</td>--}}
+{{--                                            <td>{{ $advance->registerDate }}</td>--}}
+{{--                                            <td>{{ $advance->TransferDate }}</td>--}}
+
+{{--                                            <td>--}}
+{{--                                                @if($advance->isPushed == false)--}}
+{{--                                                    <form action="{{ url('supplier_advances_push',$advance->id) }}" method="POST">--}}
+{{--                                                        @csrf--}}
+{{--                                                        @method('PUT')--}}
+{{--                                                        <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to push?')"><i style="font-size: 20px" class="fa fa-arrow-circle-o-up"></i> Push</button>--}}
+{{--                                                    </form>--}}
+{{--                                                @else--}}
+{{--                                                    <button type="submit" class=" btn btn-default btn-sm" ><i style="font-size: 20px" class="fa fa-external-link"> Pushed</i> </button>--}}
+{{--                                                @endif--}}
+{{--                                            </td>--}}
+{{--                                            <td>--}}
+{{--                                                @if($advance->isPushed == false)--}}
+{{--                                                    <form action="{{ route('supplier_advances.destroy',$advance->id) }}" method="POST">--}}
+{{--                                                        @csrf--}}
+{{--                                                        @method('DELETE')--}}
+{{--                                                        <a href="{{ route('supplier_advances.edit', $advance->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>--}}
+{{--                                                        <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>--}}
+{{--                                                    </form>--}}
+{{--                                                @else--}}
+{{--                                                    <button type="submit" class=" btn btn-default btn-sm" ><i style="font-size: 20px" class="fa fa-ban"> No Action</i> </button>--}}
+{{--                                                @endif--}}
+{{--                                            </td>--}}
+{{--                                        </tr>--}}
+{{--                                    @endforeach--}}
+{{--                                    @endif--}}
+{{--                                    </tbody>--}}
                                 </table>
                             </div>
                         </div>
@@ -122,19 +131,57 @@
     </div>
 
     <script>
-        // var id;
 
-        $(document).on('click', '.delete', function(){
-            //  id = $(this).attr('id');
-            $('#confirmModal').modal('show');
+        $(document).ready(function () {
+            $('#supplier_advances_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('supplier_advances.index') }}",
+                },
+                columns:[
+                    {
+                        data: 'supplier',
+                        name: 'supplier'
+                    },
+                    {
+                        data: 'Amount',
+                        name: 'Amount'
+                    },
+                    {
+                        data: 'paymentType',
+                        name: 'paymentType'
+                    },
+                    {
+                        data: 'registerDate',
+                        name: 'registerDate'
+                    },
+                    {
+                        data: 'TransferDate',
+                        name: 'TransferDate'
+                    },
+                    {
+                        data: 'push',
+                        name: 'push',
+                        orderable: false
+                    },
+                    // {
+                    //     data: 'action',
+                    //     name: 'action',
+                    //     orderable: false
+                    // },
+                ]
+            });
         });
-
-        $('#ok_button').click(function(){
-
-            $('#ok_button').text('Deleting...');
-            window.location.reload();
-        });
-
+    </script>
+    <script>
+        function ConfirmDelete()
+        {
+            var result = confirm("Are you sure you want to delete?");
+            if (result) {
+                document.getElementById("deleteData").submit();
+            }
+        }
     </script>
 
 

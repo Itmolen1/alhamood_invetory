@@ -18,8 +18,36 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $customerAdvances = CustomerAdvance::with('user','customer')->get();
-        return view('admin.customerAdvance.index',compact('customerAdvances'));
+//        $customerAdvances = CustomerAdvance::with('user','customer')->get();
+
+        if(request()->ajax())
+        {
+            return datatables()->of(CustomerAdvance::with('user','customer')->latest()->get())
+                ->addColumn('customer', function($data) {
+                    return $data->customer->Name ?? "No Data";
+                })
+                ->addColumn('push', function($data) {
+                    if($data->isPushed == false){
+                        $button = '<form action="'. url('customer_advances_push',$data->id) .'" method="POST"  id="">';
+                        $button .= @csrf_field();
+                        $button .= @method_field('PUT');
+                        $button .= '<a href="'.route('customer_advances.edit', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                        $button .='&nbsp;';
+                        $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm()"><i style="font-size: 20px" class="fa fa-arrow-up"> Push</i></button>';
+                        return $button;
+                    }else{
+                        $button = '<button type="submit" class="btn btn-default btn-sm"><i style="font-size: 20px" class="fa fa-ban"> Pushed</i></button>';
+                        return $button;
+                    }
+                })
+                ->rawColumns(
+                    [
+                        'push',
+                        'customer',
+                    ])
+                ->make(true);
+        }
+        return view('admin.customerAdvance.index');
     }
 
     public function create()
@@ -145,7 +173,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                     [
                         'customer_id'=> $advance->customer_id,
                     ])->get();
-                $totalDebit = $advance->customer_id;
+                $totalDebit = $advance->Amount;
                 $difference = $accountTransaction->last()->Differentiate - $advance->Amount;
             }
             $AccData =

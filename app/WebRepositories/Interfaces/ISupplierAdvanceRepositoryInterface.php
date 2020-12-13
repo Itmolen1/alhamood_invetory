@@ -28,4 +28,6 @@ interface ISupplierAdvanceRepositoryInterface
 
     public function trashed();
 
+    public function supplier_advances_push(Request $request, $Id);
+
 }

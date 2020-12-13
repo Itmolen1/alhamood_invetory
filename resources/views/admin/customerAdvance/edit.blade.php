@@ -92,7 +92,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Amount</label>
-                                                <input type="text" onkeyup="toWords($('.amount').val())" id="amount" value="{{ $customerAdvance->Amount }}" name="amount" class="form-control amount" placeholder="Enter Amount">
+                                                <input type="text" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" id="amount" value="{{ $customerAdvance->Amount }}" name="amount" class="form-control amount" placeholder="Enter Amount">
                                             </div>
                                         </div>
                                         <!--/span-->
@@ -246,93 +246,11 @@
         });
 
 
-
-        // American Numbering System
-        var th = ['', 'thousand', 'million', 'billion', 'trillion'];
-        // uncomment this line for English Number System
-        // var th = ['','thousand','million', 'milliard','billion'];
-
-        var dg = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-        var tn = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-        var tw = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-
-        function toWords(s) {
-
-            s = s.toString();
-            s = s.replace(/[\, ]/g, '');
-            if (s != parseFloat(s)) return 'not a number';
-            var x = s.indexOf('.');
-            var fulllength=s.length;
-
-            if (x == -1) x = s.length;
-            if (x > 15) return 'too big';
-            var startpos=fulllength-(fulllength-x-1);
-            var n = s.split('');
-
-            var str = '';
-            var str1 = ''; //i added another word called cent
-            var sk = 0;
-            for (var i = 0; i < x; i++) {
-                if ((x - i) % 3 == 2) {
-                    if (n[i] == '1') {
-                        str += tn[Number(n[i + 1])] + ' ';
-                        i++;
-                        sk = 1;
-                    } else if (n[i] != 0) {
-                        str += tw[n[i] - 2] + ' ';
-
-                        sk = 1;
-                    }
-                } else if (n[i] != 0) {
-                    str += dg[n[i]] + ' ';
-                    if ((x - i) % 3 == 0) str += 'hundred ';
-                    sk = 1;
-                }
-                if ((x - i) % 3 == 1) {
-                    if (sk) str += th[(x - i - 1) / 3] + ' ';
-                    sk = 0;
-                }
-            }
-            if (x != s.length) {
-
-                str += 'and '; //i change the word point to and
-                str1 += 'cents '; //i added another word called cent
-                //for (var i = x + 1; i < y; i++) str += dg[n[i]] + ' ' ;
-                var j=startpos;
-
-                for (var i = j; i < fulllength; i++) {
-
-                    if ((fulllength - i) % 3 == 2) {
-                        if (n[i] == '1') {
-                            str += tn[Number(n[i + 1])] + ' ';
-                            i++;
-                            sk = 1;
-                        } else if (n[i] != 0) {
-                            str += tw[n[i] - 2] + ' ';
-
-                            sk = 1;
-                        }
-                    } else if (n[i] != 0) {
-
-                        str += dg[n[i]] + ' ';
-                        if ((fulllength - i) % 3 == 0) str += 'hundred ';
-                        sk = 1;
-                    }
-                    if ((fulllength - i) % 3 == 1) {
-
-                        if (sk) str += th[(fulllength - i - 1) / 3] + ' ';
-                        sk = 0;
-                    }
-                }
-            }
-            var result=str.replace(/\s+/g, ' ') + str1;
-            //return str.replace(/\s+/g, ' ');
-            $('.SumOf').val(result);
-            return result; //i added the word cent to the last part of the return value to get desired output
-
-        }
-
     </script>
+
+    <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
+
+
 
 
 @endsection

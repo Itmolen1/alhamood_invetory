@@ -6,6 +6,7 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\PurchaseRequest;
 use App\Http\Resources\Purchase\PurchaseResource;
+use App\Models\AccountTransaction;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -24,8 +25,49 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $purchases = Purchase::with('purchase_details','supplier')->get();
-        return view('admin.purchase.index',compact('purchases'));
+//        $purchases = Purchase::with('purchase_details','supplier')->get();
+        if(request()->ajax())
+        {
+            return datatables()->of(Purchase::with('purchase_details.product','supplier')->latest()->get())
+
+                ->addColumn('action', function ($data) {
+
+                    $button = '<a href="'.route('purchases.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+//                    $button .='<a href="javascript:void(0)"  onclick="return'. get_pdf($data->id).'"  class=" btn btn-secondary btn-sm"><i style="font-size: 20px" class="fa fa-file-pdf-o"></i></a>';
+                    return $button;
+                })
+                ->addColumn('createdDate', function($data) {
+                    return $data->purchase_details[0]->createdDate ?? "No date";
+                })
+                ->addColumn('PadNumber', function($data) {
+                    return $data->purchase_details[0]->PadNumber ?? "No Pad";
+                })
+                ->addColumn('supplier', function($data) {
+                    return $data->supplier->Name ?? "No Name";
+                })
+                ->addColumn('Product', function($data) {
+                    return $data->purchase_details[0]->product->Name ?? "No product";
+                })
+                ->addColumn('Quantity', function($data) {
+                    return $data->purchase_details[0]->Quantity ?? "No Quantity";
+                })
+                ->addColumn('Price', function($data) {
+                    return $data->purchase_details[0]->Price ?? "No Quantity";
+                })
+                ->rawColumns(
+                    [
+                        'action',
+                        // 'isActive',
+                        'createdDate',
+                        'PadNumber',
+                        'supplier',
+                        'Product',
+                        'Quantity',
+                        'Price'
+                    ])
+                ->make(true);
+        }
+        return view('admin.purchase.index');
     }
 
     public function create()
@@ -43,6 +85,21 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         // TODO: Implement store() method.
         $AllRequestCount = collect($purchaseRequest->Data)->count();
         if($AllRequestCount > 0) {
+
+            if ($purchaseRequest->Data['paidBalance'] == 0.00 || $purchaseRequest->Data['paidBalance'] == 0) {
+                $isPaid = false;
+                $partialPaid =false;
+            }
+            elseif($purchaseRequest->Data['paidBalance'] >= $purchaseRequest->Data['grandTotal'])
+            {
+                $isPaid = true;
+                $partialPaid =false;
+            }
+            else
+            {
+                $isPaid = false;
+                $partialPaid =true;
+            }
             //return Response()->json($request);
             // return Response()->json($request->Data['orders']);
             //return Response()->json($request->Data['PurchaseNumber']);
@@ -62,6 +119,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
             $purchase->supplier_id = $purchaseRequest->Data['supplier_id'];
             $purchase->supplierNote = $purchaseRequest->Data['supplierNote'];
+            $purchase->IsPaid = $isPaid;
+            $purchase->IsPartialPaid = $partialPaid;
+            $purchase->IsNeedStampOrSignature = false;
             $purchase->user_id = $user_id;
             $purchase->company_id = $company_id;
             $purchase->save();
@@ -91,12 +151,98 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     "purchase_id"      => $purchase,
                     "createdDate" => $detail['createdDate'],
                 ]);
+            }
 
-            }
-            if ($data)
+            ////////////////// account section ////////////////
+            if ($purchase)
             {
-                return Response()->json($data);
+                $accountTransaction = AccountTransaction::where(
+                    [
+                        'supplier_id'=> $purchaseRequest->Data['supplier_id'],
+                        'createdDate' => date('Y-m-d'),
+                    ])->first();
+                if (!is_null($accountTransaction))
+                {
+                    if ($purchaseRequest->Data['paidBalance'] == 0 || $purchaseRequest->Data['paidBalance'] == 0.00) {
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalDebit = $purchaseRequest->Data['grandTotal'];
+                        } else {
+                            $totalDebit = $accountTransaction->Debit + $purchaseRequest->Data['grandTotal'];
+                        }
+                        $totalCredit = $accountTransaction->Credit;
+                        $difference = $accountTransaction->Differentiate - $purchaseRequest->Data['grandTotal'];
+                    }
+                    elseif($purchaseRequest->Data['paidBalance'] > 0 AND $purchaseRequest->Data['paidBalance'] < $purchaseRequest->Data['grandTotal'] )
+                    {
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalCredit = $purchaseRequest->Data['paidBalance'];
+                            $totalDebit = $purchaseRequest->Data['grandTotal'];
+                        } else {
+                            $totalCredit = $accountTransaction->Credit + $purchaseRequest->Data['paidBalance'];
+                            $totalDebit = $accountTransaction->Debit + $purchaseRequest->Data['grandTotal'];
+                        }
+                        $differenceValue = $accountTransaction->Differentiate + $purchaseRequest->Data['paidBalance'];
+                        $difference = $differenceValue - $purchaseRequest->Data['grandTotal'];
+                    }
+                    else{
+
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalCredit = $purchaseRequest->Data['paidBalance'];
+                        } else {
+                            $totalCredit = $accountTransaction->Credit + $purchaseRequest->Data['paidBalance'];
+                        }
+                        $totalDebit = $accountTransaction->Debit;
+                        $difference = $accountTransaction->Differentiate + $purchaseRequest->Data['paidBalance'];
+                    }
+                }
+                else
+                {
+                    $accountTransaction = AccountTransaction::where(
+                        [
+                            'supplier_id'=> $purchaseRequest->Data['supplier_id'],
+                        ])->get();
+                    if ($purchaseRequest->Data['paidBalance'] == 0 || $purchaseRequest->Data['paidBalance'] == 0.00) {
+                        $totalDebit = $purchaseRequest->Data['grandTotal'];
+                        $totalCredit = $accountTransaction->last()->Credit;
+                        $difference = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['grandTotal'];
+                    }
+                    elseif($purchaseRequest->Data['paidBalance'] > 0 AND $purchaseRequest->Data['paidBalance'] < $purchaseRequest->Data['grandTotal'] )
+                    {
+
+                        $totalCredit = $purchaseRequest->Data['paidBalance'];
+                        $totalDebit = $purchaseRequest->Data['grandTotal'];
+                        $differenceValue = $accountTransaction->last()->Differentiate - $purchaseRequest->Data['paidBalance'];
+                        $difference = $differenceValue + $purchaseRequest->Data['grandTotal'];
+                    }
+                    else{
+                        $totalCredit = $purchaseRequest->Data['paidBalance'];
+                        $totalDebit = $accountTransaction->last()->Debit;
+                        $difference = $accountTransaction->last()->Differentiate - $purchaseRequest->Data['paidBalance'];
+                    }
+                }
+                $AccData =
+                    [
+                        'supplier_id' => $purchaseRequest->Data['supplier_id'],
+                        'Credit' => $totalCredit,
+                        'Debit' => $totalDebit,
+                        'Differentiate' => $difference,
+                        'createdDate' => date('Y-m-d'),
+                        'user_id' => $user_id,
+                    ];
+                $AccountTransactions = AccountTransaction::updateOrCreate(
+                    [
+                        'createdDate'   => date('Y-m-d'),
+                        'supplier_id'   => $purchaseRequest->Data['supplier_id'],
+                    ],
+                    $AccData);
+                return Response()->json($AccountTransactions);
+                // return Response()->json("");
             }
+            ////////////////// end of account section ////////////////
+//            if ($data)
+//            {
+//                return Response()->json($data);
+//            }
         }
     }
 
@@ -106,15 +252,145 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
-            //return Response()->json($request);
-            // return Response()->json($request->Data['orders']);
-            //return Response()->json($request->Data['PurchaseNumber']);
-            //return Response()->json($request->Data['referenceNumber']);
-
             $purchased = Purchase::find($Id);
             $user_id = session('user_id');
             $company_id = session('company_id');
-            //return $request;
+
+            ////////////////// account section ////////////////
+            $accountTransaction = AccountTransaction::where(
+                [
+                    'supplier_id'=> $request->Data['supplier_id'],
+                ])->get();
+            if (!is_null($accountTransaction)) {
+                $lastAccountTransection = $accountTransaction->Last();
+                if ($lastAccountTransection->supplier_id != $purchased->supplier_id)
+                {
+                    if ($purchased->paidBalance == 0 || $purchased->paidBalance == 0.00) {
+                        $OldValue1 = $purchased->supplier->account_transaction->Last()->Debit - $purchased->grandTotal;
+                        $OldTotalDebit = $OldValue1;
+                        $OldTotalCredit = $purchased->supplier->account_transaction->Last()->Credit;
+                        $OldValue = $purchased->supplier->account_transaction->Last()->Differentiate + $purchased->grandTotal;
+                        $OldDifference = $OldValue;
+                    }
+                    elseif ($purchased->paidBalance > 0 AND $purchased->paidBalance < $purchased->grandTotal)
+                    {
+                        $OldTotalCredit = $purchased->supplier->account_transaction->Last()->Credit - $purchased->paidBalance;
+                        $OldTotalDebit = $purchased->supplier->account_transaction->Last()->Debit - $purchased->grandTotal;
+                        $differenceValue = $purchased->supplier->account_transaction->Last()->Differentiate - $purchased->paidBalance;
+                        $OldDifference = $differenceValue + $purchased->grandTotal;
+                    }
+                    else{
+                        $OldValue1 = $purchased->supplier->account_transaction->Last()->Credit - $purchased->paidBalance;
+                        $OldTotalCredit = $OldValue1;
+                        $OldTotalDebit = $purchased->supplier->account_transaction->Last()->Debit;
+                        $OldValue = $purchased->supplier->account_transaction->Last()->Differentiate - $purchased->paidBalance;
+                        $OldDifference = $OldValue;
+                    }
+                    $OldAccData =
+                        [
+                            'supplier_id' => $purchased->supplier_id,
+                            'Debit' => $OldTotalDebit,
+                            'Credit' => $OldTotalCredit,
+                            'Differentiate' => $OldDifference,
+                            'createdDate' => $purchased->supplier->account_transaction->Last()->createdDate,
+                            'user_id' =>$user_id,
+                        ];
+                    $AccountTransactions = AccountTransaction::updateOrCreate([
+                        'id'   => $purchased->supplier->account_transaction->Last()->id,
+                    ], $OldAccData);
+
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+                        $totalDebit = $lastAccountTransection->Debit + $request->Data['grandTotal'];
+                        $totalCredit = $lastAccountTransection->Credit;
+                        $difference = $lastAccountTransection->Differentiate - $request->Data['grandTotal'];
+                    }
+                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    {
+                        $totalDebit = $lastAccountTransection->Debit - $request->Data['paidBalance'];
+                        $totalCredit = $lastAccountTransection->Credit - $request->Data['grandTotal'];
+                        $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+                    }
+                    else{
+                        $totalCredit = $lastAccountTransection->Credit + $request->Data['paidBalance'];
+                        $totalDebit = $lastAccountTransection->Debit;
+                        $difference = $lastAccountTransection->Differentiate + $request->Data['paidBalance'];
+                    }
+                }
+                else
+                {
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == "") {
+                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
+                            $totalDebit = $request->Data['grandTotal'];
+                        } else {
+                            $value1 = $lastAccountTransection->Debit - $purchased->grandTotal;
+                            $totalDebit = $value1 + $request->Data['grandTotal'];
+                        }
+                        $totalCredit = $lastAccountTransection->Credit;
+                        $value = $lastAccountTransection->Differentiate + $purchased->grandTotal;
+                        $difference = $value - $request->Data['grandTotal'];
+//                                        return Response()->json($difference);
+                    }
+                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    {
+
+                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
+                            $totalCredit = $request->Data['paidBalance'];
+                            $totalDebit = $request->Data['grandTotal'];
+                        } else {
+                            $value1 = $lastAccountTransection->Credit - $purchased->paidBalance;
+                            $totalCredit = $value1 + $request->Data['paidBalance'];
+                            $valueC = $lastAccountTransection->Debit - $purchased->grandTotal;
+                            $totalDebit = $valueC + $request->Data['grandTotal'];
+                        }
+                        $differenceValue = $lastAccountTransection->Differentiate - $request->Data['paidBalance'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+                    }
+                    else{
+                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
+                            $totalCredit = $request->Data['paidBalance'];
+                        } else {
+                            $value1 = $lastAccountTransection->Credit - $purchased->paidBalance;
+                            $totalCredit = $value1 + $request->Data['paidBalance'];
+                        }
+                        $totalDebit = $lastAccountTransection->Debit;
+                        $value = $lastAccountTransection->Differentiate - $purchased->paidBalance;
+                        $difference = $value + $request->Data['paidBalance'];
+                    }
+                }
+
+                $AccData =
+                    [
+                        'supplier_id' => $request->Data['supplier_id'],
+                        'Credit' => $totalCredit,
+                        'Debit' => $totalDebit,
+                        'Differentiate' => $difference,
+                        'createdDate' => $lastAccountTransection->createdDate,
+                        'user_id' =>$user_id,
+                    ];
+                $AccountTransactions = AccountTransaction::updateOrCreate([
+                    'createdDate'   => $lastAccountTransection->createdDate,
+                    'id'   => $lastAccountTransection->id,
+                ], $AccData);
+                //return Response()->json($accountTransaction);
+            }
+            ////////////////// end of account section ////////////////
+
+            if ($request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == 0) {
+                $isPaid = false;
+                $partialPaid =false;
+            }
+            elseif($request->Data['paidBalance'] >= $request->Data['grandTotal'])
+            {
+                $isPaid = true;
+                $partialPaid =false;
+            }
+            else
+            {
+                $isPaid = false;
+                $partialPaid =true;
+            }
+
             $purchased->update(
                 [
                     'PurchaseNumber' => $request->Data['PurchaseNumber'],
@@ -129,6 +405,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     'remainingBalance' => $request->Data['remainingBalance'],
                     'supplier_id' => $request->Data['supplier_id'],
                     'supplierNote' => $request->Data['supplierNote'],
+                    'IsPaid' => $isPaid,
+                    'IsPartialPaid' => $partialPaid,
+                    'IsNeedStampOrSignature' => false,
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                 ]);
@@ -391,5 +670,16 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         {
             return FALSE;
         }
+    }
+
+    public function supplierSaleDetails($Id)
+    {
+        // TODO: Implement supplierSaleDetails() method.
+        $sales = Purchase::with('supplier','purchase_details')
+            ->where([
+                'supplier_id'=>$Id,
+                'IsPaid'=> false,
+            ])->get();
+        return response()->json($sales);
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Purchase extends Model
+class SupplierPayment extends Model
 {
         use HasFactory;
         use SoftDeletes;
@@ -14,18 +14,12 @@ class Purchase extends Model
 
         protected $guarded=[];
         protected $primaryKey = 'id';
-        protected $table = 'purchases';
+        protected $table = 'supplier_payments';
 
     public function user()
     {
         return $this->belongsTo('App\Models\User','user_id','id');
     }
-
-    public function api_user()
-    {
-        return $this->belongsTo('App\Models\User','user_id','id')->withTrashed();
-    }
-
     public function company()
     {
         return $this->belongsTo('App\Models\Company','company_id','id');
@@ -36,29 +30,13 @@ class Purchase extends Model
         return $this->belongsTo('App\Models\Supplier','supplier_id','id');
     }
 
-    public function api_supplier()
+    public function bank()
     {
-        return $this->belongsTo('App\Models\Supplier','supplier_id','id')->withTrashed();
-    }
-
-    public function purchase_details()
-    {
-        return $this->hasMany('App\Models\PurchaseDetail','purchase_id')->withTrashed();
-    }
-
-    public function update_notes()
-    {
-        return $this->hasMany('App\Models\UpdateNote','RelationId')->where('RelationTable','=','purchases');
-    }
-
-    public function documents()
-    {
-        return $this->hasMany('App\Models\FileUpload','RelationId')->where('RelationTable','=','purchases');
+        return $this->belongsTo('App\Models\Bank','bank_id','id');
     }
 
     public function supplier_payment_details()
     {
         return $this->hasMany('App\Models\SupplierPaymentDetail');
     }
-
 }

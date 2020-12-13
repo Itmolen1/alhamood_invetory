@@ -24,7 +24,10 @@ class SupplierAdvanceRequest extends FormRequest
     public function rules()
     {
         return [
-            'receiptNumber' => 'required'
+            'receiptNumber' => 'required',
+            'paymentType' => 'required',
+            'amount' => 'required',
+            'supplier_id' => 'required'
         ];
     }
 }

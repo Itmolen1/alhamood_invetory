@@ -232,6 +232,8 @@
         $(document).ready(function () {
             /////////////// Add Record //////////////////////
             $('#submit').click(function () {
+                $('#submit').text('please wait...');
+                $('#submit').attr('disabled',true);
                 var supplierNew = $('.supplier_id').val();
                 //alert(supplierNew);
                 if (supplierNew != null)

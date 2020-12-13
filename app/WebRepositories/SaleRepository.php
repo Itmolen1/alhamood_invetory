@@ -25,9 +25,6 @@ class SaleRepository implements ISaleRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-         // $sales = Sale::with('sale_details.product','sale_details.vehicle','customer')->get();
-         // dd($sales);
-        // return view('admin.sale.index',compact('sales'));
         if(request()->ajax())
         {
             return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->latest()->get())

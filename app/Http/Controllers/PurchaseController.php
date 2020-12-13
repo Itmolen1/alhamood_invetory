@@ -75,4 +75,9 @@ class PurchaseController extends Controller
     {
         //
     }
+
+    public function supplierSaleDetails($Id)
+    {
+        return $this->purchaseRepository->supplierSaleDetails($Id);
+    }
 }

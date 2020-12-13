@@ -270,7 +270,7 @@
                         totalPrice += parseInt($(this).val());
                     }
                 });
-                $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
+                $(".totalSaleAmount").val(totalPrice);
             });
 
             $('body').on('click', '.singlechkbox', function() {
@@ -284,7 +284,7 @@
                             totalPrice += parseInt($(this).val());
                         }
                     });
-                    $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
+                    $(".totalSaleAmount").val(totalPrice);
 
                 } else {
                     $("#selectall").prop('checked', false);
@@ -296,7 +296,7 @@
                             totalPrice += parseInt($(this).val());
                         }
                     });
-                    $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
+                    $(".totalSaleAmount").val(totalPrice);
                 }
             });
         });

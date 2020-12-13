@@ -26,7 +26,8 @@ class CustomerAdvanceRequest extends FormRequest
         return [
             'receiptNumber' => 'required',
             'paymentType' => 'required',
-            'amount' => 'required'
+            'amount' => 'required',
+            'customer_id' => 'required'
         ];
     }
 }

@@ -36,6 +36,7 @@ route::resource('suppliers','SupplierController');
 route::resource('customer_advances','CustomerAdvanceController');
 route::PUT('customer_advances_push/{Id}','CustomerAdvanceController@customer_advances_push');
 route::resource('supplier_advances','SupplierAdvanceController');
+route::PUT('supplier_advances_push/{Id}','SupplierAdvanceController@supplier_advances_push');
 route::resource('vehicles','VehicleController');
 route::resource('drivers','DriverController');
 route::resource('users','UserController');
@@ -92,6 +93,10 @@ route::resource('payment_receives','PaymentReceiveController');
 route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
 route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 //route::view('customer_receives','admin.customer_payment_receive.index');
+
+route::resource('supplier_payments','SupplierPaymentController');
+route::PUT('supplier_payment_push/{Id}','SupplierPaymentController@supplier_payments_push');
+route::get('supplierSaleDetails/{Id}','purchaseController@supplierSaleDetails');
 
 });
 

@@ -205,4 +205,9 @@ class Company extends Model
         return $this->hasMany('App\Models\PaymentReceiveDetail');
     }
 
+    public function supplier_payments()
+    {
+        return $this->hasMany('App\Models\SupplierPayment');
+    }
+
 }
