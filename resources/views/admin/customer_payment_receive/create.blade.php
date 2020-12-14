@@ -246,7 +246,7 @@
                 $('input[type=checkbox]').each( function() {
                     if( $(this).is(':checked') ) {
                         values.push($(this).val());
-                        totalPrice += parseInt($(this).val());
+                        totalPrice += parseFloat($(this).val());
                     }
                 });
                 $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
@@ -260,7 +260,7 @@
                     $('input[type=checkbox]').each( function() {
                         if( $(this).is(':checked') ) {
                             values.push($(this).val());
-                            totalPrice += parseInt($(this).val());
+                            totalPrice += parseFloat($(this).val());
                         }
                     });
                     $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
@@ -272,7 +272,7 @@
                     $('input[type=checkbox]').each( function() {
                         if( $(this).is(':checked') ) {
                             values.push($(this).val());
-                            totalPrice += parseInt($(this).val());
+                            totalPrice += parseFloat($(this).val());
                         }
                     });
                     $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));

@@ -105,12 +105,12 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     $totalAmount = $detail['amountPaid'];
                 }
                 elseif($amount >= $request->Data['paidAmount']){
-                    if ($detail['amountPaid'] > $request->Data['paidAmount']) {
+//                    if ($detail['amountPaid'] > $request->Data['paidAmount']) {
                         $isPaid = false;
                         $isPartialPaid = true;
                         $totalAmount1 = $amount - $request->Data['paidAmount'];
                         $totalAmount = $detail['amountPaid'] - $totalAmount1;
-                    }
+//                    }
                 }
 
                 $data =  SupplierPaymentDetail::create([
