@@ -14,7 +14,7 @@ class Driver extends Model
 
     protected $guarded=[];
     protected $primaryKey = 'id';
-    protected $table = 'Drivers';
+    protected $table = 'drivers';
 
     public function user()
     {

@@ -3,6 +3,12 @@
 
 @section('content')
 
+    <style>
+        .slct:focus{
+            background: #aed9f6;
+        }
+    </style>
+
 
     <!-- ============================================================== -->
     <!-- End Left Sidebar - style you can find in sidebar.scss  -->
@@ -63,7 +69,7 @@
                                                 <th>Quantity</th>
                                                 <th>Unit Price</th>
                                                 <th style="width: 120px">VAT</th>
-                                                <th>Total Amount</th>
+                                                <th>Total</th>
                                                 {{--                                                <th>Action</th>--}}
                                             </tr>
                                             </thead>
@@ -94,7 +100,7 @@
                                                         <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control"></td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <select name="customer" class="form-control customer_id select2" id="customer_id">
+                                                                <select name="customer" class="form-control customer_id slct" id="customer_id">
                                                                     <option readonly="" disabled selected>--Customer--</option>
                                                                     @foreach($customers as $customer)
                                                                         <option value="{{ $customer->id }}" {{ ($customer->id == $details->sale->customer_id) ? 'selected':'' }}>{{ $customer->Name }}</option>
@@ -104,14 +110,14 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <select name="vehicle" id="vehicle" class="form-control vehicle_id select2">
+                                                                <select name="vehicle" id="vehicle" class="form-control vehicle_id slct">
                                                                     <option class="opt" value="{{ $sale_details[0]->vehicle->id}}">{{ $details->vehicle->registrationNumber }}</option>
                                                                 </select>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <select name="Product_id" class="form-control product" id="product_id">
+                                                                <select name="Product_id" class="form-control product slct" id="product_id">
                                                                     <option readonly="" disabled selected>--Product--</option>
                                                                     @foreach($products as $product)
                                                                         <option value="{{ $product->id }}" {{ ($product->id == $details->product_id) ? 'selected':'' }}>{{ $product->Name }}</option>

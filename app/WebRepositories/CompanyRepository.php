@@ -25,12 +25,12 @@ class CompanyRepository implements ICompanyRepositoryInterface
         {
             return datatables()->of(Company::latest()->get())
                ->addColumn('action', function ($data) {
-                    $button = '<form action="'.route('companies.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button = '<form action="'.route('companies.destroy', $data->id).'" method="POST"  id="">';
                     $button .= @csrf_field();
                     $button .= @method_field('DELETE');
                     $button .= '<a href="'.route('companies.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
                     $button .= '&nbsp;&nbsp;';
-                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+                    $button .= '<button type="submit" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
                     $button .= '</form>';
                     return $button;
                 })

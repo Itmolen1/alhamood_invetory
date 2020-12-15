@@ -5,6 +5,7 @@ namespace App\WebRepositories;
 
 
 use App\Http\Requests\ExpenseRequest;
+use App\Models\AccountTransaction;
 use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
@@ -89,10 +90,98 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 ]);
 
             }
-            if ($data)
+
+            ////////////////// account section ////////////////
+            if ($expense)
             {
-                return Response()->json($data);
+                $accountTransaction = AccountTransaction::where(
+                    [
+                        'company_id'=> $company_id,
+                        'createdDate' => date('Y-m-d'),
+                    ])->first();
+                if (!is_null($accountTransaction))
+                {
+                    if ($expenseRequest->Data['paidBalance'] == 0 || $expenseRequest->Data['paidBalance'] == 0.00) {
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalDebit = $expenseRequest->Data['grandTotal'];
+                        } else {
+                            $totalDebit = $accountTransaction->Debit + $expenseRequest->Data['grandTotal'];
+                        }
+                        $totalCredit = $accountTransaction->Credit;
+                        $difference = $accountTransaction->Differentiate - $expenseRequest->Data['grandTotal'];
+                    }
+                    elseif($expenseRequest->Data['paidBalance'] > 0 AND $expenseRequest->Data['paidBalance'] < $expenseRequest->Data['grandTotal'] )
+                    {
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalCredit = $expenseRequest->Data['paidBalance'];
+                            $totalDebit = $expenseRequest->Data['grandTotal'];
+                        } else {
+                            $totalCredit = $accountTransaction->Credit + $expenseRequest->Data['paidBalance'];
+                            $totalDebit = $accountTransaction->Debit + $expenseRequest->Data['grandTotal'];
+                        }
+                        $differenceValue = $accountTransaction->Differentiate + $expenseRequest->Data['paidBalance'];
+                        $difference = $differenceValue - $expenseRequest->Data['grandTotal'];
+                    }
+                    else{
+
+                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+                            $totalCredit = $expenseRequest->Data['paidBalance'];
+                        } else {
+                            $totalCredit = $accountTransaction->Credit + $expenseRequest->Data['paidBalance'];
+                        }
+                        $totalDebit = $accountTransaction->Debit;
+                        $difference = $accountTransaction->Differentiate + $expenseRequest->Data['paidBalance'];
+                    }
+                }
+                else
+                {
+                    $accountTransaction = AccountTransaction::where(
+                        [
+                            'company_id'=> $company_id,
+                        ])->get();
+                    if ($expenseRequest->Data['paidBalance'] == 0 || $expenseRequest->Data['paidBalance'] == 0.00) {
+                        $totalDebit = $expenseRequest->Data['grandTotal'];
+                        $totalCredit = $accountTransaction->last()->Credit;
+                        $difference = $accountTransaction->last()->Differentiate + $expenseRequest->Data['grandTotal'];
+                    }
+                    elseif($expenseRequest->Data['paidBalance'] > 0 AND $expenseRequest->Data['paidBalance'] < $expenseRequest->Data['grandTotal'] )
+                    {
+
+                        $totalCredit = $expenseRequest->Data['paidBalance'];
+                        $totalDebit = $expenseRequest->Data['grandTotal'];
+                        $differenceValue = $accountTransaction->last()->Differentiate - $expenseRequest->Data['paidBalance'];
+                        $difference = $differenceValue + $expenseRequest->Data['grandTotal'];
+                    }
+                    else{
+                        $totalCredit = $expenseRequest->Data['paidBalance'];
+                        $totalDebit = $accountTransaction->last()->Debit;
+                        $difference = $accountTransaction->last()->Differentiate - $expenseRequest->Data['paidBalance'];
+                    }
+                }
+                $AccData =
+                    [
+                        'company_id' => $company_id,
+                        'Credit' => $totalCredit,
+                        'employee_id' => $expenseRequest->Data['employee_id'],
+                        'Debit' => $totalDebit,
+                        'Differentiate' => $difference,
+                        'createdDate' => date('Y-m-d'),
+                        'user_id' => $user_id,
+                    ];
+                $AccountTransactions = AccountTransaction::updateOrCreate(
+                    [
+                        'createdDate'   => date('Y-m-d'),
+                        'company_id'   => $company_id,
+                    ],
+                    $AccData);
+                return Response()->json($AccountTransactions);
+                // return Response()->json("");
             }
+            ////////////////// end of account section ////////////////
+//            if ($data)
+//            {
+//                return Response()->json($data);
+//            }
         }
     }
 
@@ -102,15 +191,132 @@ class ExpensesRepository implements IExpensesRepositoryInterface
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
-            //return Response()->json($request);
-            // return Response()->json($request->Data['orders']);
-            //return Response()->json($request->Data['PurchaseNumber']);
-            //return Response()->json($request->Data['referenceNumber']);
-
             $expensed = Expense::find($Id);
             $user_id = session('user_id');
             $company_id = session('company_id');
-            //return $request;
+
+            ////////////////// account section ////////////////
+            $accountTransaction = AccountTransaction::where(
+                [
+                    'company_id'=> $company_id,
+                ])->get();
+            if (!is_null($accountTransaction)) {
+                $lastAccountTransection = $accountTransaction->Last();
+                if ($lastAccountTransection->company_id != $expensed->company_id)
+                {
+                    if ($expensed->paidBalance == 0 || $expensed->paidBalance == 0.00) {
+                        $OldValue1 = $expensed->company->account_transaction->Last()->Debit - $expensed->grandTotal;
+                        $OldTotalDebit = $OldValue1;
+                        $OldTotalCredit = $expensed->company->account_transaction->Last()->Credit;
+                        $OldValue = $expensed->company->account_transaction->Last()->Differentiate + $expensed->grandTotal;
+                        $OldDifference = $OldValue;
+                    }
+                    elseif ($expensed->paidBalance > 0 AND $expensed->paidBalance < $expensed->grandTotal)
+                    {
+                        $OldTotalCredit = $expensed->company->account_transaction->Last()->Credit - $expensed->paidBalance;
+                        $OldTotalDebit = $expensed->company->account_transaction->Last()->Debit - $expensed->grandTotal;
+                        $differenceValue = $expensed->company->account_transaction->Last()->Differentiate - $expensed->paidBalance;
+                        $OldDifference = $differenceValue + $expensed->grandTotal;
+                    }
+                    else{
+                        $OldValue1 = $expensed->company->account_transaction->Last()->Credit - $expensed->paidBalance;
+                        $OldTotalCredit = $OldValue1;
+                        $OldTotalDebit = $expensed->company->account_transaction->Last()->Debit;
+                        $OldValue = $expensed->company->account_transaction->Last()->Differentiate - $expensed->paidBalance;
+                        $OldDifference = $OldValue;
+                    }
+                    $OldAccData =
+                        [
+                            'company_id' => $expensed->company_id,
+                            'employee_id' => $expensed->employee_id,
+                            'Debit' => $OldTotalDebit,
+                            'Credit' => $OldTotalCredit,
+                            'Differentiate' => $OldDifference,
+                            'createdDate' => $expensed->company->account_transaction->Last()->createdDate,
+                            'user_id' =>$user_id,
+                        ];
+                    $AccountTransactions = AccountTransaction::updateOrCreate([
+                        'id'   => $expensed->company->account_transaction->Last()->id,
+                    ], $OldAccData);
+
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+                        $totalDebit = $lastAccountTransection->Debit + $request->Data['grandTotal'];
+                        $totalCredit = $lastAccountTransection->Credit;
+                        $difference = $lastAccountTransection->Differentiate - $request->Data['grandTotal'];
+                    }
+                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    {
+                        $totalDebit = $lastAccountTransection->Debit - $request->Data['paidBalance'];
+                        $totalCredit = $lastAccountTransection->Credit - $request->Data['grandTotal'];
+                        $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+                    }
+                    else{
+                        $totalCredit = $lastAccountTransection->Credit + $request->Data['paidBalance'];
+                        $totalDebit = $lastAccountTransection->Debit;
+                        $difference = $lastAccountTransection->Differentiate + $request->Data['paidBalance'];
+                    }
+                }
+                else
+                {
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == "") {
+                        if ($lastAccountTransection->createdDate != $expensed->company->account_transaction->last()->createdDate) {
+                            $totalDebit = $request->Data['grandTotal'];
+                        } else {
+                            $value1 = $lastAccountTransection->Debit - $expensed->grandTotal;
+                            $totalDebit = $value1 + $request->Data['grandTotal'];
+                        }
+                        $totalCredit = $lastAccountTransection->Credit;
+                        $value = $lastAccountTransection->Differentiate + $expensed->grandTotal;
+                        $difference = $value - $request->Data['grandTotal'];
+//                                        return Response()->json($difference);
+                    }
+                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    {
+
+                        if ($lastAccountTransection->createdDate != $expensed->company->account_transaction->last()->createdDate) {
+                            $totalCredit = $request->Data['paidBalance'];
+                            $totalDebit = $request->Data['grandTotal'];
+                        } else {
+                            $value1 = $lastAccountTransection->Credit - $expensed->paidBalance;
+                            $totalCredit = $value1 + $request->Data['paidBalance'];
+                            $valueC = $lastAccountTransection->Debit - $expensed->grandTotal;
+                            $totalDebit = $valueC + $request->Data['grandTotal'];
+                        }
+                        $differenceValue = $lastAccountTransection->Differentiate - $request->Data['paidBalance'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+                    }
+                    else{
+                        if ($lastAccountTransection->createdDate != $expensed->company->account_transaction->last()->createdDate) {
+                            $totalCredit = $request->Data['paidBalance'];
+                        } else {
+                            $value1 = $lastAccountTransection->Credit - $expensed->paidBalance;
+                            $totalCredit = $value1 + $request->Data['paidBalance'];
+                        }
+                        $totalDebit = $lastAccountTransection->Debit;
+                        $value = $lastAccountTransection->Differentiate - $expensed->paidBalance;
+                        $difference = $value + $request->Data['paidBalance'];
+                    }
+                }
+
+                $AccData =
+                    [
+                        'company_id' => $company_id,
+                        'employee_id' => $request->Data['employee_id'],
+                        'Credit' => $totalCredit,
+                        'Debit' => $totalDebit,
+                        'Differentiate' => $difference,
+                        'createdDate' => $lastAccountTransection->createdDate,
+                        'user_id' =>$user_id,
+                    ];
+                $AccountTransactions = AccountTransaction::updateOrCreate([
+                    'createdDate'   => $lastAccountTransection->createdDate,
+                    'id'   => $lastAccountTransection->id,
+                ], $AccData);
+                //return Response()->json($accountTransaction);
+            }
+            ////////////////// end of account section ////////////////
+
             $expensed->update(
                 [
                     'expenseNumber' => $request->Data['expenseNumber'],
