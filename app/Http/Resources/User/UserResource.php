@@ -13,7 +13,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'dateOfBirth' => $this->dateOfBirth,
-            'imageUrl' =>asset('storage/profile/'.$this->imageUrl),
+            'imageUrl' =>$this->imageUrl,
             //'imageUrl' => url('storage/').$this->imageUrl,
             'contactNumber' => $this->contactNumber,
             'address' => $this->address,

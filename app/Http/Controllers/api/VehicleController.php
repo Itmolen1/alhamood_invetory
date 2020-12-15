@@ -138,4 +138,16 @@ class VehicleController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function VehicleSearch(Request $request)
+    {
+        try
+        {
+            return $this->userResponse->Success($this->vehicleRepository->VehicleSearch($request));
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
 }

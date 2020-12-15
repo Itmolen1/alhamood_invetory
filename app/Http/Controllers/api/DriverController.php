@@ -138,4 +138,16 @@ class DriverController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function DriverSearch(Request $request)
+    {
+        try
+        {
+            return $this->userResponse->Success($this->driverRepository->DriverSearch($request));
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
 }

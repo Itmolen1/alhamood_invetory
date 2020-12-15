@@ -19,6 +19,11 @@ class VehicleRepository implements IVehicleRepositoryInterface
         return VehicleResource::collection(Vehicle::all()->sortDesc());
     }
 
+    public function VehicleSearch(Request $request)
+    {
+        return VehicleResource::collection(Vehicle::where('registrationNumber','LIKE',"%{$request->registrationNumber}%")->get()->sortDesc());
+    }
+
     public function paginate($page_no, $page_size)
     {
         return VehicleResource::Collection(Vehicle::all()->sortDesc()->forPage($page_no,$page_size));

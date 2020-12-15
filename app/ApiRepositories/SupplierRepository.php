@@ -26,6 +26,11 @@ class SupplierRepository implements ISupplierRepositoryInterface
         return SupplierResource::collection(Supplier::withTrashed()->get()->sortDesc());
     }
 
+    public function SupplierSearch(Request $request)
+    {
+        return SupplierResource::collection(Supplier::where('Name','LIKE',"%{$request->Name}%")->get()->sortDesc());
+    }
+
     public function paginate($page_no, $page_size)
     {
         return SupplierResource::Collection(Supplier::all()->sortDesc()->forPage($page_no,$page_size));

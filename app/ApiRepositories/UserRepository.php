@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use mysql_xdevapi\Exception;
 
@@ -79,7 +80,7 @@ class UserRepository implements IUserRepositoryInterface
                 $extension = $file->getClientOriginalExtension();
                 $filename=uniqid('user_').'.'.$extension;
                 $request->file('imageUrl')->storeAs('profile', $filename,'public');
-                $users->where('id', $userId)->update(['imageUrl' => $filename]);
+                $users->where('id', $userId)->update(['imageUrl' => 'storage/app/public/profile/'.$filename]);
                 $users = new UserResource(User::all()->where('id', $userId)->first());
                 return $this->userResponse->Success($users);
             }
@@ -130,15 +131,34 @@ class UserRepository implements IUserRepositoryInterface
         }
     }
 
+    public function forgotPassword($id)
+    {
+        $user=User::where('id', $id)->first();
+        $email=$user->email;
+        if($email!='')
+        {
+            $six_digit_random_number = mt_rand(100000, 999999);
+            $user->where('id', $user->id)->update(array('password'=>bcrypt($six_digit_random_number)));
+            $to = $email;
+            $subject = "ALHAMOOD FORGOT PASSWORD REQUEST";
+            $txt = "Hello ".$user->name." your new password for login is : ".$six_digit_random_number." . please reset your password once you login.";
+            $headers = "From: webmaster@example.com" . "\r\n";
+            //mail($to,$subject,$txt,$headers);
+            //return array('Message'=>'Password sent to your email address.');
+
+            Mail::send('admin.city.index',array('message'=>$txt), function ($message) {
+                $message->from('webmaster@example.com','ALHAMOOD');
+                $message->to('inventory@wataninfotech.com');
+                $message->subject('ALHAMOOD FORGOT PASSWORD REQUEST');
+            });
+        }
+    }
+
     public function ResetPassword(Request $request)
     {
         // TODO: Implement ResetPassword() method.
     }
 
-    public function forgotPassword(Request $request)
-    {
-        // TODO: Implement forgotPassword() method.
-    }
 
     public function login()
     {
