@@ -46,21 +46,21 @@ class PaymentReceiveController extends Controller
 
     public function store(Request $request)
     {
-        $meter_reading=$this->paymentReceiveRepository->insert($request);
-        return $this->userResponse->Success($meter_reading);
+        $payment_receive=$this->paymentReceiveRepository->insert($request);
+        return $this->userResponse->Success($payment_receive);
     }
 
     public function show($id)
     {
         try
         {
-            $meter_reading = PaymentReceive::find($id);
-            if(is_null($meter_reading))
+            $payment_receive = PaymentReceive::find($id);
+            if(is_null($payment_receive))
             {
-                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
+                return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
             }
-            $meter_reading = $this->paymentReceiveRepository->getById($id);
-            return $this->userResponse->Success($meter_reading);
+            $payment_receive = $this->paymentReceiveRepository->getById($id);
+            return $this->userResponse->Success($payment_receive);
         }
         catch(Exception $ex)
         {
@@ -73,13 +73,13 @@ class PaymentReceiveController extends Controller
     {
         try
         {
-            $meter_reading = PaymentReceive::find($id);
-            if(is_null($meter_reading))
+            $payment_receive = PaymentReceive::find($id);
+            if(is_null($payment_receive))
             {
-                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
+                return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
             }
-            $meter_reading = $this->paymentReceiveRepository->update($paymentReceiveRequest,$id);
-            return $this->userResponse->Success($meter_reading);
+            $payment_receive = $this->paymentReceiveRepository->update($paymentReceiveRequest,$id);
+            return $this->userResponse->Success($payment_receive);
         }
         catch(Exception $ex)
         {
@@ -91,13 +91,31 @@ class PaymentReceiveController extends Controller
     {
         try
         {
-            $meter_reading = PaymentReceive::find($Id);
-            if(is_null($meter_reading))
+            $payment_receive = PaymentReceive::find($Id);
+            if(is_null($payment_receive))
             {
-                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
+                return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
             }
-            $meter_reading = $this->paymentReceiveRepository->delete($request,$Id);
-            return $this->userResponse->Success($meter_reading);
+            $payment_receive = $this->paymentReceiveRepository->delete($request,$Id);
+            return $this->userResponse->Success($payment_receive);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
+
+    public function customer_payments_push($Id)
+    {
+        try
+        {
+            $payment_receive = PaymentReceive::find($Id);
+            if(is_null($payment_receive))
+            {
+                return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
+            }
+            $payment_receive = $this->paymentReceiveRepository->customer_payments_push($Id);
+            return $this->userResponse->Success($payment_receive);
         }
         catch (Exception $exception)
         {
@@ -134,10 +152,10 @@ class PaymentReceiveController extends Controller
     {
         try
         {
-            $meter_reading = PaymentReceive::find($Id);
-            if(is_null($meter_reading))
+            $payment_receive = PaymentReceive::find($Id);
+            if(is_null($payment_receive))
             {
-                return $this->userResponse->Failed($meter_reading = (object)[],'Not Found.');
+                return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
             }
             $result=$this->paymentReceiveRepository->ActivateDeactivate($Id);
             return $this->userResponse->Success($result);

@@ -114,10 +114,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/CustomerAdvance', 'api\CustomerAdvanceController');
     Route::get('/getCustomerAdvanceBaseList', 'api\CustomerAdvanceController@BaseList');
     Route::get('/CustomerAdvance/paginate/{page_no}/{page_size}','api\CustomerAdvanceController@paginate');
+    Route::get('customer_advances_push/{Id}','api\CustomerAdvanceController@customer_advances_push');
 
     Route::apiResource('/SupplierAdvance', 'api\SupplierAdvanceController');
     Route::get('/getSupplierAdvanceBaseList', 'api\SupplierAdvanceController@BaseList');
     Route::get('/SupplierAdvance/paginate/{page_no}/{page_size}','api\SupplierAdvanceController@paginate');
+    Route::get('supplier_advances_push/{Id}','api\SupplierAdvanceController@supplier_advances_push');
 
     Route::apiResource('/Loan', 'api\LoanController');
     Route::get('/Loan/paginate/{page_no}/{page_size}','api\LoanController@paginate');
@@ -128,6 +130,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/getPurchaseBaseList', 'api\PurchaseController@BaseList');
     Route::post('PurchaseDocumentsUpload', 'api\PurchaseController@PurchaseDocumentsUpload');
     Route::get('/Purchase/print/{Id}', 'api\PurchaseController@print');
+    Route::get('/supplierPurchaseDetails/{Id}', 'api\PurchaseController@supplierPurchaseDetails');
 
     Route::apiResource('/Sales', 'api\SalesController');
     Route::post('/SalesUpdate', 'api\SalesController@update');
@@ -151,6 +154,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/PaymentReceive', 'api\PaymentReceiveController');
     Route::get('/PaymentReceive/paginate/{page_no}/{page_size}','api\PaymentReceiveController@paginate');
     Route::get('/getPaymentReceiveBaseList', 'api\PaymentReceiveController@BaseList');
+    Route::get('customer_payments_push/{Id}','api\PaymentReceiveController@customer_payments_push');
+
+    Route::apiResource('/SupplierPayment', 'api\SupplierPaymentController');
+    Route::get('/SupplierPayment/paginate/{page_no}/{page_size}','api\SupplierPaymentController@paginate');
+    Route::get('/getSupplierPaymentBaseList', 'api\SupplierPaymentController@BaseList');
+    Route::get('supplier_payments_push/{Id}','api\SupplierPaymentController@supplier_payments_push');
 });
 
 //Route::fallback(function(){

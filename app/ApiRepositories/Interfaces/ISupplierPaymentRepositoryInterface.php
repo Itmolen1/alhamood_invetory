@@ -4,10 +4,9 @@
 namespace App\ApiRepositories\Interfaces;
 
 
-use App\Http\Requests\PaymentReceiveRequest;
 use Illuminate\Http\Request;
 
-interface IPaymentReceiveRepositoryInterface
+interface ISupplierPaymentRepositoryInterface
 {
     public  function all();
 
@@ -15,6 +14,5 @@ interface IPaymentReceiveRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function customer_payments_push($Id);
-
+    public  function supplier_payments_push($Id);
 }

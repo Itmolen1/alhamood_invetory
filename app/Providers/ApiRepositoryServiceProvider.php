@@ -37,6 +37,7 @@ use App\ApiRepositories\Interfaces\IRegionRepositoryInterface;
 use App\ApiRepositories\Interfaces\ISalesRepositoryInterface;
 use App\ApiRepositories\Interfaces\IStateRepositoryInterface;
 use App\ApiRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
+use App\ApiRepositories\Interfaces\ISupplierPaymentRepositoryInterface;
 use App\ApiRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\ApiRepositories\Interfaces\IUnitRepositoryInterface;
 use App\ApiRepositories\Interfaces\IUserRepositoryInterface;
@@ -53,6 +54,7 @@ use App\ApiRepositories\RegionRepository;
 use App\ApiRepositories\SalesRepository;
 use App\ApiRepositories\StateRepository;
 use App\ApiRepositories\SupplierAdvanceRepository;
+use App\ApiRepositories\SupplierPaymentRepository;
 use App\ApiRepositories\SupplierRepository;
 use App\ApiRepositories\UnitRepository;
 use App\ApiRepositories\UserRepository;
@@ -92,6 +94,7 @@ class ApiRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IPaymentTypeRepositoryInterface::class,PaymentTypeRepository::class);
         $this->app->bind(IPaymentTermRepositoryInterface::class,PaymentTermRepository::class);
         $this->app->bind(IPaymentReceiveRepositoryInterface::class,PaymentReceiveRepository::class);
+        $this->app->bind(ISupplierPaymentRepositoryInterface::class,SupplierPaymentRepository::class);
     }
 
     public function boot()

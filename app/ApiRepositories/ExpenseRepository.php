@@ -72,6 +72,8 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $expense->grandTotal=$request->grandTotal;
         $expense->Description=$request->Description;
         //$expense->termsAndCondition=$request->termsAndCondition;
+        $expense->paidBalance=$request->paidBalance;
+        $expense->remainingBalance=$request->remainingBalance;
         $expense->supplierNote=$request->supplierNote;
         $expense->createdDate=date('Y-m-d h:i:s');
         $expense->isActive=1;
@@ -121,6 +123,8 @@ class ExpenseRepository implements IExpenseRepositoryInterface
         $expense->subTotal=$expenseRequest->subTotal;
         $expense->totalVat=$expenseRequest->totalVat;
         $expense->grandTotal=$expenseRequest->grandTotal;
+        $expense->paidBalance=$expenseRequest->paidBalance;
+        $expense->remainingBalance=$expenseRequest->remainingBalance;
         $expense->Description=$expenseRequest->Description;
         //$expense->termsAndCondition=$expenseRequest->termsAndCondition;
         $expense->supplierNote=$expenseRequest->supplierNote;

@@ -682,4 +682,14 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             return $this->userResponse->Failed($purchase = (object)[],'Not Found.');
         }
     }
+
+    public function supplierPurchaseDetails($Id)
+    {
+        $purchase = Purchase::with('supplier','purchase_details')
+            ->where([
+                'supplier_id'=>$Id,
+                'IsPaid'=> false,
+            ])->get();
+        return $purchase;
+    }
 }

@@ -145,4 +145,22 @@ class SupplierAdvanceController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function supplier_advances_push($Id)
+    {
+        try
+        {
+            $supplier_advance = SupplierAdvance::find($Id);
+            if(is_null($supplier_advance))
+            {
+                return $this->userResponse->Failed($supplier_advance = (object)[],'Not Found.');
+            }
+            $supplier_advance = $this->supplierAdvanceRepository->supplier_advances_push($Id);
+            return $this->userResponse->Success($supplier_advance);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

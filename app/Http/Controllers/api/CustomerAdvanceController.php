@@ -145,4 +145,22 @@ class CustomerAdvanceController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function customer_advances_push($Id)
+    {
+        try
+        {
+            $customer_advance = CustomerAdvance::find($Id);
+            if(is_null($customer_advance))
+            {
+                return $this->userResponse->Failed($customer_advance = (object)[],'Not Found.');
+            }
+            $customer_advance = $this->customerAdvanceRepository->customer_advances_push($Id);
+            return $this->userResponse->Success($customer_advance);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }

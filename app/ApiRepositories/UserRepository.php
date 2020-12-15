@@ -38,11 +38,35 @@ class UserRepository implements IUserRepositoryInterface
             if($user)
             {
                 $user->name=$request->name;
-                $user->dateOfBirth=$request->dateOfBirth;
+                //$user->dateOfBirth=$request->dateOfBirth;
                 $user->contactNumber=$request->contactNumber;
-                $user->address=$request->address;
-                $user->gender_Id=$request->gender_Id;
-                $user->region_Id=$request->region_Id;
+                //$user->address=$request->address;
+                //$user->gender_Id=$request->gender_Id;
+                //$user->region_Id=$request->region_Id;
+
+                if ($request->hasFile('imageUrl'))
+                {
+                    $userId = Auth::id();
+
+                    //remove previously uploaded image first *will work in live server
+                    $image_val= DB::table('users')->select('imageUrl')->where([['id',$userId]])->first();
+                    $image_path = $_SERVER['DOCUMENT_ROOT']."/storage/app/public/images/".$image_val->imageUrl;
+                    if (file_exists($image_path)){
+                        unlink($image_path);
+                    }
+                    //remove previously uploaded image first *will work in live server
+
+                    $file = $request->file('imageUrl');
+                    $extension = $file->getClientOriginalExtension();
+                    $filename=uniqid('user_').'.'.$extension;
+                    $request->file('imageUrl')->storeAs('profile', $filename,'public');
+                    //$user->where('id', $userId)->update(['imageUrl' => 'storage/app/public/profile/'.$filename]);
+                    //$users = new UserResource(User::all()->where('id', $userId)->first());
+                    //return $this->userResponse->Success($users);
+                    $user->imageUrl='storage/app/public/profile/'.$filename;
+                }
+
+
                 $user->save();
                 $userId = Auth::id();
                 $users = new UserResource(User::all()->where('id', $userId)->first());

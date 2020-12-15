@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PurchaseRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Purchase;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use mysql_xdevapi\Exception;
 
@@ -165,6 +166,24 @@ class PurchaseController extends Controller
                 return $this->userResponse->Failed($purchase = (object)[],'Not Found.');
             }
             $result=$this->purchaseRepository->ActivateDeactivate($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
+
+    public function supplierPurchaseDetails($Id)
+    {
+        try
+        {
+            $supplier = Supplier::find($Id);
+            if(is_null($supplier))
+            {
+                return $this->userResponse->Failed($supplier = (object)[],'Supplier Not Found.');
+            }
+            $result=$this->purchaseRepository->supplierPurchaseDetails($Id);
             return $this->userResponse->Success($result);
         }
         catch (Exception $exception)

@@ -7,6 +7,8 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\Http\Requests\CustomerAdvanceRequest;
 use App\Http\Resources\CustomerAdvance\CustomerAdvanceResource;
+use App\Models\AccountTransaction;
+use App\Models\Bank;
 use App\Models\Customer;
 use App\Models\CustomerAdvance;
 use App\Models\PaymentType;
@@ -66,7 +68,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function BaseList()
     {
-        return array('customer'=>Customer::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get());
+        return array('customer'=>Customer::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name')->orderBy('id','desc')->get());
     }
 
     public function delete(Request $request,$Id)
@@ -118,5 +120,59 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
         }
         $customer_advance->update();
         return new CustomerAdvanceResource(CustomerAdvance::find($Id));
+    }
+
+    public function customer_advances_push($Id)
+    {
+        $advance = CustomerAdvance::with('customer')->find($Id);
+        $user_id = Auth::id();
+        $advance->update([
+            'isPushed' =>true,
+            'user_id' =>$user_id,
+        ]);
+        ////////////////// account section ////////////////
+        if ($advance)
+        {
+            $accountTransaction = AccountTransaction::where(
+                [
+                    'customer_id'=> $advance->customer_id,
+                    'createdDate' => date('Y-m-d'),
+                ])->first();
+            if (!is_null($accountTransaction)) {
+                if ($accountTransaction->createdDate != date('Y-m-d')) {
+                    $totalDebit = $advance->Amount;
+                }
+                else
+                {
+                    $totalDebit = $accountTransaction->Debit + $advance->Amount;
+                }
+                $difference = $accountTransaction->Differentiate - $advance->Amount;
+            }
+            else
+            {
+                $accountTransaction = AccountTransaction::where(
+                    [
+                        'customer_id'=> $advance->customer_id,
+                    ])->get();
+                $totalDebit = $advance->Amount;
+                $difference = $accountTransaction->last()->Differentiate - $advance->Amount;
+            }
+            $AccData =
+                [
+                    'customer_id' => $advance->customer_id,
+                    'Debit' => $totalDebit,
+                    'Differentiate' => $difference,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                ];
+            AccountTransaction::updateOrCreate(
+                [
+                    'createdDate'   => date('Y-m-d'),
+                    'customer_id'   => $advance->customer_id,
+                ],
+                $AccData);
+        }
+        ////////////////// end of account section ////////////////
+        return TRUE;
     }
 }

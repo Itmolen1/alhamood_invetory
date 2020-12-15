@@ -7,6 +7,7 @@ namespace App\ApiRepositories;
 use App\ApiRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use App\Http\Requests\SupplierAdvanceRequest;
 use App\Http\Resources\SupplierAdvance\SupplierAdvanceResource;
+use App\Models\AccountTransaction;
 use App\Models\PaymentType;
 use App\Models\Supplier;
 use App\Models\SupplierAdvance;
@@ -119,5 +120,59 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         }
         $supplier_advance->update();
         return new SupplierAdvanceResource(SupplierAdvance::find($Id));
+    }
+
+    public function supplier_advances_push($Id)
+    {
+        $advance = SupplierAdvance::with('supplier')->find($Id);
+        $user_id = Auth::id();
+        $advance->update([
+            'isPushed' =>true,
+            'user_id' =>$user_id,
+        ]);
+        ////////////////// account section ////////////////
+        if ($advance)
+        {
+            $accountTransaction = AccountTransaction::where(
+                [
+                    'supplier_id'=> $advance->supplier_id,
+                    'createdDate' => date('Y-m-d'),
+                ])->first();
+            if (!is_null($accountTransaction)) {
+                if ($accountTransaction->createdDate != date('Y-m-d')) {
+                    $totalCredit = $advance->Amount;
+                }
+                else
+                {
+                    $totalCredit = $accountTransaction->Credit + $advance->Amount;
+                }
+                $difference = $accountTransaction->Differentiate + $advance->Amount;
+            }
+            else
+            {
+                $accountTransaction = AccountTransaction::where(
+                    [
+                        'supplier_id'=> $advance->supplier_id,
+                    ])->get();
+                $totalCredit = $advance->Amount;
+                $difference = $accountTransaction->last()->Differentiate + $advance->Amount;
+            }
+            $AccData =
+                [
+                    'supplier_id' => $advance->supplier_id,
+                    'Credit' => $totalCredit,
+                    'Differentiate' => $difference,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                ];
+            AccountTransaction::updateOrCreate(
+                [
+                    'createdDate'   => date('Y-m-d'),
+                    'supplier_id'   => $advance->supplier_id,
+                ],
+                $AccData);
+        }
+        ////////////////// end of account section ////////////////
+        return TRUE;
     }
 }
