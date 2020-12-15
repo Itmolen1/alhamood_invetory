@@ -19,6 +19,8 @@ interface ICustomerRepositoryInterface
 
     public  function getById($Id);
 
+    public  function customer_advances_push($Id);
+
     public  function delete(Request $request,$Id);
 
     public  function ActivateDeactivate($Id);

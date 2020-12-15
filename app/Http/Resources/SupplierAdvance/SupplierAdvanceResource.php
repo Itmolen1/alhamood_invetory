@@ -26,6 +26,7 @@ class SupplierAdvanceResource extends JsonResource
             'registerDate' => $this->registerDate,
             'createdDate' => $this->createdDate,
             'isActive'=>$this->isActive,
+            'isPushed'=>$this->isPushed,
             'api_supplier'=>$this->api_supplier,
             //'deleted_at'=>$this->deleted_at,
             //'updated_at'=>$this->updated_at->diffForHumans(),
