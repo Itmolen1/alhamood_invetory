@@ -42,7 +42,10 @@ class Handler extends ExceptionHandler
 
         if ($request->expectsJson()) {
             $userResponse=new ServiceResponse();
-            return $userResponse->Bad(['error' => 'Unauthenticated.']);
+            return Response([
+                'Message' => 'Unauthenticated'
+            ], 401);
+            //return $userResponse->Bad(['error' => 'Unauthenticated.']);
 //            echo "here";die;
 //            return response()->json(['error' => 'Unauthenticated.'], 401);
         }

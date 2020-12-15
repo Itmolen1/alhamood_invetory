@@ -24,6 +24,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('UserDelete/{id}', 'api\UserController@destroy');
     Route::post('UserUpdateProfilePicture', 'api\UserController@UserUpdateProfilePicture');
     Route::get('AllUsers/', 'api\UserController@AllUsers');
+    Route::get('ForgotPassword/{id}', 'api\UserController@ForgotPassword');
 
     Route::get('/Employee/restore/{Id}', 'EmployeeController@restore');
     Route::get('/EmployeeTrashed', 'EmployeeController@trash');
@@ -36,14 +37,17 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/Bank/ActivateDeactivate/{id}','api\BankController@ActivateDeactivate');
 
     Route::apiResource('/Driver', 'api\DriverController');
+    Route::post('/DriverSearch','api\DriverController@DriverSearch');
     Route::get('/Driver/paginate/{page_no}/{page_size}','api\DriverController@paginate');
     Route::get('/Driver/ActivateDeactivate/{id}','api\DriverController@ActivateDeactivate');
 
     Route::apiResource('/Vehicle', 'api\VehicleController');
+    Route::post('/VehicleSearch','api\VehicleController@VehicleSearch');
     Route::get('/Vehicle/paginate/{page_no}/{page_size}','api\VehicleController@paginate');
     Route::get('/Vehicle/ActivateDeactivate/{id}','api\VehicleController@ActivateDeactivate');
 
     Route::apiResource('/Customer', 'api\CustomerController');
+    Route::post('/CustomerSearch','api\CustomerController@CustomerSearch');
     Route::get('/Customer/paginate/{page_no}/{page_size}','api\CustomerController@paginate');
     Route::get('/Customer/ActivateDeactivate/{id}','api\CustomerController@ActivateDeactivate');
     Route::get('/CustomerBaseList', 'api\CustomerController@BaseList');
@@ -69,6 +73,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/ExpenseCategory/ActivateDeactivate/{id}','api\ExpenseCategory@ActivateDeactivate');
 
     Route::apiResource('/Supplier', 'api\SupplierController');
+    Route::post('/SupplierSearch','api\SupplierController@SupplierSearch');
     Route::get('/Supplier/paginate/{page_no}/{page_size}','api\SupplierController@paginate');
     Route::get('/Supplier/ActivateDeactivate/{id}','api\SupplierController@ActivateDeactivate');
     Route::get('/SupplierBaseList', 'api\SupplierController@BaseList');

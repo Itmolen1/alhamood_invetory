@@ -20,6 +20,11 @@ class DriverRepository implements IDriverRepositoryInterface
         return DriverResource::collection(Driver::all()->sortDesc());
     }
 
+    public function DriverSearch(Request $request)
+    {
+        return DriverResource::collection(Driver::where('driverName','LIKE',"%{$request->driverName}%")->get()->sortDesc());
+    }
+
     public function paginate($page_no, $page_size)
     {
         return DriverResource::Collection(Driver::all()->sortDesc()->forPage($page_no,$page_size));

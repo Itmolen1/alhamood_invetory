@@ -24,6 +24,11 @@ class CustomerRepository implements ICustomerRepositoryInterface
         return CustomerResource::collection(Customer::all()->sortDesc());
     }
 
+    public function CustomerSearch(Request $request)
+    {
+        return CustomerResource::collection(Customer::where('Name','LIKE',"%{$request->Name}%")->get()->sortDesc());
+    }
+
     public function paginate($page_no, $page_size)
     {
         return CustomerResource::Collection(Customer::all()->sortDesc()->forPage($page_no,$page_size));

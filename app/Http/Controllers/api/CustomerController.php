@@ -144,4 +144,16 @@ class CustomerController extends Controller
         $data = $this->customerRepository->BaseList();
         return $this->userResponse->Success($data);
     }
+
+    public function CustomerSearch(Request $request)
+    {
+        try
+        {
+            return $this->userResponse->Success($this->customerRepository->CustomerSearch($request));
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
 }

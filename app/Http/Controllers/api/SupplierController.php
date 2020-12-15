@@ -144,4 +144,16 @@ class SupplierController extends Controller
         $data = $this->supplierRepository->BaseList();
         return $this->userResponse->Success($data);
     }
+
+    public function SupplierSearch(Request $request)
+    {
+        try
+        {
+            return $this->userResponse->Success($this->supplierRepository->SupplierSearch($request));
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
 }

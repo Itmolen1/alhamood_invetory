@@ -85,4 +85,22 @@ class UserController extends Controller
             return $this->userResponse->Exception($exception);
         }
     }
+
+    public function ForgotPassword($Id)
+    {
+        try
+        {
+            $user = User::find($Id);
+            if(is_null($user))
+            {
+                return $this->userResponse->Failed($user = (object)[],'Not Found.');
+            }
+            $result=$this->IUserRepository->ForgotPassword($Id);
+            return $this->userResponse->Success($result);
+        }
+        catch (Exception $exception)
+        {
+            return $this->userResponse->Exception($exception);
+        }
+    }
 }
