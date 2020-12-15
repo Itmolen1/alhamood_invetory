@@ -98,6 +98,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     [
                         'company_id'=> $company_id,
                         'createdDate' => date('Y-m-d'),
+                        'employee_id' => $expenseRequest->Data['employee_id']
                     ])->first();
                 if (!is_null($accountTransaction))
                 {
@@ -172,6 +173,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     [
                         'createdDate'   => date('Y-m-d'),
                         'company_id'   => $company_id,
+                        'employee_id' => $expenseRequest->Data['employee_id']
                     ],
                     $AccData);
                 return Response()->json($AccountTransactions);
