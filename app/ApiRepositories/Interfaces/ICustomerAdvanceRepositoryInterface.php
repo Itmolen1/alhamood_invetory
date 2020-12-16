@@ -15,7 +15,7 @@ interface ICustomerAdvanceRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(CustomerAdvanceRequest $customerAdvanceRequest,$Id);
+    public  function update(Request $request,$Id);
 
     public  function getById($Id);
 

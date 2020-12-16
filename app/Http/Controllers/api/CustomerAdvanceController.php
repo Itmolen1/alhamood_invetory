@@ -73,7 +73,7 @@ class CustomerAdvanceController extends Controller
         }
     }
 
-    public function update(CustomerAdvanceRequest $customerAdvanceRequest, $id)
+    public function update(Request $request, $id)
     {
         try
         {
@@ -82,7 +82,7 @@ class CustomerAdvanceController extends Controller
             {
                 return $this->userResponse->Failed($customer_advance = (object)[],'Not Found.');
             }
-            $result=$this->customerAdvanceRepository->update($customerAdvanceRequest,$id);
+            $result=$this->customerAdvanceRepository->update($request,$id);
             return $this->userResponse->Success($result);;
         }
         catch(Exception $ex)

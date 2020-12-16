@@ -15,6 +15,7 @@ class SupplierPaymentDetailResource extends JsonResource
             'user_id'=>$this->user_id,
             'company_id'=>$this->company_id,
             'purchase_id'=>$this->purchase_id,
+            'api_purchase'=>$this->api_purchase,
             'Description'=>$this->Description,
             'supplierPaymentDetailDate'=>$this->supplierPaymentDetailDate,
             'createdDate'=>$this->createdDate,

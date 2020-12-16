@@ -104,7 +104,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
     public function BaseList()
     {
-        return array('customer'=>Customer::select('id','Name')->orderBy('id','desc')->get(),'payment_types'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'banks'=>Bank::select('id','Name')->orderBy('id','desc')->get());
+        return array('customer'=>Customer::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name')->orderBy('id','desc')->get());
     }
 
     public function customer_payments_push($Id)

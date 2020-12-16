@@ -8,6 +8,7 @@ use App\ApiRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use App\Http\Requests\SupplierAdvanceRequest;
 use App\Http\Resources\SupplierAdvance\SupplierAdvanceResource;
 use App\Models\AccountTransaction;
+use App\Models\Bank;
 use App\Models\PaymentType;
 use App\Models\Supplier;
 use App\Models\SupplierAdvance;
@@ -29,7 +30,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function BaseList()
     {
-        return array('supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get());
+        return array('supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name')->orderBy('id','desc')->get());
     }
 
     public function insert(Request $request)
@@ -40,7 +41,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         $supplier_advance->receiptNumber=$request->receiptNumber;
         $supplier_advance->paymentType=$request->paymentType;
         $supplier_advance->Amount=$request->Amount;
-        $supplier_advance->sumOf=$request->sumOf;
+        $supplier_advance->sumOf=Str::getUAECurrency($request->Amount);
         $supplier_advance->receiverName=$request->receiverName;
         $supplier_advance->Description=$request->Description;
         $supplier_advance->user_id=$request->user_id;
@@ -57,12 +58,13 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         return new SupplierAdvanceResource(SupplierAdvance::find($supplier_advance->id));
     }
 
-    public function update(SupplierAdvanceRequest $supplierAdvanceRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $supplier_advance = SupplierAdvance::find($Id);
-        $supplierAdvanceRequest['user_id']=$userId ?? 0;
-        $supplier_advance->update($supplierAdvanceRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $request['sumOf']=Str::getUAECurrency($request->Amount);
+        $supplier_advance->update($request->all());
         return new SupplierAdvanceResource(SupplierAdvance::find($Id));
     }
 

@@ -8,13 +8,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class State extends Model
 {
-        use HasFactory;
-        use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
 
-        protected $guarded=[];
-        protected $primaryKey = 'id';
-        protected $table = 'states';
+    protected $guarded=[];
+    protected $casts = [
+        'id'=>'integer'
+    ];
+    protected $primaryKey = 'id';
+    protected $table = 'states';
 
     public function user()
     {

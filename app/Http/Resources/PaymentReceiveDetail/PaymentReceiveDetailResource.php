@@ -15,6 +15,7 @@ class PaymentReceiveDetailResource extends JsonResource
             'user_id'=>$this->user_id,
             'company_id'=>$this->company_id,
             'sale_id'=>$this->sale_id,
+            'api_sale'=>$this->api_sale,
             'Description'=>$this->Description,
             'paymentReceiveDetailDate'=>$this->paymentReceiveDetailDate,
             'createdDate'=>$this->createdDate,

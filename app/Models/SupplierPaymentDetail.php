@@ -35,4 +35,9 @@ class SupplierPaymentDetail extends Model
     {
         return $this->belongsTo('App\Models\Purchase','purchase_id','id');
     }
+
+    public function api_purchase()
+    {
+        return $this->belongsTo('App\Models\Purchase','purchase_id','id')->withTrashed();
+    }
 }
