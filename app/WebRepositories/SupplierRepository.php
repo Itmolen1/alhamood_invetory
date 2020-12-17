@@ -110,6 +110,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
             $account = new AccountTransaction([
                 'supplier_id' => $supplier->id,
                 'user_id' => $user_id,
+                'createdDate' => date('Y-m-d'),
             ]);
         }
         $supplier->account_transaction()->save($account);
