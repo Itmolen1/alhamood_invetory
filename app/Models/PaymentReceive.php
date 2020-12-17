@@ -31,6 +31,11 @@ class PaymentReceive extends Model
         return $this->belongsTo('App\Models\Customer','customer_id','id');
     }
 
+    public function api_customer()
+    {
+        return $this->belongsTo('App\Models\Customer','customer_id','id')->withTrashed();
+    }
+
     public function payment_receive_details()
     {
         return $this->hasMany('App\Models\PaymentReceiveDetail','payment_receive_id');

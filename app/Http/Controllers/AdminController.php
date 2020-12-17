@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Purchase;
+use App\Models\Sale;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-
     public function index()
     {
-        return view('admin.index');
+        $dashboard['total_users']=User::all()->count();
+        $dashboard['total_sales_today']=Sale::all()->where('createdDate','=',date('Y-m-d'))->count();
+        $dashboard['total_purchase_today']=Purchase::all()->where('createdDate','=',date('Y-m-d'))->count();
+        //echo "<pre>";print_r($dashboard);die;
+        return view('admin.index',compact('dashboard'));
     }
 
     public function login()
@@ -22,46 +28,21 @@ class AdminController extends Controller
          return view('admin.user.register');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

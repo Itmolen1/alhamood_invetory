@@ -30,6 +30,7 @@ class SupplierPaymentResource extends JsonResource
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
             'supplier_payment_details'=>SupplierPaymentDetailResource::collection($this->whenLoaded('supplier_payment_details')),
+            'api_supplier'=>$this->api_supplier,
         ];
     }
 }

@@ -37,6 +37,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function insert(Request $request)
     {
         $userId = Auth::id();
+        $company_id=Str::getCompany($userId);
         $customer = new Customer();
         $customer->Name=$request->Name;
         $customer->Representative=$request->Representative;
@@ -52,7 +53,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $customer->postCode=$request->postCode;
         $customer->registrationDate=$request->registrationDate;
         $customer->Description=$request->Description;
-        //$customer->company_id=$request->company_id;
+        $customer->company_id=$company_id;
         $customer->region_id=$request->region_id;
         $customer->createdDate=date('Y-m-d h:i:s');
         $customer->isActive=1;
@@ -66,6 +67,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
         $account_transaction->Debit=0.00;
         $account_transaction->customer_id=$customer->id;
         $account_transaction->user_id=$userId ?? 0;
+        $account_transaction->company_id=$company_id ?? 0;
         $account_transaction->Description='account created';
         $account_transaction->createdDate=date('Y-m-d h:i:s');
         $account_transaction->save();

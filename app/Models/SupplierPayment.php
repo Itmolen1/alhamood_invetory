@@ -30,6 +30,11 @@ class SupplierPayment extends Model
         return $this->belongsTo('App\Models\Supplier','supplier_id','id');
     }
 
+    public function api_supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier','supplier_id','id')->withTrashed();
+    }
+
     public function bank()
     {
         return $this->belongsTo('App\Models\Bank','bank_id','id');

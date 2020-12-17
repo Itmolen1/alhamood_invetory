@@ -31,6 +31,11 @@ class PaymentReceiveDetail extends Model
         return $this->belongsTo('App\Models\Sale','sale_id','id');
     }
 
+    public function api_sale()
+    {
+        return $this->belongsTo('App\Models\Sale','sale_id','id')->withTrashed();
+    }
+
     public function payment_receive()
     {
         return $this->belongsTo('App\Models\PaymentReceive','payment_receive_id','id');

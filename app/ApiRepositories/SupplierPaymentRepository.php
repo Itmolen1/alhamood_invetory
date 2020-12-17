@@ -87,7 +87,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $purchase = Purchase::find($payment_item->purchase_id);
             $purchase->update([
                 "paidBalance" => $totalAmount + $purchase->paidBalance,
-                "remainingBalance" => $purchase->remainingBalance - $totalAmount,
+                "remainingBalance" => $request->totalAmount - $totalAmount,
                 "IsPaid" => $isPaid,
                 "IsPartialPaid" => $isPartialPaid,
                 //"IsReturn" => false,
@@ -158,6 +158,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function BaseList()
     {
-        return array('supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get(),'payment_types'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'banks'=>Bank::select('id','Name')->orderBy('id','desc')->get());
+        return array('supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name')->orderBy('id','desc')->get());
     }
 }

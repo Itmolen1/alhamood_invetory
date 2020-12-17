@@ -30,6 +30,7 @@ class PaymentReceiveResource extends JsonResource
             'deleted_at'=>$this->deleted_at,
             'updated_at'=>$this->updated_at->diffForHumans(),
             'payment_receive_details'=>PaymentReceiveDetailResource::collection($this->whenLoaded('payment_receive_details')),
+            'api_customer'=>$this->api_customer,
         ];
     }
 }

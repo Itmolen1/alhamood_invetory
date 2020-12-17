@@ -36,7 +36,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
         $customer_advance->receiptNumber=$request->receiptNumber;
         $customer_advance->paymentType=$request->paymentType;
         $customer_advance->Amount=$request->Amount;
-        $customer_advance->sumOf=$request->sumOf;
+        $customer_advance->sumOf=Str::getUAECurrency($request->Amount);
         $customer_advance->receiverName=$request->receiverName;
         $customer_advance->Description=$request->Description;
         $customer_advance->user_id=$request->user_id;
@@ -52,12 +52,13 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
         return new CustomerAdvanceResource(CustomerAdvance::find($customer_advance->id));
     }
 
-    public function update(CustomerAdvanceRequest $customerAdvanceRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
         $customer_advance = CustomerAdvance::find($Id);
-        $customerAdvanceRequest['user_id']=$userId ?? 0;
-        $customer_advance->update($customerAdvanceRequest->all());
+        $request['user_id']=$userId ?? 0;
+        $request['sumOf']=Str::getUAECurrency($request->Amount);
+        $customer_advance->update($request->all());
         return new CustomerAdvanceResource(CustomerAdvance::find($Id));
     }
 

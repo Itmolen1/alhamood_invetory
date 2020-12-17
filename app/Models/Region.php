@@ -8,13 +8,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Region extends Model
 {
-        use HasFactory;
-        use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
 
-        protected $guarded=[];
-        protected $primaryKey = 'id';
-        protected $table = 'regions';
+    protected $guarded=[];
+
+    protected $casts = [
+        'id'=>'integer'
+    ];
+
+    protected $primaryKey = 'id';
+    protected $table = 'regions';
 
     public function user()
     {
