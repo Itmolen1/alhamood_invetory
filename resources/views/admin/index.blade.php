@@ -73,27 +73,27 @@
                     <!-- card -->
                     <div class="card">
                         <div class="p-20 p-t-25">
-                            <h4 class="card-title">User</h4>
+                            <h4 class="card-title">Statistics</h4>
                         </div>
                         <div class="d-flex no-block p-15 align-items-center">
                             <div class="round round-info"><i class="icon-wallet font-16"></i></div>
                             <div class="m-l-10 ">
-                                <h3 class="m-b-0">2</h3>
-                                <h6 class="text-muted font-light m-b-0">visiters</h6> </div>
+                                <h3 class="m-b-0">{{$dashboard['total_users']}}</h3>
+                                <h6 class="text-muted font-light m-b-0">users</h6> </div>
                         </div>
                         <hr>
                         <div class="d-flex no-block p-15 align-items-center">
                             <div class="round round-primary"><i class="icon-umbrella font-16"></i></div>
                             <div class="m-l-10">
-                                <h3 class="m-b-0">4</h3>
-                                <h6 class="text-muted font-light m-b-0">users</h6></div>
+                                <h3 class="m-b-0">{{$dashboard['total_sales_today']}}</h3>
+                                <h6 class="text-muted font-light m-b-0">Today's Sales Invoices count</h6></div>
                         </div>
                         <hr>
                         <div class="d-flex no-block p-15 m-b-15 align-items-center">
                             <div class="round round-danger"><i class="icon-chart font-16"></i></div>
                             <div class="m-l-10">
-                                <h3 class="m-b-0">90</h3>
-                                <h6 class="text-muted font-light m-b-0">admins</h6></div>
+                                <h3 class="m-b-0">{{$dashboard['total_purchase_today']}}</h3>
+                                <h6 class="text-muted font-light m-b-0">Today's Purchase Invoices count</h6></div>
                         </div>
                     </div>
                 </div>
