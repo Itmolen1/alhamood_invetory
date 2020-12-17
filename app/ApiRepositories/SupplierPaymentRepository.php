@@ -55,43 +55,43 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         $supplier_payment_id = $supplier_payment->id;
 
         $supplier_payment_details=json_decode($_POST['supplier_payment_details']);
-
+        //echo "<pre>";print_r($request->all());die;
         $amount = 0;
-        foreach ($supplier_payment_details as $payment_item)
+        foreach ($supplier_payment_details as $detail)
         {
-            $amount += $payment_item->amountPaid;
+            $amount += $detail->amountPaid;
 
             if ($amount <= $request->paidAmount)
             {
                 $isPaid = true;
                 $isPartialPaid = false;
-                $totalAmount = $payment_item->amountPaid;
+                $totalAmount = $detail->amountPaid;
             }
             elseif($amount >= $request->paidAmount){
+//                    if ($detail['amountPaid'] > $request->Data['paidAmount']) {
                 $isPaid = false;
                 $isPartialPaid = true;
                 $totalAmount1 = $amount - $request->paidAmount;
-                $totalAmount = $payment_item->amountPaid - $totalAmount1;
+                $totalAmount = $detail->amountPaid - $totalAmount1;
+//                    }
             }
 
-            SupplierPaymentDetail::create([
-                "amountPaid" => $totalAmount,
-                "purchase_id" => $payment_item->purchase_id,
+            $data =  SupplierPaymentDetail::create([
+                "amountPaid"        => $totalAmount,
+                "purchase_id"        => $detail->purchase_id,
                 "company_id" => Str::getCompany($userId),
-                "user_id" => $userId,
-                "supplier_payment_id" => $supplier_payment_id,
+                "user_id"      => $userId,
+                "supplier_payment_id"      => $supplier_payment_id,
                 'createdDate' => date('Y-m-d')
             ]);
 
 
-            $purchase = Purchase::find($payment_item->purchase_id);
-            $purchase->update([
-                "paidBalance" => $totalAmount + $purchase->paidBalance,
-                "remainingBalance" => $request->totalAmount - $totalAmount,
+            $sale = Purchase::find($detail->purchase_id);
+            $sale->update([
+                "paidBalance"        => $totalAmount + $sale->paidBalance,
+                "remainingBalance"   => $sale->remainingBalance - $totalAmount,
                 "IsPaid" => $isPaid,
                 "IsPartialPaid" => $isPartialPaid,
-                //"IsReturn" => false,
-                //"IsPartialReturn" => false,
                 "IsNeedStampOrSignature" => false,
             ]);
         }
@@ -104,7 +104,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
     public function supplier_payments_push($Id)
     {
         $payments = SupplierPayment::with('supplier')->find($Id);
-        $user_id = session('user_id');
+        $user_id = Auth::id();
         $payments->update([
             'isPushed' =>true,
             'user_id' =>$user_id,

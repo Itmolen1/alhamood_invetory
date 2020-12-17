@@ -55,7 +55,7 @@ class Handler extends ExceptionHandler
         }
 
         // return a plain 401 response even when not a json call
-        return response('Unauthenticated.', 401);
+        return Response(['Message' => 'Unauthenticated'], 401);
     }
 
 
