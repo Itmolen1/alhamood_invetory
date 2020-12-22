@@ -123,7 +123,8 @@ class ReportRepository implements IReportRepositoryInterface
             $fileLocation = storage_path().'/app/public/report_files/';
             $fileNL = $fileLocation.'//'.$time.'.pdf';
             $pdf::Output($fileNL, 'F');
-            $url=url('/').'/storage/report_files/'.$time.'.pdf';
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
             //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;
@@ -240,7 +241,8 @@ class ReportRepository implements IReportRepositoryInterface
             $fileLocation = storage_path().'/app/public/report_files/';
             $fileNL = $fileLocation.'//'.$time.'.pdf';
             $pdf::Output($fileNL, 'F');
-            $url=url('/').'/storage/report_files/'.$time.'.pdf';
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
             //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;
