@@ -11,4 +11,6 @@ interface IReportRepositoryInterface
     public  function SalesReport(Request $request);
 
     public  function PurchaseReport(Request $request);
+
+    public  function SalesReportByVehicle(Request $request);
 }

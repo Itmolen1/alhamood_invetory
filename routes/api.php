@@ -162,6 +162,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('supplier_payments_push/{Id}','api\SupplierPaymentController@supplier_payments_push');
 
     Route::post('/SalesReport','api\ReportController@SalesReport');
+    Route::post('/SalesReportByVehicle','api\ReportController@SalesReportByVehicle');
     Route::post('/PurchaseReport','api\ReportController@PurchaseReport');
 });
 
