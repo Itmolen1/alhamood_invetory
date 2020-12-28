@@ -53,4 +53,16 @@ class ReportController extends Controller
             $this->userResponse->Exception($ex);
         }
     }
+
+    public function ExpenseReport(Request $request)
+    {
+        try
+        {
+            return $this->userResponse->Success($this->reportRepository->ExpenseReport($request));
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
 }
