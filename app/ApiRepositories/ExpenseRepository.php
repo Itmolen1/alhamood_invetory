@@ -8,6 +8,7 @@ use App\ApiRepositories\Interfaces\IExpenseRepositoryInterface;
 use App\Http\Requests\ExpenseRequest;
 use App\Http\Resources\Expense\ExpenseResource;
 use App\Models\AccountTransaction;
+use App\Models\CashTransaction;
 use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
@@ -84,6 +85,17 @@ class ExpenseRepository implements IExpenseRepositoryInterface
 
         $expense->save();
         $expense_id = $expense->id;
+
+        if($request->paidBalance != 0.00 || $request->paidBalance != 0)
+        {
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$newExpenseID;
+            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->Type='Expense';
+            $cash_transaction->Credit=0.0;
+            $cash_transaction->Debit=$request->paidBalance;
+            $cash_transaction->save();
+        }
 
         $expense_detail=json_decode($_POST['expense_detail']);
 

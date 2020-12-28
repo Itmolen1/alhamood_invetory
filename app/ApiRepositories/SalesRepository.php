@@ -8,6 +8,7 @@ use App\ApiRepositories\Interfaces\ISalesRepositoryInterface;
 use App\Http\Requests\SaleRequest;
 use App\Http\Resources\Sales\SalesResource;
 use App\Models\AccountTransaction;
+use App\Models\CashTransaction;
 use App\Models\Customer;
 use App\Models\FileUpload;
 use App\Models\Product;
@@ -81,6 +82,17 @@ class SalesRepository implements ISalesRepositoryInterface
         $sales->company_id = $company_id ?? 0;
         $sales->save();
         $sales_id = $sales->id;
+
+        if($request->paidBalance != 0.00 || $request->paidBalance != 0)
+        {
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$newInvoiceID;
+            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->Type='Sales';
+            $cash_transaction->Credit=$request->paidBalance;
+            $cash_transaction->Debit=0.0;
+            $cash_transaction->save();
+        }
 
         $sale_details=json_decode($_POST['sale_details']);
 

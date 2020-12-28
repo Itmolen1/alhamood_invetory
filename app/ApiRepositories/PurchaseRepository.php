@@ -9,6 +9,7 @@ use App\Http\Requests\PurchaseRequest;
 use App\Http\Resources\Product\ProductResource;
 use App\Http\Resources\Purchase\PurchaseResource;
 use App\Models\AccountTransaction;
+use App\Models\CashTransaction;
 use App\Models\FileUpload;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -99,6 +100,17 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $purchase->company_id=$company_id;
         $purchase->save();
         $purchase_id = $purchase->id;
+
+        if($request->paidBalance != 0.00 || $request->paidBalance != 0)
+        {
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$newInvoiceID;
+            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->Type='Purchase';
+            $cash_transaction->Credit=0.0;
+            $cash_transaction->Debit=$request->paidBalance;
+            $cash_transaction->save();
+        }
 
         $purchase_detail=json_decode($_POST['pd']);
        foreach ($purchase_detail as $purchase_item)

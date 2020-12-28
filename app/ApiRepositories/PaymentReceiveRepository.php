@@ -9,6 +9,7 @@ use App\Http\Requests\PaymentReceiveRequest;
 use App\Http\Resources\PaymentReceive\PaymentReceiveResource;
 use App\Models\AccountTransaction;
 use App\Models\Bank;
+use App\Models\CashTransaction;
 use App\Models\Customer;
 use App\Models\PaymentReceive;
 use App\Models\PaymentReceiveDetail;
@@ -116,6 +117,18 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             'isPushed' =>true,
             'user_id' =>$user_id,
         ]);
+
+        if($payment->payment_type == 'cash')
+        {
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$payment->id;
+            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->Type='Customer Payment';
+            $cash_transaction->Credit=$payment->paidAmount;
+            $cash_transaction->Debit=0.0;
+            $cash_transaction->save();
+        }
+
         ////////////////// account section ////////////////
         if ($payment)
         {

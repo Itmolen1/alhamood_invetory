@@ -7,6 +7,7 @@ namespace App\WebRepositories;
 use App\Http\Requests\PurchaseRequest;
 use App\Http\Resources\Purchase\PurchaseResource;
 use App\Models\AccountTransaction;
+use App\Models\CashTransaction;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -151,6 +152,17 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     "purchase_id"      => $purchase,
                     "createdDate" => $detail['createdDate'],
                 ]);
+            }
+
+            if($purchaseRequest->Data['paidBalance'] != 0.00 || $purchaseRequest->Data['paidBalance'] != 0)
+            {
+                $cash_transaction = new CashTransaction();
+                $cash_transaction->Reference=$purchaseRequest->Data['PurchaseNumber'];
+                $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                $cash_transaction->Type='Purchase';
+                $cash_transaction->Credit=0.0;
+                $cash_transaction->Debit=$purchaseRequest->Data['paidBalance'];
+                $cash_transaction->save();
             }
 
             ////////////////// account section ////////////////

@@ -6,6 +6,7 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\ExpenseRequest;
 use App\Models\AccountTransaction;
+use App\Models\CashTransaction;
 use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
@@ -89,6 +90,17 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     "PadNumber" => $detail['padNumber'],
                 ]);
 
+            }
+
+            if($expenseRequest->Data['paidBalance'] != 0.00 || $expenseRequest->Data['paidBalance'] != 0)
+            {
+                $cash_transaction = new CashTransaction();
+                $cash_transaction->Reference=$expenseRequest->Data['expenseNumber'];
+                $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                $cash_transaction->Type='Expense';
+                $cash_transaction->Credit=0.0;
+                $cash_transaction->Debit=$expenseRequest->Data['paidBalance'];
+                $cash_transaction->save();
             }
 
             ////////////////// account section ////////////////

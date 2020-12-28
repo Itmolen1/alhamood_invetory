@@ -8,6 +8,7 @@ use App\ApiRepositories\Interfaces\ISupplierPaymentRepositoryInterface;
 use App\Http\Resources\SupplierPayment\SupplierPaymentResource;
 use App\Models\AccountTransaction;
 use App\Models\Bank;
+use App\Models\CashTransaction;
 use App\Models\PaymentType;
 use App\Models\Purchase;
 use App\Models\Supplier;
@@ -109,6 +110,17 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             'isPushed' =>true,
             'user_id' =>$user_id,
         ]);
+
+        if($payments->payment_type == 'cash')
+        {
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$payments->id;
+            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->Type='Supplier Payment';
+            $cash_transaction->Credit=0.0;
+            $cash_transaction->Debit=$payments->paidAmount;
+            $cash_transaction->save();
+        }
 
         ////////////////// account section ////////////////
         if ($payments)

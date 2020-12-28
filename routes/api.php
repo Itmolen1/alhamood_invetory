@@ -165,6 +165,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/SalesReportByVehicle','api\ReportController@SalesReportByVehicle');
     Route::post('/PurchaseReport','api\ReportController@PurchaseReport');
     Route::post('/ExpenseReport','api\ReportController@ExpenseReport');
+    Route::post('/CashReport','api\ReportController@CashReport');
+    Route::post('/BankReport','api\ReportController@BankReport');
 });
 
 //Route::fallback(function(){

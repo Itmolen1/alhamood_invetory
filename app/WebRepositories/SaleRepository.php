@@ -9,6 +9,7 @@
 namespace App\WebRepositories;
 
 
+use App\Models\CashTransaction;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Unit;
@@ -145,6 +146,17 @@ class SaleRepository implements ISaleRepositoryInterface
                     "createdDate" => $detail['createdDate'],
                 ]);
 
+            }
+
+            if($request->Data['paidBalance'] != 0.00 || $request->Data['paidBalance'] != 0)
+            {
+                $cash_transaction = new CashTransaction();
+                $cash_transaction->Reference=$request->Data['SaleNumber'];
+                $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                $cash_transaction->Type='Sales';
+                $cash_transaction->Credit=$request->Data['paidBalance'];
+                $cash_transaction->Debit=0.0;
+                $cash_transaction->save();
             }
 
             ////////////////// account section ////////////////

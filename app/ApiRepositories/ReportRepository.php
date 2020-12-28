@@ -8,6 +8,7 @@ use App\ApiRepositories\Interfaces\IReportRepositoryInterface;
 use App\Http\Resources\Expense\ExpenseResource;
 use App\Http\Resources\Purchase\PurchaseResource;
 use App\Http\Resources\Sales\SalesResource;
+use App\Models\CashTransaction;
 use App\Models\Expense;
 use App\Models\Purchase;
 use App\Models\Sale;
@@ -467,5 +468,79 @@ class ReportRepository implements IReportRepositoryInterface
             $url=array('url'=>$url);
             return $url;
         }
+    }
+
+    public function CashReport(Request $request)
+    {
+        if ($request->fromDate!='' && $request->toDate!='')
+        {
+            $all_cash_transactions=CashTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate);
+        }
+        else
+        {
+            return FALSE;
+        }
+
+        $pdf = new PDF();
+        $pdf::setPrintHeader(false);
+        $pdf::setPrintFooter(false);
+        $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+        $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        $pdf::AddPage();$pdf::SetFont('times', '', 6);
+        $pdf::SetFillColor(255,255,0);
+
+        //$row=$sales->sale_details;
+        $row=json_decode(json_encode($all_cash_transactions), true);
+        //echo "<pre>123";print_r($row);die;
+
+        $pdf::SetFont('times', '', 15);
+        $html='Cash Transactions';
+        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+        $pdf::SetFont('times', '', 12);
+        $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+        $pdf::SetFont('times', 'B', 14);
+        $html = '<table border="0" cellpadding="5">
+            <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                <th align="center" width="80">#</th>
+                <th align="center" width="80">Date</th>
+                <th align="center" width="100">Type</th>
+                <th align="center" width="100">Details</th>
+                <th align="center" width="60">Credit</th>
+                <th align="center" width="60">Debit</th>
+                <th align="center" width="60">Closing</th>
+
+            </tr>';
+        $pdf::SetFont('times', '', 10);
+        for($i=0;$i<count($row);$i++)
+        {
+            $html .='<tr>
+                <td align="center" width="80">'.($row[$i]['Reference']).'</td>
+                <td align="center" width="80">'.($row[$i]['createdDate']).'</td>
+                <td align="center" width="100">'.($row[$i]['Type']).'</td>
+                <td align="center" width="100">N.A.</td>
+                <td align="center" width="60">'.($row[$i]['Credit']).'</td>
+                <td align="center" width="60">'.($row[$i]['Debit']).'</td>
+                <td align="center" width="60"></td>
+                </tr>';
+        }
+        $pdf::SetFillColor(255, 0, 0);
+        $html.='</table>';
+
+        $pdf::writeHTML($html, true, false, false, false, '');
+
+        $pdf::lastPage();
+        $time=time();
+        $fileLocation = storage_path().'/app/public/report_files/';
+        $fileNL = $fileLocation.'//'.$time.'.pdf';
+        $pdf::Output($fileNL, 'F');
+        //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+        $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+        //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+        $url=array('url'=>$url);
+        return $url;
     }
 }

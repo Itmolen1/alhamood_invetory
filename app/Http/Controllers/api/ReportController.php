@@ -65,4 +65,28 @@ class ReportController extends Controller
             $this->userResponse->Exception($ex);
         }
     }
+
+    public function CashReport(Request $request)
+    {
+        try
+        {
+            return $this->userResponse->Success($this->reportRepository->CashReport($request));
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
+
+    public function BankReport(Request $request)
+    {
+        try
+        {
+            return $this->userResponse->Success($this->reportRepository->BankReport($request));
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
 }
