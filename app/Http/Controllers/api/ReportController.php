@@ -89,4 +89,16 @@ class ReportController extends Controller
             $this->userResponse->Exception($ex);
         }
     }
+
+    public function GetBalanceSheet()
+    {
+        try
+        {
+            return $this->userResponse->Success($this->reportRepository->GetBalanceSheet());
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
 }

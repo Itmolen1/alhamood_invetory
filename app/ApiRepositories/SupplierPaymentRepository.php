@@ -8,6 +8,7 @@ use App\ApiRepositories\Interfaces\ISupplierPaymentRepositoryInterface;
 use App\Http\Resources\SupplierPayment\SupplierPaymentResource;
 use App\Models\AccountTransaction;
 use App\Models\Bank;
+use App\Models\BankTransaction;
 use App\Models\CashTransaction;
 use App\Models\PaymentType;
 use App\Models\Purchase;
@@ -120,6 +121,28 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $cash_transaction->Credit=0.0;
             $cash_transaction->Debit=$payments->paidAmount;
             $cash_transaction->save();
+        }
+        elseif ($payments->payment_type == 'bank')
+        {
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$payments->id;
+            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->Type='Supplier Payment';
+            $bank_transaction->Credit=$payments->paidAmount;
+            $bank_transaction->Debit=0.0;
+            $bank_transaction->Flag=1;
+            $bank_transaction->save();
+        }
+        elseif ($payments->payment_type == 'cheque')
+        {
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$payments->id;
+            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->Type='Supplier Payment';
+            $bank_transaction->Credit=$payments->paidAmount;
+            $bank_transaction->Debit=0.0;
+            $bank_transaction->Flag=0;
+            $bank_transaction->save();
         }
 
         ////////////////// account section ////////////////

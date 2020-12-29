@@ -109,9 +109,9 @@
                                             <div class="form-group">
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option value="bankTransfer" {{ ($payment_receive->payment_type == "bankTransfer") ? "selected":"" }}>Bank Transfer</option>
+                                                    <option value="bank" {{ ($payment_receive->payment_type == "bankTransfer") ? "selected":"" }}>Bank Transfer</option>
                                                     <option id="cash" value="cash" {{ ($payment_receive->cash == "bankTransfer") ? "selected":"" }}>Cash</option>
-                                                    <option value="checkTransfer" {{ ($payment_receive->cash == "checkTransfer") ? "selected":"" }}>Check Transfer</option>
+                                                    <option value="cheque" {{ ($payment_receive->cash == "checkTransfer") ? "selected":"" }}>Check Transfer</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -244,10 +244,10 @@
         $(document).on("change", '#paymentType', function () {
             var cashDetails = $('#paymentType').val();
 
-            if (cashDetails === 'bankTransfer'){
+            if (cashDetails === 'bank'){
                 $('.bankTransfer').show();
             }
-            else if(cashDetails === 'checkTransfer')
+            else if(cashDetails === 'cheque')
             {
                 $('.bankTransfer').show();
             }

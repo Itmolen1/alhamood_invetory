@@ -840,6 +840,7 @@ class ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e
         'App\\MISC\\ServiceResponse' => __DIR__ . '/../..' . '/app/MISC/ServiceResponse.php',
         'App\\Models\\AccountTransaction' => __DIR__ . '/../..' . '/app/Models/AccountTransaction.php',
         'App\\Models\\Bank' => __DIR__ . '/../..' . '/app/Models/Bank.php',
+        'App\\Models\\CashTransaction' => __DIR__ . '/../..' . '/app/Models/CashTransaction.php',
         'App\\Models\\City' => __DIR__ . '/../..' . '/app/Models/City.php',
         'App\\Models\\Company' => __DIR__ . '/../..' . '/app/Models/Company.php',
         'App\\Models\\CompanyType' => __DIR__ . '/../..' . '/app/Models/CompanyType.php',

@@ -256,6 +256,7 @@ return array(
     'App\\MISC\\ServiceResponse' => $baseDir . '/app/MISC/ServiceResponse.php',
     'App\\Models\\AccountTransaction' => $baseDir . '/app/Models/AccountTransaction.php',
     'App\\Models\\Bank' => $baseDir . '/app/Models/Bank.php',
+    'App\\Models\\CashTransaction' => $baseDir . '/app/Models/CashTransaction.php',
     'App\\Models\\City' => $baseDir . '/app/Models/City.php',
     'App\\Models\\Company' => $baseDir . '/app/Models/Company.php',
     'App\\Models\\CompanyType' => $baseDir . '/app/Models/CompanyType.php',

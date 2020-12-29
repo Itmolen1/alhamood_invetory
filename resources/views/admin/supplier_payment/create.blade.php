@@ -95,9 +95,9 @@
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option disabled readonly="" selected>--Select your Payment Type--</option>
-                                                    <option value="bankTransfer">Bank Transfer</option>
+                                                    <option value="bank">Bank Transfer</option>
                                                     <option id="cash" value="cash">Cash</option>
-                                                    <option value="checkTransfer">Check Transfer</option>
+                                                    <option value="cheque">Check Transfer</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -222,10 +222,10 @@
         $(document).on("change", '#paymentType', function () {
             var cashDetails = $('#paymentType').val();
 
-            if (cashDetails === 'bankTransfer'){
+            if (cashDetails === 'bank'){
                 $('.bankTransfer').show();
             }
-            else if(cashDetails === 'checkTransfer')
+            else if(cashDetails === 'cheque')
             {
                 $('.bankTransfer').show();
             }
