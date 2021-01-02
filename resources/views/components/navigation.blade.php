@@ -155,13 +155,13 @@
 
                 <ul aria-expanded="false" class="collapse">
                     <li  class="border-bottom">
-                        <a href="#">Customer Statement</a>
+                        <a href="{{ route('GetBalanceSheet') }}">Customer Statement</a>
                     </li>
                     <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Sales Reports</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
-                            <li  class="border-bottom"><a href="app-calendar.html">Sales Date-To-Date</a></li>
-                            <li ><a href="app-calendar.html">By Vehicle Date-to-Date</a></li>
+                            <li  class="border-bottom"><a href="{{ route('SalesReport') }}">Sales Date-To-Date</a></li>
+                            <li ><a href="{{ route('SalesReportByVehicle') }}">By Vehicle Date-to-Date</a></li>
                         </ul>
 
                     </li>
@@ -169,23 +169,26 @@
                     <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Purchase Reports</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
-                            <li  class="border-bottom"><a href="app-calendar.html">Purchase Date-To-Date</a></li>
-                            <li><a href="app-calendar.html">By Vehicle Date-to-Date</a></li>
+                            <li  class="border-bottom"><a href="{{ route('PurchaseReport') }}">Purchase Date-To-Date</a></li>
                         </ul>
+                    </li>
 
+                    <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Expense Reports</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li  class="border-bottom"><a href="{{ route('ExpenseReport') }}">Expense Date-To-Date</a></li>
+                        </ul>
                     </li>
 
                     <li><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Accounts Reports</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
+
                             <li  class="border-bottom">
-                                <a href="#">Customer Statement</a>
-                            </li>
-                            <li  class="border-bottom">
-                                <a href="#">Cash Book</a>
+                                <a href="{{ route('CashReport') }}">Cash Book</a>
                             </li>
                             <li class="border-bottom">
-                                <a href="#">Bank Book</a>
+                                <a href="{{ route('BankReport') }}">Bank Book</a>
                             </li>
                             <li class="border-bottom">
                                 <a href="#">General Ledger</a>

@@ -96,8 +96,23 @@ route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 
 route::resource('supplier_payments','SupplierPaymentController');
 route::PUT('supplier_payment_push/{Id}','SupplierPaymentController@supplier_payments_push');
-route::get('supplierSaleDetails/{Id}','purchaseController@supplierSaleDetails');
+route::get('supplierSaleDetails/{Id}','PurchaseController@supplierSaleDetails');
 
+////////reports////////////
+route::get('GetBalanceSheet','ReportController@GetBalanceSheet')->name('GetBalanceSheet');
+route::get('PrintBalanceSheet','ReportController@PrintBalanceSheet')->name('PrintBalanceSheet');
+route::get('SalesReport','ReportController@SalesReport')->name('SalesReport');
+route::post('PrintSalesReport','ReportController@PrintSalesReport')->name('PrintSalesReport');
+route::get('SalesReportByVehicle','ReportController@SalesReportByVehicle')->name('SalesReportByVehicle');
+route::post('PrintSalesReportByVehicle','ReportController@PrintSalesReportByVehicle')->name('PrintSalesReportByVehicle');
+route::get('PurchaseReport','ReportController@PurchaseReport')->name('PurchaseReport');
+route::post('PrintPurchaseReport','ReportController@PrintPurchaseReport')->name('PrintPurchaseReport');
+route::get('ExpenseReport','ReportController@ExpenseReport')->name('ExpenseReport');
+route::post('PrintExpenseReport','ReportController@PrintExpenseReport')->name('PrintExpenseReport');
+route::get('CashReport','ReportController@CashReport')->name('CashReport');
+route::post('PrintCashReport','ReportController@PrintCashReport')->name('PrintCashReport');
+route::get('BankReport','ReportController@BankReport')->name('BankReport');
+route::post('PrintBankReport','ReportController@PrintBankReport')->name('PrintBankReport');
 });
 
 
