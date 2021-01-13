@@ -7,6 +7,7 @@ namespace App\WebRepositories;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Company;
 use App\Models\Customer;
+use App\Models\CustomerPrice;
 use App\Models\Region;
 use App\Models\PaymentType;
 use App\Models\PaymentTerm;
@@ -117,6 +118,21 @@ class CustomerRepository implements ICustomerRepositoryInterface
             ]);
         }
         $customer->account_transaction()->save($account);
+
+        //also add customer base price
+        $price = [
+            'Rate' =>6.00,
+            'VAT' =>0.00,
+            'customerLimit' =>0.00,
+            'user_id' =>$user_id,
+            'customer_id' =>$customer->id,
+            'company_id' =>$company_id,
+            'pricesDate' =>date('Y-m-d'),
+            'createdDate' =>date('Y-m-d'),
+            'isActive' =>1,
+        ];
+        CustomerPrice::create($price);
+
         return redirect()->route('customers.index');
     }
 

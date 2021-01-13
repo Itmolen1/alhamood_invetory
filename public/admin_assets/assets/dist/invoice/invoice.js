@@ -28,9 +28,9 @@ function isNumber(evt, element) {
 $(document).on("keyup",'.price', function () {
     var Currentrow = $(this).closest("tr");
     var QTY = Currentrow.find('.quantity').val();
-    if (parseInt(QTY) >= 0)
+    if (parseFloat(QTY) >= 0.0)
     {
-        var Total = parseInt(QTY) * parseFloat(Currentrow.find('.price').val());
+        var Total = parseFloat(QTY) * parseFloat(Currentrow.find('.price').val());
         //alert(Total);
         Currentrow.find('.total').val(Total);
     }
@@ -44,9 +44,9 @@ $(document).on("keyup",'.price', function () {
 $(document).on("keyup",'.quantity', function () {
     var Currentrow = $(this).closest("tr");
     var QTY = $(this).val();
-    if (parseInt(QTY) >= 0)
+    if (parseFloat(QTY) >= 0)
     {
-        var Total = parseInt(QTY) * parseFloat(Currentrow.find('.price').val());
+        var Total = parseFloat(QTY) * parseFloat(Currentrow.find('.price').val());
         //alert(Total);
         Currentrow.find('.total').val(Total);
     }

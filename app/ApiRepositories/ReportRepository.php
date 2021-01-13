@@ -16,6 +16,7 @@ use App\Models\Expense;
 use App\Models\Purchase;
 use App\Models\Sale;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PDF;
 
@@ -25,11 +26,32 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if($request->customer_id!='' && $request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('customer_id',' =',$request->customer_id));
+            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('customer_id',' =',$request->customer_id));
         }
         elseif ($request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate));
+            //$sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
+            $sales=SalesResource::collection(Sale::with('sale_details')->get()->whereBetween('SaleDate',[$request->fromDate,$request->toDate]));
+
+            //$row=json_decode(json_encode($sales), true);
+            //echo "<pre>123";print_r($row);die;
+//
+//            if($request->fromDate!='' && $request->toDate!='')
+//            {
+//                $date_con=' SaleDate BETWEEN "'.$request->fromDate.'" AND "'.$request->toDate.' 23:59:59"';
+//            }
+//            else
+//            {
+//                $date_con='';
+//            }
+//
+//            $sql="SELECT * FROM sales WHERE  ".$date_con."  ORDER BY id DESC ";
+//            echo $sql;die;
+//            $row = DB::select( DB::raw($sql));
+//            $row=json_decode(json_encode($row), true);
+//
+//            //$row=json_decode(json_encode($sales), true);
+//            echo "<pre>123";print_r($row);die;
         }
         else
         {
@@ -50,7 +72,7 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage('L', 'A4');$pdf::SetFont('times', '', 6);
             $pdf::SetFillColor(255,255,0);
 
 //            $pdf::SetXY(25,7);
@@ -95,16 +117,16 @@ class ReportRepository implements IReportRepositoryInterface
 
 
             $pdf::SetFont('times', 'B', 14);
-            $html = '<table border="0" cellpadding="5">
+            $html = '<table border="0.5" cellpadding="5">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="60">Invoice #</th>
-                    <th align="center" width="70">Customer</th>
+                    <th align="center" width="60">S.No.</th>
+                    <th align="center" width="200">Customer</th>
                     <th align="center" width="50">Vehicle</th>
-                    <th align="center" width="40">Qty</th>
+                    <th align="center" width="50">Qty</th>
                     <th align="center" width="40">Rate</th>
-                    <th align="center" width="45">Total</th>
-                    <th align="center" width="40">VAT</th>
-                    <th align="center" width="50">SubTotal</th>
+                    <th align="center" width="55">Total</th>
+                    <th align="center" width="50">VAT</th>
+                    <th align="center" width="60">SubTotal</th>
                     <th align="center" width="50">Paid</th>
                     <th align="center" width="50">Balance</th>
                     <th align="center" width="60">Date</th>
@@ -112,23 +134,32 @@ class ReportRepository implements IReportRepositoryInterface
                 </tr>';
             $pdf::SetFont('times', '', 10);
 
+            $VAT_sum=0.0;
+            $rowTotal_sum=0.0;
+            $qty_sum=0.0;
             $sub_total_sum=0.0;
             $paid_total_sum=0.0;
             $balance_total_sum=0.0;
+            $rowSubTotal=0.0;
+
             for($i=0;$i<count($row);$i++)
             {
                 $sub_total_sum+=$row[$i]['sale_details'][0]['rowSubTotal'];
                 $paid_total_sum+=$row[$i]['paidBalance'];
                 $balance_total_sum+=$row[$i]['remainingBalance'];
+                $qty_sum+=$row[$i]['sale_details'][0]['Quantity'];
+                $rowTotal_sum+=$row[$i]['sale_details'][0]['rowTotal'];
+                $VAT_sum+=$row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100;
+                $rowSubTotal+=$row[$i]['sale_details'][0]['rowSubTotal'];
                 $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['SaleNumber']).'</td>
-                    <td align="center" width="70">'.($row[$i]['api_customer']['Name']).'</td>
+                    <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
+                    <td align="center" width="200">'.($row[$i]['api_customer']['Name']).'</td>
                     <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
-                    <td align="right" width="40">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
+                    <td align="right" width="50">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
                     <td align="right" width="40">'.($row[$i]['sale_details'][0]['Price']).'</td>
-                    <td align="right" width="45">'.($row[$i]['sale_details'][0]['rowTotal']).'</td>
-                    <td align="right" width="40">'.($row[$i]['sale_details'][0]['VAT']).'</td>
-                    <td align="right" width="50">'.($row[$i]['sale_details'][0]['rowSubTotal']).'</td>
+                    <td align="right" width="55">'.($row[$i]['sale_details'][0]['rowTotal']).'</td>
+                    <td align="right" width="50">'.(($row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100)).'</td>
+                    <td align="right" width="60">'.($row[$i]['sale_details'][0]['rowSubTotal']).'</td>
                     <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
                     <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
                     <td align="center" width="60">'.($row[$i]['SaleDate']).'</td>
@@ -137,17 +168,32 @@ class ReportRepository implements IReportRepositoryInterface
             $html.= '
                  <tr color="red">
                      <td width="60"></td>
-                     <td width="70"></td>
+                     <td width="200"></td>
                      <td width="50"></td>
+                     <td width="50" align="right">'.number_format($qty_sum,2,'.','').'</td>
                      <td width="40"></td>
-                     <td width="40"></td>
-                     <td width="45"></td>
-                     <td width="40" align="left">Total : </td>
-                     <td width="50" align="right">'.number_format($sub_total_sum,2,'.','').'</td>
+                     <td width="55" align="right">'.number_format($rowTotal_sum,2,'.','').'</td>
+                     <td width="50" align="right">'.number_format($VAT_sum,2,'.','').'</td>
+                     <td width="60" align="right">'.number_format($rowSubTotal,2,'.','').'</td>
                      <td width="50" align="right">'.number_format($paid_total_sum,2,'.','').'</td>
                      <td width="50" align="right">'.number_format($balance_total_sum,2,'.','').'</td>
                      <td width="60" align="right"></td>
                  </tr>';
+
+            $html.='<tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="60">S.No.</th>
+                    <th align="center" width="200">Customer</th>
+                    <th align="center" width="50">Vehicle</th>
+                    <th align="center" width="50">Qty</th>
+                    <th align="center" width="40">Rate</th>
+                    <th align="center" width="55">Total</th>
+                    <th align="center" width="50">VAT</th>
+                    <th align="center" width="60">SubTotal</th>
+                    <th align="center" width="50">Paid</th>
+                    <th align="center" width="50">Balance</th>
+                    <th align="center" width="60">Date</th>
+
+                </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
@@ -169,11 +215,11 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if($request->vehicle_id!='' && $request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate));
+            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
         }
         elseif ($request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate));
+            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
         }
         else
         {
@@ -193,7 +239,7 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage('L', 'A4');$pdf::SetFont('times', '', 6);
             $pdf::SetFillColor(255,255,0);
 
             //$row=$sales->sale_details;
@@ -214,7 +260,7 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetFont('times', 'B', 14);
             $html = '<table border="0" cellpadding="5">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="60">Invoice #</th>
+                    <th align="center" width="60">S.No.</th>
                     <th align="center" width="70">Customer</th>
                     <th align="center" width="50">Vehicle</th>
                     <th align="center" width="40">Qty</th>
@@ -238,7 +284,7 @@ class ReportRepository implements IReportRepositoryInterface
                         $paid_total_sum+=$row[$i]['paidBalance'];
                         $balance_total_sum+=$row[$i]['remainingBalance'];
                         $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['SaleNumber']).'</td>
+                    <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
                     <td align="center" width="70">'.($row[$i]['api_customer']['Name']).'</td>
                     <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
                     <td align="center" width="40">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
@@ -258,7 +304,7 @@ class ReportRepository implements IReportRepositoryInterface
                     $paid_total_sum+=$row[$i]['paidBalance'];
                     $balance_total_sum+=$row[$i]['remainingBalance'];
                         $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['SaleNumber']).'</td>
+                    <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
                     <td align="center" width="70">'.($row[$i]['api_customer']['Name']).'</td>
                     <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
                     <td align="right" width="40">'.($row[$i]['sale_details'][0]['Quantity']).'</td>

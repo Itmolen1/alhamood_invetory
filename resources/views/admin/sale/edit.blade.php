@@ -236,7 +236,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <input class="btn btn-info" id="submit"  type="button" value="Update Purchase">
+                    <input class="btn btn-info" id="submit"  type="button" value="Update Sales">
                     {{--                    <button type="button" class="btn btn-info">Send message</button>--}}
                 </div>
             </div>
@@ -362,6 +362,8 @@
                                             rowTotal: currentRow.find('.total').val(),
                                             Vat: currentRow.find('.VAT').val(),
                                             rowVatAmount: currentRow.find('.singleRowVat').val(),
+                                            rowVatAmount: currentRow.find('.singleRowVat').val(),
+                                            rowSubTotal: currentRow.find('.rowTotal').val(),
                                             rowSubTotal: currentRow.find('.rowTotal').val(),
                                             PadNumber: currentRow.find('.PadNumber').val(),
                                             createdDate: currentRow.find('.createdDate').val(),
@@ -446,18 +448,19 @@
                     }
 
                     product = currentRow.find('.product').val();
-                    quantity  = currentRow.find('.quantity').val();
-                    rate = currentRow.find('.price').val();
+                    quantity  = currentRow.find(parseFloat('.quantity')).val();
+
+                    rate = currentRow.find(parseFloat('.price')).val();
                     if (parseInt(product) === 0 || product === ""){
                         //alert(product);
                         isvalid = false;
 
                     }
-                    if (parseInt(quantity) == 0 || quantity == "")
+                    if (parseFloat(quantity) == 0 || quantity == "")
                     {
                         isvalid = false;
                     }
-                    if (parseInt(rate) == 0 || rate == "")
+                    if (parseFloat(rate) == 0 || rate == "")
                     {
                         isvalid = false
                     }

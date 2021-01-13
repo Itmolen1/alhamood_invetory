@@ -14,15 +14,15 @@ class VehicleRequest extends FormRequest
     public function rules()
     {
         return [
-            'registrationNumber' => 'required'
+            'registrationNumber' => 'required|unique:vehicles'
         ];
     }
 
     public function messages()
     {
         return [
-            'Name.unique' => 'Already Exist.',
-            'Name.required' => 'Name Cannot be empty.',
+            'registrationNumber.unique' => 'Already Exist.',
+            'registrationNumber.required' => 'Name Cannot be empty.',
         ];
     }
 }

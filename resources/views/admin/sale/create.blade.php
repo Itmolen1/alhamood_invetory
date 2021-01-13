@@ -61,11 +61,11 @@
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
+                                                <th style="width: 150px">Product</th>
                                                 <th style="width: 100px">Date</th>
                                                 <th style="width: 150px">Pad #</th>
                                                 <th style="width: 200px">Customer</th>
                                                 <th style="width: 150px">Vehicle</th>
-                                                <th style="width: 150px">Product</th>
                                                 <th>Quantity</th>
                                                 <th>Unit Price</th>
                                                 <th style="width: 120px">VAT</th>
@@ -75,6 +75,16 @@
                                             </thead>
                                             <tbody id="newRow">
                                             <tr>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <select name="Product_id" class="form-control product_id slct" id="product_id">
+                                                            <option readonly="" disabled selected>--Product--</option>
+                                                            @foreach($products as $product)
+                                                                <option value="{{ $product->id }}" selected>{{ $product->Name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </td>
                                                 <td> <input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control"></td>
                                                 <td>
@@ -94,16 +104,7 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <select name="Product_id" class="form-control product_id slct" id="product_id">
-                                                            <option readonly="" disabled selected>--Product--</option>
-                                                            @foreach($products as $product)
-                                                                <option value="{{ $product->id }}">{{ $product->Name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </td>
+
                                                 <td hidden="">
                                                     <div class="form-group">
                                                         <select name="unit" id="unit" class="form-control unit_id">
@@ -122,7 +123,7 @@
                                                     </div>
                                                 </td>
                                                 <td><input type="hidden" placeholder="Total" class="rowTotal form-control">
-                                                    <input type="text" placeholder="Total" class="rowTotal form-control" disabled="disabled">
+                                                    <input type="text" placeholder="Total" class="rowTotal form-control">
                                                 </td>
 {{--                                                <td><input class=" btn btn-success addRow" id="addRow" type="button" value="+" /></td>--}}
                                             </tr>
@@ -232,7 +233,11 @@
     <!-- ============================================================== -->
     <!-- footer -->
     <!-- ============================================================== -->
-
+    <script>
+        window.onload = function () {
+            document.getElementById('customer_id').focus();
+        };
+    </script>
     <script>
         $(document).ready(function () {
 
@@ -295,13 +300,17 @@
                         $('#newRow tr').each(function () {
                             var currentRow = $(this).closest("tr");
                             if (validateRow(currentRow)) {
+                                var quantity=currentRow.find('.quantity').val();
+                                var price=currentRow.find('.price').val();
+                                quantity=parseFloat(quantity).toFixed(2);
+                                price=parseFloat(price);
                                 orderItem =
                                     {
                                         product_id: currentRow.find('.product_id').val(),
                                         unit_id: currentRow.find('.unit_id').val(),
                                         vehicle_id: currentRow.find('.vehicle_id').val(),
-                                        Quantity: currentRow.find('.quantity').val(),
-                                        Price: currentRow.find('.price').val(),
+                                        Quantity: quantity,
+                                        Price: price,
                                         rowTotal: currentRow.find('.total').val(),
                                         Vat: currentRow.find('.VAT').val(),
                                         rowVatAmount: currentRow.find('.singleRowVat').val(),
@@ -352,7 +361,7 @@
                                         window.location.href = "{{ route('sales.create') }}";
 
                                     } else {
-                                        alert(result);
+                                        alert(JSON.stringify(result));
                                     }
                                 },
                                 error: function (errormessage) {
@@ -387,17 +396,20 @@
 
                     product = currentRow.find('.product').val();
                     quantity  = currentRow.find('.quantity').val();
+                    quantity = parseFloat(quantity).toFixed(2);
                     rate = currentRow.find('.price').val();
+                    rate = parseFloat(rate).toFixed(2)
+
                     if (parseInt(product) === 0 || product === ""){
                         //alert(product);
                         isvalid = false;
 
                     }
-                    if (parseInt(quantity) == 0 || quantity == "")
+                    if (parseFloat(quantity) == 0 || quantity == "")
                     {
                         isvalid = false;
                     }
-                    if (parseInt(rate) == 0 || rate == "")
+                    if (parseFloat(rate) == 0 || rate == "")
                     {
                         isvalid = false
                     }
@@ -442,6 +454,8 @@
 
                                     var rate = result.customer_prices[0].Rate;
                                     var vat = result.customer_prices[0].VAT;
+                                    rate=parseFloat(rate).toFixed(2)
+                                    vat=parseFloat(vat).toFixed(2)
                                     totalWithCustomer(vat, rate);
 
 
