@@ -103,7 +103,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Country Name</label>
-                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Country Name">
+                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Country Name" required>
                                     @if ($errors->has('Name'))
                                         <span class="text-danger">{{ $errors->first('Name') }}</span>
                                     @endif

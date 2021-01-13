@@ -54,8 +54,8 @@
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Compnay Name</label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter company Name">
+                                                <label class="control-label">Company Name</label>
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter company Name" required>
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                 @endif

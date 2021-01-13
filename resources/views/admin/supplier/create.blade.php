@@ -55,7 +55,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Company Name</label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Supplier Company Name">
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Supplier Company Name" required>
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                 @endif
@@ -75,8 +75,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Company Type</label>
-                                                <select class="form-control custom-select" name="companyType">
-                                                    <option readonly disabled="" selected="">--Select your Company Type--</option>
+                                                <select class="form-control custom-select" name="companyType" required>
+                                                    <option value="">--Select your Company Type--</option>
                                                     @foreach ($company_types as $company_type)
                                                         <option value="{{ $company_type->id }}">{{ $company_type->Name }}</option>
                                                     @endforeach
@@ -98,8 +98,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Payment Type</label>
-                                                <select class="form-control custom-select paymentType" name="paymentType">
-                                                    <option readonly disabled="" selected="">--Select your Payment Type--</option>
+                                                <select class="form-control custom-select paymentType" name="paymentType" required>
+                                                    <option value="">--Select your Payment Type--</option>
                                                     @foreach ($payment_types as $payment)
                                                         <option value="{{ $payment->id }}">{{ $payment->Name }}</option>
                                                     @endforeach

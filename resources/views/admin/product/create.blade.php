@@ -56,7 +56,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label">Product Name</label>
-                                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Product Name">
+                                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Product Name" required >
                                                     @if ($errors->has('Name'))
                                                         <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                     @endif

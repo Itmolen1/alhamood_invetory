@@ -53,7 +53,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Supplier Name</label>
-                                                <select class="form-control custom-select supplier_id" id="supplier_id" name="supplier_id">
+                                                <select class="form-control custom-select supplier_id" id="supplier_id" name="supplier_id" >
                                                     <option readonly="" disabled selected>--Select Supplier--</option>
                                                     @foreach($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>

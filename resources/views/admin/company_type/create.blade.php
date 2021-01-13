@@ -55,7 +55,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="control-label">Company Type Name</label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Company Type Name">
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Company Type Name" required>
                                         </div>
                                         </div>
 

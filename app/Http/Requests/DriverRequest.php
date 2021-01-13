@@ -14,7 +14,7 @@ class DriverRequest extends FormRequest
     public function rules()
     {
         return [
-            'driverName' => 'required'
+            'driverName' => 'required|unique:drivers'
         ];
     }
 

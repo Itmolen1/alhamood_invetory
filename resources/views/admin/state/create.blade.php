@@ -56,7 +56,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="control-label">state Name</label>
-                                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="State Name">
+                                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="State Name" required>
                                                     @if ($errors->has('Name'))
                                                         <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                     @endif
@@ -66,8 +66,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Country Selection</label>
-                                                <select class="form-control custom-select country_id" name="country_id" id="country_id">
-                                                    <option>--Select country--</option>
+                                                <select class="form-control custom-select country_id" name="country_id" id="country_id" required>
+                                                    <option value="">--Select country--</option>
                                                     @foreach($countries as $country)
                                                         <option value="{{ $country->id }}">{{ $country->Name }}</option>
                                                     @endforeach

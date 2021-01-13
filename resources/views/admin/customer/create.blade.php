@@ -55,7 +55,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Company Name</label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Customer Company Name">
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Customer Company Name" required>
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                 @endif
@@ -164,7 +164,7 @@
                                         </div>
                                     </div>
 
-                                   
+
 
 
                                     <h3 class="box-title m-t-40">Address</h3>

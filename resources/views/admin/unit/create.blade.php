@@ -56,7 +56,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="control-label">Unit Name</label>
-                                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Unit Name">
+                                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Unit Name" required>
                                                     @if ($errors->has('Name'))
                                                         <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                     @endif
@@ -67,7 +67,7 @@
                                             <div class="form-group">
                                                 <label>Product Selection</label>
                                                 <select class="form-control custom-select product_id" name="product_id" id="product_id" required="">
-                                                    <option readonly disabled="" selected="">--Select Product--</option>
+                                                    <option value="">--Select Product--</option>
                                                     @foreach($products as $product)
                                                         <option value="{{ $product->id }}">{{ $product->Name }}</option>
                                                     @endforeach

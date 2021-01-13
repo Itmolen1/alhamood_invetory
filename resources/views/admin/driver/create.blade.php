@@ -55,7 +55,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Driver Name</label>
-                                                <input type="text" id="driverName" name="driverName" class="form-control" placeholder="Enter Driver Name">
+                                                <input type="text" id="driverName" name="driverName" class="form-control" placeholder="Enter Driver Name" required>
                                                 @if ($errors->has('driverName'))
                                                     <span class="text-danger">{{ $errors->first('driverName') }}</span>
                                                 @endif
@@ -65,8 +65,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Customer Selection</label>
-                                                <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id">
-                                                    <option>--Select Customer--</option>
+                                                <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id" required>
+                                                    <option value=""> --Select Customer--</option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
                                                     @endforeach

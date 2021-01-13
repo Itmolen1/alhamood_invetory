@@ -26,7 +26,7 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                            <li class="breadcrumb-item active">Company Term</li>
+                            <li class="breadcrumb-item active">Payment Term</li>
                         </ol>
                         <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-eye"></i> List</button>
                     </div>
@@ -43,7 +43,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header bg-info">
-                            <h4 class="m-b-0 text-white">Company term</h4>
+                            <h4 class="m-b-0 text-white">Payment term</h4>
                         </div>
                         <div class="card-body">
                             <form method="post" action="{{ route('payment_terms.store') }}">
@@ -55,7 +55,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="control-label">Payment term Name</label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Payment Term Name">
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Payment Term Name" required>
                                         </div>
                                         </div>
 

@@ -44,8 +44,8 @@
                                 <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
-                                        <th>City Name</th>
                                         <th>Region</th>
+                                        <th>City Name</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -53,12 +53,12 @@
                                     <tbody>
                                     @foreach($regions as $region)
                                         <tr>
+                                            <td>{{ $region->Name }}</td>
                                             <td>
                                                 @if(!empty($region->city->Name))
                                                    {{ $region->city->Name }}
                                                     @endif
                                             </td>
-                                            <td>{{ $region->Name }}</td>
                                             <td>
                                                 <form action="{{ route('regions.destroy',$region->id) }}" method="POST">
                                                     @csrf

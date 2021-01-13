@@ -53,8 +53,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Supplier Name</label>
-                                                <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id">
-                                                    <option>--Select Supplier--</option>
+                                                <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id" required>
+                                                    <option value="">--Select Supplier--</option>
                                                     @foreach($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>
                                                     @endforeach
@@ -65,8 +65,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Employee Name</label>
-                                                <select class="form-control custom-select employee_id select2" name="employee_id" id="employee_id">
-                                                    <option>--Select Employee--</option>
+                                                <select class="form-control custom-select employee_id select2" name="employee_id" id="employee_id" required>
+                                                    <option value="">--Select Employee--</option>
                                                     @foreach($employees as $employee)
                                                         <option value="{{ $employee->id }}">{{ $employee->Name }}</option>
                                                     @endforeach

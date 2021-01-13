@@ -55,7 +55,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Full Name</label>
-                                            <input type="text" id="name" name="name" class="form-control" placeholder="Enter Full Name">
+                                            <input type="text" id="name" name="name" class="form-control" placeholder="Enter Full Name" required>
                                         </div>
                                     </div>
 

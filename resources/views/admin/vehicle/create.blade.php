@@ -55,7 +55,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration Number</label>
-                                                <input type="text" id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number">
+                                                <input type="text" id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number" required>
                                                 @if ($errors->has('registrationNumber'))
                                                     <span class="text-danger">{{ $errors->first('registrationNumber') }}</span>
                                                 @endif
@@ -65,8 +65,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Customer Selection</label>
-                                                <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id">
-                                                    <option>--Select your Customer--</option>
+                                                <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id" required>
+                                                    <option value="">--Select your Customer--</option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
                                                     @endforeach
