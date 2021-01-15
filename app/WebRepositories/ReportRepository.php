@@ -17,6 +17,7 @@ use App\Models\Sale;
 use App\Models\Vehicle;
 use App\WebRepositories\Interfaces\IReportRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use PDF;
 
 class ReportRepository implements IReportRepositoryInterface
@@ -257,7 +258,18 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate));
+            if($request->filter=='with')
+            {
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
+            }
+            elseif($request->filter=='without')
+            {
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
+            }
+            else
+            {
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate));
+            }
         }
         else
         {
@@ -295,52 +307,46 @@ class ReportRepository implements IReportRepositoryInterface
             $vat_sum=0.0;
             $sub_total_sum=0.0;
 
-            $pdf::SetFont('times', 'B', 14);
-            $html = '<table border="0" cellpadding="5">
+            $pdf::SetFont('times', '', 8);
+            $html = '<table border="0.5" cellpadding="3">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="50">S.No.</th>
-                    <th align="center" width="80">Employee</th>
-                    <th align="center" width="60">Supplier</th>
-                    <th align="center" width="40">Pad#</th>
-                    <th align="center" width="80">Category</th>
-                    <th align="center" width="50">Desc.</th>
-                    <th align="center" width="40">Total</th>
-                    <th align="center" width="40">VAT</th>
-                    <th align="center" width="50">SubTotal</th>
-                    <th align="center" width="70">Date</th>
+                    <th align="center" width="60">Date</th>
+                    <th align="center" width="60">Expense#</th>
+                    <th align="center" width="60">Employee</th>
+                    <th align="center" width="50">Category</th>
+                    <th align="center" width="120">Vendor</th>
+                    <th align="center" width="70">TRN</th>
+                    <th align="center" width="40">Taxable</th>
+                    <th align="center" width="35">VAT</th>
+                    <th align="center" width="45">NetTotal</th>
 
                 </tr>';
-            $pdf::SetFont('times', '', 10);
             for($i=0;$i<count($row);$i++)
             {
                 $total_sum+=$row[$i]['expense_details'][0]['Total'];
-                $vat_sum+=$row[$i]['expense_details'][0]['VAT'];
+
                 $sub_total_sum+=$row[$i]['expense_details'][0]['rowSubTotal'];
+                $this_row_vat_amount=$row[$i]['expense_details'][0]['Total']*$row[$i]['expense_details'][0]['VAT']/100;
+                $vat_sum+=$this_row_vat_amount;
                 $html .='<tr>
-                    <td align="center" width="50">'.($row[$i]['expenseNumber']).'</td>
-                    <td align="center" width="80">'.($row[$i]['api_employee']['Name']).'</td>
-                    <td align="center" width="60">'.($row[$i]['api_supplier']['Name']).'</td>
-                    <td align="center" width="40">'.($row[$i]['expense_details'][0]['PadNumber']).'</td>
-                    <td align="center" width="80">'.($row[$i]['expense_details'][0]['api_expense_category']['Name']).'</td>
-                    <td align="center" width="50">'.($row[$i]['expense_details'][0]['Description']).'</td>
-                    <td align="right" width="40">'.($row[$i]['expense_details'][0]['Total']).'</td>
-                    <td align="right" width="40">'.($row[$i]['expense_details'][0]['VAT']).'</td>
-                    <td align="right" width="50">'.($row[$i]['expense_details'][0]['rowSubTotal']).'</td>
-                    <td align="center" width="70">'.($row[$i]['expenseDate']).'</td>
+                    <td align="center" width="60">'.($row[$i]['expenseDate']).'</td>
+                    <td align="center" width="60">'.($row[$i]['referenceNumber']).'</td>
+                    <td align="center" width="60">'.($row[$i]['api_employee']['Name']).'</td>
+                    <td align="center" width="50">'.($row[$i]['expense_details'][0]['api_expense_category']['Name']).'</td>
+                    <td align="center" width="120">'.($row[$i]['api_supplier']['Name']).'</td>
+                    <td align="center" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
+                    <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.','')).'</td>
+                    <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.','')).'</td>
+                    <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.','')).'</td>
+
                     </tr>';
             }
             $html.= '
              <tr color="red">
-                 <td width="50"></td>
-                 <td width="80"></td>
-                 <td width="60"></td>
-                 <td width="40"></td>
-                 <td width="80"></td>
-                 <td width="50" align="left">Total : </td>
+                 <td width="420" align="right" colspan="5">Total :</td>
                  <td width="40" align="right">'.number_format($total_sum,2,'.','').'</td>
-                 <td width="40" align="right">'.number_format($vat_sum,2,'.','').'</td>
-                 <td width="50" align="right">'.number_format($sub_total_sum,2,'.','').'</td>
-                 <td width="70" align="right"></td>
+                 <td width="35" align="right">'.number_format($vat_sum,2,'.','').'</td>
+                 <td width="45" align="right">'.number_format($sub_total_sum,2,'.','').'</td>
              </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -368,7 +374,18 @@ class ReportRepository implements IReportRepositoryInterface
         }
         elseif ($request->fromDate!='' && $request->toDate!='')
         {
-            $purchase=PurchaseResource::collection(Purchase::with('purchase_details')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
+            if($request->filter=='with')
+            {
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
+            }
+            elseif($request->filter=='without')
+            {
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
+            }
+            else
+            {
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
+            }
         }
         else
         {
@@ -619,10 +636,22 @@ class ReportRepository implements IReportRepositoryInterface
         if($request->customer_id!='' && $request->fromDate!='' && $request->toDate!='')
         {
             $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',date("y/m/d", strtotime($request->fromDate.' 23:59:59')))->where('SaleDate','<=',$request->toDate.' 23:59:59')->where('customer_id',' =',$request->customer_id));
+
         }
         elseif ($request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
+            if($request->filter=='with')
+            {
+                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '!=', 0.00)->sortBy('sale_details.'));
+            }
+            elseif($request->filter=='without')
+            {
+                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '==', 0.00)->sortBy('sale_details.'));
+            }
+            else
+            {
+                $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->sortBy('sale_details.'));
+            }
         }
         else
         {
@@ -646,6 +675,31 @@ class ReportRepository implements IReportRepositoryInterface
 
             //$row=$sales->sale_details;
             $row=json_decode(json_encode($sales), true);
+            //echo "<pre>";print_r($row);die;
+
+            // copy all data to new array and sort it according to pad number and then print
+            $new_master_array=array();
+            for($i=0;$i<count($row);$i++)
+            {
+                $master_row=array();
+                $master_row['PadNumber']=$row[$i]['sale_details'][0]['PadNumber'];
+                $master_row['Name']=$row[$i]['api_customer']['Name'];
+                $master_row['registrationNumber']=$row[$i]['sale_details'][0]['api_vehicle']['registrationNumber'];
+                $master_row['Quantity']=$row[$i]['sale_details'][0]['Quantity'];
+                $master_row['Price']=$row[$i]['sale_details'][0]['Price'];
+                $master_row['rowTotal']=$row[$i]['sale_details'][0]['rowTotal'];
+                $master_row['VAT']=($row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100);
+                $master_row['rowSubTotal']=$row[$i]['sale_details'][0]['rowSubTotal'];
+                $master_row['paidBalance']=$row[$i]['paidBalance'];
+                $master_row['remainingBalance']=$row[$i]['remainingBalance'];
+                $master_row['SaleDate']=$row[$i]['SaleDate'];
+                $new_master_array[]=$master_row;
+            }
+            $keys = array_column($new_master_array, 'PadNumber');
+            array_multisort($keys, SORT_ASC, $new_master_array);
+            $row=$new_master_array;
+
+
             //echo "<pre>123";print_r($row);die;
             $pdf::SetFont('times', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
@@ -684,27 +738,52 @@ class ReportRepository implements IReportRepositoryInterface
             $rowSubTotal=0.0;
             for($i=0;$i<count($row);$i++)
             {
-                $sub_total_sum+=$row[$i]['sale_details'][0]['rowSubTotal'];
+                $sub_total_sum+=$row[$i]['rowSubTotal'];
                 $paid_total_sum+=$row[$i]['paidBalance'];
                 $balance_total_sum+=$row[$i]['remainingBalance'];
-                $qty_sum+=$row[$i]['sale_details'][0]['Quantity'];
-                $rowTotal_sum+=$row[$i]['sale_details'][0]['rowTotal'];
-                $VAT_sum+=$row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100;
-                $rowSubTotal+=$row[$i]['sale_details'][0]['rowSubTotal'];
+                $qty_sum+=$row[$i]['Quantity'];
+                $rowTotal_sum+=$row[$i]['rowTotal'];
+                $VAT_sum+=$row[$i]['VAT'];
+                $rowSubTotal+=$row[$i]['rowSubTotal'];
                 $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
-                    <td align="center" width="200">'.($row[$i]['api_customer']['Name']).'</td>
-                    <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
-                    <td align="right" width="50">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
-                    <td align="right" width="40">'.($row[$i]['sale_details'][0]['Price']).'</td>
-                    <td align="right" width="55">'.($row[$i]['sale_details'][0]['rowTotal']).'</td>
-                    <td align="right" width="50">'.(($row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100)).'</td>
-                    <td align="right" width="60">'.($row[$i]['sale_details'][0]['rowSubTotal']).'</td>
+                    <td align="center" width="60">'.($row[$i]['PadNumber']).'</td>
+                    <td align="center" width="200">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="50">'.($row[$i]['registrationNumber']).'</td>
+                    <td align="right" width="50">'.($row[$i]['Quantity']).'</td>
+                    <td align="right" width="40">'.($row[$i]['Price']).'</td>
+                    <td align="right" width="55">'.($row[$i]['rowTotal']).'</td>
+                    <td align="right" width="50">'.($row[$i]['VAT']).'</td>
+                    <td align="right" width="60">'.($row[$i]['rowSubTotal']).'</td>
                     <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
                     <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
                     <td align="center" width="60">'.($row[$i]['SaleDate']).'</td>
                     </tr>';
             }
+
+//            for($i=0;$i<count($row);$i++)
+//            {
+//                $sub_total_sum+=$row[$i]['sale_details'][0]['rowSubTotal'];
+//                $paid_total_sum+=$row[$i]['paidBalance'];
+//                $balance_total_sum+=$row[$i]['remainingBalance'];
+//                $qty_sum+=$row[$i]['sale_details'][0]['Quantity'];
+//                $rowTotal_sum+=$row[$i]['sale_details'][0]['rowTotal'];
+//                $VAT_sum+=$row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100;
+//                $rowSubTotal+=$row[$i]['sale_details'][0]['rowSubTotal'];
+//                $html .='<tr>
+//                    <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
+//                    <td align="center" width="200">'.($row[$i]['api_customer']['Name']).'</td>
+//                    <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
+//                    <td align="right" width="50">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
+//                    <td align="right" width="40">'.($row[$i]['sale_details'][0]['Price']).'</td>
+//                    <td align="right" width="55">'.($row[$i]['sale_details'][0]['rowTotal']).'</td>
+//                    <td align="right" width="50">'.(($row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100)).'</td>
+//                    <td align="right" width="60">'.($row[$i]['sale_details'][0]['rowSubTotal']).'</td>
+//                    <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
+//                    <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
+//                    <td align="center" width="60">'.($row[$i]['SaleDate']).'</td>
+//                    </tr>';
+//            }
+
             $html.= '
                  <tr color="red">
                      <td width="60"></td>

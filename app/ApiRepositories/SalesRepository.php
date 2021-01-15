@@ -31,6 +31,34 @@ class SalesRepository implements ISalesRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
+//        $sql1="SELECT * FROM sale_details";
+//        $row1 = DB::select( DB::raw($sql1));
+//        $row1=json_decode(json_encode($row1), true);
+//        //echo "<pre>";print_r($row1);die;
+//
+//        for($i=0;$i<count($row1);$i++)
+//        {
+//            $total=$row1[$i]['Quantity']*$row1[$i]['Price'];
+//            $pad=$row1[$i]['PadNumber'];
+//            $sql="UPDATE `sale_details` SET `rowTotal`= ".$total." WHERE `PadNumber`=".$pad;
+//            DB::raw($sql);
+//            unset($total);
+//            unset($pad);
+//            unset($sql);
+//        }
+//        echo "done";die;
+//
+//        $row=json_decode(json_encode($row), true);
+//        $row=array_column($row,'id');
+//
+//        $sql1="SELECT sale_id FROM sale_details ";
+//        $row1 = DB::select( DB::raw($sql1));
+//        $row1=json_decode(json_encode($row1), true);
+//        $row1=array_column($row1,'sale_id');
+//
+//        $result=array_diff($row,$row1);
+//        echo "<pre>";print_r($result);die;
+
         return SalesResource::Collection(Sale::with('sale_details','update_notes','documents')->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
@@ -376,7 +404,8 @@ class SalesRepository implements ISalesRepositoryInterface
         $update_note->user_id = $userId;
         $update_note->save();
 
-        DB::table('sale_details')->where([['sale_id', $Id]])->delete();
+        //DB::table('sale_details')->where([['sale_id', $Id]])->delete();
+        SaleDetail::where('sale_id', array($Id))->delete();
 
         $sale_detail=json_decode($_POST['sale_details']);
         if(!empty($sale_detail))

@@ -34,11 +34,22 @@
             </div>
 
             <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Get Purchase Report</button></a>
-                        </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">VAT FILTER</label>
+                        <select name="filter" class="form-control" id="filter" required>
+                            <option value="all" selected>ALL</option>
+                            <option value="with">With VAT</option>
+                            <option value="without">Without VAT</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Purchase Report</button></a>
                     </div>
                 </div>
             </div>
@@ -51,11 +62,12 @@
         {
             var fromDate = $('#fromDate').val();
             var toDate = $('#toDate').val();
+            var filter = $("#filter option:selected").val();
             $.ajax({
                 url: "{{ URL('PrintPurchaseReport') }}",
                 type: "POST",
                 dataType : "json",
-                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate},
+                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate,filter:filter},
                 success: function (result) {
                     window.open(result.url,'_blank');
                 },
