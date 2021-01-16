@@ -12,6 +12,7 @@ use App\Models\BankTransaction;
 use App\Models\CashTransaction;
 use App\Models\CustomerAdvance;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\Purchase;
 use App\Models\Sale;
 use App\Models\Vehicle;
@@ -39,7 +40,8 @@ class ReportRepository implements IReportRepositoryInterface
 
     public function ExpenseReport()
     {
-        return view('admin.report.expense_report');
+        $expense_category= ExpenseCategory::get();
+        return view('admin.report.expense_report',compact('expense_category'));
     }
 
     public function CashReport()
@@ -278,6 +280,18 @@ class ReportRepository implements IReportRepositoryInterface
 
         if($expense)
         {
+            $row=json_decode(json_encode($expense), true);
+            $cats_ids=array();
+            $cats_name=array();
+            foreach ($row as $item)
+            {
+                $cats_ids[]=$item['expense_details'][0]['api_expense_category']['id'];
+                $cats_name[]=$item['expense_details'][0]['api_expense_category']['Name'];
+            }
+            $cats_ids=array_unique($cats_ids);
+            $cats_name=array_unique($cats_name);
+            //echo "<pre>123";print_r($cats);die;
+
             $company_title='WATAN PHARMA LLP.';
             $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
             $company_email='Email : info@alhamood.ae';
@@ -292,8 +306,6 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetFillColor(255,255,0);
 
             //$row=$sales->sale_details;
-            $row=json_decode(json_encode($expense), true);
-            //echo "<pre>123";print_r($row);die;
 
             $pdf::SetFont('times', '', 15);
             $html='Expenses';
@@ -308,7 +320,11 @@ class ReportRepository implements IReportRepositoryInterface
             $sub_total_sum=0.0;
 
             $pdf::SetFont('times', '', 8);
-            $html = '<table border="0.5" cellpadding="3">
+
+            // if category is selected as all go for this code
+            if($request->category==='all')
+            {
+                $html = '<table border="0.5" cellpadding="3">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                     <th align="center" width="60">Date</th>
                     <th align="center" width="60">Expense#</th>
@@ -321,14 +337,14 @@ class ReportRepository implements IReportRepositoryInterface
                     <th align="center" width="45">NetTotal</th>
 
                 </tr>';
-            for($i=0;$i<count($row);$i++)
-            {
-                $total_sum+=$row[$i]['expense_details'][0]['Total'];
+                for($i=0;$i<count($row);$i++)
+                {
+                    $total_sum+=$row[$i]['expense_details'][0]['Total'];
 
-                $sub_total_sum+=$row[$i]['expense_details'][0]['rowSubTotal'];
-                $this_row_vat_amount=$row[$i]['expense_details'][0]['Total']*$row[$i]['expense_details'][0]['VAT']/100;
-                $vat_sum+=$this_row_vat_amount;
-                $html .='<tr>
+                    $sub_total_sum+=$row[$i]['expense_details'][0]['rowSubTotal'];
+                    $this_row_vat_amount=$row[$i]['expense_details'][0]['Total']*$row[$i]['expense_details'][0]['VAT']/100;
+                    $vat_sum+=$this_row_vat_amount;
+                    $html .='<tr>
                     <td align="center" width="60">'.($row[$i]['expenseDate']).'</td>
                     <td align="center" width="60">'.($row[$i]['referenceNumber']).'</td>
                     <td align="center" width="60">'.($row[$i]['api_employee']['Name']).'</td>
@@ -340,16 +356,72 @@ class ReportRepository implements IReportRepositoryInterface
                     <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.','')).'</td>
 
                     </tr>';
+                }
+                $html.= '
+                 <tr color="red">
+                     <td width="420" align="right" colspan="5">Total :</td>
+                     <td width="40" align="right">'.number_format($total_sum,2,'.','').'</td>
+                     <td width="35" align="right">'.number_format($vat_sum,2,'.','').'</td>
+                     <td width="45" align="right">'.number_format($sub_total_sum,2,'.','').'</td>
+                 </tr>';
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
             }
-            $html.= '
-             <tr color="red">
-                 <td width="420" align="right" colspan="5">Total :</td>
-                 <td width="40" align="right">'.number_format($total_sum,2,'.','').'</td>
-                 <td width="35" align="right">'.number_format($vat_sum,2,'.','').'</td>
-                 <td width="45" align="right">'.number_format($sub_total_sum,2,'.','').'</td>
-             </tr>';
-            $pdf::SetFillColor(255, 0, 0);
-            $html.='</table>';
+            else
+            {
+                for($i=0;$i<count($cats_ids);$i++)
+                {
+                    $category_name=$cats_name[$i];
+                    $cat_title='<u><b>'.$category_name.'</b></u>';
+                    $pdf::SetFont('times', '', 8);
+                    $pdf::writeHTMLCell(0, 0, '', '', $cat_title,0, 1, 0, true, 'L', true);
+
+                    $html = '<table border="0.5" cellpadding="3">
+                        <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                            <th align="center" width="60">Date</th>
+                            <th align="center" width="60">Expense#</th>
+                            <th align="center" width="60">Employee</th>
+                            <th align="center" width="120">Vendor</th>
+                            <th align="center" width="70">TRN</th>
+                            <th align="center" width="40">Taxable</th>
+                            <th align="center" width="35">VAT</th>
+                            <th align="center" width="45">NetTotal</th>
+                        </tr>';
+                    for($j=0;$j<count($row);$j++)
+                    {
+                        if($cats_ids[$i]==$row[$j]['expense_details'][0]['api_expense_category']['id'])
+                        {
+                            $total_sum+=$row[$j]['expense_details'][0]['Total'];
+
+                            $sub_total_sum+=$row[$j]['expense_details'][0]['rowSubTotal'];
+                            $this_row_vat_amount=$row[$j]['expense_details'][0]['Total']*$row[$j]['expense_details'][0]['VAT']/100;
+                            $vat_sum+=$this_row_vat_amount;
+                            $html .='<tr>
+                                <td align="center" width="60">'.($row[$j]['expenseDate']).'</td>
+                                <td align="center" width="60">'.($row[$j]['referenceNumber']).'</td>
+                                <td align="center" width="60">'.($row[$j]['api_employee']['Name']).'</td>
+                                <td align="center" width="120">'.($row[$j]['api_supplier']['Name']).'</td>
+                                <td align="center" width="70">'.($row[$j]['api_supplier']['TRNNumber']).'</td>
+                                <td align="right" width="40">'.(number_format($row[$j]['expense_details'][0]['Total'],2,'.','')).'</td>
+                                <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.','')).'</td>
+                                <td align="right" width="45">'.(number_format($row[$j]['expense_details'][0]['rowSubTotal'],2,'.','')).'</td>
+                                </tr>';
+                        }
+                    }
+                    $html.= '<tr color="red">
+                             <td width="370" align="right" colspan="5">Total :</td>
+                             <td width="40" align="right">'.number_format($total_sum,2,'.','').'</td>
+                             <td width="35" align="right">'.number_format($vat_sum,2,'.','').'</td>
+                             <td width="45" align="right">'.number_format($sub_total_sum,2,'.','').'</td>
+                         </tr>';
+                    $pdf::SetFillColor(255, 0, 0);
+                    $html.='</table>';
+                }
+                //echo "<pre>";print_r($row);die;
+                //<td align="center" width="50">'.($row[$i]['expense_details'][0]['api_expense_category']['Name']).'</td>
+
+            }
+
 
             $pdf::writeHTML($html, true, false, false, false, '');
 
