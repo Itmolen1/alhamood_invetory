@@ -116,10 +116,11 @@
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
-                                                <th style="width: 100px">Date</th>
-                                                <th style="width: 150px">purchase #</th>
+{{--                                                <th style="width: 100px">Date</th>--}}
+
                                                 <th style="width: 150px">product</th>
                                                 <th style="width: 100px">Unit</th>
+                                                <th style="width: 150px">LPO #</th>
                                                 <th style="width: 150px">Description</th>
                                                 <th>quantity</th>
                                                 <th>Price</th>
@@ -131,8 +132,7 @@
                                             </thead>
                                             <tbody id="newRow">
                                             <tr>
-                                                <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ date('Y-m-d') }}" placeholder=""></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" value="{{ $PadNumber ?? 0 }}" name="PadNumber" class="PadNumber form-control"></td>
+{{--                                                <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ date('Y-m-d') }}" placeholder=""></td>--}}
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="product" class="form-control product">
@@ -150,11 +150,14 @@
                                                         </select>
                                                     </div>
                                                 </td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" value="{{ $PadNumber ?? 0 }}" name="PadNumber" class="PadNumber form-control"></td>
                                                 <td><input type="text" placeholder="Description" class="description form-control"></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
+                                                <td><input type="text"  value="0.00" placeholder="Quantity" class="quantity form-control">
+{{--                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">--}}
                                                     <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                                 </td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" class="price form-control"></td>
+                                                <td><input type="text" value="0.00" placeholder="Price" class="price form-control"></td>
+{{--                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" class="price form-control"></td>--}}
                                                 <td><input type="text" onfocus="this.value=''"  placeholder="Total" class="total form-control" disabled>
                                                     <input type="hidden" onClick="this.select();"  placeholder="Total" class="total form-control">
                                                 </td>

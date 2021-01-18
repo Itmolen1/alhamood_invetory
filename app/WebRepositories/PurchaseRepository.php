@@ -29,10 +29,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 //        $purchases = Purchase::with('purchase_details','supplier')->get();
         if(request()->ajax())
         {
-            return datatables()->of(Purchase::with('purchase_details.product','supplier')->latest()->get())
+            return datatables()->of(Purchase::with('purchase_details.product','supplier')->where('company_id',session('company_id'))->latest()->get())
 
                 ->addColumn('action', function ($data) {
-
                     $button = '<a href="'.route('purchases.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
 //                    $button .='<a href="javascript:void(0)"  onclick="return'. get_pdf($data->id).'"  class=" btn btn-secondary btn-sm"><i style="font-size: 20px" class="fa fa-file-pdf-o"></i></a>';
                     return $button;
@@ -150,7 +149,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     "company_id" => $company_id,
                     "user_id"      => $user_id,
                     "purchase_id"      => $purchase,
-                    "createdDate" => $detail['createdDate'],
+                    "createdDate" => $purchaseRequest->Data['PurchaseDate'],
                 ]);
             }
 
@@ -509,8 +508,13 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         // TODO: Implement PadNumber() method.
 
+//        $PadNumber = new PurchaseDetail();
+//        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        $newPad = ($lastPad + 1);
+//        return $newPad;
+
         $PadNumber = new PurchaseDetail();
-        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
         $newPad = ($lastPad + 1);
         return $newPad;
     }
@@ -687,8 +691,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     public function supplierSaleDetails($Id)
     {
         // TODO: Implement supplierSaleDetails() method.
-        $sales = Purchase::with('supplier','purchase_details')
-            ->where([
+        $sales = Purchase::with('supplier','purchase_details')->where([
                 'supplier_id'=>$Id,
                 'IsPaid'=> false,
             ])->get();

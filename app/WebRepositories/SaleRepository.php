@@ -25,10 +25,11 @@ class SaleRepository implements ISaleRepositoryInterface
 
     public function index()
     {
+        //$current_user_company=session('company_id');
         // TODO: Implement index() method.
         if(request()->ajax())
         {
-            return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->latest()->get())
+            return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->where('company_id',session('company_id'))->latest()->get())
 
                 ->addColumn('action', function ($data) {
 
@@ -80,7 +81,7 @@ class SaleRepository implements ISaleRepositoryInterface
         $PadNumber = $this->PadNumber();
         $customers = Customer::with('customer_prices')->get();
         $products = Product::all();
-        $salesRecords = Sale::with('sale_details.vehicle','customer')->orderBy('id', 'desc')->skip(0)->take(3)->get();
+        $salesRecords = Sale::with('sale_details.vehicle','customer')->where('company_id',session('company_id'))->orderBy('id', 'desc')->skip(0)->take(3)->get();
         //dd($saleNo);
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','PadNumber'));
     }
@@ -495,10 +496,14 @@ class SaleRepository implements ISaleRepositoryInterface
 
     public function PadNumber()
     {
-        // TODO: Implement PadNumber() method.
+//        $PadNumber = new SaleDetail();
+//        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        $newPad = ($lastPad + 1);
+//        return $newPad;
 
+        //new pad number generation according to company last pad
         $PadNumber = new SaleDetail();
-        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
         $newPad = ($lastPad + 1);
         return $newPad;
     }

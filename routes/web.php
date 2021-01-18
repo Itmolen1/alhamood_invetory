@@ -105,6 +105,8 @@ route::get('SalesReport','ReportController@SalesReport')->name('SalesReport');
 route::post('PrintSalesReport','ReportController@PrintSalesReport')->name('PrintSalesReport');
 route::get('SalesReportByVehicle','ReportController@SalesReportByVehicle')->name('SalesReportByVehicle');
 route::post('PrintSalesReportByVehicle','ReportController@PrintSalesReportByVehicle')->name('PrintSalesReportByVehicle');
+route::get('SalesReportByCustomer','ReportController@SalesReportByCustomer')->name('SalesReportByCustomer');
+route::post('PrintSalesReportByCustomer','ReportController@PrintSalesReportByCustomer')->name('PrintSalesReportByCustomer');
 route::get('PurchaseReport','ReportController@PurchaseReport')->name('PurchaseReport');
 route::post('PrintPurchaseReport','ReportController@PrintPurchaseReport')->name('PrintPurchaseReport');
 route::get('ExpenseReport','ReportController@ExpenseReport')->name('ExpenseReport');

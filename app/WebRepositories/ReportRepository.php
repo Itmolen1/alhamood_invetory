@@ -10,6 +10,7 @@ use App\Http\Resources\Purchase\PurchaseResource;
 use App\Http\Resources\Sales\SalesResource;
 use App\Models\BankTransaction;
 use App\Models\CashTransaction;
+use App\Models\Customer;
 use App\Models\CustomerAdvance;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
@@ -58,6 +59,350 @@ class ReportRepository implements IReportRepositoryInterface
     {
         $vehicles = Vehicle::all();
         return view('admin.report.sales_report_by_vehicle',compact('vehicles'));
+    }
+
+    public function SalesReportByCustomer()
+    {
+        $customers = Customer::where('company_id',session('company_id'))->get();
+        return view('admin.report.sales_report_by_customer',compact('customers'));
+    }
+
+    public function PrintSalesReportByCustomer(Request $request)
+    {
+        if ($request->fromDate!='' && $request->toDate!='' &&  $request->customer_id!='all')
+        {
+            if($request->filter=='with')
+            {
+                $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('customer_id','==',$request->customer_id)->where('totalVat', '!=', 0.00));
+            }
+            elseif($request->filter=='without')
+            {
+                $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('customer_id','==',$request->customer_id)->where('totalVat', '==', 0.00));
+            }
+            else
+            {
+                $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('customer_id','==',$request->customer_id));
+            }
+        }
+        else
+        {
+            if($request->filter=='with')
+            {
+                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '!=', 0.00));
+            }
+            elseif($request->filter=='without')
+            {
+                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '==', 0.00));
+            }
+            else
+            {
+                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate));
+            }
+        }
+        //echo "<pre>";print_r($sales);die;
+
+        if(!$sales->isEmpty())
+        {
+            $row=json_decode(json_encode($sales), true);
+
+            $company_title='WATAN PHARMA LLP.';
+            $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
+            $company_email='Email : info@alhamood.ae';
+            $company_mobile='Mobile : +971-25550870  +971-557383866  +971-569777861';
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            $pdf::SetFont('times', '', 12);
+            $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
+
+            $pdf::SetFont('times', '', 15);
+            $html='SALES REPORT';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+
+            $pdf::SetFont('times', 'B', 8);
+            if($request->customer_id==='all')
+            {
+                //for customer selection
+                $customer_ids=array();
+                $customer_name=array();
+                foreach ($row as $item)
+                {
+                    $customer_ids[]=$item['api_customer']['id'];
+                    $customer_name[]=$item['api_customer']['Name'];
+                }
+                $customer_ids=array_unique($customer_ids);
+                $customer_name=array_unique($customer_name);
+                $customer_ids=array_values($customer_ids);
+                $customer_name=array_values($customer_name);
+
+                for($i=0;$i<count($customer_ids);$i++)
+                {
+                    $sub_total_sum=0.0;
+                    $paid_total_sum=0.0;
+                    $balance_total_sum=0.0;
+                    $vat_sum=0.0;
+                    $qty_sum=0.0;
+
+                    $customer_title='<u><b>'.'Customer :- '.$customer_name[$i].'</b></u>';
+                    $pdf::SetFont('times', 'B', 10);
+                    $pdf::writeHTMLCell(0, 0, '', '', $customer_title,0, 1, 0, true, 'L', true);
+
+                    $pdf::SetFont('times', '', 8);
+                    //code will come here
+                    $html = '<table border="0.5" cellpadding="3">
+                    <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                        <th align="center" width="60">S.No.</th>
+                        <th align="center" width="50">Vehicle</th>
+                        <th align="center" width="40">Qty</th>
+                        <th align="center" width="40">Rate</th>
+                        <th align="center" width="45">Total</th>
+                        <th align="center" width="40">VAT</th>
+                        <th align="center" width="50">SubTotal</th>
+                        <th align="center" width="50">Paid</th>
+                        <th align="center" width="50">Balance</th>
+                        <th align="center" width="60">Date</th>
+                    </tr>';
+                    for ($j=0;$j<count($row);$j++)
+                    {
+                        if ($customer_ids[$i]==$row[$j]['api_customer']['id'])
+                        {
+                            $sub_total_sum += $row[$j]['sale_details'][0]['rowSubTotal'];
+                            $paid_total_sum += $row[$j]['paidBalance'];
+                            $balance_total_sum += $row[$j]['remainingBalance'];
+                            $current_vat_amount = $row[$j]['sale_details'][0]['rowTotal'] * $row[$j]['sale_details'][0]['VAT'] / 100;
+                            $vat_sum += $current_vat_amount;
+                            $qty_sum += $row[$j]['sale_details'][0]['Quantity'];
+                            $html .= '<tr>
+                                <td align="center" width="60">' . ($row[$j]['sale_details'][0]['PadNumber']) . '</td>
+                                <td align="center" width="50">' . ($row[$j]['sale_details'][0]['api_vehicle']['registrationNumber']) . '</td>
+                                <td align="right" width="40">' . ($row[$j]['sale_details'][0]['Quantity']) . '</td>
+                                <td align="center" width="40">' . ($row[$j]['sale_details'][0]['Price']) . '</td>
+                                <td align="center" width="45">' . ($row[$j]['sale_details'][0]['rowTotal']) . '</td>
+                                <td align="right" width="40">' . (number_format($current_vat_amount, 2, '.', '')) . '</td>
+                                <td align="right" width="50">' . ($row[$j]['sale_details'][0]['rowSubTotal']) . '</td>
+                                <td align="right" width="50">' . ($row[$j]['paidBalance']) . '</td>
+                                <td align="right" width="50">' . ($row[$j]['remainingBalance']) . '</td>
+                                <td align="center" width="60">' . ($row[$j]['SaleDate']) . '</td>
+                                </tr>';
+                        }
+                    }
+                    $html .= '
+                         <tr color="red">
+                             <td width="110" align="right" colspan="2">Total : </td>
+                             <td width="40" align="right">'. number_format($qty_sum, 2, '.', '') .'</td>
+                             <td width="40"></td>
+                             <td width="45"></td>
+                             <td width="40" align="right">'. number_format($vat_sum, 2, '.', '') .'</td>
+                             <td width="50" align="right">'. number_format($sub_total_sum, 2, '.', '') .'</td>
+                             <td width="50" align="right">'. number_format($paid_total_sum, 2, '.', '') .'</td>
+                             <td width="50" align="right">'. number_format($balance_total_sum, 2, '.', '') .'</td>
+                             <td width="60" align="right"></td>
+                         </tr>';
+                    $pdf::SetFillColor(255, 0, 0);
+                    $html .= '</table>';
+                    //code will come here
+
+                    $pdf::writeHTML($html, true, false, false, false, '');
+                }
+            }
+            else
+            {
+                if($request->vehicle_id==='all')
+                {
+                    //for customer selection
+                    $customer_ids=array();
+                    $customer_name=array();
+                    foreach ($row as $item)
+                    {
+                        $customer_ids[]=$item['api_customer']['id'];
+                        $customer_name[]=$item['api_customer']['Name'];
+                    }
+                    $customer_ids=array_unique($customer_ids);
+                    $customer_name=array_unique($customer_name);
+                    $customer_ids=array_values($customer_ids);
+                    $customer_name=array_values($customer_name);
+
+                    for($i=0;$i<count($customer_ids);$i++)
+                    {
+                        $sub_total_sum=0.0;
+                        $paid_total_sum=0.0;
+                        $balance_total_sum=0.0;
+                        $vat_sum=0.0;
+                        $qty_sum=0.0;
+
+                        $customer_title='<u><b>'.'Customer :- '.$customer_name[$i].'</b></u>';
+                        $pdf::SetFont('times', 'B', 10);
+                        $pdf::writeHTMLCell(0, 0, '', '', $customer_title,0, 1, 0, true, 'L', true);
+
+                        $pdf::SetFont('times', '', 8);
+
+                        //code will come here
+                        $html = '<table border="0.5" cellpadding="3">
+                        <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                            <th align="center" width="60">S.No.</th>
+                            <th align="center" width="50">Vehicle</th>
+                            <th align="center" width="40">Qty</th>
+                            <th align="center" width="40">Rate</th>
+                            <th align="center" width="45">Total</th>
+                            <th align="center" width="40">VAT</th>
+                            <th align="center" width="50">SubTotal</th>
+                            <th align="center" width="50">Paid</th>
+                            <th align="center" width="50">Balance</th>
+                            <th align="center" width="60">Date</th>
+                        </tr>';
+                        for ($j=0;$j<count($row);$j++)
+                        {
+                            if ($customer_ids[$i]==$row[$j]['api_customer']['id'])
+                            {
+                                $sub_total_sum += $row[$j]['sale_details'][0]['rowSubTotal'];
+                                $paid_total_sum += $row[$j]['paidBalance'];
+                                $balance_total_sum += $row[$j]['remainingBalance'];
+                                $current_vat_amount = $row[$j]['sale_details'][0]['rowTotal'] * $row[$j]['sale_details'][0]['VAT'] / 100;
+                                $vat_sum += $current_vat_amount;
+                                $qty_sum+=$row[$j]['sale_details'][0]['Quantity'];
+                                $html .= '<tr>
+                                <td align="center" width="60">' . ($row[$j]['sale_details'][0]['PadNumber']) . '</td>
+                                <td align="center" width="50">' . ($row[$j]['sale_details'][0]['api_vehicle']['registrationNumber']) . '</td>
+                                <td align="right" width="40">' . ($row[$j]['sale_details'][0]['Quantity']) . '</td>
+                                <td align="center" width="40">' . ($row[$j]['sale_details'][0]['Price']) . '</td>
+                                <td align="center" width="45">' . ($row[$j]['sale_details'][0]['rowTotal']) . '</td>
+                                <td align="right" width="40">' . (number_format($current_vat_amount, 2, '.', '')) . '</td>
+                                <td align="right" width="50">' . ($row[$j]['sale_details'][0]['rowSubTotal']) . '</td>
+                                <td align="right" width="50">' . ($row[$j]['paidBalance']) . '</td>
+                                <td align="right" width="50">' . ($row[$j]['remainingBalance']) . '</td>
+                                <td align="center" width="60">' . ($row[$j]['SaleDate']) . '</td>
+                                </tr>';
+                            }
+                        }
+                        $html .= '
+                         <tr color="red">
+                             <td width="110" align="right" colspan="2">Total : </td>
+                             <td width="40" align="right">'. number_format($qty_sum, 2, '.', '') .'</td>
+                             <td width="40"></td>
+                             <td width="45"></td>
+                             <td width="40" align="right">'. number_format($vat_sum, 2, '.', '') .'</td>
+                             <td width="50" align="right">'. number_format($sub_total_sum, 2, '.', '') .'</td>
+                             <td width="50" align="right">'. number_format($paid_total_sum, 2, '.', '') .'</td>
+                             <td width="50" align="right">'. number_format($balance_total_sum, 2, '.', '') .'</td>
+                             <td width="60" align="right"></td>
+                         </tr>';
+                        $pdf::SetFillColor(255, 0, 0);
+                        $html .= '</table>';
+                        //code will come here
+
+                        $pdf::writeHTML($html, true, false, false, false, '');
+                    }
+                }
+                else
+                {
+                    //for vehicle selection
+                    $veh_ids=array();
+                    $veh_name=array();
+                    foreach ($row as $item)
+                    {
+                        if($item['sale_details'][0]['api_vehicle']['id']==$request->vehicle_id)
+                        {
+                            $veh_ids[]=$item['sale_details'][0]['api_vehicle']['id'];
+                            $veh_name[]=$item['sale_details'][0]['api_vehicle']['registrationNumber'];
+                        }
+                    }
+                    $veh_ids=array_unique($veh_ids);
+                    $veh_name=array_unique($veh_name);
+
+                    for($i=0;$i<count($veh_ids);$i++)
+                    {
+                        $sub_total_sum=0.0;
+                        $paid_total_sum=0.0;
+                        $balance_total_sum=0.0;
+                        $vat_sum=0.0;
+                        $qty_sum=0.0;
+
+                        $vehicle_name=$veh_name[$i];
+                        $veh_title='<u><b>'.'Vehicle :- '.$vehicle_name.'</b></u>';
+                        $pdf::SetFont('times', 'B', 10);
+                        $pdf::writeHTMLCell(0, 0, '', '', $veh_title,0, 1, 0, true, 'L', true);
+                        $pdf::SetFont('times', '', 8);
+
+                        $html = '<table border="0.5" cellpadding="3">
+                        <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                            <th align="center" width="50">S.No.</th>
+                            <th align="center" width="140">Customer</th>
+                            <th align="center" width="40">Qty</th>
+                            <th align="center" width="40">Rate</th>
+                            <th align="center" width="45">Total</th>
+                            <th align="center" width="40">VAT</th>
+                            <th align="center" width="50">SubTotal</th>
+                            <th align="center" width="50">Paid</th>
+                            <th align="center" width="50">Balance</th>
+                            <th align="center" width="50">Date</th>
+                        </tr>';
+
+                        for($j=0;$j<count($row);$j++)
+                        {
+                            if($veh_ids[$i]==$row[$j]['sale_details'][0]['api_vehicle']['id'])
+                            {
+                                $sub_total_sum += $row[$j]['sale_details'][0]['rowSubTotal'];
+                                $paid_total_sum += $row[$j]['paidBalance'];
+                                $balance_total_sum += $row[$j]['remainingBalance'];
+                                $current_vat_amount=$row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100;
+                                $vat_sum+=$current_vat_amount;
+                                $qty_sum+=$row[$j]['sale_details'][0]['Quantity'];
+                                $html .= '<tr>
+                                <td align="center" width="50">' . ($row[$j]['sale_details'][0]['PadNumber']) . '</td>
+                                <td align="center" width="140">' . ($row[$j]['api_customer']['Name']) . '</td>
+                                <td align="right" width="40">' . ($row[$j]['sale_details'][0]['Quantity']) . '</td>
+                                <td align="center" width="40">' . ($row[$j]['sale_details'][0]['Price']) . '</td>
+                                <td align="center" width="45">' . ($row[$j]['sale_details'][0]['rowTotal']) . '</td>
+                                <td align="center" width="40">' . ($current_vat_amount) . '</td>
+                                <td align="center" width="50">' . ($row[$j]['sale_details'][0]['rowSubTotal']) . '</td>
+                                <td align="center" width="50">' . ($row[$j]['paidBalance']) . '</td>
+                                <td align="center" width="50">' . ($row[$j]['remainingBalance']) . '</td>
+                                <td align="center" width="50">' . ($row[$j]['SaleDate']) . '</td>
+                                </tr>';
+                            }
+                        }
+                        $html .= '<tr color="red">
+                             <td width="190" colspan="2">Total : </td>
+                             <td width="40" align="right">'.number_format($qty_sum, 2, '.', '').'</td>
+                             <td width="40"></td>
+                             <td width="45"></td>
+                             <td width="40" align="left">' . number_format($vat_sum, 2, '.', '') . '</td>
+                             <td width="50" align="right">' . number_format($sub_total_sum, 2, '.', '') . '</td>
+                             <td width="50" align="right">' . number_format($paid_total_sum, 2, '.', '') . '</td>
+                             <td width="50" align="right">' . number_format($balance_total_sum, 2, '.', '') . '</td>
+                             <td width="50" align="right"></td>
+                        </tr>';
+                        $pdf::SetFillColor(255, 0, 0);
+                        $html .= '</table>';
+                        $pdf::writeHTML($html, true, false, false, false, '');
+                    }
+                    //for vehicle selection
+                }
+            }
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
     }
 
     public function PrintBankReport(Request $request)

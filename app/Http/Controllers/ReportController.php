@@ -45,6 +45,16 @@ class ReportController extends Controller
         return $this->reportRepository->PrintSalesReportByVehicle($request);
     }
 
+    public function SalesReportByCustomer()
+    {
+        return $this->reportRepository->SalesReportByCustomer();
+    }
+
+    public function PrintSalesReportByCustomer(Request $request)
+    {
+        return $this->reportRepository->PrintSalesReportByCustomer($request);
+    }
+
     public function PurchaseReport()
     {
         return $this->reportRepository->PurchaseReport();

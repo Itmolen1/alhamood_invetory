@@ -146,7 +146,7 @@
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
-                                                <th style="width: 100px">Date</th>
+{{--                                                <th style="width: 100px">Date</th>--}}
                                                 <th style="width: 150px">Voucher Number</th>
                                                 <th style="width: 150px">Category</th>
                                                 <th style="width: 300px">Description</th>
@@ -160,7 +160,7 @@
                                             @foreach($expense_details as $details)
                                                 @if(!is_null($details->deleted_at))
                                                     <tr style="text-decoration: line-through; color:red">
-                                                        <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->expenseDate }}" placeholder=""></td>
+{{--                                                        <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->expenseDate }}" placeholder=""></td>--}}
                                                         <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="expense_category" value="{{ $details->expense_category->Name ?? 0 }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Description" value="{{ $details->Description }}" class=" form-control"></td>
@@ -179,7 +179,7 @@
                                             @foreach($expense_details as $details)
                                                 @if(is_null($details->deleted_at))
                                                     <tr>
-                                                        <td> <input type="date" value="{{ $details->expenseDate }}"name="expenseDate" id="expenseDate" class="form-control expenseDate" placeholder=""></td>
+{{--                                                        <td> <input type="date" value="{{ $details->expenseDate }}"name="expenseDate" id="expenseDate" class="form-control expenseDate" placeholder=""></td>--}}
                                                         <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber }}" placeholder="Pad Number" name="padNumber" class="padNumber form-control"></td>
                                                         <td>
                                                             <div class="form-group">

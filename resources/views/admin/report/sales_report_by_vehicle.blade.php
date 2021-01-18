@@ -31,6 +31,8 @@
                         <input type="date" value="{{ date('Y-m-d') }}" id="toDate" name="toDate" class="form-control" placeholder="dd/mm/yyyy" required>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Vehicle</label>
@@ -47,11 +49,9 @@
             </div>
 
             <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Get Sales Report</button></a>
-                        </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info "><i class="fa fa-plus-circle"></i> Get Sales Report</button></a>
                     </div>
                 </div>
             </div>

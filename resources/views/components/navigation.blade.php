@@ -138,9 +138,9 @@
                     <li class="border-bottom">
                         <a href="#">Conta Voucher</a>
                     </li> -->
-                    <li class="border-bottom">
-                        <a href="#">Journal Voucher</a>
-                    </li>
+{{--                    <li class="border-bottom">--}}
+{{--                        <a href="#">Journal Voucher</a>--}}
+{{--                    </li>--}}
                     {{--<li class="border-bottom">--}}
                         {{--<a href="#"> Voucher Approval</a>--}}
                     {{--</li>--}}
@@ -162,6 +162,7 @@
                         <ul aria-expanded="false" class="collapse">
                             <li  class="border-bottom"><a href="{{ route('SalesReport') }}">Sales Date-To-Date</a></li>
                             <li ><a href="{{ route('SalesReportByVehicle') }}">By Vehicle Date-to-Date</a></li>
+                            <li ><a href="{{ route('SalesReportByCustomer') }}">By Customer Date-to-Date</a></li>
                         </ul>
 
                     </li>

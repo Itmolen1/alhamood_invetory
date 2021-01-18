@@ -23,7 +23,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
     public function index()
     {
         // TODO: Implement index() method.
-        $expenses = Expense::with('expense_details.expense_category','supplier')->get();
+        $expenses = Expense::with('expense_details.expense_category','supplier')->where('company_id',session('company_id'))->get();
        // dd($expenses);
         return view('admin.expense.index',compact('expenses'));
     }
@@ -78,7 +78,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
 
                 $data =  ExpenseDetail::create([
                     "Total"        => $detail['Total'],
-                    "expenseDate"        => $detail['expenseDate'],
+                    "expenseDate"        => $expenseRequest->Data['expenseDate'],
                     "expense_category_id"        => $detail['expense_category_id'],
                     "Description"        => $detail['description'],
                     "Vat"        => $detail['Vat'],
@@ -424,10 +424,13 @@ class ExpensesRepository implements IExpensesRepositoryInterface
 
     public function PadNumber()
     {
-        // TODO: Implement PadNumber() method.
+//        $PadNumber = new ExpenseDetail();
+//        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        $newPad = ($lastPad + 1);
+//        return $newPad;
 
         $PadNumber = new ExpenseDetail();
-        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
         $newPad = ($lastPad + 1);
         return $newPad;
     }

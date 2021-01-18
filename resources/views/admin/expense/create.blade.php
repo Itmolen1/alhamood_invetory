@@ -46,13 +46,13 @@
                             <h4 class="m-b-0 text-white">Expenses</h4>
                         </div>
                         <div class="card-body">
-                            <form action="#">
+                            <form action="#" id="add_expense" name="add_expense">
                                 <div class="form-body">
 
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Supplier Name</label>
+                                                <label>Supplier Name :- *</label>
                                                 <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id" required>
                                                     <option value="">--Select Supplier--</option>
                                                     @foreach($suppliers as $supplier)
@@ -64,7 +64,7 @@
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Employee Name</label>
+                                                <label>Employee Name :- *</label>
                                                 <select class="form-control custom-select employee_id select2" name="employee_id" id="employee_id" required>
                                                     <option value="">--Select Employee--</option>
                                                     @foreach($employees as $employee)
@@ -91,7 +91,7 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Expense date</label>
+                                                <label class="control-label">Expense date :- *</label>
                                                 <input type="date" name="expenseDate" id="expenseDate" class="form-control" value="{{ date('Y-m-d') }}" placeholder="dd/mm/yyyy">
                                             </div>
                                             <div class="row">
@@ -105,8 +105,8 @@
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label class="control-label">Reference Number</label>
-                                                        <input type="text" class="form-control" id="referenceNumber" name="referenceNumner" placeholder="Reference Number">
+                                                        <label class="control-label">Reference Number:- *</label>
+                                                        <input type="text" class="form-control" id="referenceNumber" name="referenceNumner" placeholder="Reference Number" required>
                                                     </div>
                                                 </div>
 
@@ -121,7 +121,7 @@
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
-                                                <th style="width: 100px">Date</th>
+{{--                                                <th style="width: 100px">Date</th>--}}
                                                 <th style="width: 150px">Voucher Number</th>
                                                 <th style="width: 150px">Category</th>
                                                 <th style="width: 300px">Description</th>
@@ -133,7 +133,7 @@
                                             </thead>
                                             <tbody id="newRow">
                                             <tr>
-                                                <td> <input type="date" value="{{ date('Y-m-d') }}" name="expenseDetailDate" id="expenseDetailDate" class="form-control expenseDetailDate" placeholder=""></td>
+{{--                                                <td> <input type="date" value="{{ date('Y-m-d') }}" name="expenseDetailDate" id="expenseDetailDate" class="form-control expenseDetailDate" placeholder=""></td>--}}
                                                 <td><input type="text" placeholder="" value="{{ $PadNumber }}" name="padNumber" class="padNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
@@ -221,92 +221,183 @@
 
     <script>
 
+        function DoTrim(strComp) {
+            ltrim = /^\s+/
+            rtrim = /\s+$/
+            strComp = strComp.replace(ltrim, '');
+            strComp = strComp.replace(rtrim, '');
+            return strComp;
+        }
 
+        function validateForm()
+        {
+            /*validation*/
+
+            var fields;
+            fields = "";
+
+            // if (document.add_expense.supplier_id.selectedIndex=="")
+            // {
+            //     if(fields != 1)
+            //     {
+            //         document.getElementById("supplier_id").focus();
+            //     }
+            //     fields = '1';
+            //     $("#supplier_id").addClass("error");
+            // }
+
+            // if (document.add_expense.employee_id.selectedIndex=="")
+            // {
+            //     if(fields != 1)
+            //     {
+            //         document.getElementById("employee_id").focus();
+            //     }
+            //     fields = '1';
+            //     $("#employee_id").addClass("error");
+            // }
+
+            if (DoTrim(document.getElementById('referenceNumber').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("referenceNumber").focus();
+                }
+                fields = '1';
+                $("#referenceNumber").addClass("error");
+            }
+
+            // if (DoTrim(document.getElementById('reservation_from_date').value).length == 0)
+            // {
+            //     if(fields != 1)
+            //     {
+            //         document.getElementById("reservation_from_date").focus();
+            //     }
+            //     fields = '1';
+            //     $("#reservation_from_date").addClass("error");
+            // }
+
+            // if (DoTrim(document.getElementById('reservation_to_date').value).length == 0)
+            // {
+            //     if(fields != 1)
+            //     {
+            //         document.getElementById("reservation_to_date").focus();
+            //     }
+            //     fields = '1';
+            //     $("#reservation_to_date").addClass("error");
+            // }
+
+            // if ($('input[name="vat_per_session"]:checked').length == 0)
+            // {
+            //     if(fields != 1)
+            //     {
+            //         document.getElementById("vat_per_session").focus();
+            //     }
+            //     fields = '1';
+            //     $("#vat_per_session").addClass("error");
+            // }
+            if (fields != "")
+            {
+                fields = "Please fill in the following details:" + fields;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            /*validation*/
+        }
         $(document).ready(function () {
             /////////////// Add Record //////////////////////
             $('#submit').click(function () {
-                $('#submit').text('please wait...');
-                $('#submit').attr('disabled',true);
-                var supplierNew = $('.supplier_id').val();
-                //alert(supplierNew);
-                if (supplierNew != null)
-                {
-                    var insert = [], orderItem = [], nonArrayData = "";
-                    $('#newRow tr').each(function () {
-                        var currentRow = $(this).closest("tr");
-                        if (validateRow(currentRow)) {
-                            orderItem =
-                                {
-                                    Total: currentRow.find('.total').val(),
-                                    expenseDate: currentRow.find('.expenseDetailDate').val(),
-                                    expense_category_id: currentRow.find('.expense_category_id').val(),
-                                    description: currentRow.find('.description').val(),
-                                    Vat: currentRow.find('.VAT').val(),
-                                    rowVatAmount: currentRow.find('.singleRowVat').val(),
-                                    rowSubTotal: currentRow.find('.rowTotal').val(),
-                                    padNumber: currentRow.find('.padNumber').val(),
-                                };
-                            insert.push(orderItem);
-                        }
-                        else
-                        {
-                            return false;
-                        }
 
-                    });
-                    let details = {
-                        expenseNumber: $('#expenseNumber').val(),
-                        referenceNumber: $('#referenceNumber').val(),
-                        expenseDate: $('#expenseDate').val(),
-                        Total: $('.total').val(),
-                        subTotal: $('.rowTotal').val(),
-                        totalVat: $('.TotalVat').val(),
-                        grandTotal: $('.GTotal').val(),
-                        paidBalance: $('.cashPaid').val(),
-                        remainingBalance: $('.balance').val(),
-                        supplier_id:$('#supplier_id').val(),
-                        supplierNote:$('#mainDescription').val(),
-                        employee_id:$('#employee_id').val(),
-                        orders: insert,
-                    }
-                    // var Datas = {Data: details}
-                    //console.log(Datas);
-                    if (insert.length > 0) {
-                        $.ajaxSetup({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            }
-                        });
-                        var Datas = {Data: details};
-                       // console.log(Datas);
-                        $.ajax({
-                            url: "{{ route('expenses.store') }}",
-                            type: "post",
-                            data: Datas,
-                            success: function (result) {
-                                if (result !== "Failed") {
-                                    details = [];
-                                    //console.log(result);
-                                    alert("Data Inserted Successfully");
-                                    window.location.href = "{{ route('expenses.index') }}";
-                                } else {
-                                    alert(result);
-                                }
-                            },
-                            error: function (errormessage) {
-                                alert(errormessage);
-                            }
-                        });
-                    } else
+                if(validateForm())
+                {
+                    $('#submit').text('please wait...');
+                    $('#submit').attr('disabled',true);
+                    var supplierNew = $('.supplier_id').val();
+                    //alert(supplierNew);
+                    if (supplierNew != null)
                     {
-                        alert('Please Add item to list');
+                        var insert = [], orderItem = [], nonArrayData = "";
+                        $('#newRow tr').each(function () {
+                            var currentRow = $(this).closest("tr");
+                            if (validateRow(currentRow)) {
+                                orderItem =
+                                    {
+                                        Total: currentRow.find('.total').val(),
+                                        expenseDate: currentRow.find('.expenseDate').val(),
+                                        expense_category_id: currentRow.find('.expense_category_id').val(),
+                                        description: currentRow.find('.description').val(),
+                                        Vat: currentRow.find('.VAT').val(),
+                                        rowVatAmount: currentRow.find('.singleRowVat').val(),
+                                        rowSubTotal: currentRow.find('.rowTotal').val(),
+                                        padNumber: currentRow.find('.padNumber').val(),
+                                    };
+                                insert.push(orderItem);
+                            }
+                            else
+                            {
+                                return false;
+                            }
+
+                        });
+                        let details = {
+                            expenseNumber: $('#expenseNumber').val(),
+                            referenceNumber: $('#referenceNumber').val(),
+                            expenseDate: $('#expenseDate').val(),
+                            Total: $('.total').val(),
+                            subTotal: $('.rowTotal').val(),
+                            totalVat: $('.TotalVat').val(),
+                            grandTotal: $('.GTotal').val(),
+                            paidBalance: $('.cashPaid').val(),
+                            remainingBalance: $('.balance').val(),
+                            supplier_id:$('#supplier_id').val(),
+                            supplierNote:$('#mainDescription').val(),
+                            employee_id:$('#employee_id').val(),
+                            orders: insert,
+                        }
+                        // var Datas = {Data: details}
+                        //console.log(Datas);
+                        if (insert.length > 0) {
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }
+                            });
+                            var Datas = {Data: details};
+                            // console.log(Datas);
+                            $.ajax({
+                                url: "{{ route('expenses.store') }}",
+                                type: "post",
+                                data: Datas,
+                                success: function (result) {
+                                    if (result !== "Failed") {
+                                        details = [];
+                                        //console.log(result);
+                                        alert("Data Inserted Successfully");
+                                        window.location.href = "{{ route('expenses.index') }}";
+                                    } else {
+                                        alert(result);
+                                    }
+                                },
+                                error: function (errormessage) {
+                                    alert(errormessage);
+                                }
+                            });
+                        } else
+                        {
+                            alert('Please Add item to list');
+                        }
+                    }
+                    else
+                    {
+                        alert('Select Customer first')
                     }
                 }
                 else
                 {
-                    alert('Select Customer first')
+                    alert('please enter required data');
                 }
-
             });
             //////// end of submit Records /////////////////
         });

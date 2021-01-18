@@ -45,7 +45,7 @@
                                     <thead>
                                     <tr>
                                         <th style="width: 100px">Date</th>
-                                        <th style="width: 150px">Voucher Number</th>
+                                        <th style="width: 150px">Reference Number</th>
                                         <th style="width: 150px">Category</th>
                                         <th style="width: 300px">Description</th>
                                         <th>Sub Total</th>
@@ -61,7 +61,7 @@
                                         <td>
                                                 {{ $expense->expense_details[0]->expenseDate }}
                                         </td>
-                                        <td>{{ $expense->expense_details[0]->PadNumber ?? ''}}</td>
+                                        <td>{{ $expense->referenceNumber ?? ''}}</td>
                                         <td>{{ $expense->expense_details[0]->expense_category->Name ?? '' }}</td>
                                         <td>{{ $expense->expense_details[0]->Description ?? '' }}</td>
                                         <td>{{ $expense->subTotal}}</td>

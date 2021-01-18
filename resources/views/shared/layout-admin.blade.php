@@ -7,7 +7,7 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="author" content="Rizwan afridi">
+    <meta name="author" content="ALHAMOOD GENERAL TRANSPORT">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('admin_assets/assets/images/favicon.png') }}">
     <title>Dashboard - @yield('title')</title>
@@ -52,6 +52,11 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+        .error{
+            border: 2px solid red;
+        }
+    </style>
     <style>
         /*Profile Pic Start*/
         .picture-container{
@@ -150,7 +155,7 @@
   height: 34px;
 }
 
-.switch input { 
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -348,8 +353,8 @@ input:checked + .slider:before {
                             <div class="d-flex no-block align-items-center p-15 bg-primary text-white m-b-10">
                                 <div class=""><img src="{{ asset('admin_assets/assets/images/users/1.jpg') }}" alt="user" class="img-circle" width="60"></div>
                                 <div class="m-l-10">
-                                    <h4 class="m-b-0">Rizwan Afridi</h4>
-                                    <p class=" m-b-0">rizwan.afridi9@gmail.com</p>
+                                    <h4 class="m-b-0">{{ Auth::user()->name }}</h4>
+                                    <p class=" m-b-0">{{ Auth::user()->email }}</p>
                                 </div>
                             </div>
                             <a class="dropdown-item" href="javascript:void(0)"><i class="ti-user m-r-5 m-l-5"></i> My Profile</a>
