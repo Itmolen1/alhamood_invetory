@@ -53,20 +53,20 @@
                                     <hr>
                                     <div class="row p-t-20">
                                         <!--/span-->
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="control-label">Bank Name</label>
-                                                    <input type="text" id="Name" name="Name" class="form-control" placeholder="Bank Name" required>
-                                                    @if ($errors->has('Name'))
-                                                        <span class="text-danger">{{ $errors->first('Name') }}</span>
-                                                    @endif
-                                                </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Bank Name :- *</label>
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Bank Name" required>
+                                                @if ($errors->has('Name'))
+                                                    <span class="text-danger">{{ $errors->first('Name') }}</span>
+                                                @endif
                                             </div>
+                                        </div>
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Branch</label>
-                                                <input type="text" id="Branch" name="Branch" class="form-control" placeholder="Branch Name">
+                                                <label class="control-label">Account Number :-  *</label>
+                                                <input type="text" id="Description" name="Description" class="form-control" placeholder="Account Number">
                                             </div>
                                         </div>
                                     </div>
@@ -88,9 +88,10 @@
                                     <!--/row-->
 
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <div class="form-group">
-                                                <textarea name="Description" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note"></textarea>
+                                                <label class="control-label">Branch</label>
+                                                <input type="text" id="Branch" name="Branch" class="form-control" placeholder="Branch Name">
                                             </div>
                                         </div>
                                     </div>

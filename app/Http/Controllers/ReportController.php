@@ -15,14 +15,44 @@ class ReportController extends Controller
         $this->reportRepository = $reportRepository;
     }
 
-    public function GetBalanceSheet()
+    public function GetCustomerStatement()
     {
-        return $this->reportRepository->GetBalanceSheet();
+        return $this->reportRepository->GetCustomerStatement();
     }
 
-    public function PrintBalanceSheet()
+    public function PrintCustomerStatement()
     {
-        return $this->reportRepository->PrintBalanceSheet();
+        return $this->reportRepository->PrintCustomerStatement();
+    }
+
+    public function GetDetailCustomerStatement()
+    {
+        return $this->reportRepository->GetDetailCustomerStatement();
+    }
+
+    public function PrintDetailCustomerStatement(Request $request)
+    {
+        return $this->reportRepository->PrintDetailCustomerStatement($request);
+    }
+
+    public function GetSupplierStatement()
+    {
+        return $this->reportRepository->GetSupplierStatement();
+    }
+
+    public function PrintSupplierStatement()
+    {
+        return $this->reportRepository->PrintSupplierStatement();
+    }
+
+    public function GetDetailSupplierStatement()
+    {
+        return $this->reportRepository->GetDetailSupplierStatement();
+    }
+
+    public function PrintDetailSupplierStatement(Request $request)
+    {
+        return $this->reportRepository->PrintDetailSupplierStatement($request);
     }
 
     public function SalesReport()

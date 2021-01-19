@@ -155,29 +155,56 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2 mt-2 pl-5">
+                                            <div class="form-group">
+                                                <label class="control-label">Total Payable Amount :- </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10">
                                             <div class="form-group">
                                                 <input type="text" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="" placeholder="Total Amount" disabled>
                                                 <input type="hidden" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="price" placeholder="Total Amount">
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-2 mt-2 pl-5">
                                             <div class="form-group">
-                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paid Amount">
+                                                <label class="control-label">Total Paying Amount :- </label>
                                             </div>
                                         </div>
+                                        <div class="col-md-10">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paying Now Amount">
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                        <div class="col-md-3">
+                                    <div class="row">
+                                        <div class="col-md-2 mt-2 pl-5">
+                                            <div class="form-group">
+                                                <label class="control-label">Amount In Words :- </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10">
                                             <div class="form-group">
                                                 <div class="form-group">
                                                     <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
+                                    <div class="row">
+                                        <div class="col-md-2 mt-2 pl-5">
+                                            <div class="form-group">
+                                                <label class="control-label">Paid By :- </label>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" id="receiver" name="receiverName" class="form-control" placeholder="Enter Receiver Name">
+                                                <input type="text" id="receiver" name="receiverName" class="form-control" placeholder="Enter Paid By Name">
                                             </div>
                                         </div>
                                     </div>
@@ -234,6 +261,7 @@
                 $('.bankTransfer').hide();
             }
         });
+
 
         jQuery(function($)
         {
@@ -409,8 +437,34 @@
             });
 
         });
-
-
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#bank_id').change(function () {
+                var Id = 0;
+                Id = $(this).val();
+                if (Id > 0)
+                {
+                    $.ajax({
+                        // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                $("#accountNumber").val('');
+                                $("#accountNumber").val(result);
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
+        });
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
 

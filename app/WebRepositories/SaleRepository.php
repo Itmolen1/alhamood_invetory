@@ -235,11 +235,13 @@ class SaleRepository implements ISaleRepositoryInterface
                                         'Differentiate' => $difference,
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
+                                       'company_id' => $company_id,
                                    ];
                                    $AccountTransactions = AccountTransaction::updateOrCreate(
                                     [
                                         'createdDate'   => date('Y-m-d'),
                                         'customer_id'   => $request->Data['customer_id'],
+                                        'company_id' => $company_id,
                                     ],
                                      $AccData);
                                    return Response()->json($AccountTransactions);
@@ -298,6 +300,7 @@ class SaleRepository implements ISaleRepositoryInterface
                                                     'Differentiate' => $OldDifference,
                                                     'createdDate' => $saled->customer->account_transaction->Last()->createdDate,
                                                     'user_id' =>$user_id,
+                                                    'company_id' => $company_id,
                                                ];
                                                $AccountTransactions = AccountTransaction::updateOrCreate([
                                                 'id'   => $saled->customer->account_transaction->Last()->id,
@@ -372,6 +375,7 @@ class SaleRepository implements ISaleRepositoryInterface
                                 'Differentiate' => $difference,
                                 'createdDate' => $lastAccountTransection->createdDate,
                                 'user_id' =>$user_id,
+                                'company_id' => $company_id,
                            ];
                            $AccountTransactions = AccountTransaction::updateOrCreate([
                             'createdDate'   => $lastAccountTransection->createdDate,

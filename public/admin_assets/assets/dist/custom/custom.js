@@ -105,6 +105,7 @@ function isNumber(evt, element) {
                 }
             }
             var result=str.replace(/\s+/g, ' ') + str1;
+            result=result.toUpperCase();
             //return str.replace(/\s+/g, ' ');
             $('.SumOf').val(result);
             return result; //i added the word cent to the last part of the return value to get desired output

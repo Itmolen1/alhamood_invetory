@@ -225,11 +225,9 @@
                                         </div>
 
                                         <div class="col-md-4">
-
                                             <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat ?? 0 }}" disabled="">
                                                 <input type="hidden" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat ?? 0 }}" >
                                             </p>
-
 
                                             <p>Grand Total: <input type="text" value="{{ $expense_details[0]->expense->grandTotal ?? 0 }}" class="form-control GTotal" disabled>
                                                 <input type="hidden" vvalue="{{ $expense_details[0]->expense->grandTotal ?? 0 }}" class="form-control GTotal">
@@ -240,8 +238,6 @@
                                             <p>Balance: <input type="text" value="{{ $expense_details[0]->expense->remainingBalance ?? 0 }}" class="form-control balance" disabled>
                                                 <input type="hidden" value="{{ $expense_details[0]->expense->remainingBalance ?? 0 }}" class="form-control balance">
                                             </p>
-
-
                                         </div>
                                     </div>
 
@@ -305,7 +301,6 @@
                     <table class="table color-bordered-table success-bordered-table">
                         <thead>
                         <tr>
-
                             <th>User Name</th>
                             <th>Description</th>
                         </tr>
@@ -332,8 +327,6 @@
     </div>
 
     <script>
-
-
         $(document).ready(function () {
             $('#showUpdateModel').click(function () {
                 $('#ShowUpdates').modal();

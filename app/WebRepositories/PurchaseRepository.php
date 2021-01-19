@@ -239,6 +239,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         'Differentiate' => $difference,
                         'createdDate' => date('Y-m-d'),
                         'user_id' => $user_id,
+                        'company_id' => $company_id,
                     ];
                 $AccountTransactions = AccountTransaction::updateOrCreate(
                     [
@@ -305,6 +306,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             'Differentiate' => $OldDifference,
                             'createdDate' => $purchased->supplier->account_transaction->Last()->createdDate,
                             'user_id' =>$user_id,
+                            'company_id' => $company_id,
                         ];
                     $AccountTransactions = AccountTransaction::updateOrCreate([
                         'id'   => $purchased->supplier->account_transaction->Last()->id,
@@ -378,6 +380,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         'Differentiate' => $difference,
                         'createdDate' => $lastAccountTransection->createdDate,
                         'user_id' =>$user_id,
+                        'company_id' => $company_id,
                     ];
                 $AccountTransactions = AccountTransaction::updateOrCreate([
                     'createdDate'   => $lastAccountTransection->createdDate,

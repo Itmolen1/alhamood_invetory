@@ -155,7 +155,16 @@
 
                 <ul aria-expanded="false" class="collapse">
                     <li  class="border-bottom">
-                        <a href="{{ route('GetBalanceSheet') }}">Customer Statement</a>
+                        <a href="{{ route('GetCustomerStatement') }}">Receivable Summary</a>
+                    </li>
+                    <li  class="border-bottom">
+                        <a href="{{ route('GetSupplierStatement') }}">Payable Summary</a>
+                    </li>
+                    <li  class="border-bottom">
+                        <a href="{{ route('GetDetailCustomerStatement') }}">Customer Statement</a>
+                    </li>
+                    <li  class="border-bottom">
+                        <a href="{{ route('GetDetailSupplierStatement') }}">Supplier Statement</a>
                     </li>
                     <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Sales Reports</span>
                         </a>

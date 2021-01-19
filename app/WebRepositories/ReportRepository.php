@@ -4,10 +4,13 @@
 namespace App\WebRepositories;
 
 
+use App\Http\Resources\AccountTransaction\AccountTransactionResource;
 use App\Http\Resources\CustomerAdvance\CustomerAdvanceResource;
 use App\Http\Resources\Expense\ExpenseResource;
 use App\Http\Resources\Purchase\PurchaseResource;
 use App\Http\Resources\Sales\SalesResource;
+use App\Http\Resources\SupplierAdvance\SupplierAdvanceResource;
+use App\Models\AccountTransaction;
 use App\Models\BankTransaction;
 use App\Models\CashTransaction;
 use App\Models\Customer;
@@ -16,6 +19,8 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Purchase;
 use App\Models\Sale;
+use App\Models\Supplier;
+use App\Models\SupplierAdvance;
 use App\Models\Vehicle;
 use App\WebRepositories\Interfaces\IReportRepositoryInterface;
 use Illuminate\Http\Request;
@@ -24,9 +29,25 @@ use PDF;
 
 class ReportRepository implements IReportRepositoryInterface
 {
-    public function GetBalanceSheet()
+    public function GetCustomerStatement()
     {
-        return view('admin.report.balance_sheet');
+        return view('admin.report.customer_statement');
+    }
+
+    public function GetDetailCustomerStatement()
+    {
+        return view('admin.report.customer_detailed_statement');
+    }
+
+    public function GetSupplierStatement()
+    {
+        return view('admin.report.supplier_statement');
+    }
+
+    public function GetDetailSupplierStatement()
+    {
+        $suppliers = Supplier::where('company_id',session('company_id'))->get();
+        return view('admin.report.supplier_detailed_statement',compact('suppliers'));
     }
 
     public function SalesReport()
@@ -1247,7 +1268,7 @@ class ReportRepository implements IReportRepositoryInterface
         }
     }
 
-    public function PrintBalanceSheet()
+    public function PrintCustomerStatement()
     {
         $data=SalesResource::collection(Sale::get()->where('remainingBalance','!=',0));
         if($data)
@@ -1266,7 +1287,7 @@ class ReportRepository implements IReportRepositoryInterface
             //echo "<pre>123";print_r($row);die;
 
             $pdf::SetFont('times', '', 15);
-            $html='Balance Sheet';
+            $html='Customer Statement';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
             $pdf::SetFont('times', '', 12);
@@ -1274,7 +1295,7 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
             $pdf::SetFont('times', 'B', 14);
-            $html = '<table border="0" cellpadding="5">
+            $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="80">S.No</th>
                 <th align="center" width="150">Account</th>
@@ -1314,7 +1335,7 @@ class ReportRepository implements IReportRepositoryInterface
                 $row=json_decode(json_encode($data), true);
                 //echo "<pre>";print_r($row);die;
                 $pdf::SetFont('times', '', 10);
-                $html = '<table border="0" cellpadding="5">
+                $html = '<table border="0.5" cellpadding="2">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                     <th align="center" width="80">S.No</th>
                     <th align="center" width="150">Account</th>
@@ -1344,6 +1365,224 @@ class ReportRepository implements IReportRepositoryInterface
                 $html.='</table>';
                 $pdf::writeHTML($html, true, false, false, false, '');
             }
+            $pdf::SetFont('times', '', 12);
+            $html='Receivable Total :- '.number_format($total_balance,2,'.','');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $html='Advances Total :- '.number_format($total_advances,2,'.','');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $html='Differance Total :- '.number_format($total_balance-$total_advances,2,'.','');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+
+    public function PrintSupplierStatement()
+    {
+        $data=PurchaseResource::collection(Purchase::get()->where('remainingBalance','!=',0));
+        if($data)
+        {
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            //$row=$sales->sale_details;
+            $row=json_decode(json_encode($data), true);
+            //echo "<pre>123";print_r($row);die;
+
+            $pdf::SetFont('times', '', 15);
+            $html='Supplier Statement';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $pdf::SetFont('times', '', 12);
+            $html='Date :- '.date('d-m-Y h:i:s');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $pdf::SetFont('times', 'B', 14);
+            $html = '<table border="0.5" cellpadding="2">
+            <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                <th align="center" width="80">S.No</th>
+                <th align="center" width="150">Account</th>
+                <th align="center" width="150">Cell</th>
+                <th align="right" width="150">Balance</th>
+            </tr>';
+            $pdf::SetFont('times', '', 10);
+            $total_balance=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                $total_balance+=$row[$i]['remainingBalance'];
+                $html .='<tr>
+                <td align="center" width="80">'.($i+1).'</td>
+                <td align="center" width="150">'.($row[$i]['api_supplier']['Name']).'</td>
+                <td align="center" width="150">'.($row[$i]['api_supplier']['Mobile']).'</td>
+                <td align="right" width="150">'.($row[$i]['remainingBalance']).'</td>
+                </tr>';
+            }
+            $html.= '
+                 <tr color="red">
+                     <td width="80"></td>
+                     <td width="150"></td>
+                     <td width="150" align="right">Total Balance :- </td>
+                     <td width="150" align="right">'.number_format($total_balance,2,'.','').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $data=SupplierAdvanceResource::collection(SupplierAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
+            if($data)
+            {
+                $pdf::SetFont('times', '', 15);
+                $html='Suppliers Advance Payments';
+                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+                $row=json_decode(json_encode($data), true);
+                //echo "<pre>";print_r($row);die;
+                $pdf::SetFont('times', '', 10);
+                $html = '<table border="0.5" cellpadding="2">
+                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="80">S.No</th>
+                    <th align="center" width="150">Account</th>
+                    <th align="center" width="150">Cell</th>
+                    <th align="right" width="150">Balance</th>
+                </tr>';
+
+
+                $total_advances=0.0;
+                for($j=0;$j<count($row);$j++)
+                {
+                    $total_advances+=$row[$j]['Amount'];
+                    $html .='<tr>
+                    <td align="center" width="80">'.($j+1).'</td>
+                    <td align="center" width="150">'.($row[$j]['api_supplier']['Name']).'</td>
+                    <td align="center" width="150">'.($row[$j]['api_supplier']['Mobile']).'</td>
+                    <td align="right" width="150">'.($row[$j]['Amount']).'</td>
+                    </tr>';
+                }
+                $html.= '
+                 <tr color="red">
+                     <td width="80"></td>
+                     <td width="150"></td>
+                     <td width="150" align="right">Total Advances :- </td>
+                     <td width="150" align="right">'.number_format($total_advances,2,'.','').'</td>
+                 </tr>';
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
+
+            $pdf::SetFont('times', '', 12);
+            $html='Outstanding Total :- '.number_format($total_balance,2,'.','');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $html='Advances Total :- '.number_format($total_advances,2,'.','');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $html='Differance Total :- '.number_format($total_balance-$total_advances,2,'.','');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+
+    public function PrintDetailSupplierStatement(Request $request)
+    {
+        $data=AccountTransactionResource::collection(AccountTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate', '<=', $request->toDate)->where('supplier_id', '==', $request->supplier_id));
+        //$row=json_decode(json_encode($data), true);
+        //echo "<pre>123";print_r($row);die;
+        if(!$data->isEmpty())
+        {
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            //$row=$sales->sale_details;
+            $row=json_decode(json_encode($data), true);
+            //echo "<pre>123";print_r($row);die;
+
+            $pdf::SetFont('times', '', 15);
+            $html='Supplier Statement :- '.$row[0]['supplier']['Name'].' ';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $pdf::SetFont('times', '', 12);
+            $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
+
+            $pdf::SetFont('times', 'B', 14);
+            $html = '<table border="0.5" cellpadding="2">
+            <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                <th align="center" width="60">Date</th>
+                <th align="center" width="200">Description</th>
+                <th align="center" width="70">Credit</th>
+                <th align="center" width="70">Debit</th>
+                <th align="right" width="80">Closing</th>
+            </tr>';
+            $pdf::SetFont('times', '', 10);
+            $sum_of_credit=0.0;
+            $sum_of_debit=0.0;
+            $sum_of_differance=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                $sum_of_credit+=$row[$i]['Credit'];
+                $sum_of_debit+=$row[$i]['Debit'];
+                $sum_of_differance+=$row[$i]['Differentiate'];
+                $html .='<tr>
+                <td align="center" width="60">'.($row[$i]['createdDate']).'</td>
+                <td align="left" width="200">'.($row[$i]['Description']).'</td>
+                <td align="right" width="70">'.(number_format($row[$i]['Credit'],2,'.','')).'</td>
+                <td align="right" width="70">'.(number_format($row[$i]['Debit'],2,'.','')).'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.','')).'</td>
+                </tr>';
+            }
+            $html.= '
+                 <tr color="red">
+                     <td width="60"></td>
+                     <td width="200" align="right">Total :- </td>
+                     <td width="70" align="right">'.number_format($sum_of_credit,2,'.','').'</td>
+                     <td width="70" align="right">'.number_format($sum_of_debit,2,'.','').'</td>
+                     <td width="80" align="right">'.number_format($sum_of_differance,2,'.','').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
 
             $pdf::lastPage();
             $time=time();

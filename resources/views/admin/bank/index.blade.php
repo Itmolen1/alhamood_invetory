@@ -45,6 +45,7 @@
                                     <thead>
                                     <tr>
                                         <th>Bank Name</th>
+                                        <th>Account Number</th>
                                         <th>Branch</th>
                                         <th>Contact Number</th>
                                         <th width="100">IsActive</th>
@@ -119,6 +120,10 @@
                     {
                         data: 'Name',
                         name: 'Name'
+                    },
+                    {
+                        data: 'Description',
+                        name: 'Description'
                     },
                     {
                         data: 'Branch',

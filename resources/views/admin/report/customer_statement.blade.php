@@ -12,18 +12,16 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Balance Sheet</li>
+                            <li class="breadcrumb-item active">Customer Statement</li>
                         </ol>
                        </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Get Balance Sheet</button></a>
-                        </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                            <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Get Customer Statement</button></a>
                     </div>
                 </div>
             </div>
@@ -35,7 +33,7 @@
         function get_pdf()
         {
             $.ajax({
-                url: "{{ URL('PrintBalanceSheet') }}",
+                url: "{{ URL('PrintCustomerStatement') }}",
                 type: "get",
                 success: function (result) {
                     window.open(result.url,'_blank');

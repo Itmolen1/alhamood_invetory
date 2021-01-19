@@ -28,7 +28,7 @@ route::resource('customers','CustomerController');
 route::get('customerDetails/{id}','DriverController@customerDetails');
 route::resource('company_types','CompanyTypeController');
 route::resource('payment_types','PaymentTypeController');
-    route::resource('payment_terms','PaymentTermController');
+route::resource('payment_terms','PaymentTermController');
 
 
 
@@ -42,6 +42,7 @@ route::resource('drivers','DriverController');
 route::resource('users','UserController');
 route::resource('roles','RoleController');
 route::resource('banks','BankController');
+route::get('getBankAccountDetail/{id}','BankController@getBankAccountDetail');
 route::resource('countries','CountryController');
 route::resource('states','StateController');
 route::resource('cities','CityController');
@@ -99,8 +100,14 @@ route::PUT('supplier_payment_push/{Id}','SupplierPaymentController@supplier_paym
 route::get('supplierSaleDetails/{Id}','PurchaseController@supplierSaleDetails');
 
 ////////reports////////////
-route::get('GetBalanceSheet','ReportController@GetBalanceSheet')->name('GetBalanceSheet');
-route::get('PrintBalanceSheet','ReportController@PrintBalanceSheet')->name('PrintBalanceSheet');
+route::get('GetCustomerStatement','ReportController@GetCustomerStatement')->name('GetCustomerStatement');
+route::get('PrintCustomerStatement','ReportController@PrintCustomerStatement')->name('PrintCustomerStatement');
+route::get('GetSupplierStatement','ReportController@GetSupplierStatement')->name('GetSupplierStatement');
+route::get('PrintSupplierStatement','ReportController@PrintSupplierStatement')->name('PrintSupplierStatement');
+route::get('GetDetailCustomerStatement','ReportController@GetDetailCustomerStatement')->name('GetDetailCustomerStatement');
+route::post('PrintDetailCustomerStatement','ReportController@PrintDetailCustomerStatement')->name('PrintDetailCustomerStatement');
+route::get('GetDetailSupplierStatement','ReportController@GetDetailSupplierStatement')->name('GetDetailSupplierStatement');
+route::post('PrintDetailSupplierStatement','ReportController@PrintDetailSupplierStatement')->name('PrintDetailSupplierStatement');
 route::get('SalesReport','ReportController@SalesReport')->name('SalesReport');
 route::post('PrintSalesReport','ReportController@PrintSalesReport')->name('PrintSalesReport');
 route::get('SalesReportByVehicle','ReportController@SalesReportByVehicle')->name('SalesReportByVehicle');

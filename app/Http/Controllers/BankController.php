@@ -55,4 +55,10 @@ class BankController extends Controller
     {
         return $this->bankRepository->delete($request, $Id);
     }
+
+    public function getBankAccountDetail($id)
+    {
+        $bank = Bank::find($id);
+        return response()->json($bank->Description);
+    }
 }
