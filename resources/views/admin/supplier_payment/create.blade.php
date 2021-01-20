@@ -133,6 +133,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
+                                                <label class="control-label">Receipt Number</label>
                                                 <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
                                                 @if ($errors->has('receiptNumber'))
                                                     <span class="text-danger">{{ $errors->first('receiptNumber') }}</span>
@@ -140,16 +141,19 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
+                                            <label class="control-label">Reference Number</label>
                                             <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Reference Number">
                                         </div>
 
                                         <div class="col-md-4">
+                                            <label class="control-label">Payment Receive Date</label>
                                             <input type="date" class="form-control" name="paymentReceiveDate" id="paymentReceiveDate" value="{{ date('Y-m-d') }}" placeholder="">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <label class="control-label">Description</label>
                                             <textarea style="width: 100%" id="Description" name="Description" placeholder="Description"></textarea>
                                         </div>
                                     </div>

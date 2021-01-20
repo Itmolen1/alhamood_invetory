@@ -28,7 +28,9 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             return datatables()->of(SupplierPayment::with('user','company','supplier')->latest()->get())
                 ->addColumn('action', function ($data) {
 
-                    $button = '<a href="'.route('supplier_payments.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                    $button = '<a href="'.route('supplier_payments.show', $data->id).'"  class=" btn btn-info btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<a href="'.route('supplier_payments.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
                     $button .='&nbsp;';
                     return $button;
                 })
@@ -138,9 +140,31 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         }
     }
 
+    public function edit($Id)
+    {
+        $supplier_payment = SupplierPayment::where('id',$Id)->get();
+        $banks = Bank::all();
+        //dd($supplier_payment[0]->transferDate);
+        return view('admin.supplier_payment.edit',compact('supplier_payment','banks'));
+    }
+
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
+        $supplier_payment = SupplierPayment::find($Id);
+        $user_id = session('user_id');
+        $supplier_payment->update([
+            'payment_type' => $request->paymentType,
+            'bank_id' => $request->bank_id,
+            'accountNumber' => $request->accountNumber,
+            'TransferDate' => $request->TransferDate,
+            'receiptNumber' => $request->receiptNumber,
+            'supplierPaymentDate' => $request->paymentReceiveDate,
+            'Description' => $request->Description,
+            'amountInWords' => $request->amountInWords,
+            'receiverName' => $request->receiverName,
+            'user_id' => $user_id,
+        ]);
+        return redirect()->route('supplier_payments.index')->with('update','Record Updated Successfully');
     }
 
     public function getById($Id)
@@ -149,11 +173,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         $supplier_payment_details = SupplierPaymentDetail::with('user','company','supplier_payment.supplier')->where('supplier_payment_id',$Id)->get();
 //        dd($payment_receives);
         return view('admin.supplier_payment.show',compact('supplier_payment_details'));
-    }
-
-    public function edit($Id)
-    {
-        // TODO: Implement edit() method.
     }
 
     public function delete(Request $request, $Id)

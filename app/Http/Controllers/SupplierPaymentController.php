@@ -9,14 +9,15 @@ use Illuminate\Http\Request;
 class SupplierPaymentController extends Controller
 {
     private $supplierPaymentRepository;
-   public function __construct(ISupplierPaymentRepositoryInterface $supplierPaymentRepository){
-    $this->supplierPaymentRepository = $supplierPaymentRepository;
-   }
+    public function __construct(ISupplierPaymentRepositoryInterface $supplierPaymentRepository)
+    {
+        $this->supplierPaymentRepository = $supplierPaymentRepository;
+    }
+
     public function index()
     {
         return $this->supplierPaymentRepository->index();
     }
-
 
     public function create()
     {
@@ -28,41 +29,21 @@ class SupplierPaymentController extends Controller
         return $this->supplierPaymentRepository->store($request);
     }
 
-
     public function show($Id)
     {
         return $this->supplierPaymentRepository->getById($Id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\SupplierPayment  $supplierPayment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(SupplierPayment $supplierPayment)
+    public function edit($Id)
     {
-        //
+        return $this->supplierPaymentRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\SupplierPayment  $supplierPayment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, SupplierPayment $supplierPayment)
+    public function update(Request $request, $Id)
     {
-        //
+        return $this->supplierPaymentRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\SupplierPayment  $supplierPayment
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(SupplierPayment $supplierPayment)
     {
         //

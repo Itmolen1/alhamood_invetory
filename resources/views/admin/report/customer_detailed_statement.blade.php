@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Balance Sheet')
+@section('title', 'Customer Statement')
 
 @section('content')
 
@@ -12,7 +12,7 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Supplier Statement</li>
+                            <li class="breadcrumb-item active">Customer Statement</li>
                         </ol>
                        </div>
                 </div>
@@ -20,7 +20,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <h2>Supplier Statement</h2>
+                    <h2>Customer Statement</h2>
                 </div>
             </div>
 
@@ -42,11 +42,11 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Supplier :- *</label>
-                        <select class="form-control supplier-select supplier_id" name="supplier_id" id="supplier_id">
-                            @foreach($suppliers as $supplier)
-                                @if(!empty($supplier->Name))
-                                    <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>
+                        <label>Customer :- *</label>
+                        <select class="form-control supplier-select customer_id" name="customer_id" id="customer_id">
+                            @foreach($customers as $customer)
+                                @if(!empty($customer->Name))
+                                    <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
                                 @endif
                             @endforeach
                         </select>
@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Supplier Statement</button></a>
+                        <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Customer Statement</button></a>
                     </div>
                 </div>
             </div>
@@ -70,13 +70,13 @@
         {
             var fromDate = $('#fromDate').val();
             var toDate = $('#toDate').val();
-            var supplier_id = $('#supplier_id').val();
-            var supplier_name=$( "#supplier_id option:selected" ).text();
+            var customer_id = $('#customer_id').val();
+            var customer_name=$( "#customer_id option:selected" ).text();
             $.ajax({
-                url: "{{ URL('PrintDetailSupplierStatement') }}",
+                url: "{{ URL('PrintDetailCustomerStatement') }}",
                 type: "POST",
                 dataType : "json",
-                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate,supplier_id:supplier_id,supplier_name:supplier_name},
+                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate,customer_id:customer_id,customer_name:customer_name},
                 success: function (result) {
                     window.open(result.url,'_blank');
                 },

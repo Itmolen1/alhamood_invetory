@@ -241,6 +241,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                     ];
+
                 $AccountTransactions = AccountTransaction::updateOrCreate(
                     [
                         'createdDate'   => date('Y-m-d'),

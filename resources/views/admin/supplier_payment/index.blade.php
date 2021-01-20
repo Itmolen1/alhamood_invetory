@@ -47,6 +47,8 @@
                                         <th>Supplier</th>
                                         <th>Date</th>
                                         <th>Amount</th>
+                                        <th>Ref#</th>
+                                        <th>Desc.</th>
                                         <th width="100">Push Payment</th>
                                         <th width="100">Action</th>
                                     </tr>
@@ -96,6 +98,14 @@
                     {
                         data: 'paidAmount',
                         name: 'paidAmount'
+                    },
+                    {
+                        data: 'referenceNumber',
+                        name: 'referenceNumber'
+                    },
+                    {
+                        data: 'Description',
+                        name: 'Description'
                     },
                     {
                         data: 'push',

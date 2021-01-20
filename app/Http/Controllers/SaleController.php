@@ -10,9 +10,6 @@ use Illuminate\Http\Request;
 
 class SaleController extends Controller
 {
-    /**
-     * @var ISaleRepositoryInterface
-     */
     private $saleRepository;
 
     public function __construct(ISaleRepositoryInterface $saleRepository)
@@ -25,43 +22,31 @@ class SaleController extends Controller
         return $this->saleRepository->index();
     }
 
-
     public function create()
     {
         return $this->saleRepository->create();
     }
-
 
     public function store(Request $request)
     {
         $this->saleRepository->store($request);
     }
 
-
     public function show(Sale $sale)
     {
         //
     }
-
 
     public function edit($Id)
     {
         return $this->saleRepository->edit($Id);
     }
 
-
-
     public function salesUpdate(Request $request, $Id)
     {
         return $this->saleRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Sale $sale)
     {
         //
