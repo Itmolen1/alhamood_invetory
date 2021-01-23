@@ -122,6 +122,8 @@ route::get('CashReport','ReportController@CashReport')->name('CashReport');
 route::post('PrintCashReport','ReportController@PrintCashReport')->name('PrintCashReport');
 route::get('BankReport','ReportController@BankReport')->name('BankReport');
 route::post('PrintBankReport','ReportController@PrintBankReport')->name('PrintBankReport');
+route::get('GeneralLedger','ReportController@GeneralLedger')->name('GeneralLedger');
+route::post('PrintGeneralLedger','ReportController@PrintGeneralLedger')->name('PrintGeneralLedger');
 });
 
 

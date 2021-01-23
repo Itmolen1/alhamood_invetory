@@ -207,9 +207,10 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$payments->id;
             $cash_transaction->createdDate=date('Y-m-d h:i:s');
-            $cash_transaction->Type='Supplier Payment';
-            $cash_transaction->Credit=0.0;
-            $cash_transaction->Debit=$payments->paidAmount;
+            $cash_transaction->Type='supplier_payments';
+            $cash_transaction->Details='Supplier Cash Payment';
+            $cash_transaction->Credit=$payments->paidAmount;
+            $cash_transaction->Debit=0.00;
             $cash_transaction->save();
         }
         elseif ($payments->payment_type == 'bank')
@@ -217,7 +218,8 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$payments->id;
             $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='Supplier Payment';
+            $bank_transaction->Type='supplier_payments';
+            $bank_transaction->Details='Supplier Bank Payment';
             $bank_transaction->Credit=$payments->paidAmount;
             $bank_transaction->Debit=0.0;
             $bank_transaction->Flag=1;
@@ -228,7 +230,8 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$payments->id;
             $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='Supplier Payment';
+            $bank_transaction->Type='supplier_payments';
+            $bank_transaction->Details='Supplier Cheque Payment';
             $bank_transaction->Credit=$payments->paidAmount;
             $bank_transaction->Debit=0.0;
             $bank_transaction->Flag=0;

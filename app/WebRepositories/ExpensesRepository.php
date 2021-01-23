@@ -75,7 +75,6 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 //return $detail['Quantity'];
                 //return Response()->json($detail['Quantity']);
 
-
                 $data =  ExpenseDetail::create([
                     "Total"        => $detail['Total'],
                     "expenseDate"        => $expenseRequest->Data['expenseDate'],
@@ -95,11 +94,12 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             if($expenseRequest->Data['paidBalance'] != 0.00 || $expenseRequest->Data['paidBalance'] != 0)
             {
                 $cash_transaction = new CashTransaction();
-                $cash_transaction->Reference=$expenseRequest->Data['expenseNumber'];
+                $cash_transaction->Reference=$expense->id;
                 $cash_transaction->createdDate=date('Y-m-d h:i:s');
-                $cash_transaction->Type='Expense';
-                $cash_transaction->Credit=0.0;
-                $cash_transaction->Debit=$expenseRequest->Data['paidBalance'];
+                $cash_transaction->Type='expenses';
+                $cash_transaction->Type='Cash Expense';
+                $cash_transaction->Credit=$expenseRequest->Data['paidBalance'];
+                $cash_transaction->Debit=0.00;
                 $cash_transaction->save();
             }
 
@@ -331,6 +331,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             }
             ////////////////// end of account section ////////////////
 
+            //here will come cash transaction record update if scenario will come by
             $expensed->update(
                 [
                     'expenseNumber' => $request->Data['expenseNumber'],

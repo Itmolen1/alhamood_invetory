@@ -96,9 +96,9 @@
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option disabled readonly="" selected>--Select your Payment Type--</option>
-                                                    <option value="bank">Bank Transfer</option>
+                                                    <option value="bankTransfer">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
-                                                    <option value="cheque">Check Transfer</option>
+                                                    <option value="checkTransfer">Cheque</option>
                                                 </select>
                                             </div>
                                         </div>

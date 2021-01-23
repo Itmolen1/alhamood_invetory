@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Balance Sheet')
+@section('title', 'Customer Receivable Summary')
 
 @section('content')
 

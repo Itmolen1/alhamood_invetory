@@ -82,9 +82,9 @@
                                             <div class="form-group">
                                                 <label>Payment Type {{ $supplierAdvance->paymentType }}</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option value="bankTransfer" {{ ($supplierAdvance->paymentType == 'bankTransfer') ? 'selected':'' }}>Bank Transfer</option>
+                                                    <option value="bankTransfer" {{ ($supplierAdvance->paymentType == 'bankTransfer') ? 'selected':'' }}>Bank</option>
                                                     <option id="cash" value="cash" {{ ($supplierAdvance->paymentType == 'cash') ? 'selected':'' }}>Cash</option>
-                                                    <option value="checkTransfer" {{ ($supplierAdvance->paymentType == 'checkTransfer') ? 'selected':'' }}>Check Transfer</option>
+                                                    <option value="checkTransfer" {{ ($supplierAdvance->paymentType == 'checkTransfer') ? 'selected':'' }}>Cheque</option>
                                                 </select>
                                             </div>
                                         </div>

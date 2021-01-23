@@ -88,6 +88,8 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
             $account = new AccountTransaction([
                 'employee_id' => $employee->id ?? 0,
                 'user_id' => $user_id ?? 0,
+                'company_id' => $company_id ?? 0,
+                'Description' => 'initial',
             ]);
         }
         $employee->account_transaction()->save($account);

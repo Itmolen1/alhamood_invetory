@@ -54,7 +54,7 @@
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Company Name</label>
+                                                <label class="control-label">Company Name :- *</label>
                                                 <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Customer Company Name" required>
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
@@ -74,7 +74,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Company Type</label>
+                                                <label>Company Type :- *</label>
                                                 <select class="form-control custom-select" name="companyType">
                                                     <option readonly disabled="" selected="">--Select your Company Type--</option>
                                                     @foreach ($company_types as $company_type)
@@ -86,7 +86,7 @@
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Registration date</label>
+                                                <label class="control-label">Registration date :- *</label>
                                                 <input type="date" value="{{ date('Y-m-d') }}" name="registrationDate" class="form-control" placeholder="dd/mm/yyyy">
                                             </div>
                                         </div>
@@ -97,7 +97,7 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Payment Type</label>
+                                                <label>Payment Type :- *</label>
                                                 <select class="form-control custom-select paymentType" name="paymentType">
                                                     <option readonly disabled="" selected="">--Select your Payment Type--</option>
                                                     @foreach ($payment_types as $payment)
@@ -106,7 +106,6 @@
                                                 </select>
                                             </div>
                                         </div>
-
 
                                         <div class="col-md-6">
                                             <div class="form-group" id="paymentTermAll">
@@ -120,11 +119,24 @@
                                             </div>
                                         </div>
                                         <!--/span-->
-
                                     </div>
 
                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance :- *</label>
+                                                <input type="number" step=".01" name="openingBalance" value="0.00" class="form-control" placeholder="Opening Balance" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance As of Date :- *</label>
+                                                <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ date('Y-m-d') }}" placeholder="Opening Balance As of Date" required>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div class="row">
                                         <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -165,8 +177,6 @@
                                     </div>
 
 
-
-
                                     <h3 class="box-title m-t-40">Address</h3>
                                     <hr>
                                     <div class="row">
@@ -179,7 +189,7 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Region</label>
+                                                <label>Region :- *</label>
                                                 <select class="form-control custom-select region_id" name="region_id" id="region_id">
 
                                                     <option value="">-- Select Region --</option>

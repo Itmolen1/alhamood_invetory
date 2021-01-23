@@ -85,9 +85,9 @@
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option disabled readonly="" selected>--Select your Payment Type--</option>
-                                                    <option value="bankTransfer">Bank Transfer</option>
+                                                    <option value="bankTransfer">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
-                                                    <option value="checkTransfer">Check Transfer</option>
+                                                    <option value="checkTransfer">Cheque</option>
                                                 </select>
                                                 @if ($errors->has('paymentType'))
                                                     <span class="text-danger">{{ $errors->first('paymentType') }}</span>

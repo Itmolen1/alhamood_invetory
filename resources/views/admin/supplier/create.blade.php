@@ -61,16 +61,14 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Owner/Representative Name</label>
                                                 <input type="text" id="Representative" name="Representative" class="form-control" placeholder="Enter Owner/Representative Name">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -83,18 +81,15 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration date</label>
                                                 <input type="date" name="registrationDate" value="{{date('Y-m-d')}}" class="form-control" placeholder="dd/mm/yyyy">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
-                                    <div class="row">
 
+                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Payment Type</label>
@@ -107,7 +102,6 @@
                                             </div>
                                         </div>
 
-
                                         <div class="col-md-6">
                                             <div class="form-group" id="paymentTermAll">
                                                 <label class="control-label">Payment Term</label>
@@ -119,21 +113,30 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
-
                                     </div>
 
                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance :- *</label>
+                                                <input type="number" step=".01" name="openingBalance" value="0.00" class="form-control" placeholder="Opening Balance" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance As of Date :- *</label>
+                                                <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ date('Y-m-d') }}" placeholder="Opening Balance As of Date" required>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                        <!--/span-->
+                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">TRN Number</label>
                                                 <input type="text" name="TRNNumber" class="form-control" placeholder="Enter TRN Number">
                                             </div>
                                         </div>
-                                        <!--/span-->
-
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Upload File</label>
@@ -155,7 +158,6 @@
                                                 <input type="text" name="Phone" placeholder="Phone" class="form-control">
                                             </div>
                                         </div>
-
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Email</label>
@@ -163,7 +165,6 @@
                                             </div>
                                         </div>
                                     </div>
-
 
                                     <h3 class="box-title m-t-40">Address</h3>
                                     <hr>
@@ -198,16 +199,13 @@
                                                 <input type="text" name="City" id="city" placeholder="City" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
                                                 <input type="text" name="State" id="state" PLACEHOLDER="State" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -215,14 +213,12 @@
                                                 <input type="text" name="postCode" placeholder="PostCode" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
                                                 <input type="text" name="Country" id="country" PLACEHOLDER="Country" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
 
                                     <div class="row">

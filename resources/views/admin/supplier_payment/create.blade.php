@@ -95,9 +95,9 @@
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option disabled readonly="" selected>--Select your Payment Type--</option>
-                                                    <option value="bank">Bank Transfer</option>
+                                                    <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
-                                                    <option value="cheque">Check Transfer</option>
+                                                    <option value="cheque">Cheque</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -366,77 +366,80 @@
         $(document).ready(function () {
             $('#submit').click(function (event) {
 
-                $('#submit').text('please wait...');
-                $('#submit').attr('disabled',true);
-
-                var insert = [], chekedValue = [];
-                $('.singlechkbox:checked').each(function(){
-                    var currentRow = $(this).closest("tr");
-
-                    // currentRow.find('.singlechkbox').val(),
-                    // chekedValue .push($(this).val());
-                    // alert(chekedValue);
-
-                    chekedValue =
-                        {
-                            amountPaid: currentRow.find('.singlechkbox').val(),
-                            purchase_id: currentRow.find('.purchase_id').val(),
-                        };
-                    insert.push(chekedValue);
-                })
-                var bank_id = $('#bank_id').val();
-                if (bank_id === "")
+                if(confirm("Please check all amount before submission..."))
                 {
-                    bank_id = 0
-                }
-                let details = {
-                    'supplier_id': $('#supplier_id').val(),
-                    'totalAmount': $('#price').val(),
-                    'payment_type': $('#paymentType').val(),
-                    'bank_id': bank_id,
-                    'accountNumber': $('#accountNumber').val(),
-                    'TransferDate': $('#TransferDate').val(),
-                    'amountInWords': $('#SumOf').val(),
-                    'receiptNumber': $('#receiptNumber').val(),
-                    'receiverName': $('#receiver').val(),
-                    'referenceNumber': $('#referenceNumber').val(),
-                    'supplierPaymentDate': $('#paymentReceiveDate').val(),
-                    'paidAmount': $('#paidAmount').val(),
-                    'Description': $('#Description').val(),
-                    orders: insert,
-                };
-                if (insert.length > 0) {
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-                    var Datas = {Data: details};
-                    console.log(Datas);
-                    $.ajax({
-                        url: "{{ route('supplier_payments.store') }}",
-                        type: "post",
-                        data: Datas,
-                        success: function (result) {
-                            if (result !== "Failed") {
-                                details = [];
-                                console.log(result);
-                                alert("Data Inserted Successfully");
-                                window.location.href = "{{ route('supplier_payments.index') }}";
+                    $('#submit').text('please wait...');
+                    $('#submit').attr('disabled',true);
 
-                            } else {
-                                alert(result);
+                    var insert = [], chekedValue = [];
+                    $('.singlechkbox:checked').each(function(){
+                        var currentRow = $(this).closest("tr");
+
+                        // currentRow.find('.singlechkbox').val(),
+                        // chekedValue .push($(this).val());
+                        // alert(chekedValue);
+
+                        chekedValue =
+                            {
+                                amountPaid: currentRow.find('.singlechkbox').val(),
+                                purchase_id: currentRow.find('.purchase_id').val(),
+                            };
+                        insert.push(chekedValue);
+                    })
+                    var bank_id = $('#bank_id').val();
+                    if (bank_id === "")
+                    {
+                        bank_id = 0
+                    }
+                    let details = {
+                        'supplier_id': $('#supplier_id').val(),
+                        'totalAmount': $('#price').val(),
+                        'payment_type': $('#paymentType').val(),
+                        'bank_id': bank_id,
+                        'accountNumber': $('#accountNumber').val(),
+                        'TransferDate': $('#TransferDate').val(),
+                        'amountInWords': $('#SumOf').val(),
+                        'receiptNumber': $('#receiptNumber').val(),
+                        'receiverName': $('#receiver').val(),
+                        'referenceNumber': $('#referenceNumber').val(),
+                        'supplierPaymentDate': $('#paymentReceiveDate').val(),
+                        'paidAmount': $('#paidAmount').val(),
+                        'Description': $('#Description').val(),
+                        orders: insert,
+                    };
+                    if (insert.length > 0) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             }
-                        },
-                        error: function (errormessage) {
-                            alert(errormessage);
-                        }
-                    });
-                } else
-                {
-                    alert('Please Add item to list');
-                    $('#submit').text('Save');
-                    $('#submit').attr('disabled',false);
+                        });
+                        var Datas = {Data: details};
+                        console.log(Datas);
+                        $.ajax({
+                            url: "{{ route('supplier_payments.store') }}",
+                            type: "post",
+                            data: Datas,
+                            success: function (result) {
+                                if (result !== "Failed") {
+                                    details = [];
+                                    console.log(result);
+                                    alert("Data Inserted Successfully");
+                                    window.location.href = "{{ route('supplier_payments.index') }}";
+
+                                } else {
+                                    alert(result);
+                                }
+                            },
+                            error: function (errormessage) {
+                                alert(errormessage);
+                            }
+                        });
+                    } else
+                    {
+                        alert('Please Add item to list');
+                        $('#submit').text('Save');
+                        $('#submit').attr('disabled',false);
+                    }
                 }
             });
 

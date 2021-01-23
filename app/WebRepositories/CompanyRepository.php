@@ -91,6 +91,7 @@ class CompanyRepository implements ICompanyRepositoryInterface
             $account = new AccountTransaction([
                 'company_id' => $company->id,
                 'user_id' => $user_id,
+                'Description' =>'initial',
             ]);
         }
         $company->account_transaction()->save($account);

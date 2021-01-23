@@ -79,6 +79,11 @@ class ReportRepository implements IReportRepositoryInterface
         return view('admin.report.bank_report');
     }
 
+    public function GeneralLedger()
+    {
+        return view('admin.report.general_ledger_report');
+    }
+
     public function SalesReportByVehicle()
     {
         $vehicles = Vehicle::all();
@@ -429,6 +434,145 @@ class ReportRepository implements IReportRepositoryInterface
         }
     }
 
+    public function PrintGeneralLedger(Request $request)
+    {
+//        if ($request->fromDate!='' && $request->toDate!='')
+//        {
+//            $all_account_transactions=AccountTransactionResource::collection(AccountTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Credit','!=',0.00)->where('Debit','!=',0.00)->where('Differentiate','!=',0.00));
+//        }
+//        else
+//        {
+//            return FALSE;
+//        }
+
+        //this is suppose to be generated with account_transaction table but something is not right in there so
+        // generating this report manually
+
+        //1.bring all cash sales -> debit
+        //2.bring all cash purchase -> credit
+        //3.all expenses (by cash and bank) -> credit
+        //4.all customer advance (cash and bank) -> debit
+        //5.all supplier advance (cash and bank) -> credit
+        //6.all customer receive (cash and bank) -> debit
+        //7.all supplier payment (cash and bank) -> credit
+
+        //1.bring all cash sales -> debit
+//        $row = Sale::select('PurchaseDate as Date', DB::raw('SUM(grandTotal) as PurchaseAmount'))
+//            ->where('supplier_id','=',$supplier_id)
+//            ->whereBetween('PurchaseDate',[$fromDate,$toDate])
+//            ->groupBy('PurchaseDate')
+//            ->get();
+//        $row=json_decode(json_encode($row), true);
+
+        //supplier payment entries
+//        $row1 = SupplierPayment::select('transferDate as Date','paidAmount','referenceNumber','Description')
+//            ->where('supplier_id','=',$supplier_id)
+//            //->where('isPushed','=',1)
+//            ->whereBetween('transferDate',[$fromDate,$toDate])
+//            ->get();
+//        $row1=json_decode(json_encode($row1), true);
+//        $combined=array_merge($row,$row1);
+//
+//        $ord = array();
+//        foreach ($combined as $key => $value){
+//            $ord[] = strtotime($value['Date']);
+//        }
+//        array_multisort($ord, SORT_ASC, $combined);
+//        //echo "<pre>123";print_r($combined);die;
+//        $row=$combined;
+
+        $all_account_transactions='';
+
+        $pdf = new PDF();
+        $pdf::setPrintHeader(false);
+        $pdf::setPrintFooter(false);
+        $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+        $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        $pdf::AddPage();$pdf::SetFont('times', '', 6);
+        $pdf::SetFillColor(255,255,0);
+
+        //$row=$sales->sale_details;
+        $row=json_decode(json_encode($all_account_transactions), true);
+        //echo "<pre>123";print_r($row);die;
+        if(empty($row))
+        {
+            return FALSE;
+        }
+
+        $pdf::SetFont('times', '', 15);
+        $html='General Ledger';
+        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+        $pdf::SetFont('times', '', 12);
+        $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+        $pdf::writeHTMLCell(0, 0, ''    , '', $html,0, 1, 0, true, 'R', true);
+
+        $balance=0.0;
+        $debit_total=0.0;
+        $credit_total=0.0;
+
+        $pdf::SetFont('times', 'B', 14);
+        $html = '<table border="0.5" cellpadding="2">
+            <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                <th align="center" width="50">#</th>
+                <th align="center" width="80">Date</th>
+                <th align="center" width="100">Type</th>
+                <th align="center" width="100">Details</th>
+                <th align="center" width="60">Credit</th>
+                <th align="center" width="60">Debit</th>
+                <th align="center" width="60">Closing</th>
+            </tr>';
+        $pdf::SetFont('times', '', 10);
+        for($i=0;$i<count($row);$i++)
+        {
+            if($row[$i]['Debit']!=0)
+            {
+                $debit_total += $row[$i]['Debit'];
+                $balance = $balance + $row[$i]['Debit'];
+            }
+            else
+            {
+                $credit_total += $row[$i]['Credit'];
+                $balance = $balance - $row[$i]['Credit'];
+            }
+            $html .='<tr>
+                <td align="center" width="50">'.($row[$i]['referenceNumber']).'</td>
+                <td align="center" width="80">'.($row[$i]['createdDate']).'</td>
+                <td align="center" width="100">'.'Type'.'</td>
+                <td align="center" width="100">N.A.</td>
+                <td align="right" width="60">'.($row[$i]['Credit']).'</td>
+                <td align="right" width="60">'.($row[$i]['Debit']).'</td>
+                <td align="right" width="60">'.number_format($row[$i]['Differentiate'],2,'.','').'</td>
+                </tr>';
+        }
+        $html.= '
+             <tr color="red">
+                 <td width="50"></td>
+                 <td width="80"></td>
+                 <td width="100"></td>
+                 <td width="100" align="right">Total : </td>
+                 <td width="60" align="right">'.number_format($credit_total,2,'.','').'</td>
+                 <td width="60" align="right">'.number_format($debit_total,2,'.','').'</td>
+                 <td width="60" align="right">'.number_format($balance,2,'.','').'</td>
+             </tr>';
+        $pdf::SetFillColor(255, 0, 0);
+        $html.='</table>';
+
+        $pdf::writeHTML($html, true, false, false, false, '');
+
+        $pdf::lastPage();
+        $time=time();
+        $fileLocation = storage_path().'/app/public/report_files/';
+        $fileNL = $fileLocation.'//'.$time.'.pdf';
+        $pdf::Output($fileNL, 'F');
+        //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+        $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+        //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+        $url=array('url'=>$url);
+        return $url;
+    }
+
     public function PrintBankReport(Request $request)
     {
         if ($request->fromDate!='' && $request->toDate!='')
@@ -475,7 +619,6 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="60">Credit</th>
                 <th align="center" width="60">Debit</th>
                 <th align="center" width="60">Closing</th>
-
             </tr>';
         $pdf::SetFont('times', '', 10);
         for($i=0;$i<count($row);$i++)
@@ -564,16 +707,15 @@ class ReportRepository implements IReportRepositoryInterface
         $credit_total=0.0;
 
         $pdf::SetFont('times', 'B', 14);
-        $html = '<table border="0" cellpadding="5">
+        $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="80">#</th>
                 <th align="center" width="80">Date</th>
                 <th align="center" width="100">Type</th>
                 <th align="center" width="100">Details</th>
-                <th align="center" width="60">Credit</th>
-                <th align="center" width="60">Debit</th>
-                <th align="center" width="60">Closing</th>
-
+                <th align="right" width="60">Debit</th>
+                <th align="right" width="60">Credit</th>
+                <th align="right" width="60">Closing</th>
             </tr>';
         $pdf::SetFont('times', '', 10);
         for($i=0;$i<count($row);$i++)
@@ -581,15 +723,15 @@ class ReportRepository implements IReportRepositoryInterface
             if($row[$i]['Debit']!=0)
             {
                 $debit_total += $row[$i]['Debit'];
-                $balance = $balance + $row[$i]['Debit'];
+                $balance = $balance - $row[$i]['Debit'];
             }
             else
             {
                 $credit_total += $row[$i]['Credit'];
-                $balance = $balance - $row[$i]['Credit'];
+                $balance = $balance + $row[$i]['Credit'];
             }
             $html .='<tr>
-                <td align="center" width="80">'.($row[$i]['Reference']).'</td>
+                <td align="left" width="80">'.($row[$i]['Reference']).'</td>
                 <td align="center" width="80">'.($row[$i]['createdDate']).'</td>
                 <td align="center" width="100">'.($row[$i]['Type']).'</td>
                 <td align="center" width="100">N.A.</td>
@@ -704,7 +846,6 @@ class ReportRepository implements IReportRepositoryInterface
                     <th align="center" width="40">Taxable</th>
                     <th align="center" width="35">VAT</th>
                     <th align="center" width="45">NetTotal</th>
-
                 </tr>';
                 for($i=0;$i<count($row);$i++)
                 {
@@ -879,7 +1020,6 @@ class ReportRepository implements IReportRepositoryInterface
                     <th align="center" width="50">Paid</th>
                     <th align="center" width="50">Balance</th>
                     <th align="center" width="70">Date</th>
-
                 </tr>';
             $pdf::SetFont('times', '', 10);
             for($i=0;$i<count($row);$i++)
@@ -1274,7 +1414,9 @@ class ReportRepository implements IReportRepositoryInterface
     public function PrintCustomerStatement()
     {
         $row = DB::table('sales as s')->select('s.customer_id', DB::raw('SUM(s.remainingBalance) as SalesAmount'),'c.Name','c.Mobile')
+            ->where('remainingBalance','>=',10)
             ->groupBy('customer_id')
+            ->orderBy('SalesAmount','desc')
             ->leftjoin('customers as c', 'c.id', '=', 's.customer_id')
             ->get();
         $row=json_decode(json_encode($row), true);
@@ -1294,20 +1436,20 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetFillColor(255,255,0);
 
             $pdf::SetFont('times', '', 15);
-            $html='Customer Statement';
+            $html='CUSTOMER RECEIVABLE SUMMARY';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
             $pdf::SetFont('times', '', 12);
-            $html='Date :- '.date('d-m-Y h:i:s');
+            $html='Date : '.date('d-m-Y h:i:s');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
             $pdf::SetFont('times', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                <th align="center" width="80">S.No</th>
-                <th align="center" width="150">Account</th>
-                <th align="center" width="150">Cell</th>
-                <th align="right" width="150">Balance</th>
+                <th align="center" width="50">S.No</th>
+                <th align="center" width="300">Customer Name</th>
+                <th align="center" width="100">Cell</th>
+                <th align="right" width="80">Balance</th>
             </tr>';
             $pdf::SetFont('times', '', 10);
             $total_balance=0.0;
@@ -1315,18 +1457,21 @@ class ReportRepository implements IReportRepositoryInterface
             {
                 $total_balance+=$row[$i]['SalesAmount'];
                 $html .='<tr>
-                <td align="center" width="80">'.($i+1).'</td>
-                <td align="center" width="150">'.($row[$i]['Name']).'</td>
-                <td align="center" width="150">'.($row[$i]['Mobile']).'</td>
-                <td align="right" width="150">'.($row[$i]['SalesAmount']).'</td>
+                <td align="center" width="50">'.($i+1).'</td>
+                <td align="left" width="300">'.($row[$i]['Name']).'</td>
+                <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['SalesAmount'],2,'.',',')).'</td>
                 </tr>';
             }
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('times', 'B', 13);
+            $html='<table border="0" cellpadding="0">';
             $html.= '
                  <tr color="red">
-                     <td width="80"></td>
-                     <td width="150"></td>
-                     <td width="150" align="right">Total Balance :- </td>
-                     <td width="150" align="right">'.number_format($total_balance,2,'.','').'</td>
+                     <td width="450" align="right" colspan="3">TOTAL BALANCE : </td>
+                     <td width="80" align="right">'.number_format($total_balance,2,'.',',').'</td>
                  </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -1336,7 +1481,7 @@ class ReportRepository implements IReportRepositoryInterface
             if($data)
             {
                 $pdf::SetFont('times', '', 15);
-                $html='Advance Payments';
+                $html='CUSTOMER ADVANCES';
                 $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
                 $row=json_decode(json_encode($data), true);
@@ -1344,42 +1489,44 @@ class ReportRepository implements IReportRepositoryInterface
                 $pdf::SetFont('times', '', 10);
                 $html = '<table border="0.5" cellpadding="2">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="80">S.No</th>
-                    <th align="center" width="150">Account</th>
-                    <th align="center" width="150">Cell</th>
-                    <th align="right" width="150">Balance</th>
+                    <th align="center" width="50">S.No</th>
+                    <th align="center" width="300">Account</th>
+                    <th align="center" width="100">Cell</th>
+                    <th align="right" width="80">Balance</th>
                 </tr>';
-
 
                 $total_advances=0.0;
                 for($j=0;$j<count($row);$j++)
                 {
                     $total_advances+=$row[$j]['Amount'];
                     $html .='<tr>
-                    <td align="center" width="80">'.($j+1).'</td>
-                    <td align="center" width="150">'.($row[$j]['api_customer']['Name']).'</td>
-                    <td align="center" width="150">'.($row[$j]['api_customer']['Mobile']).'</td>
-                    <td align="right" width="150">'.($row[$j]['Amount']).'</td>
+                    <td align="center" width="50">'.($j+1).'</td>
+                    <td align="left" width="300">'.($row[$j]['api_customer']['Name']).'</td>
+                    <td align="center" width="100">'.($row[$j]['api_customer']['Mobile']).'</td>
+                    <td align="right" width="80">'.(number_format($row[$j]['Amount'],2,'.',',')).'</td>
                     </tr>';
                 }
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+
+                $pdf::SetFont('times', 'B', 13);
+                $html='<table border="0" cellpadding="0">';
                 $html.= '
                  <tr color="red">
-                     <td width="80"></td>
-                     <td width="150"></td>
-                     <td width="150" align="right">Total Advances :- </td>
-                     <td width="150" align="right">'.number_format($total_advances,2,'.','').'</td>
+                     <td width="450" align="right" colspan="3">TOTAL ADVANCES : </td>
+                     <td width="80" align="right">'.number_format($total_advances,2,'.',',').'</td>
                  </tr>';
                 $html.='</table>';
                 $pdf::writeHTML($html, true, false, false, false, '');
             }
             $pdf::SetFont('times', '', 12);
-            $html='Receivable Total :- '.number_format($total_balance,2,'.','');
+            $html='Receivable Total : '.number_format($total_balance,2,'.','');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $html='Advances Total :- '.number_format($total_advances,2,'.','');
+            $html='Advances Total : '.number_format($total_advances,2,'.','');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $html='Differance Total :- '.number_format($total_balance-$total_advances,2,'.','');
+            $html='Differance Total : '.number_format($total_balance-$total_advances,2,'.','');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
 
@@ -1404,6 +1551,7 @@ class ReportRepository implements IReportRepositoryInterface
     {
         $row = DB::table('purchases as p')->select('p.supplier_id', DB::raw('SUM(p.remainingBalance) as PurchaseAmount'),'s.Name','s.Mobile')
             ->groupBy('supplier_id')
+            ->orderBy('PurchaseAmount','desc')
             ->leftjoin('suppliers as s', 's.id', '=', 'p.supplier_id')
             ->get();
         $row=json_decode(json_encode($row), true);
@@ -1425,20 +1573,20 @@ class ReportRepository implements IReportRepositoryInterface
             //echo "<pre>123";print_r($row);die;
 
             $pdf::SetFont('times', '', 15);
-            $html='Supplier Statement';
+            $html='SUPPLIER PAYABLE SUMMARY';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
             $pdf::SetFont('times', '', 12);
-            $html='Date :- '.date('d-m-Y h:i:s');
+            $html='Date : '.date('d-m-Y h:i:s');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
             $pdf::SetFont('times', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                <th align="center" width="80">S.No</th>
-                <th align="center" width="150">Account</th>
-                <th align="center" width="150">Cell</th>
-                <th align="right" width="150">Balance</th>
+                <th align="center" width="50">S.No</th>
+                <th align="center" width="300">Account</th>
+                <th align="center" width="100">Cell</th>
+                <th align="right" width="80">Balance</th>
             </tr>';
             $pdf::SetFont('times', '', 10);
             $total_balance=0.0;
@@ -1446,18 +1594,21 @@ class ReportRepository implements IReportRepositoryInterface
             {
                 $total_balance+=$row[$i]['PurchaseAmount'];
                 $html .='<tr>
-                <td align="center" width="80">'.($i+1).'</td>
-                <td align="center" width="150">'.($row[$i]['Name']).'</td>
-                <td align="center" width="150">'.($row[$i]['Mobile']).'</td>
-                <td align="right" width="150">'.($row[$i]['PurchaseAmount']).'</td>
+                <td align="center" width="50">'.($i+1).'</td>
+                <td align="left" width="300">'.($row[$i]['Name']).'</td>
+                <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['PurchaseAmount'],2,'.',',')).'</td>
                 </tr>';
             }
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('times', 'B', 13);
+            $html='<table border="0" cellpadding="0">';
             $html.= '
                  <tr color="red">
-                     <td width="80"></td>
-                     <td width="150"></td>
-                     <td width="150" align="right">Total Balance :- </td>
-                     <td width="150" align="right">'.number_format($total_balance,2,'.','').'</td>
+                     <td width="450" align="right" colspan="3">Total Balance : </td>
+                     <td width="80" align="right">'.number_format($total_balance,2,'.',',').'</td>
                  </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -1467,7 +1618,7 @@ class ReportRepository implements IReportRepositoryInterface
             if($data)
             {
                 $pdf::SetFont('times', '', 15);
-                $html='Suppliers Advance Payments';
+                $html='SUPPLIER ADVANCES';
                 $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
                 $row=json_decode(json_encode($data), true);
@@ -1475,43 +1626,45 @@ class ReportRepository implements IReportRepositoryInterface
                 $pdf::SetFont('times', '', 10);
                 $html = '<table border="0.5" cellpadding="2">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="80">S.No</th>
-                    <th align="center" width="150">Account</th>
-                    <th align="center" width="150">Cell</th>
-                    <th align="right" width="150">Balance</th>
+                    <th align="center" width="50">S.No</th>
+                    <th align="center" width="300">Account</th>
+                    <th align="center" width="100">Cell</th>
+                    <th align="right" width="80">Balance</th>
                 </tr>';
-
 
                 $total_advances=0.0;
                 for($j=0;$j<count($row);$j++)
                 {
                     $total_advances+=$row[$j]['Amount'];
                     $html .='<tr>
-                    <td align="center" width="80">'.($j+1).'</td>
-                    <td align="center" width="150">'.($row[$j]['api_supplier']['Name']).'</td>
-                    <td align="center" width="150">'.($row[$j]['api_supplier']['Mobile']).'</td>
-                    <td align="right" width="150">'.($row[$j]['Amount']).'</td>
+                    <td align="center" width="50">'.($j+1).'</td>
+                    <td align="left" width="300">'.($row[$j]['api_supplier']['Name']).'</td>
+                    <td align="center" width="100">'.($row[$j]['api_supplier']['Mobile']).'</td>
+                    <td align="right" width="80">'.(number_format($row[$j]['Amount'],2,'.',',')).'</td>
                     </tr>';
                 }
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+
+                $pdf::SetFont('times', 'B', 13);
+                $html='<table border="0" cellpadding="0">';
                 $html.= '
                  <tr color="red">
-                     <td width="80"></td>
-                     <td width="150"></td>
-                     <td width="150" align="right">Total Advances :- </td>
-                     <td width="150" align="right">'.number_format($total_advances,2,'.','').'</td>
+                     <td width="450" align="right" colspan="3">Total Advances : </td>
+                     <td width="80" align="right">'.number_format($total_advances,2,'.',',').'</td>
                  </tr>';
                 $html.='</table>';
                 $pdf::writeHTML($html, true, false, false, false, '');
             }
 
             $pdf::SetFont('times', '', 12);
-            $html='Outstanding Total :- '.number_format($total_balance,2,'.','');
+            $html='Outstanding Total : '.number_format($total_balance,2,'.','');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $html='Advances Total :- '.number_format($total_advances,2,'.','');
+            $html='Advances Total : '.number_format($total_advances,2,'.','');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $html='Differance Total :- '.number_format($total_balance-$total_advances,2,'.','');
+            $html='Differance Total : '.number_format($total_balance-$total_advances,2,'.','');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
             $pdf::lastPage();
@@ -1574,7 +1727,7 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetFillColor(255,255,0);
 
             $pdf::SetFont('times', '', 15);
-            $html='Supplier Statement :- '.$request->supplier_name;
+            $html='Supplier Name : '.$request->supplier_name;
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
             $pdf::SetFont('times', '', 12);
@@ -1626,16 +1779,39 @@ class ReportRepository implements IReportRepositoryInterface
                         </tr>';
                 }
             }
-            $html.= '
-                 <tr color="red">
-                     <td width="330" align="right" colspan="3">Total :- </td>
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('times', 'B', 13);
+            if($sum_of_differance<0)
+            {
+                $html='<table border="0.5" cellpadding="0">';
+                $html.= '
+                 <tr>
+                     <td width="330" align="right" colspan="3">Total : </td>
+                     <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
+                     <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
+                     <td width="80" align="right" color="red">'.number_format($sum_of_differance,2,'.',',').'</td>
+                 </tr>';
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
+            else
+            {
+                $html='<table border="0.5" cellpadding="0">';
+                $html.= '
+                 <tr>
+                     <td width="330" align="right" colspan="3">Total : </td>
                      <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
                      <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
                      <td width="80" align="right">'.number_format($sum_of_differance,2,'.',',').'</td>
                  </tr>';
-            $pdf::SetFillColor(255, 0, 0);
-            $html.='</table>';
-            $pdf::writeHTML($html, true, false, false, false, '');
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
+
 
             $pdf::lastPage();
             $time=time();
@@ -1697,7 +1873,7 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetFillColor(255,255,0);
 
             $pdf::SetFont('times', '', 15);
-            $html='Customer Statement :- '.$request->customer_name;
+            $html='Customer Statement : '.$request->customer_name;
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
             $pdf::SetFont('times', '', 12);
@@ -1751,7 +1927,7 @@ class ReportRepository implements IReportRepositoryInterface
             }
             $html.= '
                  <tr color="red">
-                     <td width="330" align="right" colspan="3">Total :- </td>
+                     <td width="330" align="right" colspan="3">Total : </td>
                      <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
                      <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
                      <td width="80" align="right">'.number_format($sum_of_differance,2,'.',',').'</td>

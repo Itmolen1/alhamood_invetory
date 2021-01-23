@@ -201,7 +201,7 @@
                                 <a href="{{ route('BankReport') }}">Bank Book</a>
                             </li>
                             <li class="border-bottom">
-                                <a href="#">General Ledger</a>
+                                <a href="{{ route('GeneralLedger') }}">General Ledger</a>
                             </li>
                             <li class="border-bottom">
                                 <a href="#">Cash flow</a>

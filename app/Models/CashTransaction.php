@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CashTransaction extends Model
 {
-        use HasFactory;
-        use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
-        protected $primaryKey = 'id';
-        protected $table = 'cash_transactions';
+    protected $primaryKey = 'id';
+    protected $table = 'cash_transactions';
 }

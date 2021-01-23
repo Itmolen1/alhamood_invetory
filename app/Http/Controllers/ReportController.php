@@ -124,4 +124,14 @@ class ReportController extends Controller
     {
         return $this->reportRepository->PrintBankReport($request);
     }
+
+    public function GeneralLedger()
+    {
+        return $this->reportRepository->GeneralLedger();
+    }
+
+    public function PrintGeneralLedger(Request $request)
+    {
+        return $this->reportRepository->PrintGeneralLedger($request);
+    }
 }

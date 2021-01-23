@@ -105,6 +105,8 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'Description' =>$customerRequest->Description,
             'registrationDate' =>$customerRequest->registrationDate,
             'TRNNumber' =>$customerRequest->TRNNumber,
+            'openingBalance' =>$customerRequest->openingBalance,
+            'openingBalanceAsOfDate' =>$customerRequest->openingBalanceAsOfDate,
             'payment_term_id' =>$customerRequest->paymentTerm ?? 0,
             'company_type_id' =>$customerRequest->companyType ?? 0,
             'payment_type_id' =>$customerRequest->paymentType ?? 0,
@@ -115,6 +117,8 @@ class CustomerRepository implements ICustomerRepositoryInterface
                 'customer_id' => $customer->id,
                 'user_id' => $user_id,
                 'createdDate' => date('Y-m-d'),
+                'company_id' =>$company_id,
+                'Description' =>'initial',
             ]);
         }
         $customer->account_transaction()->save($account);
@@ -164,6 +168,8 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'Description' =>$request->Description,
             'registrationDate' =>$request->registrationDate,
             'TRNNumber' =>$request->TRNNumber,
+            'openingBalance' =>$request->openingBalance,
+            'openingBalanceAsOfDate' =>$request->openingBalanceAsOfDate,
             'payment_term_id' =>$request->paymentTerm ?? 0,
             'company_type_id' =>$request->companyType ?? 0,
             'payment_type_id' =>$request->paymentType ?? 0,

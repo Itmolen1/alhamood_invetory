@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Purchase Report')
+@section('title', 'General Ledger')
 
 @section('content')
 
@@ -12,9 +12,15 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Purchase Report</li>
+                            <li class="breadcrumb-item active">General Ledger</li>
                         </ol>
                        </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>General Ledger</h2>
                 </div>
             </div>
 
@@ -36,20 +42,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="control-label">VAT FILTER</label>
-                        <select name="filter" class="form-control" id="filter" required>
-                            <option value="all" selected>ALL</option>
-                            <option value="with">With VAT</option>
-                            <option value="without">Without VAT</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Purchase Report</button></a>
+                        <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get General Ledger</button></a>
                     </div>
                 </div>
             </div>
@@ -62,12 +55,11 @@
         {
             var fromDate = $('#fromDate').val();
             var toDate = $('#toDate').val();
-            var filter = $("#filter option:selected").val();
             $.ajax({
-                url: "{{ URL('PrintPurchaseReport') }}",
+                url: "{{ URL('PrintGeneralLedger') }}",
                 type: "POST",
                 dataType : "json",
-                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate,filter:filter},
+                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate},
                 success: function (result) {
                     window.open(result.url,'_blank');
                 },

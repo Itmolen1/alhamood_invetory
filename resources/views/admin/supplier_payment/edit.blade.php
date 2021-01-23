@@ -53,9 +53,9 @@
                                             <label>Payment Type</label>
                                             <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                 <option value="">--Select your Payment Type--</option>
-                                                <option value="bank" @if($supplier_payment[0]->payment_type == 'bank') {{  'selected' }} @endif>Bank Transfer</option>
+                                                <option value="bank" @if($supplier_payment[0]->payment_type == 'bank') {{  'selected' }} @endif>Bank</option>
                                                 <option id="cash" value="cash" @if($supplier_payment[0]->payment_type == 'cash') {{  'selected' }} @endif>Cash</option>
-                                                <option value="cheque" @if($supplier_payment[0]->payment_type == 'cheque') {{  'selected' }} @endif>Check Transfer</option>
+                                                <option value="cheque" @if($supplier_payment[0]->payment_type == 'cheque') {{  'selected' }} @endif>Cheque</option>
                                             </select>
                                         </div>
                                     </div>

@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Balance Sheet')
+@section('title', 'Cash Report')
 
 @section('content')
 
@@ -34,11 +34,9 @@
             </div>
 
             <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Get Cash Report</button></a>
-                        </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Cash Report</button></a>
                     </div>
                 </div>
             </div>

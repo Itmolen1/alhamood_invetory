@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rizwanafridi
- * Date: 11/23/20
- * Time: 14:14
- */
 
 namespace App\WebRepositories;
-
 
 use App\Models\CashTransaction;
 use App\Models\Customer;
@@ -152,11 +145,12 @@ class SaleRepository implements ISaleRepositoryInterface
             if($request->Data['paidBalance'] != 0.00 || $request->Data['paidBalance'] != 0)
             {
                 $cash_transaction = new CashTransaction();
-                $cash_transaction->Reference=$request->Data['SaleNumber'];
+                $cash_transaction->Reference=$sale->id;
                 $cash_transaction->createdDate=date('Y-m-d h:i:s');
-                $cash_transaction->Type='Sales';
-                $cash_transaction->Credit=$request->Data['paidBalance'];
-                $cash_transaction->Debit=0.0;
+                $cash_transaction->Type='sales';
+                $cash_transaction->Details='Cash Sales';
+                $cash_transaction->Debit=$request->Data['paidBalance'];
+                $cash_transaction->Credit=0.00;
                 $cash_transaction->save();
             }
 
@@ -228,23 +222,23 @@ class SaleRepository implements ISaleRepositoryInterface
                     }
                 }
                 $AccData =
-                                   [
-                                        'customer_id' => $request->Data['customer_id'],
-                                        'Credit' => $totalCredit,
-                                        'Debit' => $totalDebit,
-                                        'Differentiate' => $difference,
-                                        'createdDate' => date('Y-m-d'),
-                                        'user_id' => $user_id,
-                                       'company_id' => $company_id,
-                                   ];
-                                   $AccountTransactions = AccountTransaction::updateOrCreate(
-                                    [
-                                        'createdDate'   => date('Y-m-d'),
-                                        'customer_id'   => $request->Data['customer_id'],
-                                        'company_id' => $company_id,
-                                    ],
-                                     $AccData);
-                                   return Response()->json($AccountTransactions);
+                       [
+                            'customer_id' => $request->Data['customer_id'],
+                            'Credit' => $totalCredit,
+                            'Debit' => $totalDebit,
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                       ];
+               $AccountTransactions = AccountTransaction::updateOrCreate(
+                        [
+                            'createdDate'   => date('Y-m-d'),
+                            'customer_id'   => $request->Data['customer_id'],
+                            'company_id' => $company_id,
+                        ],
+                 $AccData);
+               return Response()->json($AccountTransactions);
                   // return Response()->json("");
             }
             ////////////////// end of account section ////////////////
@@ -385,6 +379,8 @@ class SaleRepository implements ISaleRepositoryInterface
                }
             ////////////////// end of account section ////////////////
 
+
+            //here will come cash transaction record update if scenario will come by
             if ($request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == 0) {
                $isPaid = false;
                $partialPaid =false;

@@ -59,16 +59,14 @@
                                                 <input type="text" id="Name" name="Name" value="{{ $customer->Name }}" class="form-control" placeholder="Enter Customer Company Name">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Owner/Representative Name</label>
                                                 <input type="text" id="Representative" value="{{ $customer->Representative }}" name="Representative" class="form-control" placeholder="Enter Owner/Representative Name">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -81,18 +79,15 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration date</label>
                                                 <input type="date" name="registrationDate" value="{{ $customer->registrationDate }}" class="form-control" placeholder="dd/mm/yyyy">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
-                                    <div class="row">
 
+                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Payment Type</label>
@@ -104,7 +99,6 @@
                                                 </select>
                                             </div>
                                         </div>
-
 
                                         <div class="col-md-6">
                                             <div class="form-group" id="paymentTermAll">
@@ -118,21 +112,30 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
-
                                     </div>
 
                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance :- *</label>
+                                                <input type="number" step=".01" name="openingBalance" value="{{ $customer->openingBalance }}" class="form-control" placeholder="Opening Balance" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance As of Date :- *</label>
+                                                <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ $customer->openingBalanceAsOfDate }}" placeholder="Opening Balance As of Date" required>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                        <!--/span-->
+                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">TRN Number</label>
                                                 <input type="text" name="TRNNumber" value="{{ $customer->TRNNumber }}" class="form-control" placeholder="Enter TRN Number">
                                             </div>
                                         </div>
-                                        <!--/span-->
-
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Upload File</label>
@@ -163,7 +166,6 @@
                                         </div>
                                     </div>
 
-
                                     <h3 class="box-title m-t-40">Address</h3>
                                     <hr>
                                     <div class="row">
@@ -173,7 +175,6 @@
                                                 <input type="text" name="Address" value="{{ $customer->Address }}" placeholder="Address" class="form-control">
                                             </div>
                                         </div>
-
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Region</label>
@@ -195,16 +196,13 @@
                                                 <input type="text" name="City" id="city" value="{{ $customer->region->city->Name ?? "" }}" placeholder="City" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
                                                 <input type="text" name="State" id="state" value="{{ $customer->region->city->state->Name ?? "" }}" PLACEHOLDER="State" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -212,14 +210,12 @@
                                                 <input type="text" name="postCode" value="{{ $customer->postCode }}" placeholder="PostCode" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>State</label>
                                                 <input type="text" name="Country" id="country" value="{{ $customer->region->city->state->country->Name ?? "" }}" PLACEHOLDER="Country" class="form-control">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
 
                                     <div class="row">

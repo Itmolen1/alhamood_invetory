@@ -156,11 +156,12 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             if($purchaseRequest->Data['paidBalance'] != 0.00 || $purchaseRequest->Data['paidBalance'] != 0)
             {
                 $cash_transaction = new CashTransaction();
-                $cash_transaction->Reference=$purchaseRequest->Data['PurchaseNumber'];
+                $cash_transaction->Reference=$purchase->id;
                 $cash_transaction->createdDate=date('Y-m-d h:i:s');
-                $cash_transaction->Type='Purchase';
-                $cash_transaction->Credit=0.0;
-                $cash_transaction->Debit=$purchaseRequest->Data['paidBalance'];
+                $cash_transaction->Type='purchases';
+                $cash_transaction->Details='Cash Purchase';
+                $cash_transaction->Credit=$purchaseRequest->Data['paidBalance'];
+                $cash_transaction->Debit=0.00;
                 $cash_transaction->save();
             }
 
@@ -391,6 +392,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             }
             ////////////////// end of account section ////////////////
 
+
+            //here will come cash transaction record update if scenario will come by
             if ($request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == 0) {
                 $isPaid = false;
                 $partialPaid =false;

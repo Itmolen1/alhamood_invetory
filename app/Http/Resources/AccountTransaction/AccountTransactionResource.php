@@ -22,6 +22,7 @@ class AccountTransactionResource extends JsonResource
             'createdDate'=>$this->createdDate,
             'customer'=>$this->customer,
             'supplier'=>$this->supplier,
+            'employee'=>$this->employee,
         ];
     }
 }

@@ -239,9 +239,10 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$paymets->id;
             $cash_transaction->createdDate=date('Y-m-d h:i:s');
-            $cash_transaction->Type='Customer Payment';
-            $cash_transaction->Credit=$paymets->paidAmount;
-            $cash_transaction->Debit=0.0;
+            $cash_transaction->Type='payment_receives';
+            $cash_transaction->Details='Customer payment cash Received';
+            $cash_transaction->Credit=0.00;
+            $cash_transaction->Debit=$paymets->paidAmount;
             $cash_transaction->save();
         }
         elseif($paymets->payment_type == 'bank')
@@ -249,9 +250,10 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$paymets->id;
             $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='Customer Payment';
-            $bank_transaction->Credit=$paymets->paidAmount;
-            $bank_transaction->Debit=0.0;
+            $bank_transaction->Type='payment_receives';
+            $bank_transaction->Details='Customer payment Bank Transfer Received';
+            $bank_transaction->Credit=0.00;
+            $bank_transaction->Debit=$paymets->paidAmount;
             $bank_transaction->Flag=1;
             $bank_transaction->save();
         }
@@ -260,9 +262,10 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$paymets->id;
             $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='Customer Payment';
-            $bank_transaction->Credit=$paymets->paidAmount;
-            $bank_transaction->Debit=0.0;
+            $bank_transaction->Type='payment_receives';
+            $bank_transaction->Details='Customer payment Cheque Received';
+            $bank_transaction->Credit=0.00;
+            $bank_transaction->Debit=$paymets->paidAmount;
             $bank_transaction->Flag=0;
             $bank_transaction->save();
         }
