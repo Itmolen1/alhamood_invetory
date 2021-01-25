@@ -6,6 +6,7 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\BankRequest;
 use App\Models\Bank;
+use App\Models\BankTransaction;
 use App\WebRepositories\Interfaces\IBankRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -59,19 +60,35 @@ class BankRepository implements IBankRepositoryInterface
 
     public function store(BankRequest $bankRequest)
     {
-        // TODO: Implement store() method.
         $user_id = session('user_id');
         $company_id = session('company_id');
-        $role = [
+        $bank = [
             'Name' =>$bankRequest->Name,
             'Branch' =>$bankRequest->Branch,
+            'openingBalance' =>$bankRequest->openingBalance,
+            'openingBalanceAsOfDate' =>$bankRequest->openingBalanceAsOfDate,
             'Description' =>$bankRequest->Description,
             'contactNumber' =>$bankRequest->contactNumber,
             'Address' =>$bankRequest->Address,
             'user_id' =>$user_id,
             'company_id' =>$company_id,
         ];
-        Bank::create($role);
+        Bank::create($bank);
+
+        //initial cash or cash on hand for the company
+        if ($bank) {
+            BankTransaction::Create([
+                'Reference' => $bank->id,
+                'user_id' => $user_id,
+                'createdDate' => $bankRequest->openingBalanceAsOfDate,
+                'company_id' =>$company_id,
+                'Details' =>'initial',
+                'Credit' =>0.00,
+                'Debit' =>0.00,
+                'Differentiate' =>$bankRequest->openingBalance,
+            ]);
+        }
+
         return redirect()->route('banks.index');
     }
 
@@ -83,11 +100,29 @@ class BankRepository implements IBankRepositoryInterface
         $bank->update([
             'Name' =>$request->Name,
             'Branch' =>$request->Branch,
+            'openingBalance' =>$request->openingBalance,
+            'openingBalanceAsOfDate' =>$request->openingBalanceAsOfDate,
             'Description' =>$request->Description,
             'contactNumber' =>$request->contactNumber,
             'Address' =>$request->Address,
             'user_id' =>$user_id,
         ]);
+
+        //initial cash or cash on hand for the company
+        $company_id = session('company_id');
+        if ($bank) {
+            BankTransaction::Create([
+                'Reference' => $bank->id,
+                'user_id' => $user_id,
+                'createdDate' => $request->openingBalanceAsOfDate,
+                'company_id' =>$company_id,
+                'Details' =>'initial',
+                'Credit' =>0.00,
+                'Debit' =>0.00,
+                'Differentiate' =>$request->openingBalance,
+            ]);
+        }
+
         return redirect()->route('banks.index');
     }
 

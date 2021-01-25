@@ -133,8 +133,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             {
                 //return $detail['Quantity'];
                 //return Response()->json($detail['Quantity']);
-
-
                 $data =  PurchaseDetail::create([
                     "product_id"        => $detail['product_id'],
                     "unit_id"        => $detail['unit_id'],
@@ -155,103 +153,203 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
             if($purchaseRequest->Data['paidBalance'] != 0.00 || $purchaseRequest->Data['paidBalance'] != 0)
             {
+                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                $difference = $cashTransaction->last()->Differentiate;
                 $cash_transaction = new CashTransaction();
-                $cash_transaction->Reference=$purchase->id;
+                $cash_transaction->Reference=$purchase;
                 $cash_transaction->createdDate=date('Y-m-d h:i:s');
                 $cash_transaction->Type='purchases';
-                $cash_transaction->Details='Cash Purchase';
+                $cash_transaction->Details='CashPurchase';
                 $cash_transaction->Credit=$purchaseRequest->Data['paidBalance'];
                 $cash_transaction->Debit=0.00;
+                $cash_transaction->Differentiate=$difference-$purchaseRequest->Data['paidBalance'];
+                $cash_transaction->user_id = $user_id;
+                $cash_transaction->company_id = $company_id;
                 $cash_transaction->save();
             }
 
-            ////////////////// account section ////////////////
+            ////////////////// start account section gautam ////////////////
             if ($purchase)
             {
-                $accountTransaction = AccountTransaction::where(
-                    [
-                        'supplier_id'=> $purchaseRequest->Data['supplier_id'],
-                        'createdDate' => date('Y-m-d'),
-                    ])->first();
-                if (!is_null($accountTransaction))
-                {
-                    if ($purchaseRequest->Data['paidBalance'] == 0 || $purchaseRequest->Data['paidBalance'] == 0.00) {
-                        if ($accountTransaction->createdDate != date('Y-m-d')) {
-                            $totalDebit = $purchaseRequest->Data['grandTotal'];
-                        } else {
-                            $totalDebit = $accountTransaction->Debit + $purchaseRequest->Data['grandTotal'];
-                        }
-                        $totalCredit = $accountTransaction->Credit;
-                        $difference = $accountTransaction->Differentiate - $purchaseRequest->Data['grandTotal'];
-                    }
-                    elseif($purchaseRequest->Data['paidBalance'] > 0 AND $purchaseRequest->Data['paidBalance'] < $purchaseRequest->Data['grandTotal'] )
-                    {
-                        if ($accountTransaction->createdDate != date('Y-m-d')) {
-                            $totalCredit = $purchaseRequest->Data['paidBalance'];
-                            $totalDebit = $purchaseRequest->Data['grandTotal'];
-                        } else {
-                            $totalCredit = $accountTransaction->Credit + $purchaseRequest->Data['paidBalance'];
-                            $totalDebit = $accountTransaction->Debit + $purchaseRequest->Data['grandTotal'];
-                        }
-                        $differenceValue = $accountTransaction->Differentiate + $purchaseRequest->Data['paidBalance'];
-                        $difference = $differenceValue - $purchaseRequest->Data['grandTotal'];
-                    }
-                    else{
+                $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchaseRequest->Data['supplier_id'],])->get();
+                // totally credit
+                if ($purchaseRequest->Data['paidBalance'] == 0 || $purchaseRequest->Data['paidBalance'] == 0.00) {
+                    $totalCredit = $purchaseRequest->Data['grandTotal'];
+                    $difference = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['grandTotal'];
 
-                        if ($accountTransaction->createdDate != date('Y-m-d')) {
-                            $totalCredit = $purchaseRequest->Data['paidBalance'];
-                        } else {
-                            $totalCredit = $accountTransaction->Credit + $purchaseRequest->Data['paidBalance'];
-                        }
-                        $totalDebit = $accountTransaction->Debit;
-                        $difference = $accountTransaction->Differentiate + $purchaseRequest->Data['paidBalance'];
-                    }
+                    $AccData =
+                        [
+                            'supplier_id' => $purchaseRequest->Data['supplier_id'],
+                            'Credit' => $totalCredit,
+                            'Debit' => 0.00,
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Purchase|'.$detail['PadNumber'],
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
                 }
+                // partial payment some cash some credit
+                elseif($purchaseRequest->Data['paidBalance'] > 0 AND $purchaseRequest->Data['paidBalance'] < $purchaseRequest->Data['grandTotal'] )
+                {
+                    $differenceValue = $accountTransaction->last()->Differentiate - $purchaseRequest->Data['paidBalance'];
+                    $totalCredit = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['grandTotal'];
+                    $difference = $differenceValue + $purchaseRequest->Data['grandTotal'];
+
+                    //make credit entry for the purchase
+                    $AccData =
+                        [
+                            'supplier_id' => $purchaseRequest->Data['supplier_id'],
+                            'Credit' => $purchaseRequest->Data['grandTotal'],
+                            'Debit' => 0.00,
+                            'Differentiate' => $totalCredit,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Purchase|'.$detail['PadNumber'],
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+
+                    //make debit entry for the whatever cash is paid
+                    $difference=$totalCredit-$purchaseRequest->Data['paidBalance'];
+                    $AccData =
+                        [
+                            'supplier_id' => $purchaseRequest->Data['supplier_id'],
+                            'Credit' => 0.00,
+                            'Debit' => $purchaseRequest->Data['paidBalance'],
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'PartialCashPurchase|'.$detail['PadNumber'],
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                }
+                // fully paid with cash
                 else
                 {
-                    $accountTransaction = AccountTransaction::where(
-                        [
-                            'supplier_id'=> $purchaseRequest->Data['supplier_id'],
-                        ])->get();
-                    if ($purchaseRequest->Data['paidBalance'] == 0 || $purchaseRequest->Data['paidBalance'] == 0.00) {
-                        $totalDebit = $purchaseRequest->Data['grandTotal'];
-                        $totalCredit = $accountTransaction->last()->Credit;
-                        $difference = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['grandTotal'];
-                    }
-                    elseif($purchaseRequest->Data['paidBalance'] > 0 AND $purchaseRequest->Data['paidBalance'] < $purchaseRequest->Data['grandTotal'] )
-                    {
+                    $totalCredit = $purchaseRequest->Data['paidBalance'];
+                    $difference = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['paidBalance'];
 
-                        $totalCredit = $purchaseRequest->Data['paidBalance'];
-                        $totalDebit = $purchaseRequest->Data['grandTotal'];
-                        $differenceValue = $accountTransaction->last()->Differentiate - $purchaseRequest->Data['paidBalance'];
-                        $difference = $differenceValue + $purchaseRequest->Data['grandTotal'];
-                    }
-                    else{
-                        $totalCredit = $purchaseRequest->Data['paidBalance'];
-                        $totalDebit = $accountTransaction->last()->Debit;
-                        $difference = $accountTransaction->last()->Differentiate - $purchaseRequest->Data['paidBalance'];
-                    }
-                }
-                $AccData =
-                    [
+                    //make credit entry for the purchase
+                    $AccountTransactions=AccountTransaction::Create([
                         'supplier_id' => $purchaseRequest->Data['supplier_id'],
                         'Credit' => $totalCredit,
-                        'Debit' => $totalDebit,
+                        'Debit' => 0.00,
                         'Differentiate' => $difference,
                         'createdDate' => date('Y-m-d'),
                         'user_id' => $user_id,
                         'company_id' => $company_id,
-                    ];
+                        'Description'=>'Purchase|'.$detail['PadNumber'],
+                    ]);
 
-                $AccountTransactions = AccountTransaction::updateOrCreate(
-                    [
-                        'createdDate'   => date('Y-m-d'),
-                        'supplier_id'   => $purchaseRequest->Data['supplier_id'],
-                    ],
-                    $AccData);
+                    //make debit entry for the whatever cash is paid
+                    $difference=$difference-$purchaseRequest->Data['paidBalance'];
+                    $AccountTransactions=AccountTransaction::Create([
+                        'supplier_id' => $purchaseRequest->Data['supplier_id'],
+                        'Credit' => 0.00,
+                        'Debit' => $purchaseRequest->Data['paidBalance'],
+                        'Differentiate' => $difference,
+                        'createdDate' => date('Y-m-d'),
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'FullCashPurchase|'.$detail['PadNumber'],
+                    ]);
+                }
                 return Response()->json($AccountTransactions);
                 // return Response()->json("");
             }
+            ////////////////// end account section gautam ////////////////
+
+
+//            ////////////////// account section ////////////////
+//            if ($purchase)
+//            {
+//                $accountTransaction = AccountTransaction::where(
+//                    [
+//                        'supplier_id'=> $purchaseRequest->Data['supplier_id'],
+//                        'createdDate' => date('Y-m-d'),
+//                    ])->first();
+//                if (!is_null($accountTransaction))
+//                {
+//                    if ($purchaseRequest->Data['paidBalance'] == 0 || $purchaseRequest->Data['paidBalance'] == 0.00) {
+//                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+//                            $totalDebit = $purchaseRequest->Data['grandTotal'];
+//                        } else {
+//                            $totalDebit = $accountTransaction->Debit + $purchaseRequest->Data['grandTotal'];
+//                        }
+//                        $totalCredit = $accountTransaction->Credit;
+//                        $difference = $accountTransaction->Differentiate - $purchaseRequest->Data['grandTotal'];
+//                    }
+//                    elseif($purchaseRequest->Data['paidBalance'] > 0 AND $purchaseRequest->Data['paidBalance'] < $purchaseRequest->Data['grandTotal'] )
+//                    {
+//                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+//                            $totalCredit = $purchaseRequest->Data['paidBalance'];
+//                            $totalDebit = $purchaseRequest->Data['grandTotal'];
+//                        } else {
+//                            $totalCredit = $accountTransaction->Credit + $purchaseRequest->Data['paidBalance'];
+//                            $totalDebit = $accountTransaction->Debit + $purchaseRequest->Data['grandTotal'];
+//                        }
+//                        $differenceValue = $accountTransaction->Differentiate + $purchaseRequest->Data['paidBalance'];
+//                        $difference = $differenceValue - $purchaseRequest->Data['grandTotal'];
+//                    }
+//                    else{
+//
+//                        if ($accountTransaction->createdDate != date('Y-m-d')) {
+//                            $totalCredit = $purchaseRequest->Data['paidBalance'];
+//                        } else {
+//                            $totalCredit = $accountTransaction->Credit + $purchaseRequest->Data['paidBalance'];
+//                        }
+//                        $totalDebit = $accountTransaction->Debit;
+//                        $difference = $accountTransaction->Differentiate + $purchaseRequest->Data['paidBalance'];
+//                    }
+//                }
+//                else
+//                {
+//                    $accountTransaction = AccountTransaction::where(
+//                        [
+//                            'supplier_id'=> $purchaseRequest->Data['supplier_id'],
+//                        ])->get();
+//                    if ($purchaseRequest->Data['paidBalance'] == 0 || $purchaseRequest->Data['paidBalance'] == 0.00) {
+//                        $totalDebit = $purchaseRequest->Data['grandTotal'];
+//                        $totalCredit = $accountTransaction->last()->Credit;
+//                        $difference = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['grandTotal'];
+//                    }
+//                    elseif($purchaseRequest->Data['paidBalance'] > 0 AND $purchaseRequest->Data['paidBalance'] < $purchaseRequest->Data['grandTotal'] )
+//                    {
+//
+//                        $totalCredit = $purchaseRequest->Data['paidBalance'];
+//                        $totalDebit = $purchaseRequest->Data['grandTotal'];
+//                        $differenceValue = $accountTransaction->last()->Differentiate - $purchaseRequest->Data['paidBalance'];
+//                        $difference = $differenceValue + $purchaseRequest->Data['grandTotal'];
+//                    }
+//                    else{
+//                        $totalCredit = $purchaseRequest->Data['paidBalance'];
+//                        $totalDebit = $accountTransaction->last()->Debit;
+//                        $difference = $accountTransaction->last()->Differentiate - $purchaseRequest->Data['paidBalance'];
+//                    }
+//                }
+//                $AccData =
+//                    [
+//                        'supplier_id' => $purchaseRequest->Data['supplier_id'],
+//                        'Credit' => $totalCredit,
+//                        'Debit' => $totalDebit,
+//                        'Differentiate' => $difference,
+//                        'createdDate' => date('Y-m-d'),
+//                        'user_id' => $user_id,
+//                        'company_id' => $company_id,
+//                    ];
+//
+//                $AccountTransactions = AccountTransaction::updateOrCreate(
+//                    [
+//                        'createdDate'   => date('Y-m-d'),
+//                        'supplier_id'   => $purchaseRequest->Data['supplier_id'],
+//                    ],
+//                    $AccData);
+//                return Response()->json($AccountTransactions);
+//                // return Response()->json("");
+//            }
             ////////////////// end of account section ////////////////
 //            if ($data)
 //            {
@@ -262,7 +360,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
@@ -270,127 +367,933 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $user_id = session('user_id');
             $company_id = session('company_id');
 
-            ////////////////// account section ////////////////
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'supplier_id'=> $request->Data['supplier_id'],
-                ])->get();
-            if (!is_null($accountTransaction)) {
-                $lastAccountTransection = $accountTransaction->Last();
-                if ($lastAccountTransection->supplier_id != $purchased->supplier_id)
-                {
-                    if ($purchased->paidBalance == 0 || $purchased->paidBalance == 0.00) {
-                        $OldValue1 = $purchased->supplier->account_transaction->Last()->Debit - $purchased->grandTotal;
-                        $OldTotalDebit = $OldValue1;
-                        $OldTotalCredit = $purchased->supplier->account_transaction->Last()->Credit;
-                        $OldValue = $purchased->supplier->account_transaction->Last()->Differentiate + $purchased->grandTotal;
-                        $OldDifference = $OldValue;
-                    }
-                    elseif ($purchased->paidBalance > 0 AND $purchased->paidBalance < $purchased->grandTotal)
-                    {
-                        $OldTotalCredit = $purchased->supplier->account_transaction->Last()->Credit - $purchased->paidBalance;
-                        $OldTotalDebit = $purchased->supplier->account_transaction->Last()->Debit - $purchased->grandTotal;
-                        $differenceValue = $purchased->supplier->account_transaction->Last()->Differentiate - $purchased->paidBalance;
-                        $OldDifference = $differenceValue + $purchased->grandTotal;
-                    }
-                    else{
-                        $OldValue1 = $purchased->supplier->account_transaction->Last()->Credit - $purchased->paidBalance;
-                        $OldTotalCredit = $OldValue1;
-                        $OldTotalDebit = $purchased->supplier->account_transaction->Last()->Debit;
-                        $OldValue = $purchased->supplier->account_transaction->Last()->Differentiate - $purchased->paidBalance;
-                        $OldDifference = $OldValue;
-                    }
-                    $OldAccData =
-                        [
-                            'supplier_id' => $purchased->supplier_id,
-                            'Debit' => $OldTotalDebit,
-                            'Credit' => $OldTotalCredit,
-                            'Differentiate' => $OldDifference,
-                            'createdDate' => $purchased->supplier->account_transaction->Last()->createdDate,
-                            'user_id' =>$user_id,
-                            'company_id' => $company_id,
-                        ];
-                    $AccountTransactions = AccountTransaction::updateOrCreate([
-                        'id'   => $purchased->supplier->account_transaction->Last()->id,
-                    ], $OldAccData);
+            ////////////////// account section gautam ////////////////
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchased->supplier_id,])->get();
+            if (!is_null($accountTransaction))
+            {
+                // here will come 3 cases
+                // 1. only supplier is updating - quantity and price remains same
+                // 2. only quantity or price updating - supplier is the same
+                // 3. both supplier and quantity or price updating
 
+                //check if only supplier is changed and not quantity or price = grand total is same as previous
+                if($request->Data['supplier_id']!=$purchased->supplier_id  AND $purchased->grandTotal==$request->Data['grandTotal'])
+                {
+                    //supplier is changed need to reverse all previously made account entries for the previous supplier
+
+                    // if paid balance is not same as earlier need to update cash account as well
+                    if($purchased->paidBalance!=$request->Data['paidBalance'])
+                    {
+                        //if increased debit in cash
+                        if($purchased->paidBalance<$request->Data['paidBalance'])
+                        {
+                            $new_cash_incoming=$request->Data['paidBalance']-$purchased->paidBalance;
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$new_cash_incoming;
+                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        //if decreased credit in cash
+                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
+                        {
+                            $new_cash_outgoing=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=$new_cash_outgoing;
+                            $cash_transaction->Debit=0.00;
+                            $cash_transaction->Differentiate=$difference-$new_cash_outgoing;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        // no else
+                    }
+
+                    //case : 1 full credit entry + payment is not done yet like isPaid=0 and IsPartialPaid=0
+                    if($purchased->IsPaid==0 && $purchased->IsPartialPaid==0)
+                    {
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                    }
+                    //case : 2 partial cash is paid and some amount is credit + payment is not fully done yet like isPaid=0 and IsPartialPaid=1
+                    elseif($purchased->paidBalance > 0 AND $purchased->paidBalance < $purchased->grandTotal AND $purchased->IsPartialPaid==1)
+                    {
+                        // entry 1 : debit entry for purchase
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                        // entry 2 : credit whatever cash is debited
+                        // start reverse entry
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchased->supplier_id,])->get();
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='PartialCashPurchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'PartialCashPurchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+
+                        // reverse cash entry start
+                        // reverse cash entry end
+                        // no need to make cash entries because amount is same only supplier is changing
+                        // make new cash entry for correct supplier start
+                        // make new cash entry for correct supplier end
+                    }
+                    //case : 3 fully cash paid + isPaid=1 and IsPartialPaid=1
+                    else
+                    {
+                        // entry 1 : debit entry for purchase
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                        // entry 2 : credit whatever cash is debited
+                        // start reverse entry
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchased->supplier_id,])->get();
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='FullCashPurchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'FullCashPurchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+
+                        // reverse cash entry start
+                        // reverse cash entry end
+                        // no need to make cash entries because amount is same only supplier is changing
+                        // make new cash entry for correct supplier start
+                        // make new cash entry for correct supplier end
+                    }
+
+                    /*new entry*/
+                    // start new entry for updated supplier with checking all three cases
+                    $accountTransaction = AccountTransaction::where(['supplier_id'=> $request->Data['supplier_id'],])->get();
+                    // totally credit
                     if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
-                        $totalDebit = $lastAccountTransection->Debit + $request->Data['grandTotal'];
-                        $totalCredit = $lastAccountTransection->Credit;
-                        $difference = $lastAccountTransection->Differentiate - $request->Data['grandTotal'];
+                        $totalCredit = $request->Data['grandTotal'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => $totalCredit,
+                                'Debit' => 0.00,
+                                'Differentiate' => $difference,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
                     }
-                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    // partial payment some cash some credit
+                    elseif($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'] )
                     {
-                        $totalDebit = $lastAccountTransection->Debit - $request->Data['paidBalance'];
-                        $totalCredit = $lastAccountTransection->Credit - $request->Data['grandTotal'];
                         $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+                        $totalCredit = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
                         $difference = $differenceValue + $request->Data['grandTotal'];
+
+                        //make credit entry for the purchase
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => $request->Data['grandTotal'],
+                                'Debit' => 0.00,
+                                'Differentiate' => $totalCredit,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+
+                        //make debit entry for the whatever cash is paid
+                        $difference=$totalCredit-$request->Data['paidBalance'];
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => 0.00,
+                                'Debit' => $request->Data['paidBalance'],
+                                'Differentiate' => $difference,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'PartialCashPurchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
                     }
-                    else{
-                        $totalCredit = $lastAccountTransection->Credit + $request->Data['paidBalance'];
-                        $totalDebit = $lastAccountTransection->Debit;
-                        $difference = $lastAccountTransection->Differentiate + $request->Data['paidBalance'];
-                    }
-                }
-                else
-                {
-                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == "") {
-                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
-                            $totalDebit = $request->Data['grandTotal'];
-                        } else {
-                            $value1 = $lastAccountTransection->Debit - $purchased->grandTotal;
-                            $totalDebit = $value1 + $request->Data['grandTotal'];
-                        }
-                        $totalCredit = $lastAccountTransection->Credit;
-                        $value = $lastAccountTransection->Differentiate + $purchased->grandTotal;
-                        $difference = $value - $request->Data['grandTotal'];
-//                                        return Response()->json($difference);
-                    }
-                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    // fully paid with cash
+                    else
                     {
+                        $totalCredit = $request->Data['paidBalance'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
 
-                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
-                            $totalCredit = $request->Data['paidBalance'];
-                            $totalDebit = $request->Data['grandTotal'];
-                        } else {
-                            $value1 = $lastAccountTransection->Credit - $purchased->paidBalance;
-                            $totalCredit = $value1 + $request->Data['paidBalance'];
-                            $valueC = $lastAccountTransection->Debit - $purchased->grandTotal;
-                            $totalDebit = $valueC + $request->Data['grandTotal'];
-                        }
-                        $differenceValue = $lastAccountTransection->Differentiate - $request->Data['paidBalance'];
-                        $difference = $differenceValue + $request->Data['grandTotal'];
+                        //make credit entry for the purchase
+                        $AccountTransactions=AccountTransaction::Create([
+                            'supplier_id' => $request->Data['supplier_id'],
+                            'Credit' => $totalCredit,
+                            'Debit' => 0.00,
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                        ]);
+
+                        //make debit entry for the whatever cash is paid
+                        $difference=$difference-$request->Data['paidBalance'];
+                        $AccountTransactions=AccountTransaction::Create([
+                            'supplier_id' => $request->Data['supplier_id'],
+                            'Credit' => 0.00,
+                            'Debit' => $request->Data['paidBalance'],
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'FullCashPurchase|'.$request->Data['orders'][0]['PadNumber'],
+                        ]);
                     }
-                    else{
-                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
-                            $totalCredit = $request->Data['paidBalance'];
-                        } else {
-                            $value1 = $lastAccountTransection->Credit - $purchased->paidBalance;
-                            $totalCredit = $value1 + $request->Data['paidBalance'];
-                        }
-                        $totalDebit = $lastAccountTransection->Debit;
-                        $value = $lastAccountTransection->Differentiate - $purchased->paidBalance;
-                        $difference = $value + $request->Data['paidBalance'];
-                    }
+                    /*new entry*/
                 }
+                // check if only grand total is changed and not the supplier
+                elseif($request->Data['supplier_id']==$purchased->supplier_id  AND $purchased->grandTotal!=$request->Data['grandTotal'])
+                {
+                    //supplier is not changed then need to find what is the differance in total and for payment changes
+                    // here in two way we can proceed
+                    // option 1 : reverse previous account entries and make new entry
+                    // option 2 : find out plus minus differance and make one another entry with differences
+                    // option 2 is not preferable because of while displaying we need to add or subtract similar purchase id entry so that is little tricky in query
+                    // also need to manage isPaid and isPartialPaid flag according
 
-                $AccData =
-                    [
-                        'supplier_id' => $request->Data['supplier_id'],
-                        'Credit' => $totalCredit,
-                        'Debit' => $totalDebit,
-                        'Differentiate' => $difference,
-                        'createdDate' => $lastAccountTransection->createdDate,
-                        'user_id' =>$user_id,
-                        'company_id' => $company_id,
-                    ];
-                $AccountTransactions = AccountTransaction::updateOrCreate([
-                    'createdDate'   => $lastAccountTransection->createdDate,
-                    'id'   => $lastAccountTransection->id,
-                ], $AccData);
+                    // if paid balance is not same as earlier need to update cash account as well
+                    if($purchased->paidBalance!=$request->Data['paidBalance'])
+                    {
+                        //if increased debit in cash
+                        if($purchased->paidBalance<$request->Data['paidBalance'])
+                        {
+                            $new_cash_incoming=$request->Data['paidBalance']-$purchased->paidBalance;
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$new_cash_incoming;
+                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        //if decreased credit in cash
+                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
+                        {
+                            $new_cash_outgoing=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=$new_cash_outgoing;
+                            $cash_transaction->Debit=0.00;
+                            $cash_transaction->Differentiate=$difference-$new_cash_outgoing;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        // no else
+                    }
+
+                    // implementation of option 2
+                    //case : 1 full credit entry + payment is not done yet like isPaid=0 and IsPartialPaid=0
+                    if($purchased->IsPaid==0 && $purchased->IsPartialPaid==0)
+                    {
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                    }
+                    //case : 2 partial cash is paid and some amount is credit + payment is not fully done yet like isPaid=0 and IsPartialPaid=1
+                    elseif($purchased->paidBalance > 0 AND $purchased->paidBalance < $purchased->grandTotal AND $purchased->IsPartialPaid==1)
+                    {
+                        // entry 1 : debit entry for purchase
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                        // entry 2 : credit whatever cash is debited
+                        // start reverse entry
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchased->supplier_id,])->get();
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='PartialCashPurchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'PartialCashPurchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+
+                        // reverse cash entry start
+                        // reverse cash entry end
+                        // no need to make cash entries because amount is same only supplier is changing
+                        // make new cash entry for correct supplier start
+                        // make new cash entry for correct supplier end
+                    }
+                    //case : 3 fully cash paid + isPaid=1 and IsPartialPaid=1
+                    else
+                    {
+                        // entry 1 : debit entry for purchase
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                        // entry 2 : credit whatever cash is debited
+                        // start reverse entry
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchased->supplier_id,])->get();
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='FullCashPurchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'FullCashPurchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+
+                        // reverse cash entry start
+                        // reverse cash entry end
+                        // no need to make cash entries because amount is same only supplier is changing
+                        // make new cash entry for correct supplier start
+                        // make new cash entry for correct supplier end
+                    }
+
+                    /* new entry */
+                    // start new entry for updated supplier with checking all three cases
+                    $accountTransaction = AccountTransaction::where(['supplier_id'=> $request->Data['supplier_id'],])->get();
+                    // totally credit
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+                        $totalCredit = $request->Data['grandTotal'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => $totalCredit,
+                                'Debit' => 0.00,
+                                'Differentiate' => $difference,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                    }
+                    // partial payment some cash some credit
+                    elseif($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'] )
+                    {
+                        $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+                        $totalCredit = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+
+                        //make credit entry for the purchase
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => $request->Data['grandTotal'],
+                                'Debit' => 0.00,
+                                'Differentiate' => $totalCredit,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+
+                        //make debit entry for the whatever cash is paid
+                        $difference=$totalCredit-$request->Data['paidBalance'];
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => 0.00,
+                                'Debit' => $request->Data['paidBalance'],
+                                'Differentiate' => $difference,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'PartialCashPurchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                    }
+                    // fully paid with cash
+                    else
+                    {
+                        $totalCredit = $request->Data['paidBalance'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
+
+                        //make credit entry for the purchase
+                        $AccountTransactions=AccountTransaction::Create([
+                            'supplier_id' => $request->Data['supplier_id'],
+                            'Credit' => $totalCredit,
+                            'Debit' => 0.00,
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                        ]);
+
+                        //make debit entry for the whatever cash is paid
+                        $difference=$difference-$request->Data['paidBalance'];
+                        $AccountTransactions=AccountTransaction::Create([
+                            'supplier_id' => $request->Data['supplier_id'],
+                            'Credit' => 0.00,
+                            'Debit' => $request->Data['paidBalance'],
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'FullCashPurchase|'.$request->Data['orders'][0]['PadNumber'],
+                        ]);
+                    }
+                    /* new entry */
+                }
+                // check both supplier and grandTotal is changed meaning case 3
+                elseif($request->Data['supplier_id']!=$purchased->supplier_id  AND $purchased->grandTotal!=$request->Data['grandTotal'])
+                {
+                    // if paid balance is not same as earlier need to update cash account as well
+                    if($purchased->paidBalance!=$request->Data['paidBalance'])
+                    {
+                        //if increased debit in cash
+                        if($purchased->paidBalance<$request->Data['paidBalance'])
+                        {
+                            $new_cash_incoming=$request->Data['paidBalance']-$purchased->paidBalance;
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$new_cash_incoming;
+                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        //if decreased credit in cash
+                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
+                        {
+                            $new_cash_outgoing=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=$new_cash_outgoing;
+                            $cash_transaction->Debit=0.00;
+                            $cash_transaction->Differentiate=$difference-$new_cash_outgoing;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        // no else
+                    }
+
+                    //case : 1 full credit entry + payment is not done yet like isPaid=0 and IsPartialPaid=0
+                    if($purchased->IsPaid==0 && $purchased->IsPartialPaid==0)
+                    {
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                    }
+                    //case : 2 partial cash is paid and some amount is credit + payment is not fully done yet like isPaid=0 and IsPartialPaid=1
+                    elseif($purchased->paidBalance > 0 AND $purchased->paidBalance < $purchased->grandTotal AND $purchased->IsPartialPaid==1)
+                    {
+                        // entry 1 : debit entry for purchase
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                        // entry 2 : credit whatever cash is debited
+                        // start reverse entry
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchased->supplier_id,])->get();
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='PartialCashPurchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'PartialCashPurchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+
+                        // reverse cash entry start
+                        // reverse cash entry end
+                        // no need to make cash entries because amount is same only supplier is changing
+                        // make new cash entry for correct supplier start
+                        // make new cash entry for correct supplier end
+                    }
+                    //case : 3 fully cash paid + isPaid=1 and IsPartialPaid=1
+                    else
+                    {
+                        // entry 1 : debit entry for purchase
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Purchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_credited = $previous_entry->Credit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => $previously_credited,
+                                'Credit' => 0.00,
+                                'Differentiate' => $last_closing-$previously_credited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+                        // entry 2 : credit whatever cash is debited
+                        // start reverse entry
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $purchased->supplier_id,])->get();
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='FullCashPurchase|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$purchased->supplier_id)->where('Description','like',$description_string)->last();
+                        //echo "<pre>";print_r($previous_entry->Credit);die;
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'supplier_id' => $purchased->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'FullCashPurchase|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // reverse entry done
+
+                        // reverse cash entry start
+                        // reverse cash entry end
+                        // no need to make cash entries because amount is same only supplier is changing
+                        // make new cash entry for correct supplier start
+                        // make new cash entry for correct supplier end
+                    }
+
+                    /*new entry*/
+                    // start new entry for updated supplier with checking all three cases
+                    $accountTransaction = AccountTransaction::where(['supplier_id'=> $request->Data['supplier_id'],])->get();
+                    // totally credit
+                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+                        $totalCredit = $request->Data['grandTotal'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => $totalCredit,
+                                'Debit' => 0.00,
+                                'Differentiate' => $difference,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                    }
+                    // partial payment some cash some credit
+                    elseif($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'] )
+                    {
+                        $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+                        $totalCredit = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+                        $difference = $differenceValue + $request->Data['grandTotal'];
+
+                        //make credit entry for the purchase
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => $request->Data['grandTotal'],
+                                'Debit' => 0.00,
+                                'Differentiate' => $totalCredit,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+
+                        //make debit entry for the whatever cash is paid
+                        $difference=$totalCredit-$request->Data['paidBalance'];
+                        $AccData =
+                            [
+                                'supplier_id' => $request->Data['supplier_id'],
+                                'Credit' => 0.00,
+                                'Debit' => $request->Data['paidBalance'],
+                                'Differentiate' => $difference,
+                                'createdDate' => date('Y-m-d'),
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'PartialCashPurchase|'.$request->Data['orders'][0]['PadNumber'],
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                    }
+                    // fully paid with cash
+                    else
+                    {
+                        $totalCredit = $request->Data['paidBalance'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
+
+                        //make credit entry for the purchase
+                        $AccountTransactions=AccountTransaction::Create([
+                            'supplier_id' => $request->Data['supplier_id'],
+                            'Credit' => $totalCredit,
+                            'Debit' => 0.00,
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Purchase|'.$request->Data['orders'][0]['PadNumber'],
+                        ]);
+
+                        //make debit entry for the whatever cash is paid
+                        $difference=$difference-$request->Data['paidBalance'];
+                        $AccountTransactions=AccountTransaction::Create([
+                            'supplier_id' => $request->Data['supplier_id'],
+                            'Credit' => 0.00,
+                            'Debit' => $request->Data['paidBalance'],
+                            'Differentiate' => $difference,
+                            'createdDate' => date('Y-m-d'),
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'FullCashPurchase|'.$request->Data['orders'][0]['PadNumber'],
+                        ]);
+                    }
+                    /*new entry*/
+                }
                 //return Response()->json($accountTransaction);
             }
-            ////////////////// end of account section ////////////////
+            ////////////////// end of account section gautam ////////////////
+
+//            ////////////////// account section ////////////////
+//            $accountTransaction = AccountTransaction::where(
+//                [
+//                    'supplier_id'=> $request->Data['supplier_id'],
+//                ])->get();
+//            if (!is_null($accountTransaction)) {
+//                $lastAccountTransection = $accountTransaction->Last();
+//                if ($lastAccountTransection->supplier_id != $purchased->supplier_id)
+//                {
+//                    if ($purchased->paidBalance == 0 || $purchased->paidBalance == 0.00) {
+//                        $OldValue1 = $purchased->supplier->account_transaction->Last()->Debit - $purchased->grandTotal;
+//                        $OldTotalDebit = $OldValue1;
+//                        $OldTotalCredit = $purchased->supplier->account_transaction->Last()->Credit;
+//                        $OldValue = $purchased->supplier->account_transaction->Last()->Differentiate + $purchased->grandTotal;
+//                        $OldDifference = $OldValue;
+//                    }
+//                    elseif ($purchased->paidBalance > 0 AND $purchased->paidBalance < $purchased->grandTotal)
+//                    {
+//                        $OldTotalCredit = $purchased->supplier->account_transaction->Last()->Credit - $purchased->paidBalance;
+//                        $OldTotalDebit = $purchased->supplier->account_transaction->Last()->Debit - $purchased->grandTotal;
+//                        $differenceValue = $purchased->supplier->account_transaction->Last()->Differentiate - $purchased->paidBalance;
+//                        $OldDifference = $differenceValue + $purchased->grandTotal;
+//                    }
+//                    else{
+//                        $OldValue1 = $purchased->supplier->account_transaction->Last()->Credit - $purchased->paidBalance;
+//                        $OldTotalCredit = $OldValue1;
+//                        $OldTotalDebit = $purchased->supplier->account_transaction->Last()->Debit;
+//                        $OldValue = $purchased->supplier->account_transaction->Last()->Differentiate - $purchased->paidBalance;
+//                        $OldDifference = $OldValue;
+//                    }
+//                    $OldAccData =
+//                        [
+//                            'supplier_id' => $purchased->supplier_id,
+//                            'Debit' => $OldTotalDebit,
+//                            'Credit' => $OldTotalCredit,
+//                            'Differentiate' => $OldDifference,
+//                            'createdDate' => $purchased->supplier->account_transaction->Last()->createdDate,
+//                            'user_id' =>$user_id,
+//                            'company_id' => $company_id,
+//                        ];
+//                    $AccountTransactions = AccountTransaction::updateOrCreate([
+//                        'id'   => $purchased->supplier->account_transaction->Last()->id,
+//                    ], $OldAccData);
+//
+//                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
+//                        $totalDebit = $lastAccountTransection->Debit + $request->Data['grandTotal'];
+//                        $totalCredit = $lastAccountTransection->Credit;
+//                        $difference = $lastAccountTransection->Differentiate - $request->Data['grandTotal'];
+//                    }
+//                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+//                    {
+//                        $totalDebit = $lastAccountTransection->Debit - $request->Data['paidBalance'];
+//                        $totalCredit = $lastAccountTransection->Credit - $request->Data['grandTotal'];
+//                        $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
+//                        $difference = $differenceValue + $request->Data['grandTotal'];
+//                    }
+//                    else{
+//                        $totalCredit = $lastAccountTransection->Credit + $request->Data['paidBalance'];
+//                        $totalDebit = $lastAccountTransection->Debit;
+//                        $difference = $lastAccountTransection->Differentiate + $request->Data['paidBalance'];
+//                    }
+//                }
+//                else
+//                {
+//                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == "") {
+//                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
+//                            $totalDebit = $request->Data['grandTotal'];
+//                        } else {
+//                            $value1 = $lastAccountTransection->Debit - $purchased->grandTotal;
+//                            $totalDebit = $value1 + $request->Data['grandTotal'];
+//                        }
+//                        $totalCredit = $lastAccountTransection->Credit;
+//                        $value = $lastAccountTransection->Differentiate + $purchased->grandTotal;
+//                        $difference = $value - $request->Data['grandTotal'];
+////                                        return Response()->json($difference);
+//                    }
+//                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+//                    {
+//
+//                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
+//                            $totalCredit = $request->Data['paidBalance'];
+//                            $totalDebit = $request->Data['grandTotal'];
+//                        } else {
+//                            $value1 = $lastAccountTransection->Credit - $purchased->paidBalance;
+//                            $totalCredit = $value1 + $request->Data['paidBalance'];
+//                            $valueC = $lastAccountTransection->Debit - $purchased->grandTotal;
+//                            $totalDebit = $valueC + $request->Data['grandTotal'];
+//                        }
+//                        $differenceValue = $lastAccountTransection->Differentiate - $request->Data['paidBalance'];
+//                        $difference = $differenceValue + $request->Data['grandTotal'];
+//                    }
+//                    else{
+//                        if ($lastAccountTransection->createdDate != $purchased->supplier->account_transaction->last()->createdDate) {
+//                            $totalCredit = $request->Data['paidBalance'];
+//                        } else {
+//                            $value1 = $lastAccountTransection->Credit - $purchased->paidBalance;
+//                            $totalCredit = $value1 + $request->Data['paidBalance'];
+//                        }
+//                        $totalDebit = $lastAccountTransection->Debit;
+//                        $value = $lastAccountTransection->Differentiate - $purchased->paidBalance;
+//                        $difference = $value + $request->Data['paidBalance'];
+//                    }
+//                }
+//
+//                $AccData =
+//                    [
+//                        'supplier_id' => $request->Data['supplier_id'],
+//                        'Credit' => $totalCredit,
+//                        'Debit' => $totalDebit,
+//                        'Differentiate' => $difference,
+//                        'createdDate' => $lastAccountTransection->createdDate,
+//                        'user_id' =>$user_id,
+//                        'company_id' => $company_id,
+//                    ];
+//                $AccountTransactions = AccountTransaction::updateOrCreate([
+//                    'createdDate'   => $lastAccountTransection->createdDate,
+//                    'id'   => $lastAccountTransection->id,
+//                ], $AccData);
+//                //return Response()->json($accountTransaction);
+//            }
+//            ////////////////// end of account section ////////////////
 
 
             //here will come cash transaction record update if scenario will come by
@@ -462,9 +1365,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             }
             $ss = PurchaseDetail::where('purchase_id', array($purchaseDetails['purchase_id']))->get();
             return Response()->json($ss);
-
         }
-
     }
 
     public function getById($Id)

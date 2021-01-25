@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Bank extends Model
 {
-        use HasFactory;
-        use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
-
-        protected $guarded=[];
-        protected $primaryKey = 'id';
-        protected $table = 'banks';
+    protected $guarded=[];
+    protected $primaryKey = 'id';
+    protected $table = 'banks';
 
     public function user()
     {

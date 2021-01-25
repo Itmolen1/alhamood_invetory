@@ -103,12 +103,16 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
         if($request->paidBalance != 0.00 || $request->paidBalance != 0)
         {
+            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+            $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
-            $cash_transaction->Reference=$newInvoiceID;
+            $cash_transaction->Reference=$purchase_id;
             $cash_transaction->createdDate=date('Y-m-d h:i:s');
-            $cash_transaction->Type='Purchase';
-            $cash_transaction->Credit=0.0;
-            $cash_transaction->Debit=$request->paidBalance;
+            $cash_transaction->Type='purchases';
+            $cash_transaction->Details='Cash Purchase';
+            $cash_transaction->Credit=$request->paidBalance;
+            $cash_transaction->Debit=0.00;
+            $cash_transaction->Differentiate=$difference-$request->paidBalance;
             $cash_transaction->save();
         }
 

@@ -101,6 +101,8 @@ class SupplierRepository implements ISupplierRepositoryInterface
             'Description' =>$supplierRequest->Description,
             'registrationDate' =>$supplierRequest->registrationDate,
             'TRNNumber' =>$supplierRequest->TRNNumber,
+            'openingBalance' =>$supplierRequest->openingBalance,
+            'openingBalanceAsOfDate' =>$supplierRequest->openingBalanceAsOfDate,
             'payment_term_id' =>$supplierRequest->paymentTerm ?? 0,
             'company_type_id' =>$supplierRequest->companyType ?? 0,
             'payment_type_id' =>$supplierRequest->paymentType ?? 0,
@@ -113,6 +115,9 @@ class SupplierRepository implements ISupplierRepositoryInterface
                 'createdDate' => date('Y-m-d'),
                 'company_id' =>$company_id,
                 'Description' =>'initial',
+                'Credit' =>0.00,
+                'Debit' =>0.00,
+                'Differentiate' =>$supplierRequest->openingBalance,
             ]);
         }
         $supplier->account_transaction()->save($account);
@@ -146,6 +151,8 @@ class SupplierRepository implements ISupplierRepositoryInterface
             'Description' =>$request->Description,
             'registrationDate' =>$request->registrationDate,
             'TRNNumber' =>$request->TRNNumber,
+            'openingBalance' =>$request->openingBalance,
+            'openingBalanceAsOfDate' =>$request->openingBalanceAsOfDate,
             'payment_term_id' =>$request->paymentTerm ?? 0,
             'company_type_id' =>$request->companyType ?? 0,
             'payment_type_id' =>$request->paymentType ?? 0,

@@ -39,7 +39,6 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
-        ApplyCashPaid();
     });
     ////////// end of add price /////////////////
 
@@ -58,7 +57,6 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
-        ApplyCashPaid();
     });
     ///////// end of add quantity ///////////////////
 

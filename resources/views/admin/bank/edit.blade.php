@@ -72,6 +72,22 @@
                                         </div>
                                     </div>
                                     <!--/row-->
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance :- *</label>
+                                                <input type="number" step=".01" name="openingBalance" value="{{ $bank->openingBalance }}" class="form-control" placeholder="Opening Balance" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance As of Date :- *</label>
+                                                <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ $bank->openingBalanceAsOfDate }}" placeholder="Opening Balance As of Date" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">

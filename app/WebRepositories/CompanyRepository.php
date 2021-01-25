@@ -5,6 +5,7 @@ namespace App\WebRepositories;
 
 
 use App\Http\Requests\CompanyRequest;
+use App\Models\CashTransaction;
 use App\Models\Company;
 use App\Models\Region;
 use App\Models\User;
@@ -73,12 +74,13 @@ class CompanyRepository implements ICompanyRepositoryInterface
 
     public function store(CompanyRequest $companyRequest)
     {
-        // TODO: Implement store() method.
         $user_id = session('user_id');
         $company = [
             'Name' =>$companyRequest->Name,
             'Mobile' =>$companyRequest->Mobile,
             'Representative' =>$companyRequest->Representative,
+            'openingBalance' =>$companyRequest->openingBalance,
+            'openingBalanceAsOfDate' =>$companyRequest->openingBalanceAsOfDate,
             'Phone' =>$companyRequest->Phone,
             'Address' =>$companyRequest->Address,
             'region_id' =>$companyRequest->region_id ?? 0,
@@ -95,12 +97,25 @@ class CompanyRepository implements ICompanyRepositoryInterface
             ]);
         }
         $company->account_transaction()->save($account);
+
+        //initial cash or cash on hand for the company
+        if ($company) {
+            CashTransaction::Create([
+                'Reference' => $company->id,
+                'user_id' => $user_id,
+                'createdDate' => $companyRequest->openingBalanceAsOfDate,
+                'company_id' =>$company->id,
+                'Details' =>'initial',
+                'Credit' =>0.00,
+                'Debit' =>0.00,
+                'Differentiate' =>$companyRequest->openingBalance,
+            ]);
+        }
         return redirect()->route('companies.index');
     }
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $company = Company::find($Id);
         $user_id = session('user_id');
         $company->update([
@@ -108,13 +123,28 @@ class CompanyRepository implements ICompanyRepositoryInterface
             'Phone' => $request->Phone,
             'Mobile' => $request->Mobile,
             'Representative' => $request->Representative,
+            'openingBalance' =>$request->openingBalance,
+            'openingBalanceAsOfDate' =>$request->openingBalanceAsOfDate,
             'Address' => $request->Address,
             'region_id' =>$request->region_id ?? 0,
             'postCode' => $request->postCode,
             'Description' => $request->Description,
             'user_id' => $user_id ?? 0,
-
         ]);
+
+        //initial cash or cash on hand for the company
+        if ($company) {
+            CashTransaction::Create([
+                'Reference' => $company->id,
+                'user_id' => $user_id,
+                'createdDate' => $request->openingBalanceAsOfDate,
+                'company_id' =>$company->id,
+                'Details' =>'initial',
+                'Credit' =>0.00,
+                'Debit' =>0.00,
+                'Differentiate' =>$request->openingBalance,
+            ]);
+        }
         return redirect()->route('companies.index');
     }
 

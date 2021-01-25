@@ -54,7 +54,7 @@
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Compnay Name</label>
+                                                <label class="control-label">Company Name :- *</label>
                                                 <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter company Name" required>
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
@@ -63,12 +63,27 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Representative</label>
+                                                <label class="control-label">Representative :- *</label>
                                                 <input type="text" id="Representative" name="Representative" class="form-control" placeholder="Representative Name">
                                             </div>
                                         </div>
                                     </div>
                                     <!--/row-->
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance :- *</label>
+                                                <input type="number" step=".01" name="openingBalance" value="0.00" class="form-control" placeholder="Opening Balance" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Opening Balance As of Date :- *</label>
+                                                <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ date('Y-m-d') }}" placeholder="Opening Balance As of Date" required>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="row p-t-20">
                                         <div class="col-md-6">

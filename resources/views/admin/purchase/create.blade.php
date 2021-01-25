@@ -429,12 +429,6 @@
             CountTotalVat();
         }
         ////////////////////////// end of products select //////////
-
     </script>
-
-
-
     <script src="{{ asset('admin_assets/assets/dist/invoice/invoice.js') }}"></script>
-
-
 @endsection

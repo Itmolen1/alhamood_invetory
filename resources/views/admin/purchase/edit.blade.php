@@ -54,7 +54,6 @@
                                             <div class="form-group">
                                                 <label>Supplier Name</label>
                                                 <select class="form-control custom-select supplier_id" id="supplier_id" name="supplier_id">
-                                                    <option readonly="" disabled selected>--Select Supplier--</option>
                                                     @foreach($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}" {{ ($supplier->id == $purchase_details[0]->purchase->supplier_id) ? 'selected':'' }}>{{ $supplier->Name }}</option>
                                                     @endforeach
@@ -120,7 +119,6 @@
                                         </div>
 
                                         <div class="col-md-6">
-
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
@@ -128,14 +126,9 @@
                                                         <input type="text" class="form-control referenceNumber" value="{{ $purchase_details[0]->purchase->referenceNumber ?? 0 }}" name="referenceNumber" id="referenceNumber" placeholder="Reference Number">
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
-                                        <!--/span-->
-
                                     </div>
-                                    <!--/row-->
-
 
                                     <div class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table">
@@ -280,8 +273,6 @@
     <!-- footer -->
     <!-- ============================================================== -->
 
-
-
     <div class="modal fade" id="updateMessage" tabindex="-1" role="dialog" aria-labelledby="modalForm">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -337,7 +328,6 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-
                     {{--                    <button type="button" class="btn btn-info">Send message</button>--}}
                 </div>
             </div>
@@ -432,7 +422,7 @@
                                         details = [];
                                         console.log(result);
                                         alert("Data Inserted Successfully");
-                                        window.location.href = "{{ route('purchases.index') }}";
+                                        //window.location.href = "{{ route('purchases.index') }}";
                                     } else {
                                         alert(result);
                                     }
@@ -563,10 +553,5 @@
         ////////////////////////// end of products select //////////
 
     </script>
-
-
-
-    <script src="{{ asset('admin_assets/assets/dist/invoice/invoice.js') }}"></script>
-
-
+    <script src="{{ asset('admin_assets/assets/dist/invoice/update_invoice.js') }}"></script>
 @endsection
