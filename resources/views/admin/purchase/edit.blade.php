@@ -422,7 +422,7 @@
                                         details = [];
                                         console.log(result);
                                         alert("Data Inserted Successfully");
-                                        //window.location.href = "{{ route('purchases.index') }}";
+                                        window.location.href = "{{ route('purchases.index') }}";
                                     } else {
                                         alert(result);
                                     }

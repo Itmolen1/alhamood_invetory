@@ -720,24 +720,27 @@ class ReportRepository implements IReportRepositoryInterface
         $pdf::SetFont('times', '', 10);
         for($i=0;$i<count($row);$i++)
         {
-            if($row[$i]['Debit']!=0)
-            {
-                $debit_total += $row[$i]['Debit'];
-                $balance = $balance - $row[$i]['Debit'];
-            }
-            else
-            {
-                $credit_total += $row[$i]['Credit'];
-                $balance = $balance + $row[$i]['Credit'];
-            }
+//            if($row[$i]['Debit']!=0)
+//            {
+//
+//                $balance = $balance - $row[$i]['Debit'];
+//            }
+//            else
+//            {
+//                $credit_total += $row[$i]['Credit'];
+//                $balance = $balance + $row[$i]['Credit'];
+//            }
+            $debit_total += $row[$i]['Debit'];
+            $credit_total += $row[$i]['Credit'];
+            $balance = $balance + $row[$i]['Differentiate'];
             $html .='<tr>
-                <td align="left" width="80">'.($row[$i]['Reference']).'</td>
-                <td align="center" width="80">'.($row[$i]['createdDate']).'</td>
-                <td align="center" width="100">'.($row[$i]['Type']).'</td>
+                <td align="left" width="80">'.($i+1).'</td>
+                <td align="center" width="80">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                <td align="center" width="100">'.($row[$i]['Details']).'</td>
                 <td align="center" width="100">N.A.</td>
                 <td align="right" width="60">'.($row[$i]['Credit']).'</td>
                 <td align="right" width="60">'.($row[$i]['Debit']).'</td>
-                <td align="right" width="60">'.number_format($balance,2,'.',',').'</td>
+                <td align="right" width="60">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
                 </tr>';
         }
         $html.= '
@@ -1684,7 +1687,7 @@ class ReportRepository implements IReportRepositoryInterface
         }
     }
 
-    public function PrintDetailSupplierStatement(Request $request)
+    /*public function PrintDetailSupplierStatement(Request $request)
     {
         //get daily sum of grandTotal from purchases for the given supplier from date to date
         $supplier_id=$request->supplier_id;
@@ -1778,6 +1781,149 @@ class ReportRepository implements IReportRepositoryInterface
                         <td align="right" width="80">'.(number_format($sum_of_differance,2,'.',',')).'</td>
                         </tr>';
                 }
+            }
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('times', 'B', 13);
+            if($sum_of_differance<0)
+            {
+                $html='<table border="0.5" cellpadding="0">';
+                $html.= '
+                 <tr>
+                     <td width="330" align="right" colspan="3">Total : </td>
+                     <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
+                     <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
+                     <td width="80" align="right" color="red">'.number_format($sum_of_differance,2,'.',',').'</td>
+                 </tr>';
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
+            else
+            {
+                $html='<table border="0.5" cellpadding="0">';
+                $html.= '
+                 <tr>
+                     <td width="330" align="right" colspan="3">Total : </td>
+                     <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
+                     <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format($sum_of_differance,2,'.',',').'</td>
+                 </tr>';
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
+
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }*/
+
+    public function PrintDetailSupplierStatement(Request $request)
+    {
+        //get daily sum of grandTotal from purchases for the given supplier from date to date
+        $supplier_id=$request->supplier_id;
+        $fromDate=$request->fromDate;
+        $toDate=$request->toDate;
+
+        if ($request->fromDate!='' && $request->toDate!='')
+        {
+            $account_transactions=AccountTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id);
+        }
+        else
+        {
+            return FALSE;
+        }
+        //purchase entries
+//        $row = Purchase::select('PurchaseDate as Date', DB::raw('SUM(grandTotal) as PurchaseAmount'))
+//            ->where('supplier_id','=',$supplier_id)
+//            ->whereBetween('PurchaseDate',[$fromDate,$toDate])
+//            ->groupBy('PurchaseDate')
+//            ->get();
+//        $row=json_decode(json_encode($row), true);
+//
+//        //supplier payment entries
+//        $row1 = SupplierPayment::select('transferDate as Date','paidAmount','referenceNumber','Description')
+//            ->where('supplier_id','=',$supplier_id)
+//            //->where('isPushed','=',1)
+//            ->whereBetween('transferDate',[$fromDate,$toDate])
+//            ->get();
+//        $row1=json_decode(json_encode($row1), true);
+//        $combined=array_merge($row,$row1);
+//
+//        $ord = array();
+//        foreach ($combined as $key => $value){
+//            $ord[] = strtotime($value['Date']);
+//        }
+//        array_multisort($ord, SORT_ASC, $combined);
+//        //echo "<pre>123";print_r($combined);die;
+//        $row=$combined;
+
+        $row=json_decode(json_encode($account_transactions), true);
+        $row=array_values($row);
+        //echo "<pre>";print_r($row);die;
+
+
+        if(!empty($row))
+        {
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            $pdf::SetFont('times', '', 15);
+            $html='Supplier Name : '.$request->supplier_name;
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $pdf::SetFont('times', '', 12);
+            $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
+
+            $pdf::SetFont('times', 'B', 14);
+            $html = '<table border="0.5" cellpadding="2">
+            <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                <th align="center" width="60">Date</th>
+                <th align="center" width="70">Ref#</th>
+                <th align="center" width="200">Description</th>
+                <th align="center" width="70">Debit</th>
+                <th align="center" width="70">Credit</th>
+                <th align="right" width="80">Closing</th>
+            </tr>';
+            $pdf::SetFont('times', '', 10);
+            $sum_of_credit=0.0;
+            $sum_of_debit=0.0;
+            $sum_of_differance=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                $sum_of_debit+=$row[$i]['Debit'];
+                $sum_of_credit+=$row[$i]['Credit'];
+                $sum_of_differance+=$row[$i]['Differentiate'];
+                $html .='<tr>
+                    <td align="center" width="60">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                    <td align="left" width="70"></td>
+                    <td align="left" width="200">'.$row[$i]['Description'].'</td>
+                    <td align="right" width="70">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
+                    <td align="right" width="70">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
+                    <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
+                    </tr>';
             }
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');

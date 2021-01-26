@@ -50,11 +50,12 @@
                                 @csrf
                                 <div class="form-body">
                                     <h3 class="card-title">Registration</h3>
+                                    <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <hr>
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Company Name</label>
+                                                <label class="control-label">Company Name :- <span class="required">*</span></label>
                                                 <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Supplier Company Name" required>
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
@@ -72,7 +73,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Company Type</label>
+                                                <label>Company Type :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" name="companyType" required>
                                                     <option value="">--Select your Company Type--</option>
                                                     @foreach ($company_types as $company_type)
@@ -83,7 +84,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Registration date</label>
+                                                <label class="control-label">Registration date :- <span class="required">*</span></label>
                                                 <input type="date" name="registrationDate" value="{{date('Y-m-d')}}" class="form-control" placeholder="dd/mm/yyyy">
                                             </div>
                                         </div>
@@ -92,7 +93,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Payment Type</label>
+                                                <label>Payment Type :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select paymentType" name="paymentType" required>
                                                     <option value="">--Select your Payment Type--</option>
                                                     @foreach ($payment_types as $payment)
@@ -118,13 +119,13 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Opening Balance :- *</label>
+                                                <label class="control-label">Opening Balance :- <span class="required">*</span></label>
                                                 <input type="number" step=".01" name="openingBalance" value="0.00" class="form-control" placeholder="Opening Balance" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Opening Balance As of Date :- *</label>
+                                                <label class="control-label">Opening Balance As of Date :- <span class="required">*</span></label>
                                                 <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ date('Y-m-d') }}" placeholder="Opening Balance As of Date" required>
                                             </div>
                                         </div>
@@ -178,7 +179,7 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Region</label>
+                                                <label>Region :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select region_id" name="region_id" id="region_id">
 
                                                     <option value="">-- Select Region --</option>

@@ -384,28 +384,10 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     // if paid balance is not same as earlier need to update cash account as well
                     if($purchased->paidBalance!=$request->Data['paidBalance'])
                     {
-                        //if increased debit in cash
+                        //if increased credit in cash
                         if($purchased->paidBalance<$request->Data['paidBalance'])
                         {
-                            $new_cash_incoming=$request->Data['paidBalance']-$purchased->paidBalance;
-                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
-                            $difference = $cashTransaction->last()->Differentiate;
-                            $cash_transaction = new CashTransaction();
-                            $cash_transaction->Reference=$purchased->id;
-                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
-                            $cash_transaction->Type='purchases';
-                            $cash_transaction->Details='CashPurchase';
-                            $cash_transaction->Credit=0.00;
-                            $cash_transaction->Debit=$new_cash_incoming;
-                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
-                            $cash_transaction->user_id = $user_id;
-                            $cash_transaction->company_id = $company_id;
-                            $cash_transaction->save();
-                        }
-                        //if decreased credit in cash
-                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
-                        {
-                            $new_cash_outgoing=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $new_cash_outgoing=$request->Data['paidBalance']-$purchased->paidBalance;
                             $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
                             $difference = $cashTransaction->last()->Differentiate;
                             $cash_transaction = new CashTransaction();
@@ -416,6 +398,24 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             $cash_transaction->Credit=$new_cash_outgoing;
                             $cash_transaction->Debit=0.00;
                             $cash_transaction->Differentiate=$difference-$new_cash_outgoing;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        //if decreased debit in cash
+                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
+                        {
+                            $new_cash_incoming=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$new_cash_incoming;
+                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
                             $cash_transaction->user_id = $user_id;
                             $cash_transaction->company_id = $company_id;
                             $cash_transaction->save();
@@ -652,28 +652,10 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     // if paid balance is not same as earlier need to update cash account as well
                     if($purchased->paidBalance!=$request->Data['paidBalance'])
                     {
-                        //if increased debit in cash
+                        //if increased credit in cash
                         if($purchased->paidBalance<$request->Data['paidBalance'])
                         {
-                            $new_cash_incoming=$request->Data['paidBalance']-$purchased->paidBalance;
-                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
-                            $difference = $cashTransaction->last()->Differentiate;
-                            $cash_transaction = new CashTransaction();
-                            $cash_transaction->Reference=$purchased->id;
-                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
-                            $cash_transaction->Type='purchases';
-                            $cash_transaction->Details='CashPurchase';
-                            $cash_transaction->Credit=0.00;
-                            $cash_transaction->Debit=$new_cash_incoming;
-                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
-                            $cash_transaction->user_id = $user_id;
-                            $cash_transaction->company_id = $company_id;
-                            $cash_transaction->save();
-                        }
-                        //if decreased credit in cash
-                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
-                        {
-                            $new_cash_outgoing=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $new_cash_outgoing=$request->Data['paidBalance']-$purchased->paidBalance;
                             $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
                             $difference = $cashTransaction->last()->Differentiate;
                             $cash_transaction = new CashTransaction();
@@ -684,6 +666,24 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             $cash_transaction->Credit=$new_cash_outgoing;
                             $cash_transaction->Debit=0.00;
                             $cash_transaction->Differentiate=$difference-$new_cash_outgoing;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        //if decreased debit in cash
+                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
+                        {
+                            $new_cash_incoming=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$new_cash_incoming;
+                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
                             $cash_transaction->user_id = $user_id;
                             $cash_transaction->company_id = $company_id;
                             $cash_transaction->save();
@@ -914,28 +914,10 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     // if paid balance is not same as earlier need to update cash account as well
                     if($purchased->paidBalance!=$request->Data['paidBalance'])
                     {
-                        //if increased debit in cash
+                        //if increased credit in cash
                         if($purchased->paidBalance<$request->Data['paidBalance'])
                         {
-                            $new_cash_incoming=$request->Data['paidBalance']-$purchased->paidBalance;
-                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
-                            $difference = $cashTransaction->last()->Differentiate;
-                            $cash_transaction = new CashTransaction();
-                            $cash_transaction->Reference=$purchased->id;
-                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
-                            $cash_transaction->Type='purchases';
-                            $cash_transaction->Details='CashPurchase';
-                            $cash_transaction->Credit=0.00;
-                            $cash_transaction->Debit=$new_cash_incoming;
-                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
-                            $cash_transaction->user_id = $user_id;
-                            $cash_transaction->company_id = $company_id;
-                            $cash_transaction->save();
-                        }
-                        //if decreased credit in cash
-                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
-                        {
-                            $new_cash_outgoing=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $new_cash_outgoing=$request->Data['paidBalance']-$purchased->paidBalance;
                             $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
                             $difference = $cashTransaction->last()->Differentiate;
                             $cash_transaction = new CashTransaction();
@@ -946,6 +928,24 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             $cash_transaction->Credit=$new_cash_outgoing;
                             $cash_transaction->Debit=0.00;
                             $cash_transaction->Differentiate=$difference-$new_cash_outgoing;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        //if decreased debit in cash
+                        elseif($purchased->paidBalance>$request->Data['paidBalance'])
+                        {
+                            $new_cash_incoming=$purchased->paidBalance-$request->Data['paidBalance'];
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$purchased->id;
+                            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                            $cash_transaction->Type='purchases';
+                            $cash_transaction->Details='CashPurchase';
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$new_cash_incoming;
+                            $cash_transaction->Differentiate=$difference+$new_cash_incoming;
                             $cash_transaction->user_id = $user_id;
                             $cash_transaction->company_id = $company_id;
                             $cash_transaction->save();

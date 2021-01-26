@@ -71,7 +71,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Opening Balance :- *</label>
+                                                <label class="control-label">Cash Opening Balance :- *</label>
                                                 <input type="number" step=".01" name="openingBalance" value="{{ $company->openingBalance }}" class="form-control" placeholder="Opening Balance" required>
                                             </div>
                                         </div>

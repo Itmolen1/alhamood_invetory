@@ -56,6 +56,9 @@
         .error{
             border: 2px solid red;
         }
+        .required {
+            color: red;
+        }
     </style>
     <style>
         /*Profile Pic Start*/
