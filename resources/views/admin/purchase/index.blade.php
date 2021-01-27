@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Expenses')
+@section('title', 'PURCHASE')
 
 @section('content')
 
@@ -183,7 +183,8 @@
                         name: 'action',
                         orderable: false
                     },
-                ]
+                ],
+                order: [[ 2, "desc" ]]
             });
         });
     </script>

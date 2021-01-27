@@ -39,4 +39,5 @@ class AccountTransaction extends Model
     {
         return $this->belongsTo('App\Models\Supplier','supplier_id','id');
     }
+
 }

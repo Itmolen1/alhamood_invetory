@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
 
 class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 {
-
     public function index()
     {
         // TODO: Implement index() method.
@@ -192,11 +191,11 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function supplier_payments_push(Request $request, $Id)
     {
-        // TODO: Implement supplier_payments_push() method.
         $payments = SupplierPayment::with('supplier')->find($Id);
         //dd($advance->Amount);
 
         $user_id = session('user_id');
+        $company_id = session('company_id');
         $payments->update([
             'isPushed' =>true,
             'user_id' =>$user_id,
@@ -204,85 +203,185 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
         if($payments->payment_type == 'cash')
         {
+//            $cash_transaction = new CashTransaction();
+//            $cash_transaction->Reference=$payments->id;
+//            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+//            $cash_transaction->Type='supplier_payments';
+//            $cash_transaction->Details='Supplier Cash Payment';
+//            $cash_transaction->Credit=$payments->paidAmount;
+//            $cash_transaction->Debit=0.00;
+//            $cash_transaction->save();
+
+            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+            $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
-            $cash_transaction->Reference=$payments->id;
+            $cash_transaction->Reference=$Id;
             $cash_transaction->createdDate=date('Y-m-d h:i:s');
             $cash_transaction->Type='supplier_payments';
-            $cash_transaction->Details='Supplier Cash Payment';
+            $cash_transaction->Details='SupplierCashPayment|'.$Id;
             $cash_transaction->Credit=$payments->paidAmount;
             $cash_transaction->Debit=0.00;
+            $cash_transaction->Differentiate=$difference-$payments->paidAmount;
+            $cash_transaction->user_id = $user_id;
+            $cash_transaction->company_id = $company_id;
             $cash_transaction->save();
-        }
-        elseif ($payments->payment_type == 'bank')
-        {
-            $bank_transaction = new BankTransaction();
-            $bank_transaction->Reference=$payments->id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='supplier_payments';
-            $bank_transaction->Details='Supplier Bank Payment';
-            $bank_transaction->Credit=$payments->paidAmount;
-            $bank_transaction->Debit=0.0;
-            $bank_transaction->Flag=1;
-            $bank_transaction->save();
-        }
-        elseif ($payments->payment_type == 'cheque')
-        {
-            $bank_transaction = new BankTransaction();
-            $bank_transaction->Reference=$payments->id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='supplier_payments';
-            $bank_transaction->Details='Supplier Cheque Payment';
-            $bank_transaction->Credit=$payments->paidAmount;
-            $bank_transaction->Debit=0.0;
-            $bank_transaction->Flag=0;
-            $bank_transaction->save();
-        }
 
-        ////////////////// account section ////////////////
-        if ($payments)
-        {
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'supplier_id'=> $payments->supplier_id,
-                    'createdDate' => date('Y-m-d'),
-                ])->first();
-            if (!is_null($accountTransaction)) {
-                if ($accountTransaction->createdDate != date('Y-m-d')) {
-                    $totalCredit = $payments->paidAmount;
-                }
-                else
-                {
-                    $totalCredit = $accountTransaction->Credit + $payments->paidAmount;
-                }
-                $difference = $accountTransaction->Differentiate + $payments->paidAmount;
-            }
-            else
-            {
-                $accountTransaction = AccountTransaction::where(
-                    [
-                        'supplier_id'=> $payments->supplier_id,
-                    ])->get();
-                $totalCredit = $payments->paidAmount;
-                $difference = $accountTransaction->last()->Differentiate + $payments->paidAmount;
-            }
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $payments->supplier_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
             $AccData =
                 [
                     'supplier_id' => $payments->supplier_id,
-                    'Credit' => $totalCredit,
-                    'Differentiate' => $difference,
+                    'Debit' => $payments->paidAmount,
+                    'Credit' => 0.00,
+                    'Differentiate' => $last_closing-$payments->paidAmount,
                     'createdDate' => date('Y-m-d'),
                     'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'SupplierCashPayment|'.$Id,
                 ];
-            $AccountTransactions = AccountTransaction::updateOrCreate(
-                [
-                    'createdDate'   => date('Y-m-d'),
-                    'supplier_id'   => $payments->supplier_id,
-                ],
-                $AccData);
-            //return Response()->json($AccountTransactions);
-            // return Response()->json("");
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
         }
-        ////////////////// end of account section ////////////////
+        elseif ($payments->payment_type == 'bank')
+        {
+//            $bank_transaction = new BankTransaction();
+//            $bank_transaction->Reference=$payments->id;
+//            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+//            $bank_transaction->Type='supplier_payments';
+//            $bank_transaction->Details='Supplier Bank Payment';
+//            $bank_transaction->Credit=$payments->paidAmount;
+//            $bank_transaction->Debit=0.0;
+//            $bank_transaction->Flag=1;
+//            $bank_transaction->save();
+
+            $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$Id;
+            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->Type='supplier_payments';
+            $bank_transaction->Details='SupplierBankPayment|'.$Id;
+            $bank_transaction->Credit=$payments->paidAmount;
+            $bank_transaction->Debit=0.00;
+            $bank_transaction->Differentiate=$difference-$payments->paidAmount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $payments->bank_id;
+            $bank_transaction->updateDescription = $payments->referenceNumber;
+            $bank_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $payments->supplier_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
+            $AccData =
+                [
+                    'supplier_id' => $payments->supplier_id,
+                    'Debit' => $payments->paidAmount,
+                    'Credit' => 0.00,
+                    'Differentiate' => $last_closing-$payments->paidAmount,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'SupplierCashPayment|'.$Id,
+                    'referenceNumber'=>$payments->referenceNumber,
+                ];
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
+        }
+        elseif ($payments->payment_type == 'cheque')
+        {
+//            $bank_transaction = new BankTransaction();
+//            $bank_transaction->Reference=$payments->id;
+//            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+//            $bank_transaction->Type='supplier_payments';
+//            $bank_transaction->Details='Supplier Cheque Payment';
+//            $bank_transaction->Credit=$payments->paidAmount;
+//            $bank_transaction->Debit=0.0;
+//            $bank_transaction->Flag=0;
+//            $bank_transaction->save();
+
+            $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$Id;
+            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->Type='supplier_payments';
+            $bank_transaction->Details='SupplierChequePayment|'.$Id;
+            $bank_transaction->Credit=$payments->paidAmount;
+            $bank_transaction->Debit=0.00;
+            $bank_transaction->Differentiate=$difference-$payments->paidAmount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $payments->bank_id;
+            $bank_transaction->updateDescription = $payments->referenceNumber;
+            $bank_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $payments->supplier_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
+            $AccData =
+                [
+                    'supplier_id' => $payments->supplier_id,
+                    'Debit' => $payments->paidAmount,
+                    'Credit' => 0.00,
+                    'Differentiate' => $last_closing-$payments->paidAmount,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'SupplierChequePayment|'.$Id,
+                    'referenceNumber'=>$payments->referenceNumber,
+                ];
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
+        }
+
+
+//        ////////////////// account section ////////////////
+//        if ($payments)
+//        {
+//            $accountTransaction = AccountTransaction::where(
+//                [
+//                    'supplier_id'=> $payments->supplier_id,
+//                    'createdDate' => date('Y-m-d'),
+//                ])->first();
+//            if (!is_null($accountTransaction)) {
+//                if ($accountTransaction->createdDate != date('Y-m-d')) {
+//                    $totalCredit = $payments->paidAmount;
+//                }
+//                else
+//                {
+//                    $totalCredit = $accountTransaction->Credit + $payments->paidAmount;
+//                }
+//                $difference = $accountTransaction->Differentiate + $payments->paidAmount;
+//            }
+//            else
+//            {
+//                $accountTransaction = AccountTransaction::where(
+//                    [
+//                        'supplier_id'=> $payments->supplier_id,
+//                    ])->get();
+//                $totalCredit = $payments->paidAmount;
+//                $difference = $accountTransaction->last()->Differentiate + $payments->paidAmount;
+//            }
+//            $AccData =
+//                [
+//                    'supplier_id' => $payments->supplier_id,
+//                    'Credit' => $totalCredit,
+//                    'Differentiate' => $difference,
+//                    'createdDate' => date('Y-m-d'),
+//                    'user_id' => $user_id,
+//                ];
+//            $AccountTransactions = AccountTransaction::updateOrCreate(
+//                [
+//                    'createdDate'   => date('Y-m-d'),
+//                    'supplier_id'   => $payments->supplier_id,
+//                ],
+//                $AccData);
+//            //return Response()->json($AccountTransactions);
+//            // return Response()->json("");
+//        }
+//        ////////////////// end of account section ////////////////
         return redirect()->route('supplier_payments.index')->with('pushed','Your Account Debit Successfully');
     }
 }

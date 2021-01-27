@@ -63,7 +63,7 @@
                                        <div class="form-group">
                                            <label>Bank Name</label>
                                            <select class="form-control custom-select" id="bank_id" name="bank_id">
-                                               <option selected readonly="" disabled>--Select Bank Name--</option>
+                                               <option value="">--Select Bank Name--</option>
                                                @foreach($banks as $bank)
                                                    <option value="{{ $bank->id }}" @if($supplier_payment[0]->bank_id == $bank->id) {{  'selected' }} @endif>{{ $bank->Name }}</option>
                                                @endforeach

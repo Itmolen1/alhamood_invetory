@@ -45,9 +45,9 @@
                                     <thead>
                                     <tr>
                                         <th>supplier</th>
-                                        <th>Total Amount Paid</th>
+{{--                                        <th>Total Amount Paid</th>--}}
                                         <th>Date</th>
-                                        <th width="150">Amount</th>
+                                        <th width="150">Total Amount Paid</th>
                                         <th width="150"><a href="{{ route('supplier_payments.index') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-bars"></i> Go Back </button></a>
                                         </th>
                                     </tr>
@@ -57,7 +57,7 @@
                                         @foreach($supplier_payment_details as $details)
                                             <tr>
                                                 <td>{{ $details->supplier_payment->supplier->Name ?? '' }}</td>
-                                                <td>{{ $details->supplier_payment->paidAmount ?? '' }}</td>
+{{--                                                <td>{{ $details->supplier_payment->paidAmount ?? '' }}</td>--}}
                                                 <td>{{ $details->createdDate ?? '' }}</td>
                                                 <td colspan="2">{{ $details->amountPaid ?? '' }}</td>
 

@@ -36,6 +36,21 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
+                        <label>Bank :- *</label>
+                        <select class="form-control supplier-select bank_id" name="bank_id" id="bank_id">
+                            @foreach($banks as $bank)
+                                @if(!empty($bank->Name))
+                                    <option value="{{ $bank->id }}">{{ $bank->Name }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
                         <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Bank Report</button></a>
                     </div>
                 </div>
@@ -49,11 +64,13 @@
         {
             var fromDate = $('#fromDate').val();
             var toDate = $('#toDate').val();
+            var bank_id = $('#bank_id').val();
+            var bank_name=$( "#bank_id option:selected" ).text();
             $.ajax({
                 url: "{{ URL('PrintBankReport') }}",
                 type: "POST",
                 dataType : "json",
-                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate},
+                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate,bank_id:bank_id,bank_name:bank_name},
                 success: function (result) {
                     window.open(result.url,'_blank');
                 },

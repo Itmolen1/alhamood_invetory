@@ -86,6 +86,7 @@ class BankRepository implements IBankRepositoryInterface
                 'Credit' =>0.00,
                 'Debit' =>0.00,
                 'Differentiate' =>$bankRequest->openingBalance,
+                'bank_id' =>$bank->id,
             ]);
         }
 
@@ -120,6 +121,7 @@ class BankRepository implements IBankRepositoryInterface
                 'Credit' =>0.00,
                 'Debit' =>0.00,
                 'Differentiate' =>$request->openingBalance,
+                'bank_id' => $Id,
             ]);
         }
 

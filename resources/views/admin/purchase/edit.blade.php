@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'purchase create')
+@section('title', 'PURCHASE UPDATE')
 
 @section('content')
 
@@ -134,7 +134,7 @@
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
-                                                <th style="width: 100px">Date</th>
+{{--                                                <th style="width: 100px">Date</th>--}}
                                                 <th style="width: 150px">purchase #</th>
                                                 <th style="width: 150px">product</th>
                                                 <th style="width: 100px">Unit</th>
@@ -152,7 +152,7 @@
                                             @foreach($purchase_details as $details)
                                                 @if(!is_null($details->deleted_at))
                                                     <tr style="text-decoration: line-through; color:red">
-                                                        <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->createdDate }}" placeholder=""></td>
+{{--                                                        <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->createdDate }}" placeholder=""></td>--}}
                                                         <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Product" value="{{ $details->product->Name ?? '' }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Unit" value="{{ $details->unit->Name ?? '' }}" class=" form-control"></td>
@@ -171,7 +171,7 @@
                                             @foreach($purchase_details as $details)
                                                 @if(is_null($details->deleted_at))
                                             <tr>
-                                                <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ $details->createdDate }}" placeholder=""></td>
+{{--                                                <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ $details->createdDate }}" placeholder=""></td>--}}
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" name="PadNumber" value="{{ $details->PadNumber }}" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">

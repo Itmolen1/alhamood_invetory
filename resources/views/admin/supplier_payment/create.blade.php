@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'New Payment')
+@section('title', 'ADD SUPPLIER PAYMENT')
 
 @section('content')
 

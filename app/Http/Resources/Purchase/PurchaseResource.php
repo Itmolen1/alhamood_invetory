@@ -38,6 +38,7 @@ class PurchaseResource extends JsonResource
             'api_supplier'=>$this->api_supplier,
             //'user'=>UserResource::collection($this->whenLoaded('user')),
             'purchase_details'=>PurchaseDetailResource::collection($this->whenLoaded('purchase_details')),
+            'purchase_details_without_trash'=>PurchaseDetailResource::collection($this->whenLoaded('purchase_details_without_trash')),
             'update_notes'=>UpdateNoteResource::collection($this->whenLoaded('update_notes')),
             'documents'=>FileUploadResource::collection($this->whenLoaded('documents')),
         ];
