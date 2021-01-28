@@ -2275,4 +2275,140 @@ class ReportRepository implements IReportRepositoryInterface
             return FALSE;
         }
     }
+
+    public function PrintReceivedAdvancesSummary()
+    {
+        $row = DB::table('sales as s')->select('s.customer_id', DB::raw('SUM(s.remainingBalance) as SalesAmount'),'c.Name','c.Mobile')
+            ->where('remainingBalance','>=',10)
+            ->groupBy('customer_id')
+            ->orderBy('SalesAmount','desc')
+            ->leftjoin('customers as c', 'c.id', '=', 's.customer_id')
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        //$data=$row;
+        //echo "<pre>";print_r($row);die;
+
+        //$data=SalesResource::collection(Sale::get()->where('remainingBalance','!=',0));
+        if(!empty($row))
+        {
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            $pdf::SetFont('times', '', 15);
+            $html='CUSTOMER ADVANCES SUMMARY';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $pdf::SetFont('times', '', 12);
+            $html='Date : '.date('d-m-Y h:i:s');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $pdf::SetFont('times', 'B', 14);
+            $html = '<table border="0.5" cellpadding="2">
+            <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                <th align="center" width="50">S.No</th>
+                <th align="center" width="300">Customer Name</th>
+                <th align="center" width="100">Cell</th>
+                <th align="right" width="80">Balance</th>
+            </tr>';
+            $pdf::SetFont('times', '', 10);
+            $total_balance=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                $total_balance+=$row[$i]['SalesAmount'];
+                $html .='<tr>
+                <td align="center" width="50">'.($i+1).'</td>
+                <td align="left" width="300">'.($row[$i]['Name']).'</td>
+                <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['SalesAmount'],2,'.',',')).'</td>
+                </tr>';
+            }
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('times', 'B', 13);
+            $html='<table border="0" cellpadding="0">';
+            $html.= '
+                 <tr color="red">
+                     <td width="450" align="right" colspan="3">TOTAL BALANCE : </td>
+                     <td width="80" align="right">'.number_format($total_balance,2,'.',',').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $data=CustomerAdvanceResource::collection(CustomerAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
+            if($data)
+            {
+                $pdf::SetFont('times', '', 15);
+                $html='CUSTOMER ADVANCES';
+                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+                $row=json_decode(json_encode($data), true);
+                //echo "<pre>";print_r($row);die;
+                $pdf::SetFont('times', '', 10);
+                $html = '<table border="0.5" cellpadding="2">
+                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="50">S.No</th>
+                    <th align="center" width="300">Account</th>
+                    <th align="center" width="100">Cell</th>
+                    <th align="right" width="80">Balance</th>
+                </tr>';
+
+                $total_advances=0.0;
+                for($j=0;$j<count($row);$j++)
+                {
+                    $total_advances+=$row[$j]['Amount'];
+                    $html .='<tr>
+                    <td align="center" width="50">'.($j+1).'</td>
+                    <td align="left" width="300">'.($row[$j]['api_customer']['Name']).'</td>
+                    <td align="center" width="100">'.($row[$j]['api_customer']['Mobile']).'</td>
+                    <td align="right" width="80">'.(number_format($row[$j]['Amount'],2,'.',',')).'</td>
+                    </tr>';
+                }
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+
+                $pdf::SetFont('times', 'B', 13);
+                $html='<table border="0" cellpadding="0">';
+                $html.= '
+                 <tr color="red">
+                     <td width="450" align="right" colspan="3">TOTAL ADVANCES : </td>
+                     <td width="80" align="right">'.number_format($total_advances,2,'.',',').'</td>
+                 </tr>';
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
+            $pdf::SetFont('times', '', 12);
+            $html='Receivable Total : '.number_format($total_balance,2,'.',',');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $html='Advances Total : '.number_format($total_advances,2,'.',',');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $html='Differance Total : '.number_format($total_balance-$total_advances,2,'.',',');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
 }
