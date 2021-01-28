@@ -123,7 +123,7 @@
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
-                                                <label class="control-label">Transfer Date</label>
+                                                <label class="control-label">Transfer or Deposit Date</label>
                                                 <input type="date" id="TransferDate" name="TransferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
                                             </div>
                                         </div>

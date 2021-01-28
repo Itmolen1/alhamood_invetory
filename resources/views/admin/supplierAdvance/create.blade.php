@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Supplier advances')
+@section('title', 'ADD Supplier advances')
 
 @section('content')
 
@@ -43,18 +43,19 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header bg-info">
-                            <h4 class="m-b-0 text-white">Supplier</h4>
+                            <h4 class="m-b-0 text-white">Supplier Advance</h4>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('supplier_advances.store') }}" method="post" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-body">
-                                    <h3 class="card-title">Registration</h3>
+                                    <h3 class="card-title">ADD SUPPLIER ADVANCE</h3>
+                                    <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <hr>
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Supplier Selection</label>
+                                                <label>Supplier Selection :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id">
                                                     <option disabled readonly="" selected>--Select Supplier--</option>
                                                     @foreach($suppliers as $supplier)
@@ -66,63 +67,44 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Receipt Number</label>
+                                                <label class="control-label">Receipt Number :- <span class="required">*</span></label>
                                                 <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
                                                 @if ($errors->has('receiptNumber'))
                                                     <span class="text-danger">{{ $errors->first('receiptNumber') }}</span>
                                                 @endif
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Payment Type</label>
+                                                <label>Payment Type :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option disabled readonly="" selected>--Select your Payment Type--</option>
-                                                    <option value="bankTransfer">Bank</option>
+                                                    <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
-                                                    <option value="checkTransfer">Cheque</option>
+                                                    <option value="cheque">Cheque</option>
                                                 </select>
                                                 @if ($errors->has('paymentType'))
                                                     <span class="text-danger">{{ $errors->first('paymentType') }}</span>
                                                 @endif
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Amount</label>
-                                                <input type="text" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" id="amount" name="amount" class="form-control amount" placeholder="Enter Amount">
-                                            </div>
-                                            @if ($errors->has('amount'))
-                                                <span class="text-danger">{{ $errors->first('amount') }}</span>
-                                            @endif
-                                        </div>
-                                        <!--/span-->
-                                    </div>
-                                    <!--/row-->
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label">Sum Of</label>
-                                                <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
+                                                <label class="control-label">Transfer or Deposit Date :- <span class="required">*</span></label>
+                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
 
                                     <div class="row bankTransfer">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Bank Name</label>
+                                                <label>Bank Name :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
                                                     <option disabled readonly="" selected>--Select Bank Name--</option>
                                                     @foreach($banks as $bank)
@@ -131,24 +113,31 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
-
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Account Number</label>
+                                                <label class="control-label">Account Number :- <span class="required">*</span></label>
                                                 <input type="text" id="accountNumber" name="accountNumber" class="form-control" placeholder="Enter Account Number">
                                             </div>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Transfer Date</label>
-                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
-                                            </div>
-                                        </div>
-
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Amount :- <span class="required">*</span></label>
+                                                <input type="text" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" id="amount" name="amount" class="form-control amount" placeholder="Enter Amount">
+                                            </div>
+                                            @if ($errors->has('amount'))
+                                                <span class="text-danger">{{ $errors->first('amount') }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <label class="control-label">Sum Of :- <span class="required">*</span></label>
+                                                <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="row">
                                         <div class="col-md-6">
@@ -157,16 +146,12 @@
                                                 <input type="date" id="registerDate" name="registerDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
                                             </div>
                                         </div>
-                                        <!--/span-->
-
-
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Receiver Name</label>
-                                                <input type="text" id="receiver" name="receiverName" class="form-control" placeholder="Enter Receiver Name">
+                                                <label class="control-label">Paid By :- <span class="required">*</span></label>
+                                                <input type="text" id="receiver" name="receiverName" class="form-control" placeholder="Paid By">
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <div class="row">
@@ -181,6 +166,7 @@
                                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Save</button>
                                         <button type="button" class="btn btn-inverse">Cancel</button>
                                     </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -206,11 +192,6 @@
 
     <script>
         $(document).ready(function () {
-
-
-
-
-
             // $('#paymentTermAll').hide();
             //
             // $("#customRadio1 input:radio").click(function() {
@@ -226,9 +207,7 @@
             // $('.c2').click(function () {
             //     $('#paymentTermAll').hide();
             // });
-
             $('.bankTransfer').hide();
-
         });
 
         $(document).on("change", '#paymentType', function () {
@@ -246,10 +225,34 @@
                 $('.bankTransfer').hide();
             }
         });
-
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#bank_id').change(function () {
+                var Id = 0;
+                Id = $(this).val();
+                if (Id > 0)
+                {
+                    $.ajax({
+                        // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                $("#accountNumber").val('');
+                                $("#accountNumber").val(result);
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
+        });
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
-
-
-
 @endsection

@@ -7,6 +7,8 @@ namespace App\WebRepositories;
 use App\Http\Requests\SupplierAdvanceRequest;
 use App\Models\AccountTransaction;
 use App\Models\Bank;
+use App\Models\BankTransaction;
+use App\Models\CashTransaction;
 use App\Models\CustomerAdvance;
 use App\Models\Supplier;
 use App\Models\SupplierAdvance;
@@ -15,14 +17,8 @@ use Illuminate\Http\Request;
 
 class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 {
-
     public function index()
     {
-        // TODO: Implement index() method.
-//        $supplierAdvances = SupplierAdvance::with('supplier')->get();
-        //dd($supplierAdvances);
-        //return view('admin.supplierAdvance.index',compact('supplierAdvances'));
-
         if(request()->ajax())
         {
             return datatables()->of(SupplierAdvance::with('supplier')->latest()->get())
@@ -55,7 +51,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function create()
     {
-        // TODO: Implement create() method.
         $suppliers = Supplier::all();
         $banks = Bank::all();
         return view('admin.supplierAdvance.create',compact('suppliers','banks'));
@@ -63,7 +58,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function store(SupplierAdvanceRequest $supplierAdvanceRequest)
     {
-        // TODO: Implement store() method.
         $user_id = session('user_id');
         $company_id = session('company_id');
 
@@ -88,7 +82,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $advance = SupplierAdvance::find($Id);
 
         $user_id = session('user_id');
@@ -116,7 +109,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $suppliers = Supplier::all();
         $banks = Bank::all();
         $supplierAdvance = SupplierAdvance::with('supplier')->find($Id);
@@ -125,7 +117,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
-        // TODO: Implement delete() method.
         $data = SupplierAdvance::findOrFail($Id);
         $data->delete();
         return redirect()->route('supplier_advances.index');
@@ -144,60 +135,170 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function supplier_advances_push(Request $request, $Id)
     {
-        // TODO: Implement supplier_advances_push() method.
         $advance = SupplierAdvance::with('supplier')->find($Id);
-        //dd($advance->Amount);
 
         $user_id = session('user_id');
+        $company_id = session('company_id');
         $advance->update([
             'isPushed' =>true,
             'user_id' =>$user_id,
         ]);
-        ////////////////// account section ////////////////
-        if ($advance)
+
+        /* account section by gautam */
+        if($advance->paymentType == 'cash')
         {
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'supplier_id'=> $advance->supplier_id,
-                    'createdDate' => date('Y-m-d'),
-                ])->first();
-            if (!is_null($accountTransaction)) {
-                if ($accountTransaction->createdDate != date('Y-m-d')) {
-                    $totalCredit = $advance->Amount;
-                }
-                else
-                {
-                    $totalCredit = $accountTransaction->Credit + $advance->Amount;
-                }
-                $difference = $accountTransaction->Differentiate + $advance->Amount;
-            }
-            else
-            {
-                $accountTransaction = AccountTransaction::where(
-                    [
-                        'supplier_id'=> $advance->supplier_id,
-                    ])->get();
-                $totalCredit = $advance->Amount;
-                $difference = $accountTransaction->last()->Differentiate + $advance->Amount;
-            }
+            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+            $difference = $cashTransaction->last()->Differentiate;
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$Id;
+            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->Type='supplier_advances';
+            $cash_transaction->Details='SupplierCashAdvance|'.$Id;
+            $cash_transaction->Credit=$advance->Amount;
+            $cash_transaction->Debit=0.00;
+            $cash_transaction->Differentiate=$difference-$advance->Amount;
+            $cash_transaction->user_id = $user_id;
+            $cash_transaction->company_id = $company_id;
+            $cash_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $advance->supplier_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
             $AccData =
                 [
                     'supplier_id' => $advance->supplier_id,
-                    'Credit' => $totalCredit,
-                    'Differentiate' => $difference,
+                    'Debit' => $advance->Amount,
+                    'Credit' => 0.00,
+                    'Differentiate' => $last_closing-$advance->Amount,
                     'createdDate' => date('Y-m-d'),
                     'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'SupplierCashAdvance|'.$Id,
                 ];
-            $AccountTransactions = AccountTransaction::updateOrCreate(
-                [
-                    'createdDate'   => date('Y-m-d'),
-                    'supplier_id'   => $advance->supplier_id,
-                ],
-                $AccData);
-            //return Response()->json($AccountTransactions);
-            // return Response()->json("");
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
         }
-        ////////////////// end of account section ////////////////
+        elseif ($advance->paymentType == 'bank')
+        {
+            $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$Id;
+            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->Type='supplier_payments';
+            $bank_transaction->Details='SupplierBankAdvance|'.$Id;
+            $bank_transaction->Credit=$advance->Amount;
+            $bank_transaction->Debit=0.00;
+            $bank_transaction->Differentiate=$difference-$advance->Amount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $advance->bank_id;
+            $bank_transaction->updateDescription = $advance->referenceNumber;
+            $bank_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $advance->supplier_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
+            $AccData =
+                [
+                    'supplier_id' => $advance->supplier_id,
+                    'Debit' => $advance->Amount,
+                    'Credit' => 0.00,
+                    'Differentiate' => $last_closing-$advance->Amount,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'SupplierBankAdvance|'.$Id,
+                    'referenceNumber'=>$advance->referenceNumber,
+                ];
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
+        }
+        elseif ($advance->paymentType == 'cheque')
+        {
+            $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$Id;
+            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->Type='supplier_payments';
+            $bank_transaction->Details='SupplierChequeAdvance|'.$Id;
+            $bank_transaction->Credit=$advance->Amount;
+            $bank_transaction->Debit=0.00;
+            $bank_transaction->Differentiate=$difference-$advance->Amount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $advance->bank_id;
+            $bank_transaction->updateDescription = $advance->referenceNumber;
+            $bank_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $advance->supplier_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
+            $AccData =
+                [
+                    'supplier_id' => $advance->supplier_id,
+                    'Debit' => $advance->Amount,
+                    'Credit' => 0.00,
+                    'Differentiate' => $last_closing-$advance->Amount,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'SupplierChequeAdvance|'.$Id,
+                    'referenceNumber'=>$advance->referenceNumber,
+                ];
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
+        }
+        /* account section by gautam */
+
+
+
+//        ////////////////// account section ////////////////
+//        if ($advance)
+//        {
+//            $accountTransaction = AccountTransaction::where(
+//                [
+//                    'supplier_id'=> $advance->supplier_id,
+//                    'createdDate' => date('Y-m-d'),
+//                ])->first();
+//            if (!is_null($accountTransaction)) {
+//                if ($accountTransaction->createdDate != date('Y-m-d')) {
+//                    $totalCredit = $advance->Amount;
+//                }
+//                else
+//                {
+//                    $totalCredit = $accountTransaction->Credit + $advance->Amount;
+//                }
+//                $difference = $accountTransaction->Differentiate + $advance->Amount;
+//            }
+//            else
+//            {
+//                $accountTransaction = AccountTransaction::where(
+//                    [
+//                        'supplier_id'=> $advance->supplier_id,
+//                    ])->get();
+//                $totalCredit = $advance->Amount;
+//                $difference = $accountTransaction->last()->Differentiate + $advance->Amount;
+//            }
+//            $AccData =
+//                [
+//                    'supplier_id' => $advance->supplier_id,
+//                    'Credit' => $totalCredit,
+//                    'Differentiate' => $difference,
+//                    'createdDate' => date('Y-m-d'),
+//                    'user_id' => $user_id,
+//                ];
+//            $AccountTransactions = AccountTransaction::updateOrCreate(
+//                [
+//                    'createdDate'   => date('Y-m-d'),
+//                    'supplier_id'   => $advance->supplier_id,
+//                ],
+//                $AccData);
+//            //return Response()->json($AccountTransactions);
+//            // return Response()->json("");
+//        }
+//        ////////////////// end of account section ////////////////
         return redirect()->route('supplier_advances.index')->with('pushed','Your Account Debit Successfully');
     }
 }

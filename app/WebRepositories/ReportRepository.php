@@ -612,14 +612,14 @@ class ReportRepository implements IReportRepositoryInterface
         $credit_total=0.0;
 
         $pdf::SetFont('times', 'B', 14);
-        $html = '<table border="0.5" cellpadding="1">
+        $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="80">Date</th>
                 <th align="center" width="100">Type</th>
                 <th align="center" width="100">Ref#</th>
-                <th align="center" width="60">Debit</th>
-                <th align="center" width="60">Credit</th>
-                <th align="center" width="60">Closing</th>
+                <th align="center" width="80">Debit</th>
+                <th align="center" width="80">Credit</th>
+                <th align="center" width="90">Closing</th>
             </tr>';
         $pdf::SetFont('times', '', 10);
         $last_closing=0.0;
@@ -637,30 +637,49 @@ class ReportRepository implements IReportRepositoryInterface
 //            }
             $debit_total += $row[$i]['Debit'];
             $credit_total += $row[$i]['Credit'];
-            $balance = $balance + $row[$i]['Differentiate'];
+            //$balance = $balance + $row[$i]['Differentiate'];
             $html .='<tr>
-                <td align="center" width="80">'.($row[$i]['createdDate']).'</td>
+                <td align="center" width="80">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
                 <td align="center" width="100">'.($row[$i]['Type']).'</td>
                 <td align="center" width="100">'.$row[$i]['updateDescription'].'</td>
-                <td align="right" width="60">'.($row[$i]['Debit']).'</td>
-                <td align="right" width="60">'.($row[$i]['Credit']).'</td>
-                <td align="right" width="60">'.number_format($balance,2,'.',',').'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
+                <td align="right" width="90">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
                 </tr>';
             $last_closing=$row[$i]['Differentiate'];
         }
-        $html.= '
-             <tr color="red">
-                 <td width="80"></td>
-                 <td width="100"></td>
-                 <td width="100" align="right">Total : </td>
-                 <td width="60" align="right">'.number_format($debit_total,2,'.',',').'</td>
-                 <td width="60" align="right">'.number_format($credit_total,2,'.',',').'</td>
-                 <td width="60" align="right">'.number_format($last_closing,2,'.',',').'</td>
-             </tr>';
-        $pdf::SetFillColor(255, 0, 0);
         $html.='</table>';
-
         $pdf::writeHTML($html, true, false, false, false, '');
+
+        $pdf::SetFont('times', 'B', 13);
+        if($last_closing<0)
+        {
+            $html='<table border="0.5" cellpadding="2">';
+            $html.= '
+                 <tr>
+                 <td width="280" align="right" colspan="3">Total : </td>
+                 <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
+                 <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
+                 <td width="90" align="right">'.number_format($last_closing,2,'.',',').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+        }
+        else
+        {
+            $html='<table border="0.5" cellpadding="0">';
+            $html.= '
+                 <tr>
+                 <td width="280" align="right" colspan="3">Total : </td>
+                 <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
+                 <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
+                 <td width="90" align="right">'.number_format($last_closing,2,'.',',').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+        }
 
         $pdf::lastPage();
         $time=time();
@@ -713,13 +732,11 @@ class ReportRepository implements IReportRepositoryInterface
         $pdf::SetFont('times', 'B', 14);
         $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                <th align="center" width="80">#</th>
                 <th align="center" width="80">Date</th>
-                <th align="center" width="100">Type</th>
-                <th align="center" width="100">Details</th>
-                <th align="right" width="60">Debit</th>
-                <th align="right" width="60">Credit</th>
-                <th align="right" width="60">Closing</th>
+                <th align="center" width="200">Details</th>
+                <th align="right" width="80">Debit</th>
+                <th align="right" width="80">Credit</th>
+                <th align="right" width="90">Closing</th>
             </tr>';
         $pdf::SetFont('times', '', 10);
         $last_closing=0.0;
@@ -739,30 +756,46 @@ class ReportRepository implements IReportRepositoryInterface
             $credit_total += $row[$i]['Credit'];
             $balance = $balance + $row[$i]['Differentiate'];
             $html .='<tr>
-                <td align="left" width="80">'.($i+1).'</td>
                 <td align="center" width="80">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
-                <td align="center" width="100">'.($row[$i]['Details']).'</td>
-                <td align="center" width="100">N.A.</td>
-                <td align="right" width="60">'.($row[$i]['Credit']).'</td>
-                <td align="right" width="60">'.($row[$i]['Debit']).'</td>
-                <td align="right" width="60">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
+                <td align="center" width="200">'.($row[$i]['Details']).'</td>
+                <td align="right" width="80">'.($row[$i]['Debit']).'</td>
+                <td align="right" width="80">'.($row[$i]['Credit']).'</td>
+                <td align="right" width="90">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
                 </tr>';
             $last_closing=$row[$i]['Differentiate'];
         }
-        $html.= '
-             <tr color="red">
-                 <td width="80"></td>
-                 <td width="80"></td>
-                 <td width="100"></td>
-                 <td width="100" align="right">Total : </td>
-                 <td width="60" align="right">'.number_format($credit_total,2,'.',',').'</td>
-                 <td width="60" align="right">'.number_format($debit_total,2,'.',',').'</td>
-                 <td width="60" align="right">'.number_format($last_closing,2,'.',',').'</td>
-             </tr>';
-        $pdf::SetFillColor(255, 0, 0);
         $html.='</table>';
-
         $pdf::writeHTML($html, true, false, false, false, '');
+
+        $pdf::SetFont('times', 'B', 13);
+        if($last_closing<0)
+        {
+            $html='<table border="0.5" cellpadding="2">';
+            $html.= '
+                 <tr>
+                 <td width="280" align="right" colspan="2">Total : </td>
+                 <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
+                 <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
+                 <td width="90" align="right">'.number_format($last_closing,2,'.',',').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+        }
+        else
+        {
+            $html='<table border="0.5" cellpadding="2">';
+            $html.= '
+                 <tr>
+                 <td width="280" align="right" colspan="2">Total : </td>
+                 <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
+                 <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
+                 <td width="90" align="right">'.number_format($last_closing,2,'.',',').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+        }
 
         $pdf::lastPage();
         $time=time();
