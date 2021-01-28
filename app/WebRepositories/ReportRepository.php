@@ -48,6 +48,16 @@ class ReportRepository implements IReportRepositoryInterface
         return view('admin.report.supplier_statement');
     }
 
+    public function GetPaidAdvancesSummary()
+    {
+        return view('admin.report.paid_advance_summary');
+    }
+
+    public function GetReceivedAdvancesSummary()
+    {
+        return view('admin.report.received_advance_summary');
+    }
+
     public function GetDetailSupplierStatement()
     {
         $suppliers = Supplier::where('company_id',session('company_id'))->get();
@@ -1652,13 +1662,16 @@ class ReportRepository implements IReportRepositoryInterface
             $total_balance=0.0;
             for($i=0;$i<count($row);$i++)
             {
-                $total_balance+=$row[$i]['Differentiate'];
-                $html .='<tr>
-                <td align="center" width="50">'.($i+1).'</td>
-                <td align="left" width="300">'.($row[$i]['Name']).'</td>
-                <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
-                <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
-                </tr>';
+                if($row[$i]['Differentiate']>0)
+                {
+                    $total_balance+=$row[$i]['Differentiate'];
+                    $html .='<tr>
+                    <td align="center" width="50">'.($i+1).'</td>
+                    <td align="left" width="300">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
+                    <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
+                    </tr>';
+                }
             }
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
@@ -2149,6 +2162,98 @@ class ReportRepository implements IReportRepositoryInterface
                      <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
                      <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
                      <td width="80" align="right">'.number_format($sum_of_differance,2,'.',',').'</td>
+                 </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+
+    public function PrintPaidAdvancesSummary()
+    {
+        // getting latest closing for all suppliers from account transaction table
+        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id','ac.Differentiate','s.Name','s.Mobile')
+            ->groupBy('ac.supplier_id')
+            ->orderBy('ac.id','asc')
+            ->leftjoin('suppliers as s', 's.id', '=', 'ac.supplier_id')
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        $needed_ids=array_column($row,'max_id');
+
+        $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.supplier_id','ac.Differentiate','s.Name','s.Mobile')
+            ->whereIn('ac.id',$needed_ids)
+            ->orderBy('ac.id','asc')
+            ->leftjoin('suppliers as s', 's.id', '=', 'ac.supplier_id')
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        //echo "<pre>";print_r($row);die;
+
+        if(!empty($row))
+        {
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            $pdf::SetFont('times', '', 15);
+            $html='SUPPLIER ADVANCE SUMMARY';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $pdf::SetFont('times', '', 12);
+            $html='Date : '.date('d-m-Y h:i:s');
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+            $pdf::SetFont('times', 'B', 14);
+            $html = '<table border="0.5" cellpadding="2">
+            <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                <th align="center" width="50">S.No</th>
+                <th align="center" width="300">Account</th>
+                <th align="center" width="100">Cell</th>
+                <th align="right" width="80">Balance</th>
+            </tr>';
+            $pdf::SetFont('times', '', 10);
+            $total_balance=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                if($row[$i]['Differentiate']<0)
+                {
+                    $total_balance+=$row[$i]['Differentiate'];
+                    $html .='<tr>
+                    <td align="center" width="50">'.($i+1).'</td>
+                    <td align="left" width="300">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
+                    <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
+                    </tr>';
+                }
+            }
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('times', 'B', 13);
+            $html='<table border="0" cellpadding="0">';
+            $html.= '
+                 <tr color="red">
+                     <td width="450" align="right" colspan="3">Total Balance : </td>
+                     <td width="80" align="right">'.number_format($total_balance,2,'.',',').'</td>
                  </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';

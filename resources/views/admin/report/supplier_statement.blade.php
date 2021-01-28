@@ -19,6 +19,10 @@
             </div>
 
             <div class="row">
+                <h2 class="card-title">Supplier Statement</h2>
+            </div>
+
+            <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
                         <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Supplier Statement</button></a>

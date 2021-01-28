@@ -102,8 +102,16 @@ route::get('supplierSaleDetails/{Id}','PurchaseController@supplierSaleDetails');
 ////////reports////////////
 route::get('GetCustomerStatement','ReportController@GetCustomerStatement')->name('GetCustomerStatement');
 route::get('PrintCustomerStatement','ReportController@PrintCustomerStatement')->name('PrintCustomerStatement');
+
 route::get('GetSupplierStatement','ReportController@GetSupplierStatement')->name('GetSupplierStatement');
 route::get('PrintSupplierStatement','ReportController@PrintSupplierStatement')->name('PrintSupplierStatement');
+
+route::get('GetPaidAdvancesSummary','ReportController@GetPaidAdvancesSummary')->name('GetPaidAdvancesSummary');
+route::get('PrintPaidAdvancesSummary','ReportController@PrintPaidAdvancesSummary')->name('PrintPaidAdvancesSummary');
+
+route::get('GetReceivedAdvancesSummary','ReportController@GetReceivedAdvancesSummary')->name('GetReceivedAdvancesSummary');
+route::get('PrintReceivedAdvancesSummary','ReportController@PrintReceivedAdvancesSummary')->name('PrintReceivedAdvancesSummary');
+
 route::get('GetDetailCustomerStatement','ReportController@GetDetailCustomerStatement')->name('GetDetailCustomerStatement');
 route::post('PrintDetailCustomerStatement','ReportController@PrintDetailCustomerStatement')->name('PrintDetailCustomerStatement');
 route::get('GetDetailSupplierStatement','ReportController@GetDetailSupplierStatement')->name('GetDetailSupplierStatement');

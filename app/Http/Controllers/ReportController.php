@@ -25,6 +25,26 @@ class ReportController extends Controller
         return $this->reportRepository->PrintCustomerStatement();
     }
 
+    public function GetPaidAdvancesSummary()
+    {
+        return $this->reportRepository->GetPaidAdvancesSummary();
+    }
+
+    public function PrintPaidAdvancesSummary()
+    {
+        return $this->reportRepository->PrintPaidAdvancesSummary();
+    }
+
+    public function PrintReceivedAdvancesSummary()
+    {
+        return $this->reportRepository->PrintReceivedAdvancesSummary();
+    }
+
+    public function GetReceivedAdvancesSummary()
+    {
+        return $this->reportRepository->GetReceivedAdvancesSummary();
+    }
+
     public function GetDetailCustomerStatement()
     {
         return $this->reportRepository->GetDetailCustomerStatement();

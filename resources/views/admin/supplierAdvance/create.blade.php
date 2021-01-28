@@ -213,10 +213,10 @@
         $(document).on("change", '#paymentType', function () {
             var cashDetails = $('#paymentType').val();
 
-            if (cashDetails === 'bankTransfer'){
+            if (cashDetails === 'bank'){
                 $('.bankTransfer').show();
             }
-            else if(cashDetails === 'checkTransfer')
+            else if(cashDetails === 'cheque')
             {
                 $('.bankTransfer').show();
             }

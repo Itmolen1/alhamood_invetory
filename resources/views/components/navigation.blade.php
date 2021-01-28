@@ -39,8 +39,6 @@
                         <ul aria-expanded="false" class="collapse">
                             <li class="border-bottom"><a href="{{ route('customers.create') }}">Add New Customer</a></li>
                             <li class="border-bottom"><a href="{{ route('customers.index') }}">Manage Customers</a></li>
-                            <li class="border-bottom"><a href="{{ route('customer_advances.create') }}">Add Advances</a></li>
-                            <li class="border-bottom"><a href="{{ route('customer_advances.index') }}">Manage Advances</a></li>
                             <li><a href="{{ route('customer_prices.index') }}">Manage Prices</a></li>
                         </ul>
                     </li>
@@ -50,8 +48,6 @@
                         <ul aria-expanded="false" class="collapse">
                             <li class="border-bottom"><a href="{{ route('suppliers.create') }}">Add New Supplier</a></li>
                             <li class="border-bottom"><a href="{{ route('suppliers.index') }}">Manage Suppliers</a></li>
-                            <li class="border-bottom"><a href="{{ route('supplier_advances.create') }}">Add Advances</a></li>
-                            <li><a href="{{ route('supplier_advances.index') }}">Manage Advances</a></li>
                         </ul>
                     </li>
 
@@ -112,6 +108,13 @@
                 </ul>
             </li>
 
+            <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-sort-numeric-asc"></i><span class="hide-menu">Advances</span></a>
+                <ul aria-expanded="false" class="collapse">
+                    <li  class="border-bottom"><a href="{{ route('supplier_advances.index') }}">Supplier Advances</a></li>
+                    <li><a href="{{ route('customer_advances.index') }}">Customer Advances</a></li>
+                </ul>
+            </li>
+
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-bar-chart"></i><span class="hide-menu">Accounts</span></a>
                 <ul aria-expanded="false" class="collapse">
                    <!-- <li  class="border-bottom">
@@ -154,18 +157,24 @@
                 </a>
 
                 <ul aria-expanded="false" class="collapse">
-                    <li  class="border-bottom">
-                        <a href="{{ route('GetCustomerStatement') }}">Receivable Summary</a>
+                    <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Summaries</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li class="border-bottom"><a href="{{ route('GetCustomerStatement') }}">Receivable Summary</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetSupplierStatement') }}">Payable Summary</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetPaidAdvancesSummary') }}">Supplier Advance Summary</a></li>
+                            <li><a href="{{ route('GetReceivedAdvancesSummary') }}">Customer Advances Summary</a></li>
+                        </ul>
                     </li>
-                    <li  class="border-bottom">
-                        <a href="{{ route('GetSupplierStatement') }}">Payable Summary</a>
+
+                    <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Statements</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li class="border-bottom"><a href="{{ route('GetDetailCustomerStatement') }}">Customer Statement</a></li>
+                            <li><a href="{{ route('GetDetailSupplierStatement') }}">Supplier Statement</a></li>
+                        </ul>
                     </li>
-                    <li  class="border-bottom">
-                        <a href="{{ route('GetDetailCustomerStatement') }}">Customer Statement</a>
-                    </li>
-                    <li  class="border-bottom">
-                        <a href="{{ route('GetDetailSupplierStatement') }}">Supplier Statement</a>
-                    </li>
+
                     <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Sales Reports</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
@@ -173,7 +182,6 @@
                             <li ><a href="{{ route('SalesReportByVehicle') }}">By Vehicle Date-to-Date</a></li>
                             <li ><a href="{{ route('SalesReportByCustomer') }}">By Customer Date-to-Date</a></li>
                         </ul>
-
                     </li>
 
                     <li  class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Purchase Reports</span>
@@ -216,15 +224,11 @@
                                 <a href="#">Monthly Closings</a>
                             </li>
                         </ul>
-
                     </li>
                 </ul>
             </li>
 
-
             <li class="nav-small-cap"></li>
-
-
         </ul>
     </nav>
     <!-- End Sidebar navigation -->
