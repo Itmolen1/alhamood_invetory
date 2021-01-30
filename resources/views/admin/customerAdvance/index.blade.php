@@ -40,6 +40,7 @@
                         <div class="card-body">
                             <h4 class="card-title">Customer Advances</h4>
                             <h6 class="card-subtitle">All Advances</h6>
+                            <h5 class="required">** AFTER PUSH EDIT IS NOT ALLOWED SO VERIFY ENTRY BEFORE PUSH **</h5>
                             <div class="table-responsive m-t-40">
                                 <table id="customer_advances_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>

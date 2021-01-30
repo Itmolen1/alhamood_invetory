@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'New Payment')
+@section('title', 'ADD Customer Payment')
 
 @section('content')
 
@@ -48,9 +48,11 @@
                         <div class="card-body">
                             <form action="#">
                                 <div class="form-body">
-
+                                    <h3 class="card-title">ADD CUSTOMER Payment</h3>
+                                    <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <div class="row">
-                                        <div class="col-md-11">
+                                        <label class="mt-2">Select Customer :- <span class="required">*</span></label>
+                                        <div class="col-md-9">
                                             <div class="form-group">
                                                 {{--   <label>Select Customer</label> --}}
                                                 <select class="form-control custom-select select2 customer_id" name="customer_id" id="customer_id">
@@ -58,14 +60,14 @@
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
                                                     @endforeach
-
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-1 all">
-                                            <input type="checkbox" class="form-control" name="chk[]" value="0" id="selectall">
+                                            <input type="checkbox" class="form-control" name="chk[]" value="0" id="selectall"><span style="margin-left: 20px;">Select All</span>
                                         </div>
                                     </div>
+
                                     <div class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
@@ -77,34 +79,31 @@
                                                 <th>Balance</th>
                                                 <th>Date</th>
                                                 <th width="70">Action</th>
-
                                             </tr>
                                             </thead>
                                             <tbody id="sales" style="font-size: 12px">
                                             <tr>
                                                 <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
                                             </tr>
-
                                             </tbody>
                                         </table>
                                     </div>
 
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Payment Type</label>
+                                                <label>Payment Type :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option disabled readonly="" selected>--Select your Payment Type--</option>
-                                                    <option value="bankTransfer">Bank</option>
+                                                    <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
-                                                    <option value="checkTransfer">Cheque</option>
+                                                    <option value="cheque">Cheque</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
-                                                <label>Bank Name</label>
+                                                <label>Bank Name :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
                                                     <option selected readonly="" disabled>--Select Bank Name--</option>
                                                     @foreach($banks as $bank)
@@ -113,27 +112,26 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
-                                                <label class="control-label">Account Number</label>
+                                                <label class="control-label">Account Number :- <span class="required">*</span></label>
                                                 <input type="text" id="accountNumber" name="accountNumber" class="form-control accountNumber" placeholder="Enter Account Number">
                                             </div>
                                         </div>
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
-                                                <label class="control-label">Transfer Date</label>
+                                                <label class="control-label">Transfer or Deposit Date :- <span class="required">*</span></label>
                                                 <input type="date" id="TransferDate" name="TransferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
+                                                <label class="control-label">Receipt Number</label>
                                                 <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
                                                 @if ($errors->has('receiptNumber'))
                                                     <span class="text-danger">{{ $errors->first('receiptNumber') }}</span>
@@ -141,41 +139,69 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Reference Number">
+                                            <label class="control-label">Cheque or Ref. Number ?</label>
+                                            <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Cheque or Ref. Number">
                                         </div>
 
                                         <div class="col-md-4">
+                                            <label class="control-label">Payment Receive Date</label>
                                             <input type="date" class="form-control" name="paymentReceiveDate" id="paymentReceiveDate" value="{{ date('Y-m-d') }}" placeholder="">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <label class="control-label">Description</label>
                                             <textarea style="width: 100%" id="Description" name="Description" placeholder="Description"></textarea>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2 mt-2 pl-5">
+                                            <div class="form-group">
+                                                <label class="control-label">Total Payable Amount :- </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10">
                                             <div class="form-group">
                                                 <input type="text" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="" placeholder="Total Amount" disabled>
                                                 <input type="hidden" class="form-control totalSaleAmount" onClick="this.setSelectionRange(0, this.value.length)"  name="" id="price" placeholder="Total Amount">
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 mt-2 pl-5">
+                                            <div class="form-group">
+                                                <label class="control-label">Total Paying Amount :- <span class="required">*</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10">
                                             <div class="form-group">
                                                 <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paid Amount">
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="col-md-3">
+                                    <div class="row">
+                                        <div class="col-md-2 mt-2 pl-5">
+                                            <div class="form-group">
+                                                <label class="control-label">Amount In Words  :- <span class="required">*</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10">
                                             <div class="form-group">
                                                 <div class="form-group">
-                                                    <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
+                                                    <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words" readonly>
                                                 </div>
                                             </div>
                                         </div>
-
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 mt-2 pl-5">
+                                            <div class="form-group">
+                                                <label class="control-label">Paid By :- <span class="required">*</span> </label>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <input type="text" id="receiver" name="receiverName" class="form-control" placeholder="Enter Receiver Name">
@@ -189,18 +215,10 @@
                                     <button type="button" class="btn btn-inverse">Cancel</button>
                                 </div>
                             </form>
-
-
                         </div>
                     </div>
                 </div>
-
-
             </div>
-            <!-- Row -->
-
-
-
         </div>
         <!-- ============================================================== -->
         <!-- End Container fluid  -->
@@ -214,10 +232,8 @@
     <!-- ============================================================== -->
 
     <script type="text/javascript">
-
         $(document).ready(function () {
             $('.bankTransfer').hide();
-
         });
 
         $(document).on("change", '#paymentType', function () {
@@ -279,11 +295,8 @@
                 }
             });
         });
-
     </script>
-
     <script>
-
         $(document).ready(function (){
             $('.customer_id').change(function () {
                 var Id = 0;
@@ -312,7 +325,6 @@
                                         salesDetails += '<td>' + result[i].sale_details[0].createdDate + '<input type="hidden" class="sale_id" name="sale_id" value="' + result[i].id + '"/></td>';
                                         var value = result[i].grandTotal - result[i].paidBalance;
                                         salesDetails += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + value + '"/> </td>';
-
                                     }
                                 }
                                 else {
@@ -409,13 +421,35 @@
                     $('#submit').attr('disabled',false);
                 }
             });
-
         });
-
-
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#bank_id').change(function () {
+                var Id = 0;
+                Id = $(this).val();
+                if (Id > 0)
+                {
+                    $.ajax({
+                        // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                $("#accountNumber").val('');
+                                $("#accountNumber").val(result);
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
+        });
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
-
-
-
 @endsection

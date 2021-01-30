@@ -48,9 +48,11 @@
                         <div class="card-body">
                             <form action="#">
                                 <div class="form-body">
-
+                                    <h3 class="card-title">ADD SUPPLIER Payment</h3>
+                                    <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <div class="row">
-                                        <div class="col-md-11">
+                                        <label class="mt-2">Select Supplier :- <span class="required">*</span></label>
+                                        <div class="col-md-10">
                                             <div class="form-group">
                                                 {{--   <label>Select Customer</label> --}}
                                                 <select class="form-control custom-select select2 supplier_id" name="supplier_id" id="supplier_id">
@@ -63,9 +65,10 @@
                                             </div>
                                         </div>
                                         <div class="col-md-1 all">
-                                            <input type="checkbox" class="form-control" name="chk[]" value="0" id="selectall">
+                                            <input type="checkbox" class="form-control" name="chk[]" value="0" id="selectall"><span style="margin-left: 20px;">Select All</span>
                                         </div>
                                     </div>
+
                                     <div class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
@@ -76,25 +79,22 @@
                                                 <th>Balance</th>
                                                 <th>Date</th>
                                                 <th width="70">Action</th>
-
                                             </tr>
                                             </thead>
                                             <tbody id="purchases" style="font-size: 12px">
                                             <tr>
                                                 <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
                                             </tr>
-
                                             </tbody>
                                         </table>
                                     </div>
 
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Payment Type</label>
+                                                <label>Payment Type :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option disabled readonly="" selected>--Select your Payment Type--</option>
+                                                    <option value="">--Select your Payment Type--</option>
                                                     <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
                                                     <option value="cheque">Cheque</option>
@@ -103,7 +103,7 @@
                                         </div>
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
-                                                <label>Bank Name</label>
+                                                <label>Bank Name :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
                                                     <option selected readonly="" disabled>--Select Bank Name--</option>
                                                     @foreach($banks as $bank)
@@ -112,18 +112,17 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
-                                                <label class="control-label">Account Number</label>
-                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control accountNumber" placeholder="Enter Account Number">
+                                                <label class="control-label">Account Number :- <span class="required">*</span></label>
+                                                <input type="text" id="accountNumber" name="accountNumber" class="form-control accountNumber" placeholder="Enter Account Number" readonly>
                                             </div>
                                         </div>
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
-                                                <label class="control-label">Transfer or Deposit Date</label>
+                                                <label class="control-label">Transfer or Deposit Date :- <span class="required">*</span></label>
                                                 <input type="date" id="TransferDate" name="TransferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
                                             </div>
                                         </div>
@@ -141,8 +140,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="control-label">Reference Number</label>
-                                            <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Reference Number">
+                                            <label class="control-label">Cheque or Ref. Number ?</label>
+                                            <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Cheque or Ref. Number">
                                         </div>
 
                                         <div class="col-md-4">
@@ -175,7 +174,7 @@
                                     <div class="row">
                                         <div class="col-md-2 mt-2 pl-5">
                                             <div class="form-group">
-                                                <label class="control-label">Total Paying Amount :- </label>
+                                                <label class="control-label">Total Paying Amount :- <span class="required">*</span></label>
                                             </div>
                                         </div>
                                         <div class="col-md-10">
@@ -188,13 +187,13 @@
                                     <div class="row">
                                         <div class="col-md-2 mt-2 pl-5">
                                             <div class="form-group">
-                                                <label class="control-label">Amount In Words :- </label>
+                                                <label class="control-label">Amount In Words  :- <span class="required">*</span></label>
                                             </div>
                                         </div>
                                         <div class="col-md-10">
                                             <div class="form-group">
                                                 <div class="form-group">
-                                                    <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
+                                                    <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -203,7 +202,7 @@
                                     <div class="row">
                                         <div class="col-md-2 mt-2 pl-5">
                                             <div class="form-group">
-                                                <label class="control-label">Paid By :- </label>
+                                                <label class="control-label">Paid By :- <span class="required">*</span> </label>
                                             </div>
                                         </div>
                                         <div class="col-md-3">

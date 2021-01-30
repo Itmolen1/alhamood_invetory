@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Customer advances Edit')
+@section('title', 'Edit Customer advances')
 
 @section('content')
 
@@ -50,12 +50,13 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="form-body">
-                                    <h3 class="card-title">Modification</h3>
+                                    <h3 class="card-title">UPDATE CUSTOMER ADVANCE</h3>
+                                    <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <hr>
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Customer Selection</label>
+                                                <label>Customer Selection :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id">
                                                     <option>--Select Customer--</option>
                                                     @foreach($customers as $customer)
@@ -64,23 +65,21 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Recept Numner</label>
+                                                <label class="control-label">Receipt Number</label>
                                                 <input type="text" id="receiptNumber" name="receiptNumber" value="{{ $customerAdvance->receiptNumber }}" class="form-control" placeholder="Receipt Number">
                                                 @if ($errors->has('receiptNumber'))
                                                     <span class="text-danger">{{ $errors->first('receiptNumber') }}</span>
                                                 @endif
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Payment Type {{ $customerAdvance->paymentType }}</label>
+                                                <label>Payment Type {{ $customerAdvance->paymentType }} :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option value="bankTransfer" {{ ($customerAdvance->paymentType == 'bankTransfer') ? 'selected':'' }}>Bank</option>
                                                     <option id="cash" value="cash" {{ ($customerAdvance->paymentType == 'cash') ? 'selected':'' }}>Cash</option>
@@ -88,31 +87,31 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Transfer or Deposit Date :- <span class="required">*</span></label>
+                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ $customerAdvance->TransferDate }}" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label class="control-label">Amount</label>
                                                 <input type="text" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" id="amount" value="{{ $customerAdvance->Amount }}" name="amount" class="form-control amount" placeholder="Enter Amount">
                                             </div>
                                         </div>
-                                        <!--/span-->
-                                    </div>
-                                    <!--/row-->
-
-                                    <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-9">
                                             <div class="form-group">
                                                 <label class="control-label">Sum Of</label>
                                                 <input type="text" id="SumOf" name="amountInWords" value="{{ $customerAdvance->sumOf }}" class="form-control SumOf" placeholder="Amount In words">
                                             </div>
                                         </div>
-                                        <!--/span-->
                                     </div>
-                                    <!--/row-->
-
 
                                     <div class="row bankTransfer">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Bank Name</label>
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
@@ -122,24 +121,20 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
-
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label class="control-label">Account Number</label>
                                                 <input type="text" id="accountNumber" name="accountNumber" value="{{ $customerAdvance->accountNumber }}" class="form-control" placeholder="Enter Account Number">
                                             </div>
                                         </div>
-
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
-                                                <label class="control-label">Transfer Date</label>
-                                                <input type="date" id="TransferDate" name="TransferDate" value="{{ $customerAdvance->TransferDate }}" class="form-control" placeholder="">
+                                                <label class="control-label">Cheque or Ref. Number ?</label>
+                                                <input type="text" id="ChequeNumber" name="ChequeNumber" class="form-control" placeholder="Enter Cheque Number">
                                             </div>
                                         </div>
 
                                     </div>
-
 
                                     <div class="row">
                                         <div class="col-md-6">
@@ -148,16 +143,12 @@
                                                 <input type="date" id="registerDate" name="registerDate" value="{{ $customerAdvance->registerDate }}"  class="form-control" placeholder="">
                                             </div>
                                         </div>
-                                        <!--/span-->
-
-
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Receiver Name</label>
+                                                <label class="control-label">Receiver Name :- <span class="required">*</span></label>
                                                 <input type="text" id="receiver" name="receiverName" value="{{ $customerAdvance->receiverName }}" class="form-control" placeholder="Enter Receiver Name">
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <div class="row">
@@ -172,6 +163,7 @@
                                         <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Update Advance</button>
                                         <button type="button" class="btn btn-inverse">Cancel</button>
                                     </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -197,11 +189,6 @@
 
     <script>
         $(document).ready(function () {
-
-
-
-
-
             // $('#paymentTermAll').hide();
             //
             // $("#customRadio1 input:radio").click(function() {
@@ -218,7 +205,6 @@
             //     $('#paymentTermAll').hide();
             // });
 
-
             var val = $('#paymentType').val();
             if (val !== 'cash'){
                 $('.bankTransfer').show();
@@ -226,7 +212,6 @@
             else {
                 $('.bankTransfer').hide();
             }
-
         });
 
         $(document).on("change", '#paymentType', function () {
@@ -244,13 +229,6 @@
                 $('.bankTransfer').hide();
             }
         });
-
-
     </script>
-
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
-
-
-
-
 @endsection

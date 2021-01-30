@@ -257,86 +257,86 @@ input:checked + .slider:before {
                     <!-- ============================================================== -->
                     <!-- Comment -->
                     <!-- ============================================================== -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="ti-email"></i>
-                            <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
-                        </a>
-                        <div class="dropdown-menu mailbox animated bounceInDown">
-                            <span class="with-arrow"><span class="bg-primary"></span></span>
-                            <ul>
-                                <li>
-                                    <div class="drop-title text-white bg-danger">
-                                        <h4 class="m-b-0 m-t-5">0 New</h4>
-                                        <span class="font-light">Messages</span>
-                                    </div>
-                                </li>
+{{--                    <li class="nav-item dropdown">--}}
+{{--                        <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="ti-email"></i>--}}
+{{--                            <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>--}}
+{{--                        </a>--}}
+{{--                        <div class="dropdown-menu mailbox animated bounceInDown">--}}
+{{--                            <span class="with-arrow"><span class="bg-primary"></span></span>--}}
+{{--                            <ul>--}}
+{{--                                <li>--}}
+{{--                                    <div class="drop-title text-white bg-danger">--}}
+{{--                                        <h4 class="m-b-0 m-t-5">0 New</h4>--}}
+{{--                                        <span class="font-light">Messages</span>--}}
+{{--                                    </div>--}}
+{{--                                </li>--}}
 
-                                <li>
-                                    <div class="message-center">
-                                        <!-- Message -->
-                                        <!--  <a href="javascript:void(0)">
-                                             <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>
-                                             <div class="mail-contnet">
-                                                 <h5>Luanch Admin</h5> <span class="mail-desc">Just see the my new admin_assets!</span> <span class="time">9:30 AM</span> </div>
-                                         </a> -->
+{{--                                <li>--}}
+{{--                                    <div class="message-center">--}}
+{{--                                        <!-- Message -->--}}
+{{--                                        <!--  <a href="javascript:void(0)">--}}
+{{--                                             <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>--}}
+{{--                                             <div class="mail-contnet">--}}
+{{--                                                 <h5>Luanch Admin</h5> <span class="mail-desc">Just see the my new admin_assets!</span> <span class="time">9:30 AM</span> </div>--}}
+{{--                                         </a> -->--}}
 
-                                    </div>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-center m-b-5" href="javascript:void(0);"> <strong>Check all</strong> <i class="fa fa-angle-right"></i> </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+{{--                                    </div>--}}
+{{--                                </li>--}}
+{{--                                <li>--}}
+{{--                                    <a class="nav-link text-center m-b-5" href="javascript:void(0);"> <strong>Check all</strong> <i class="fa fa-angle-right"></i> </a>--}}
+{{--                                </li>--}}
+{{--                            </ul>--}}
+{{--                        </div>--}}
+{{--                    </li>--}}
                     <!-- ============================================================== -->
                     <!-- End Comment -->
                     <!-- ============================================================== -->
                     <!-- ============================================================== -->
                     <!-- Messages -->
                     <!-- ============================================================== -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="icon-note"></i>
-                            <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
-                        </a>
-                        <div class="dropdown-menu mailbox animated bounceInDown" aria-labelledby="2">
-                            <span class="with-arrow"><span class="bg-danger"></span></span>
-                            <ul>
-                                <li>
-                                    <div class="drop-title bg-primary text-white">
-                                        <h4 class="m-b-0 m-t-5">0 New</h4>
-                                        <span class="font-light">Notifications</span>
-                                    </div>
-                                </li>
+{{--                    <li class="nav-item dropdown">--}}
+{{--                        <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="icon-note"></i>--}}
+{{--                            <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>--}}
+{{--                        </a>--}}
+{{--                        <div class="dropdown-menu mailbox animated bounceInDown" aria-labelledby="2">--}}
+{{--                            <span class="with-arrow"><span class="bg-danger"></span></span>--}}
+{{--                            <ul>--}}
+{{--                                <li>--}}
+{{--                                    <div class="drop-title bg-primary text-white">--}}
+{{--                                        <h4 class="m-b-0 m-t-5">0 New</h4>--}}
+{{--                                        <span class="font-light">Notifications</span>--}}
+{{--                                    </div>--}}
+{{--                                </li>--}}
 
-                                <li>
-                                    <div class="message-center">
-                                        <!-- Message -->
-                                        <!--  <a href="javascript:void(0)">
-                                             <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>
-                                             <div class="mail-contnet">
-                                                 <h5>Luanch Admin</h5> <span class="mail-desc">Just see the my new admin_assets!</span> <span class="time">9:30 AM</span> </div>
-                                         </a> -->
+{{--                                <li>--}}
+{{--                                    <div class="message-center">--}}
+{{--                                        <!-- Message -->--}}
+{{--                                        <!--  <a href="javascript:void(0)">--}}
+{{--                                             <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>--}}
+{{--                                             <div class="mail-contnet">--}}
+{{--                                                 <h5>Luanch Admin</h5> <span class="mail-desc">Just see the my new admin_assets!</span> <span class="time">9:30 AM</span> </div>--}}
+{{--                                         </a> -->--}}
 
-                                    </div>
-                                </li>
+{{--                                    </div>--}}
+{{--                                </li>--}}
 
-                                <li>
-                                    <a class="nav-link text-center link m-b-5" href="javascript:void(0);"> <b>See all</b> <i class="fa fa-angle-right"></i> </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+{{--                                <li>--}}
+{{--                                    <a class="nav-link text-center link m-b-5" href="javascript:void(0);"> <b>See all</b> <i class="fa fa-angle-right"></i> </a>--}}
+{{--                                </li>--}}
+{{--                            </ul>--}}
+{{--                        </div>--}}
+{{--                    </li>--}}
                     <!-- ============================================================== -->
                     <!-- End Messages -->
                     <!-- ============================================================== -->
                     <!-- ============================================================== -->
                     <!-- Search -->
                     <!-- ============================================================== -->
-                    <li class="nav-item search-box"> <a class="nav-link waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
-                        <form class="app-search">
-                            <input type="text" class="form-control" placeholder="Search &amp; enter"> <a class="srh-btn"><i class="ti-close"></i></a>
-                        </form>
-                    </li>
+{{--                    <li class="nav-item search-box"> <a class="nav-link waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>--}}
+{{--                        <form class="app-search">--}}
+{{--                            <input type="text" class="form-control" placeholder="Search &amp; enter"> <a class="srh-btn"><i class="ti-close"></i></a>--}}
+{{--                        </form>--}}
+{{--                    </li>--}}
                 </ul>
                 <ul class="navbar-nav my-lg-0">
                     <!-- ============================================================== -->

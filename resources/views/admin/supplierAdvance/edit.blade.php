@@ -20,7 +20,7 @@
             <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h4 class="text-themecolor">Customer Advances Modification</h4>
+                    <h4 class="text-themecolor">Supplier Advances Modification</h4>
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -96,7 +96,7 @@
                                     </div>
 
                                     <div class="row bankTransfer">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Bank Name</label>
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
@@ -106,10 +106,16 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label class="control-label">Account Number</label>
                                                 <input type="text" id="accountNumber" name="accountNumber" value="{{ $supplierAdvance->accountNumber }}" class="form-control" placeholder="Enter Account Number">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Cheque or Ref. Number ?</label>
+                                                <input type="text" id="ChequeNumber" name="ChequeNumber" class="form-control" placeholder="Enter Cheque Number">
                                             </div>
                                         </div>
                                     </div>

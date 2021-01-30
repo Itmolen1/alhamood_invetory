@@ -21,9 +21,6 @@ class CustomerRepository implements ICustomerRepositoryInterface
 
     public function index()
     {
-        // TODO: Implement index() method.
-        // $customers = Customer::with('company','user')->get();
-        // return view('admin.customer.index',compact('customers'));
         if(request()->ajax())
         {
             return datatables()->of(Customer::with('company','user','payment_type','company_type','payment_term')->latest()->get())
@@ -63,23 +60,19 @@ class CustomerRepository implements ICustomerRepositoryInterface
                 ->make(true);
         }
         return view('admin.customer.index');
-
     }
 
     public function create()
     {
-        // TODO: Implement create() method.
         $regions = Region::with('city')->get();
         $payment_types = PaymentType::orderBy('id', 'asc')->skip(0)->take(2)->get();
         $company_types = CompanyType::all();
         $payment_terms = PaymentTerm::all();
         return view('admin.customer.create',compact('regions','payment_types','company_types','payment_terms'));
-
     }
 
     public function store(CustomerRequest $customerRequest)
     {
-        // TODO: Implement store() method.
         $user_id = session('user_id');
         $company_id = session('company_id');
 
@@ -113,12 +106,22 @@ class CustomerRepository implements ICustomerRepositoryInterface
         ];
         $customer = Customer::create($customer);
         if ($customer) {
+//            $account = new AccountTransaction([
+//                'customer_id' => $customer->id,
+//                'user_id' => $user_id,
+//                'createdDate' => date('Y-m-d'),
+//                'company_id' =>$company_id,
+//                'Description' =>'initial',
+//            ]);
             $account = new AccountTransaction([
                 'customer_id' => $customer->id,
                 'user_id' => $user_id,
                 'createdDate' => date('Y-m-d'),
                 'company_id' =>$company_id,
                 'Description' =>'initial',
+                'Credit' =>0.00,
+                'Debit' =>0.00,
+                'Differentiate' =>$customerRequest->openingBalance,
             ]);
         }
         $customer->account_transaction()->save($account);
@@ -136,14 +139,11 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'isActive' =>1,
         ];
         CustomerPrice::create($price);
-
         return redirect()->route('customers.index');
     }
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
-
         $customer = Customer::find($Id);
         $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
         if ($request->hasFile('fileUpload'))
@@ -181,13 +181,10 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function getById($Id)
     {
         // TODO: Implement getById() method.
-
-
     }
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $regions = Region::with('city')->get();
         $payment_types = PaymentType::orderBy('id', 'asc')->skip(0)->take(2)->get();
         $company_types = CompanyType::all();
@@ -198,7 +195,6 @@ class CustomerRepository implements ICustomerRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
-        // TODO: Implement delete() method.
         $data = Customer::findOrFail($Id);
         $data->delete();
         return redirect()->route('customers.index');

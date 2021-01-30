@@ -16,12 +16,8 @@ use Illuminate\Http\Request;
 
 class SupplierRepository implements ISupplierRepositoryInterface
 {
-
     public function index()
     {
-        // TODO: Implement index() method.
-        // $suppliers = Supplier::with('company','user')->get();
-        // return view('admin.supplier.index',compact('suppliers'));
         if(request()->ajax())
         {
             return datatables()->of(Supplier::with('company','user','payment_type','company_type','payment_term')->latest()->get())
@@ -65,7 +61,6 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function create()
     {
-        // TODO: Implement create() method.
         $regions = Region::with('city')->get();
         $payment_types = PaymentType::orderBy('id', 'asc')->skip(0)->take(2)->get();
         $company_types = CompanyType::all();
@@ -75,7 +70,6 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function store(SupplierRequest $supplierRequest)
     {
-        // TODO: Implement store() method.
         $user_id = session('user_id');
         $company_id = session('company_id');
 
@@ -126,7 +120,6 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $supplier = Supplier::find($Id);
         $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
         if ($request->hasFile('fileUpload'))
@@ -178,7 +171,6 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
-        // TODO: Implement delete() method.
         $data = Supplier::findOrFail($Id);
         $data->delete();
         return redirect()->route('suppliers.index');

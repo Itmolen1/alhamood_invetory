@@ -76,7 +76,6 @@
                                                 <th>Balance</th>
                                                 <th>Date</th>
                                                 <th width="70">Action</th>
-
                                             </tr>
                                             </thead>
                                             <tbody id="sales" style="font-size: 12px">
@@ -97,12 +96,9 @@
                                                     <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
                                                 </tr>
                                             @endif
-
-
                                             </tbody>
                                         </table>
                                     </div>
-
 
                                     <div class="row">
                                         <div class="col-md-6">
@@ -126,7 +122,6 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
 
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
@@ -141,7 +136,6 @@
                                                 <input type="date" id="TransferDate" name="TransferDate" value="{{ $payment_receive->transferDate }}" class="form-control" placeholder="">
                                             </div>
                                         </div>
-
                                     </div>
 
                                     <div class="row">
@@ -203,18 +197,10 @@
                                     <button type="button" class="btn btn-inverse">Cancel</button>
                                 </div>
                             </form>
-
-
                         </div>
                     </div>
                 </div>
-
-
             </div>
-            <!-- Row -->
-
-
-
         </div>
         <!-- ============================================================== -->
         <!-- End Container fluid  -->
@@ -228,9 +214,7 @@
     <!-- ============================================================== -->
 
     <script type="text/javascript">
-
         $(document).ready(function () {
-
             var val = $('#paymentType').val();
             if (val !== 'cash'){
                 $('.bankTransfer').show();
@@ -238,12 +222,35 @@
             else {
                 $('.bankTransfer').hide();
             }
-
         });
+
+        $(document).ready(function () {
+            var Id=$('#bank_id').val();
+            if(Id!='')
+            {
+                $.ajax({
+                    // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result !== "Failed") {
+                            $("#accountNumber").val('');
+                            $("#accountNumber").val(result);
+                        } else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        });
+
 
         $(document).on("change", '#paymentType', function () {
             var cashDetails = $('#paymentType').val();
-
             if (cashDetails === 'bank'){
                 $('.bankTransfer').show();
             }
@@ -300,13 +307,10 @@
                 }
             });
         });
-
     </script>
 
     <script>
-
         $(document).ready(function (){
-
             $(document).on("change", '.customer_id', function () {
                 // alert();
             // $('.customer_id').change(function () {
@@ -335,7 +339,6 @@
                                         salesDetails += '<td>' + result[i].remainingBalance + '</td>';
                                         salesDetails += '<td>' + result[i].sale_details[0].createdDate + '<input type="hidden" class="sale_id" name="sale_id" value="' + result[i].id + '"/></td>';
                                         salesDetails += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + result[i].paidBalance + '"/> </td>';
-
                                     }
                                 }
                                 else {
@@ -354,7 +357,6 @@
                 }
             });
         });
-
 
         $(document).ready(function () {
             $('#submit').click(function (event) {
@@ -432,12 +434,8 @@
                     $('#submit').attr('disabled',false);
                 }
             });
-
         });
-
-
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
-
 
 @endsection

@@ -40,6 +40,7 @@
                         <div class="card-body">
                             <h4 class="card-title">Supplier Payment</h4>
                             <h6 class="card-subtitle">All Payments</h6>
+                            <h5 class="required">** AFTER PUSH EDIT IS NOT ALLOWED SO VERIFY ENTRY BEFORE PUSH **</h5>
                             <div class="table-responsive m-t-40">
                                 <table id="supplier_payments_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
@@ -53,14 +54,10 @@
                                         <th width="100">Action</th>
                                     </tr>
                                     </thead>
-
-
                                 </table>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
             <!-- ============================================================== -->
@@ -76,9 +73,7 @@
     <!-- ============================================================== -->
     <!-- End Page wrapper  -->
     <!-- ============================================================== -->
-
     <script>
-
         $(document).ready(function () {
             $('#supplier_payments_table').dataTable({
                 processing: true,
@@ -130,6 +125,4 @@
             }
         }
     </script>
-
-
 @endsection

@@ -71,8 +71,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function store(Request $request)
     {
-        // TODO: Implement store() method.
-
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0) {
             $user_id = session('user_id');
@@ -192,7 +190,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
     public function supplier_payments_push(Request $request, $Id)
     {
         $payments = SupplierPayment::with('supplier')->find($Id);
-        //dd($advance->Amount);
 
         $user_id = session('user_id');
         $company_id = session('company_id');
@@ -216,7 +213,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$Id;
-            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->createdDate=$payments->TransferDate;
             $cash_transaction->Type='supplier_payments';
             $cash_transaction->Details='SupplierCashPayment|'.$Id;
             $cash_transaction->Credit=$payments->paidAmount;
@@ -259,7 +256,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->createdDate=$payments->TransferDate;
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierBankPayment|'.$Id;
             $bank_transaction->Credit=$payments->paidAmount;
@@ -305,7 +302,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->createdDate=$payments->TransferDate;
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierChequePayment|'.$Id;
             $bank_transaction->Credit=$payments->paidAmount;
@@ -335,7 +332,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $AccountTransactions = AccountTransaction::Create($AccData);
             // new entry done
         }
-
 
 //        ////////////////// account section ////////////////
 //        if ($payments)

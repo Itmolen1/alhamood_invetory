@@ -7,6 +7,8 @@ namespace App\WebRepositories;
 use App\Http\Requests\CustomerAdvanceRequest;
 use App\Models\AccountTransaction;
 use App\Models\Bank;
+use App\Models\BankTransaction;
+use App\Models\CashTransaction;
 use App\Models\Customer;
 use App\Models\CustomerAdvance;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
@@ -14,12 +16,8 @@ use Illuminate\Http\Request;
 
 class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 {
-
     public function index()
     {
-        // TODO: Implement index() method.
-//        $customerAdvances = CustomerAdvance::with('user','customer')->get();
-
         if(request()->ajax())
         {
             return datatables()->of(CustomerAdvance::with('user','customer')->latest()->get())
@@ -52,7 +50,6 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function create()
     {
-        // TODO: Implement create() method.
         $customers = Customer::all();
         $banks = Bank::all();
         return view('admin.customerAdvance.create',compact('customers','banks'));
@@ -60,7 +57,6 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function store(CustomerAdvanceRequest $customerAdvanceRequest)
     {
-        // TODO: Implement store() method.
         $user_id = session('user_id');
         $company_id = session('company_id');
 
@@ -71,6 +67,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
             'sumOf' =>$customerAdvanceRequest->amountInWords,
             'receiverName' =>$customerAdvanceRequest->receiverName,
             'accountNumber' =>$customerAdvanceRequest->accountNumber ?? 0,
+            'ChequeNumber' =>$customerAdvanceRequest->ChequeNumber,
             'TransferDate' =>$customerAdvanceRequest->TransferDate ?? 0,
             'registerDate' =>$customerAdvanceRequest->registerDate,
             'bank_id' =>$customerAdvanceRequest->bank_id ?? 0,
@@ -85,7 +82,6 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $advance = CustomerAdvance::find($Id);
 
         $user_id = session('user_id');
@@ -96,6 +92,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
             'sumOf' =>$request->amountInWords,
             'receiverName' =>$request->receiverName,
             'accountNumber' =>$request->accountNumber ?? null,
+            'ChequeNumber' =>$request->ChequeNumber ?? 0,
             'TransferDate' =>$request->TransferDate,
             'registerDate' =>$request->registerDate,
             'bank_id' =>$request->bank_id ?? 0,
@@ -113,7 +110,6 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $customers = Customer::all();
         $banks = Bank::all();
         $customerAdvance = CustomerAdvance::with('customer')->find($Id);
@@ -122,7 +118,6 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
-        // TODO: Implement delete() method.
         $data = CustomerAdvance::findOrFail($Id);
         $data->delete();
         return redirect()->route('customer_advances.index');
@@ -140,15 +135,124 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function customer_advances_push(Request $request, $Id)
     {
-        // TODO: Implement customer_advances_push() method.
         $advance = CustomerAdvance::with('customer')->find($Id);
-        //dd($advance->Amount);
 
         $user_id = session('user_id');
+        $company_id = session('company_id');
         $advance->update([
             'isPushed' =>true,
             'user_id' =>$user_id,
         ]);
+
+        /* account section by gautam */
+        if($advance->paymentType == 'cash')
+        {
+            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+            $difference = $cashTransaction->last()->Differentiate;
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$Id;
+            $cash_transaction->createdDate=$advance->TransferDate;
+            $cash_transaction->Type='customer_advances';
+            $cash_transaction->Details='CustomerCashAdvance|'.$Id;
+            $cash_transaction->Credit=0.00;
+            $cash_transaction->Debit=$advance->Amount;
+            $cash_transaction->Differentiate=$difference+$advance->Amount;
+            $cash_transaction->user_id = $user_id;
+            $cash_transaction->company_id = $company_id;
+            $cash_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
+            $AccData =
+                [
+                    'customer_id' => $advance->customer_id,
+                    'Debit' => 0.00,
+                    'Credit' => $advance->Amount,
+                    'Differentiate' => $last_closing-$advance->Amount,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'CustomerCashAdvance|'.$Id,
+                ];
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
+        }
+        elseif ($advance->paymentType == 'bank')
+        {
+            $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$Id;
+            $bank_transaction->createdDate=$advance->TransferDate;
+            $bank_transaction->Type='customer_advances';
+            $bank_transaction->Details='CustomerBankAdvance|'.$Id;
+            $bank_transaction->Credit=0.00;
+            $bank_transaction->Debit=$advance->Amount;
+            $bank_transaction->Differentiate=$difference+$advance->Amount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $advance->bank_id;
+            $bank_transaction->updateDescription = $advance->ChequeNumber;
+            $bank_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
+            $AccData =
+                [
+                    'customer_id' => $advance->customer_id,
+                    'Debit' => 0.00,
+                    'Credit' => $advance->Amount,
+                    'Differentiate' => $last_closing-$advance->Amount,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'CustomerBankAdvance|'.$Id,
+                    'referenceNumber'=>$advance->ChequeNumber,
+                ];
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
+        }
+        elseif ($advance->paymentType == 'cheque')
+        {
+            $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$Id;
+            $bank_transaction->createdDate=$advance->TransferDate;
+            $bank_transaction->Type='customer_advances';
+            $bank_transaction->Details='CustomerChequeAdvance|'.$Id;
+            $bank_transaction->Credit=0.00;
+            $bank_transaction->Debit=$advance->Amount;
+            $bank_transaction->Differentiate=$difference+$advance->Amount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $advance->bank_id;
+            $bank_transaction->updateDescription = $advance->ChequeNumber;
+            $bank_transaction->save();
+
+            // start new entry
+            $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
+            $last_closing=$accountTransaction->last()->Differentiate;
+            $AccData =
+                [
+                    'customer_id' => $advance->customer_id,
+                    'Debit' => 0.00,
+                    'Credit' => $advance->Amount,
+                    'Differentiate' => $last_closing-$advance->Amount,
+                    'createdDate' => date('Y-m-d'),
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'CustomerChequeAdvance|'.$Id,
+                    'referenceNumber'=>$advance->ChequeNumber,
+                ];
+            $AccountTransactions = AccountTransaction::Create($AccData);
+            // new entry done
+        }
+        /* account section by gautam */
+
+        /*
         ////////////////// account section ////////////////
         if ($advance)
         {
@@ -194,6 +298,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
             // return Response()->json("");
         }
         ////////////////// end of account section ////////////////
+        /// */
         return redirect()->route('customer_advances.index')->with('pushed','Your Account Debit Successfully');
     }
 }

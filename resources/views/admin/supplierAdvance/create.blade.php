@@ -102,7 +102,7 @@
                                     </div>
 
                                     <div class="row bankTransfer">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Bank Name :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="bank_id" name="bank_id">
@@ -113,10 +113,16 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label class="control-label">Account Number :- <span class="required">*</span></label>
                                                 <input type="text" id="accountNumber" name="accountNumber" class="form-control" placeholder="Enter Account Number">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Cheque or Ref. Number ?</label>
+                                                <input type="text" id="ChequeNumber" name="ChequeNumber" class="form-control" placeholder="Enter Cheque Number">
                                             </div>
                                         </div>
                                     </div>
@@ -134,7 +140,7 @@
                                         <div class="col-md-9">
                                             <div class="form-group">
                                                 <label class="control-label">Sum Of :- <span class="required">*</span></label>
-                                                <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words">
+                                                <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words" readonly>
                                             </div>
                                         </div>
                                     </div>

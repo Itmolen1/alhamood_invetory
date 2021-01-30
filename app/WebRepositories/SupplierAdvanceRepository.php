@@ -68,6 +68,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             'sumOf' =>$supplierAdvanceRequest->amountInWords,
             'receiverName' =>$supplierAdvanceRequest->receiverName,
             'accountNumber' =>$supplierAdvanceRequest->accountNumber,
+            'ChequeNumber' =>$supplierAdvanceRequest->ChequeNumber,
             'TransferDate' =>$supplierAdvanceRequest->TransferDate,
             'registerDate' =>$supplierAdvanceRequest->registerDate,
             'bank_id' =>$supplierAdvanceRequest->bank_id ?? 0,
@@ -92,6 +93,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             'sumOf' =>$request->amountInWords,
             'receiverName' =>$request->receiverName,
             'accountNumber' =>$request->accountNumber,
+            'ChequeNumber' =>$request->ChequeNumber ?? 0,
             'TransferDate' =>$request->TransferDate,
             'registerDate' =>$request->registerDate,
             'bank_id' =>$request->bank_id ?? 0,
@@ -151,7 +153,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$Id;
-            $cash_transaction->createdDate=date('Y-m-d h:i:s');
+            $cash_transaction->createdDate=$advance->TransferDate;
             $cash_transaction->Type='supplier_advances';
             $cash_transaction->Details='SupplierCashAdvance|'.$Id;
             $cash_transaction->Credit=$advance->Amount;
@@ -184,7 +186,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->createdDate=$advance->TransferDate;
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierBankAdvance|'.$Id;
             $bank_transaction->Credit=$advance->Amount;
@@ -193,7 +195,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             $bank_transaction->user_id = $user_id;
             $bank_transaction->company_id = $company_id;
             $bank_transaction->bank_id = $advance->bank_id;
-            $bank_transaction->updateDescription = $advance->referenceNumber;
+            $bank_transaction->updateDescription = $advance->ChequeNumber;
             $bank_transaction->save();
 
             // start new entry
@@ -209,7 +211,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'SupplierBankAdvance|'.$Id,
-                    'referenceNumber'=>$advance->referenceNumber,
+                    'referenceNumber'=>$advance->ChequeNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
             // new entry done
@@ -220,7 +222,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
+            $bank_transaction->createdDate=$advance->TransferDate;
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierChequeAdvance|'.$Id;
             $bank_transaction->Credit=$advance->Amount;
@@ -229,7 +231,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             $bank_transaction->user_id = $user_id;
             $bank_transaction->company_id = $company_id;
             $bank_transaction->bank_id = $advance->bank_id;
-            $bank_transaction->updateDescription = $advance->referenceNumber;
+            $bank_transaction->updateDescription = $advance->ChequeNumber;
             $bank_transaction->save();
 
             // start new entry
@@ -245,7 +247,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'SupplierChequeAdvance|'.$Id,
-                    'referenceNumber'=>$advance->referenceNumber,
+                    'referenceNumber'=>$advance->ChequeNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
             // new entry done

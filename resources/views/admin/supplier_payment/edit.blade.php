@@ -98,8 +98,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="control-label">Reference Number</label>
-                                        <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Reference Number" value="{{ $supplier_payment[0]->referenceNumber}}">
+                                        <label class="control-label">Cheque or Ref. Number ?</label>
+                                        <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Cheque or Ref. Number" value="{{ $supplier_payment[0]->referenceNumber}}">
                                     </div>
 
                                     <div class="col-md-4">

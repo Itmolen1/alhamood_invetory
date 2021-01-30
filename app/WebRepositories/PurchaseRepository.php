@@ -25,7 +25,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function index()
     {
-        // TODO: Implement index() method.
 //        $purchases = Purchase::with('purchase_details','supplier')->get();
         if(request()->ajax())
         {
@@ -72,7 +71,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function create()
     {
-        // TODO: Implement create() method.
         $purchaseNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
         $suppliers = Supplier::all();
@@ -82,7 +80,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function store(PurchaseRequest $purchaseRequest)
     {
-        // TODO: Implement store() method.
         $AllRequestCount = collect($purchaseRequest->Data)->count();
         if($AllRequestCount > 0) {
 
