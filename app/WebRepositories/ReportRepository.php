@@ -2143,11 +2143,11 @@ class ReportRepository implements IReportRepositoryInterface
                 {
                     if($row[$i]['Debit']==0)
                     {
-                        $closing_amount+=$row[$i]['Credit'];
+                        $closing_amount-=$row[$i]['Credit'];
                     }
                     else
                     {
-                        $closing_amount-=$row[$i]['Debit'];
+                        $closing_amount+=$row[$i]['Debit'];
                     }
                 }
                 $sum_of_debit+=$row[$i]['Debit'];
@@ -2270,7 +2270,7 @@ class ReportRepository implements IReportRepositoryInterface
                     <td align="center" width="50">'.($i+1).'</td>
                     <td align="left" width="300">'.($row[$i]['Name']).'</td>
                     <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
-                    <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
+                    <td align="right" width="80">'.(number_format(abs($row[$i]['Differentiate']),2,'.',',')).'</td>
                     </tr>';
                 }
             }
@@ -2282,7 +2282,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.= '
                  <tr color="red">
                      <td width="450" align="right" colspan="3">Total Balance : </td>
-                     <td width="80" align="right">'.number_format($total_balance,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format(abs($total_balance),2,'.',',').'</td>
                  </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -2362,7 +2362,7 @@ class ReportRepository implements IReportRepositoryInterface
                     <td align="center" width="50">'.($i+1).'</td>
                     <td align="left" width="300">'.($row[$i]['Name']).'</td>
                     <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
-                    <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
+                    <td align="right" width="80">'.(number_format(abs($row[$i]['Differentiate']),2,'.',',')).'</td>
                     </tr>';
                 }
             }
@@ -2374,7 +2374,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.= '
                  <tr color="red">
                      <td width="450" align="right" colspan="3">Total Balance : </td>
-                     <td width="80" align="right">'.number_format($total_balance,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format(abs($total_balance),2,'.',',').'</td>
                  </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';

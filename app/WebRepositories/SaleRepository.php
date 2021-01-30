@@ -145,7 +145,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                 $difference = $cashTransaction->last()->Differentiate;
                 $cash_transaction = new CashTransaction();
                 $cash_transaction->Reference=$sale;
-                $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                $cash_transaction->createdDate=$request->Data['SaleDate'];
                 $cash_transaction->Type='sales';
                 $cash_transaction->Details='CashSales|'.$sale;
                 $cash_transaction->Credit=0.00;
@@ -173,7 +173,8 @@ class   SaleRepository implements ISaleRepositoryInterface
                             'createdDate' => date('Y-m-d'),
                             'user_id' => $user_id,
                             'company_id' => $company_id,
-                            'Description'=>'Sales|'.$detail['PadNumber'],
+                            'Description'=>'Sales|'.$sale,
+                            'referenceNumber'=>'P#'.$detail['PadNumber'],
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                 }
@@ -191,10 +192,11 @@ class   SaleRepository implements ISaleRepositoryInterface
                             'Credit' => 0.00,
                             'Debit' => $request->Data['grandTotal'],
                             'Differentiate' => $totalCredit,
-                            'createdDate' => date('Y-m-d'),
+                            'createdDate' => $request->Data['SaleDate'],
                             'user_id' => $user_id,
                             'company_id' => $company_id,
-                            'Description'=>'Sales|'.$detail['PadNumber'],
+                            'Description'=>'Sales|'.$sale,
+                            'referenceNumber'=>'P#'.$detail['PadNumber'],
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
 
@@ -209,7 +211,8 @@ class   SaleRepository implements ISaleRepositoryInterface
                             'createdDate' => date('Y-m-d'),
                             'user_id' => $user_id,
                             'company_id' => $company_id,
-                            'Description'=>'PartialCashSales|'.$detail['PadNumber'],
+                            'Description'=>'PartialCashSales|'.$sale,
+                            'referenceNumber'=>'P#'.$detail['PadNumber'],
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                 }
@@ -225,10 +228,11 @@ class   SaleRepository implements ISaleRepositoryInterface
                         'Credit' => 0.00,
                         'Debit' => $totalCredit,
                         'Differentiate' => $difference,
-                        'createdDate' => date('Y-m-d'),
+                        'createdDate' => $request->Data['SaleDate'],
                         'user_id' => $user_id,
                         'company_id' => $company_id,
-                        'Description'=>'Sales|'.$detail['PadNumber'],
+                        'Description'=>'Sales|'.$sale,
+                        'referenceNumber'=>'P#'.$detail['PadNumber'],
                     ]);
 
                     //make credit entry for the whatever cash is paid
@@ -241,7 +245,8 @@ class   SaleRepository implements ISaleRepositoryInterface
                         'createdDate' => date('Y-m-d'),
                         'user_id' => $user_id,
                         'company_id' => $company_id,
-                        'Description'=>'FullCashSales|'.$detail['PadNumber'],
+                        'Description'=>'FullCashSales|'.$sale,
+                        'referenceNumber'=>'P#'.$detail['PadNumber'],
                     ]);
                 }
                 return Response()->json($AccountTransactions);
@@ -278,7 +283,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                         $difference = $cashTransaction->last()->Differentiate;
                         $cash_transaction = new CashTransaction();
                         $cash_transaction->Reference=$Id;
-                        $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                        $cash_transaction->createdDate=$request->Data['SaleDate'];
                         $cash_transaction->Type='sales';
                         $cash_transaction->Details='CashSales|'.$Id.'hide';
                         $cash_transaction->Credit=$previously_debited;
@@ -297,7 +302,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                         $difference = $cashTransaction->last()->Differentiate;
                         $cash_transaction = new CashTransaction();
                         $cash_transaction->Reference=$Id;
-                        $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                        $cash_transaction->createdDate=$request->Data['SaleDate'];
                         $cash_transaction->Type='sales';
                         $cash_transaction->Details='CashSales|'.$Id;
                         $cash_transaction->Credit=0.00;
@@ -364,7 +369,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                         $difference = $cashTransaction->last()->Differentiate;
                         $cash_transaction = new CashTransaction();
                         $cash_transaction->Reference=$Id;
-                        $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                        $cash_transaction->createdDate=$request->Data['SaleDate'];
                         $cash_transaction->Type='sales';
                         $cash_transaction->Details='CashSales|'.$Id;
                         $cash_transaction->Credit=0.00;
