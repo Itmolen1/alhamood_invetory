@@ -226,8 +226,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                 // fully paid with cash
                 else
                 {
-                    $totalCredit = $purchaseRequest->Data['paidBalance'];
-                    $difference = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['paidBalance'];
+                    $totalCredit = $purchaseRequest->Data['grandTotal'];
+                    $difference = $accountTransaction->last()->Differentiate + $purchaseRequest->Data['grandTotal'];
 
                     //make credit entry for the purchase
                     $AccountTransactions=AccountTransaction::Create([
@@ -759,8 +759,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     // fully paid with cash
                     else
                     {
-                        $totalCredit = $request->Data['paidBalance'];
-                        $difference = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
+                        $totalCredit = $request->Data['grandTotal'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
 
                         //make credit entry for the purchase
                         $AccountTransactions=AccountTransaction::Create([
@@ -1048,8 +1048,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     // fully paid with cash
                     else
                     {
-                        $totalCredit = $request->Data['paidBalance'];
-                        $difference = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
+                        $totalCredit = $request->Data['grandTotal'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
 
                         //make credit entry for the purchase
                         $AccountTransactions=AccountTransaction::Create([
@@ -1330,8 +1330,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     // fully paid with cash
                     else
                     {
-                        $totalCredit = $request->Data['paidBalance'];
-                        $difference = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
+                        $totalCredit = $request->Data['grandTotal'];
+                        $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
 
                         //make credit entry for the purchase
                         $AccountTransactions=AccountTransaction::Create([

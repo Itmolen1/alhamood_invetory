@@ -213,7 +213,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$Id;
-            $cash_transaction->createdDate=$payments->TransferDate;
+            $cash_transaction->createdDate=$payments->transferDate;
             $cash_transaction->Type='supplier_payments';
             $cash_transaction->Details='SupplierCashPayment|'.$Id;
             $cash_transaction->Credit=$payments->paidAmount;
@@ -256,7 +256,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->TransferDate;
+            $bank_transaction->createdDate=$payments->transferDate;
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierBankPayment|'.$Id;
             $bank_transaction->Credit=$payments->paidAmount;
@@ -302,7 +302,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->TransferDate;
+            $bank_transaction->createdDate=$payments->transferDate;
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierChequePayment|'.$Id;
             $bank_transaction->Credit=$payments->paidAmount;

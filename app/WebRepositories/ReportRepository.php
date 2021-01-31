@@ -2217,6 +2217,7 @@ class ReportRepository implements IReportRepositoryInterface
     {
         // getting latest closing for all suppliers from account transaction table
         $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id','ac.Differentiate','s.Name','s.Mobile')
+            ->where('ac.supplier_id','!=',0)
             ->groupBy('ac.supplier_id')
             ->orderBy('ac.id','asc')
             ->leftjoin('suppliers as s', 's.id', '=', 'ac.supplier_id')
@@ -2309,6 +2310,7 @@ class ReportRepository implements IReportRepositoryInterface
     {
         // getting latest closing for all customers from account transaction table
         $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id','ac.Differentiate','s.Name','s.Mobile')
+            ->where('ac.customer_id','!=',0)
             ->groupBy('ac.customer_id')
             ->orderBy('ac.id','asc')
             ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')

@@ -219,8 +219,8 @@ class   SaleRepository implements ISaleRepositoryInterface
                 // fully paid with cash
                 else
                 {
-                    $totalCredit = $request->Data['paidBalance'];
-                    $difference = $accountTransaction->last()->Differentiate + $request->Data['paidBalance'];
+                    $totalCredit = $request->Data['grandTotal'];
+                    $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
 
                     //make credit entry for the sales
                     $AccountTransactions=AccountTransaction::Create([
