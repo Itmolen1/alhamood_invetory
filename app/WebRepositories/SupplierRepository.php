@@ -13,6 +13,7 @@ use App\Models\Supplier;
 use App\Models\AccountTransaction;
 use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SupplierRepository implements ISupplierRepositoryInterface
 {
@@ -188,8 +189,22 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function supplierDetails($Id)
     {
-        // TODO: Implement supplierDetails() method.
         $suppliers = Supplier::find($Id);
-        return response()->json($suppliers);
+
+        // getting latest closing for supplier from account transaction table
+        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id')
+            ->where('ac.supplier_id','=',$Id)
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        $needed_ids=array_column($row,'max_id');
+
+        $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.supplier_id','ac.Differentiate')
+            ->whereIn('ac.id',$needed_ids)
+            ->orderBy('ac.id','asc')
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        $row=$row[0]['Differentiate'];
+
+        return response()->json(array('supplier'=>$suppliers,'closing'=>$row));
     }
 }

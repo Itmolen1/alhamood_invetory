@@ -40,6 +40,7 @@
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
         ApplyCashPaid();
+        apply_closing();
     });
     ////////// end of add price /////////////////
 
@@ -59,6 +60,7 @@
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
         ApplyCashPaid();
+        apply_closing();
     });
     ///////// end of add quantity ///////////////////
 
@@ -73,6 +75,7 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
+        apply_closing();
     });
     ///////// end of add quantity ///////////////////
 
@@ -83,7 +86,7 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, CurrentRow);
         CountTotalVat();
-
+        apply_closing();
     });
     ////////////// end of vat /////////////////
 
@@ -100,15 +103,12 @@
 
     ///// row Sub Total ///////////////////////
     function RowSubTalSubtotal(vat, CurrentRow) {
-
         Total = 0;
         Total = CurrentRow.find('.total').val();
         if (parseInt(vat) === 0 && typeof (vat) != "undefined" && vat !== ""){
             if (!isNaN(Total) && typeof (Total) != "undefined")
             {
-
                 CurrentRow.find('.rowTotal').val(parseFloat(Total).toFixed(2));
-
                 //CurrentRow.find('.rowTotal').val(Total);
                 //CurrentRow.find('.rowTotal').val(parseFloat(Total).toFixed(2))
                 return;
@@ -117,7 +117,6 @@
 
         if (!isNaN(Total) && Total !== "" && typeof (vat) != "undefined")
         {
-
             var InputVatValue = parseFloat((Total / 100) * vat);
             var ValueWTV = parseFloat(InputVatValue) + parseFloat(Total);
             // if (!isNaN(ValueWTV))
@@ -125,7 +124,6 @@
             //     CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
             // }
             CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
-
             CurrentRow.find('.singleRowVat').val(parseFloat(InputVatValue).toFixed(2));
         }
     }
@@ -137,6 +135,7 @@
         var TotalVat = 0;
         var Gtotal = 0;
         var ToatWTVAT = 0;
+
         $('#newRow tr').each(function () {
             if ($(this).find(".rowTotal").val().trim() != ""){
                 Gtotal = parseFloat(Gtotal) + parseFloat($(this).find(".rowTotal").val());
@@ -159,7 +158,6 @@
             // alert(TotalVat);
         });
 
-
         if (!isNaN(TotalVat)){
             $('#TotalVat').text(TotalVat.toFixed(2));
             $('.TotalVat').val(TotalVat.toFixed(2));
@@ -173,7 +171,6 @@
         $('#GTotal').text((Gtotal.toFixed(2)));
         $('.GTotal').val((Gtotal.toFixed(2)));
 
-        $('.balance').val(Gtotal - $('.cashPaid').val());
     }
     //////////////// end of total vat /////////////
 
@@ -195,9 +192,10 @@
 
     $(document).on("keyup",'.cashPaid',function () {
         var GTotal = $('.GTotal').val();
-        var Input = parseFloat(GTotal - $('.cashPaid').val());
+        var Input = parseFloat(GTotal + closing - $('.cashPaid').val());
         //var Value = parseFloat(Input) + parseFloat(GTotal);
         var rr= $('.balance').val((Input.toFixed(2)));
+        apply_closing();
     });
 
 
@@ -215,10 +213,11 @@
         Total = 0;
         Total = $('.total').val();
         //alert(Total);
-            var InputVatValue = parseFloat((Total / 100) * vat);
-            var ValueWTV = parseFloat(InputVatValue) + parseFloat(Total);
-            $('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
-            $('.singleRowVat').val(parseFloat(InputVatValue).toFixed(2));
+
+        var InputVatValue = parseFloat((Total / 100) * vat);
+        var ValueWTV = parseFloat(InputVatValue) + parseFloat(Total);
+        $('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
+        $('.singleRowVat').val(parseFloat(InputVatValue).toFixed(2));
 
         CountTotalVat();
     }
@@ -226,3 +225,32 @@
     function roundToTwo(num) {
         return +(Math.round(num + "e+2")  + "e-2");
     }
+
+    function apply_closing()
+    {
+        // remaining balance = grand total + account closing - cash paid
+        var grand_total = $('.GTotal').val();
+        grand_total=parseFloat(grand_total).toFixed(2);
+        grand_total=roundToTwo(grand_total);
+
+        var closing = $('#closing').val();
+        closing=parseFloat(closing).toFixed(2);
+        closing=roundToTwo(closing);
+
+        var cash_paid = $('.cashPaid').val();
+        cash_paid=parseFloat(cash_paid).toFixed(2);
+        cash_paid=roundToTwo(cash_paid);
+
+        var remaining_balance=grand_total+closing-cash_paid;
+        $('.balance').val((remaining_balance.toFixed(2)));
+
+        if(remaining_balance<=0)
+        {
+            $('.cashPaid').attr('readonly', true);
+        }
+        else
+        {
+            $('.cashPaid').attr('readonly', false);
+        }
+    }
+

@@ -3,7 +3,6 @@
 
 @section('content')
 
-
     <!-- ============================================================== -->
     <!-- End Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
@@ -48,11 +47,11 @@
                         <div class="card-body">
                             <form action="#">
                                 <div class="form-body">
-
+                                    <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Supplier Name</label>
+                                                <label>Supplier Name :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select supplier_id" id="supplier_id" name="supplier_id" >
                                                     <option readonly="" disabled selected>--Select Supplier--</option>
                                                     @foreach($suppliers as $supplier)
@@ -61,18 +60,17 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="row">
                                                 <div class="col-md 6">
                                                     <div class="form-group">
-                                                        <label class="control-label">purchase date</label>
+                                                        <label class="control-label">Purchase date :- <span class="required">*</span></label>
                                                         <input type="date" name="PurchaseDate" id="PurchaseDate" value="{{ date('Y-m-d') }}" class="form-control PurchaseDate" placeholder="dd/mm/yyyy">
                                                     </div>
                                                 </div>
                                                 <div class="col-md 6">
                                                     <div class="form-group">
-                                                            <label class="control-label">Due date</label>
+                                                            <label class="control-label">Due date :- <span class="required">*</span></label>
                                                             <input type="date" name="DueDate" id="DueDate" value="{{ date('Y-m-d') }}" class="form-control DueDate" placeholder="dd/mm/yyyy">
                                                         <input type="hidden" class="form-control PurchaseNumber" name="PurchaseNumber" id="PurchaseNumber" value="{{ $purchaseNo ?? 0 }}" placeholder="">
                                                     </div>
@@ -80,11 +78,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!--/row-->
 
                                     <div class="row">
-
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <ul class="feeds p-b-20">
                                                 <li>Address <span class="text-muted" id="Address">No Address</span></li>
@@ -95,7 +90,6 @@
                                         </div>
 
                                         <div class="col-md-6">
-
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
@@ -103,30 +97,24 @@
                                                         <input type="text" class="form-control referenceNumber" name="referenceNumber" id="referenceNumber" placeholder="Reference Number">
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
-                                        <!--/span-->
-
                                     </div>
-                                    <!--/row-->
-
 
                                     <div class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
 {{--                                                <th style="width: 100px">Date</th>--}}
-
-                                                <th style="width: 150px">product</th>
-                                                <th style="width: 100px">Unit</th>
+                                                <th style="width: 150px">PRODUCT <span class="required">*</span></th>
+                                                <th style="width: 100px">UNIT</th>
                                                 <th style="width: 150px">LPO #</th>
                                                 <th style="width: 150px">Description</th>
-                                                <th>quantity</th>
-                                                <th>Price</th>
-                                                <th>Total</th>
-                                                <th style="width: 100px">VAT</th>
-                                                <th style="width: 150px">Total Amount</th>
+                                                <th>QUANTITY <span class="required">*</span></th>
+                                                <th>PRICE <span class="required">*</span></th>
+                                                <th>TOTAL</th>
+                                                <th style="width: 100px">VAT <span class="required">*</span></th>
+                                                <th style="width: 150px">SUBTOTAL</th>
                                                 {{--                                                <th>Action</th>--}}
                                             </tr>
                                             </thead>
@@ -187,11 +175,9 @@
                                         </div>
 
                                         <div class="col-md-4">
-
                                             <p>Total Vat: <input type="text" value="0.00" class="form-control TotalVat" disabled="">
                                                 <input type="hidden" value="0.00" class="form-control TotalVat">
                                             </p>
-
 
                                             <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled>
                                                 <input type="hidden" value="0.00" class="form-control GTotal" >
@@ -199,11 +185,13 @@
 
                                             <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
 
-                                            <p>Balance: <input type="text" value="0.00" class="form-control balance" id="balance" disabled="disabled">
-                                                <input type="hidden" value="0.00" class="form-control balance">
+                                            <p>Account Closing : <input type="text" value="0.00" class="form-control closing" id="closing" readonly>
+                                                <input type="hidden" value="0.00" class="form-control closing">
                                             </p>
 
-
+                                            <p>Remaining Balance: <input type="text" value="0.00" class="form-control balance" id="balance" disabled="disabled">
+                                                <input type="hidden" value="0.00" class="form-control balance">
+                                            </p>
                                         </div>
                                     </div>
 
@@ -218,7 +206,6 @@
                 </div>
             </div>
             <!-- Row -->
-
         </div>
         <!-- ============================================================== -->
         <!-- End Container fluid  -->
@@ -324,10 +311,8 @@
             //////// end of submit Records /////////////////
         });
 
-
         //////// validate rows ////////
         function validateRow(currentRow) {
-
             var isvalid = true;
             var rate = 0, product = 0, quantity = 0;
             product = currentRow.find('.product').val();
@@ -336,7 +321,6 @@
             if (parseInt(product) === 0 || product === ""){
                 //alert(product);
                 isvalid = false;
-
             }
             if (parseInt(quantity) == 0 || quantity == "")
             {
@@ -352,7 +336,6 @@
 
         /////////////////////////// supplier select /////////////////
         $(document).ready(function () {
-
             $('.supplier_id').change(function () {
                 var Id = 0;
                 Id = $(this).val();
@@ -366,11 +349,11 @@
                         success: function (result) {
                             if (result !== "Failed") {
                                 //console.log(result);
-                                 $('#Address').text(result.Address);
-                                 $('#Mobile').text(result.Mobile);
-                                 $('#Email').text(result.postCode);
-                                 $('#TRN').text(result.TRNNumber);
-
+                                 $('#Address').text(result.supplier.Address);
+                                 $('#Mobile').text(result.supplier.Mobile);
+                                 $('#Email').text(result.supplier.postCode);
+                                 $('#TRN').text(result.supplier.TRNNumber);
+                                 $('#closing').val(result.closing);
                             } else {
                                 alert(result);
                             }
@@ -381,7 +364,6 @@
                     });
                 }
             });
-
         });
         ////////////// end of supplier select ////////////////
 

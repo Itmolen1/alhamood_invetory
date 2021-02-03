@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-    /**
-     * @var ISupplierRepositoryInterface
-     */
     private $supplierRepository;
 
     public function __construct(ISupplierRepositoryInterface $supplierRepository)
@@ -24,30 +21,25 @@ class SupplierController extends Controller
         return $this->supplierRepository->index();
     }
 
-
     public function create()
     {
         return $this->supplierRepository->create();
     }
-
 
     public function store(SupplierRequest $supplierRequest)
     {
         return $this->supplierRepository->store($supplierRequest);
     }
 
-
     public function show($Id)
     {
         //
     }
 
-
     public function edit($Id)
     {
         return $this->supplierRepository->edit($Id);
     }
-
 
     public function update(Request $request, $Id)
     {

@@ -39,7 +39,7 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
-        apply_closing();
+        ApplyCashPaid();
     });
     ////////// end of add price /////////////////
 
@@ -58,7 +58,7 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
-        apply_closing();
+        ApplyCashPaid();
     });
     ///////// end of add quantity ///////////////////
 
@@ -73,7 +73,6 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, Currentrow);
         CountTotalVat();
-        apply_closing();
     });
     ///////// end of add quantity ///////////////////
 
@@ -84,7 +83,7 @@
         vat=roundToTwo(vat);
         RowSubTalSubtotal(vat, CurrentRow);
         CountTotalVat();
-        apply_closing();
+
     });
     ////////////// end of vat /////////////////
 
@@ -101,15 +100,12 @@
 
     ///// row Sub Total ///////////////////////
     function RowSubTalSubtotal(vat, CurrentRow) {
-
         Total = 0;
         Total = CurrentRow.find('.total').val();
         if (parseInt(vat) === 0 && typeof (vat) != "undefined" && vat !== ""){
             if (!isNaN(Total) && typeof (Total) != "undefined")
             {
-
                 CurrentRow.find('.rowTotal').val(parseFloat(Total).toFixed(2));
-
                 //CurrentRow.find('.rowTotal').val(Total);
                 //CurrentRow.find('.rowTotal').val(parseFloat(Total).toFixed(2))
                 return;
@@ -118,7 +114,6 @@
 
         if (!isNaN(Total) && Total !== "" && typeof (vat) != "undefined")
         {
-
             var InputVatValue = parseFloat((Total / 100) * vat);
             var ValueWTV = parseFloat(InputVatValue) + parseFloat(Total);
             // if (!isNaN(ValueWTV))
@@ -126,7 +121,6 @@
             //     CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
             // }
             CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
-
             CurrentRow.find('.singleRowVat').val(parseFloat(InputVatValue).toFixed(2));
         }
     }
@@ -159,7 +153,6 @@
             TotalVat = roundToTwo(TotalVat);
             // alert(TotalVat);
         });
-
 
         if (!isNaN(TotalVat)){
             $('#TotalVat').text(TotalVat.toFixed(2));
@@ -199,7 +192,6 @@
         var Input = parseFloat(GTotal - $('.cashPaid').val());
         //var Value = parseFloat(Input) + parseFloat(GTotal);
         var rr= $('.balance').val((Input.toFixed(2)));
-        apply_closing();
     });
 
 
@@ -227,33 +219,4 @@
 
     function roundToTwo(num) {
         return +(Math.round(num + "e+2")  + "e-2");
-    }
-
-    function apply_closing()
-    {
-        // remaining balance = grand total + account closing - cash paid
-        var grand_total = $('.GTotal').val();
-        grand_total=parseFloat(grand_total).toFixed(2);
-        grand_total=roundToTwo(grand_total);
-
-        var closing = $('#closing').val();
-        closing=parseFloat(closing).toFixed(2);
-        closing=roundToTwo(closing);
-
-        var cash_paid = $('.cashPaid').val();
-        cash_paid=parseFloat(cash_paid).toFixed(2);
-        cash_paid=roundToTwo(cash_paid);
-
-        var remaining_balance=grand_total+closing-cash_paid;
-        $('.balance').val((remaining_balance.toFixed(2)));
-
-        // if(remaining_balance<=0)
-        // {
-        //     $('.cashPaid').attr('readonly', true);
-        // }
-        // else
-        // {
-        //     $('.cashPaid').attr('readonly', false);
-        // }
-
     }

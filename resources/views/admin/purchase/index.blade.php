@@ -124,7 +124,6 @@
     <!-- ============================================================== -->
 
     <script>
-
         $(document).ready(function () {
             $('#purchase_table').dataTable({
                 processing: true,

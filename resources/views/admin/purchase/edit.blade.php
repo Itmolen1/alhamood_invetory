@@ -2,8 +2,6 @@
 @section('title', 'PURCHASE UPDATE')
 
 @section('content')
-
-
     <!-- ============================================================== -->
     <!-- End Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
@@ -234,18 +232,23 @@
                                                 <input type="hidden" class="form-control TotalVat" value="{{ $purchase_details[0]->purchase->totalVat ?? 0 }}">
                                             </p>
 
-
                                             <p>Grand Total: <input type="text" class="form-control GTotal" value="{{ $purchase_details[0]->purchase->grandTotal ?? 0 }}" disabled>
                                                 <input type="hidden" class="form-control GTotal" value="{{ $purchase_details[0]->purchase->grandTotal ?? 0 }}" >
                                             </p>
 
-                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $purchase_details[0]->purchase->paidBalance ?? 0 }}"></p>
+                                            @if($purchase_details[0]->purchase->Description=='AutoPaid')
+                                                <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="0.00" readonly></p>
+                                            @else
+                                                <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $purchase_details[0]->purchase->paidBalance ?? 0 }}" readonly></p>
+                                            @endif
+
+                                            <p>Account Closing : <input type="text" value="0.00" class="form-control closing" id="closing" readonly>
+                                                <input type="hidden" value="0.00" class="form-control closing">
+                                            </p>
 
                                             <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $purchase_details[0]->purchase->remainingBalance ?? 0 }}" disabled="disabled">
                                                 <input type="hidden" class="form-control balance" value="{{ $purchase_details[0]->purchase->remainingBalance ?? 0 }}">
                                             </p>
-
-
                                         </div>
                                     </div>
 
@@ -259,7 +262,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Row -->
 
         </div>
         <!-- ============================================================== -->
@@ -309,7 +311,6 @@
                     <table class="table color-bordered-table success-bordered-table">
                         <thead>
                         <tr>
-
                             <th>User Name</th>
                             <th>Description</th>
                         </tr>
@@ -442,7 +443,6 @@
                     alert('Need Update Note')
                     window.location.href = "{{ route('purchases.index') }}";
                 }
-
             });
             //////// end of submit Records /////////////////
         });
@@ -475,7 +475,6 @@
 
         /////////////////////////// supplier select /////////////////
         $(document).ready(function () {
-
             $('.supplier_id').change(function () {
                 var Id = 0;
                 Id = $(this).val();
@@ -493,7 +492,7 @@
                                 $('#Mobile').text(result.Mobile);
                                 $('#Email').text(result.postCode);
                                 $('#TRN').text(result.TRNNumber);
-
+                                $('#closing').val(result.closing);
                             } else {
                                 alert(result);
                             }
@@ -504,9 +503,34 @@
                     });
                 }
             });
-
         });
         ////////////// end of supplier select ////////////////
+
+        /// start of when dom is ready fetch closing for selected supplier////////
+        $(document).ready(function () {
+            var Id = 0;
+            Id = $('.supplier_id').val();
+
+            if (Id > 0)
+            {
+                $.ajax({
+                    url: "{{ URL('supplierDetails') }}/" + Id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result !== "Failed") {
+                            $('#closing').val(result.closing);
+                        } else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        });
+        /// end of when dom is ready fetch closing for selected supplier////////
 
         /////////// product select //////////////
         $(document).on("change", '.product', function () {
