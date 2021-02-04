@@ -55,8 +55,8 @@
                                         <div class="col-md-10">
                                             <div class="form-group">
                                                 {{--   <label>Select Customer</label> --}}
-                                                <select class="form-control custom-select select2 supplier_id" name="supplier_id" id="supplier_id">
-                                                    <option selected readonly disabled> ---- Select suppliers ---- </option>
+                                                <select class="form-control custom-select select2 supplier_id" name="supplier_id" id="supplier_id" required>
+                                                    <option value=""> ---- Select suppliers ---- </option>
                                                     @foreach($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>
                                                     @endforeach
@@ -93,7 +93,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Payment Type :- <span class="required">*</span></label>
-                                                <select class="form-control custom-select" id="paymentType" name="paymentType">
+                                                <select class="form-control custom-select" id="paymentType" name="paymentType" required>
                                                     <option value="">--Select your Payment Type--</option>
                                                     <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>

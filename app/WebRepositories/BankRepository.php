@@ -12,22 +12,18 @@ use Illuminate\Http\Request;
 
 class BankRepository implements IBankRepositoryInterface
 {
-
     public function index()
     {
-        // TODO: Implement index() method.
-        // $banks = Bank::with('user','company')->get();
-        // return view('admin.bank.index',compact('banks'));
         if(request()->ajax())
         {
             return datatables()->of(Bank::with('user','company')->latest()->get())
                ->addColumn('action', function ($data) {
                     $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST"  id="deleteData">';
-                    $button .= @csrf_field();
                     $button .= @method_field('DELETE');
-                    $button .= '<a href="'.route('banks.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= @csrf_field();
+                    $button .= '<button type="submit" class=" btn btn-danger btn-sm" onclick="return ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
                     $button .= '&nbsp;&nbsp;';
-                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+                    $button .= '<a href="'.route('banks.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
                     $button .= '</form>';
                     return $button;
                 })
@@ -54,12 +50,12 @@ class BankRepository implements IBankRepositoryInterface
 
     public function create()
     {
-        // TODO: Implement create() method.
         return view('admin.bank.create');
     }
 
     public function store(BankRequest $bankRequest)
     {
+        echo "inside store";die;
         $user_id = session('user_id');
         $company_id = session('company_id');
         $bank = [
@@ -73,7 +69,7 @@ class BankRepository implements IBankRepositoryInterface
             'user_id' =>$user_id,
             'company_id' =>$company_id,
         ];
-        Bank::create($bank);
+        $bank=Bank::create($bank);
 
         //initial cash or cash on hand for the company
         if ($bank) {
@@ -89,13 +85,12 @@ class BankRepository implements IBankRepositoryInterface
                 'bank_id' =>$bank->id,
             ]);
         }
-
         return redirect()->route('banks.index');
     }
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
+        echo "inside update";die;
         $bank = Bank::find($Id);
         $user_id = session('user_id');
         $bank->update([
@@ -124,7 +119,6 @@ class BankRepository implements IBankRepositoryInterface
                 'bank_id' => $Id,
             ]);
         }
-
         return redirect()->route('banks.index');
     }
 
@@ -135,14 +129,12 @@ class BankRepository implements IBankRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $bank = Bank::find($Id);
         return view('admin.bank.edit',compact('bank'));
     }
 
     public function delete(Request $request, $Id)
     {
-        // TODO: Implement delete() method.
         $data = Bank::findOrFail($Id);
         $data->delete();
         return redirect()->route('banks.index');

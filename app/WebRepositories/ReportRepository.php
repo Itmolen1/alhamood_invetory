@@ -1707,58 +1707,58 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $data=SupplierAdvanceResource::collection(SupplierAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
-            if($data)
-            {
-                $pdf::SetFont('times', '', 15);
-                $html='SUPPLIER ADVANCES';
-                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
-
-                $row=json_decode(json_encode($data), true);
-                //echo "<pre>";print_r($row);die;
-                $pdf::SetFont('times', '', 10);
-                $html = '<table border="0.5" cellpadding="2">
-                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="50">S.No</th>
-                    <th align="center" width="300">Account</th>
-                    <th align="center" width="100">Cell</th>
-                    <th align="right" width="80">Balance</th>
-                </tr>';
-
-                $total_advances=0.0;
-                for($j=0;$j<count($row);$j++)
-                {
-                    $total_advances+=$row[$j]['Amount'];
-                    $html .='<tr>
-                    <td align="center" width="50">'.($j+1).'</td>
-                    <td align="left" width="300">'.($row[$j]['api_supplier']['Name']).'</td>
-                    <td align="center" width="100">'.($row[$j]['api_supplier']['Mobile']).'</td>
-                    <td align="right" width="80">'.(number_format($row[$j]['Amount'],2,'.',',')).'</td>
-                    </tr>';
-                }
-                $html.='</table>';
-                $pdf::writeHTML($html, true, false, false, false, '');
-
-                $pdf::SetFont('times', 'B', 13);
-                $html='<table border="0" cellpadding="0">';
-                $html.= '
-                 <tr color="red">
-                     <td width="450" align="right" colspan="3">Total Advances : </td>
-                     <td width="80" align="right">'.number_format($total_advances,2,'.',',').'</td>
-                 </tr>';
-                $html.='</table>';
-                $pdf::writeHTML($html, true, false, false, false, '');
-            }
-
-            $pdf::SetFont('times', '', 12);
-            $html='Outstanding Total : '.number_format($total_balance,2,'.',',');
-            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
-
-            $html='Advances Total : '.number_format($total_advances,2,'.',',');
-            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
-
-            $html='Differance Total : '.number_format($total_balance-$total_advances,2,'.',',');
-            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+//            $data=SupplierAdvanceResource::collection(SupplierAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
+//            if($data)
+//            {
+//                $pdf::SetFont('times', '', 15);
+//                $html='SUPPLIER ADVANCES';
+//                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+//
+//                $row=json_decode(json_encode($data), true);
+//                //echo "<pre>";print_r($row);die;
+//                $pdf::SetFont('times', '', 10);
+//                $html = '<table border="0.5" cellpadding="2">
+//                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+//                    <th align="center" width="50">S.No</th>
+//                    <th align="center" width="300">Account</th>
+//                    <th align="center" width="100">Cell</th>
+//                    <th align="right" width="80">Balance</th>
+//                </tr>';
+//
+//                $total_advances=0.0;
+//                for($j=0;$j<count($row);$j++)
+//                {
+//                    $total_advances+=$row[$j]['Amount'];
+//                    $html .='<tr>
+//                    <td align="center" width="50">'.($j+1).'</td>
+//                    <td align="left" width="300">'.($row[$j]['api_supplier']['Name']).'</td>
+//                    <td align="center" width="100">'.($row[$j]['api_supplier']['Mobile']).'</td>
+//                    <td align="right" width="80">'.(number_format($row[$j]['Amount'],2,'.',',')).'</td>
+//                    </tr>';
+//                }
+//                $html.='</table>';
+//                $pdf::writeHTML($html, true, false, false, false, '');
+//
+//                $pdf::SetFont('times', 'B', 13);
+//                $html='<table border="0" cellpadding="0">';
+//                $html.= '
+//                 <tr color="red">
+//                     <td width="450" align="right" colspan="3">Total Advances : </td>
+//                     <td width="80" align="right">'.number_format($total_advances,2,'.',',').'</td>
+//                 </tr>';
+//                $html.='</table>';
+//                $pdf::writeHTML($html, true, false, false, false, '');
+//            }
+//
+//            $pdf::SetFont('times', '', 12);
+//            $html='Outstanding Total : '.number_format($total_balance,2,'.',',');
+//            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+//
+//            $html='Advances Total : '.number_format($total_advances,2,'.',',');
+//            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+//
+//            $html='Differance Total : '.number_format($total_balance-$total_advances,2,'.',',');
+//            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
             $pdf::lastPage();
             $time=time();
