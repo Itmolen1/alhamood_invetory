@@ -3,21 +3,8 @@
 
 @section('content')
 
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Bank Modification</h4>
@@ -32,13 +19,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -51,12 +32,12 @@
                                 @method('PUT')
                                 <div class="form-body">
                                     <h3 class="card-title">Modification</h3>
+                                    <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <hr>
                                     <div class="row p-t-20">
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Bank Name :- *</label>
+                                                <label class="control-label">Bank Name :- <span class="required">*</span></label>
                                                 <input type="text" id="Name" name="Name" value="{{ $bank->Name }}" class="form-control" placeholder="Bank Name">
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
@@ -66,23 +47,22 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Account Number :- *</label>
-                                                <input type="text" id="Description" name="Description"  value="{{ $bank->Description }}"class="form-control" placeholder="Account Number">
+                                                <label class="control-label">Account Number :- <span class="required">*</span></label>
+                                                <input type="text" id="Description" name="Description"  value="{{ $bank->Description }}"class="form-control" placeholder="Account Number" required>
                                             </div>
                                         </div>
                                     </div>
-                                    <!--/row-->
 
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Opening Balance :- *</label>
+                                                <label class="control-label">Opening Balance :- <span class="required">*</span></label>
                                                 <input type="number" step=".01" name="openingBalance" value="{{ $bank->openingBalance }}" class="form-control" placeholder="Opening Balance" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Opening Balance As of Date :- *</label>
+                                                <label class="control-label">Opening Balance As of Date :- <span class="required">*</span></label>
                                                 <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ $bank->openingBalanceAsOfDate }}" placeholder="Opening Balance As of Date" required>
                                             </div>
                                         </div>
@@ -102,7 +82,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!--/row-->
 
                                     <div class="row">
                                         <div class="col-md-6">
@@ -123,24 +102,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Row -->
 
-            <!-- ============================================================== -->
-            <!-- End PAge Content -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
-
-
-
 @endsection

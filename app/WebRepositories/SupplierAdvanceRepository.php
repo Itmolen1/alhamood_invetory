@@ -136,7 +136,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         // TODO: Implement trashed() method.
     }
 
-
     public function supplier_advances_push(Request $request, $Id)
     {
         $advance = SupplierAdvance::with('supplier')->find($Id);
@@ -192,7 +191,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                 $bank_transaction = new BankTransaction();
                 $bank_transaction->Reference=$Id;
                 $bank_transaction->createdDate=$advance->TransferDate;
-                $bank_transaction->Type='supplier_payments';
+                $bank_transaction->Type='supplier_advances';
                 $bank_transaction->Details='SupplierBankAdvance|'.$Id;
                 $bank_transaction->Credit=$advance->Amount;
                 $bank_transaction->Debit=0.00;
@@ -229,7 +228,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                 $bank_transaction = new BankTransaction();
                 $bank_transaction->Reference=$Id;
                 $bank_transaction->createdDate=$advance->TransferDate;
-                $bank_transaction->Type='supplier_payments';
+                $bank_transaction->Type='supplier_advances';
                 $bank_transaction->Details='SupplierChequeAdvance|'.$Id;
                 $bank_transaction->Credit=$advance->Amount;
                 $bank_transaction->Debit=0.00;

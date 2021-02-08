@@ -5,7 +5,6 @@ namespace App\WebRepositories;
 
 
 use App\Http\Requests\CustomerRequest;
-use App\Models\Company;
 use App\Models\Customer;
 use App\Models\CustomerPrice;
 use App\Models\Region;
@@ -15,10 +14,10 @@ use App\Models\CompanyType;
 use App\Models\AccountTransaction;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerRepository implements ICustomerRepositoryInterface
 {
-
     public function index()
     {
         if(request()->ajax())
@@ -214,5 +213,26 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function getCustomerVehicleDetails($Id)
     {
         // TODO: Implement getCustomerVehicleDetails() method.
+    }
+
+    public function customerDetails($Id)
+    {
+        // getting latest closing for supplier from account transaction table
+        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id')
+            ->where('ac.customer_id','=',$Id)
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        $needed_ids=array_column($row,'max_id');
+
+        $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.customer_id','ac.Differentiate')
+            ->whereIn('ac.id',$needed_ids)
+            ->orderBy('ac.id','asc')
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        $row=$row[0]['Differentiate'];
+
+        $customers = Customer::with('vehicles','customer_prices')->find($Id);
+
+        return response()->json(array('customers'=>$customers,'closing'=>$row));
     }
 }

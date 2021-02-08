@@ -21,12 +21,10 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 {
     public function index()
     {
-        // TODO: Implement index() method.
         if(request()->ajax())
         {
             return datatables()->of(SupplierPayment::with('user','company','supplier')->latest()->get())
                 ->addColumn('action', function ($data) {
-
                     $button = '<a href="'.route('supplier_payments.show', $data->id).'"  class=" btn btn-info btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
                     $button .= '&nbsp;&nbsp;';
                     $button .= '<a href="'.route('supplier_payments.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
@@ -63,7 +61,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function create()
     {
-        // TODO: Implement create() method.
         $suppliers = Supplier::all();
         $banks = Bank::all();
         return view('admin.supplier_payment.create',compact('suppliers','banks'));
@@ -122,16 +119,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     "supplier_payment_id"      => $payment,
                     'createdDate' => date('Y-m-d')
                 ]);
-
-
-                $sale = Purchase::find($detail['purchase_id']);
-                $sale->update([
-                    "paidBalance"        => $totalAmount + $sale->paidBalance,
-                    "remainingBalance"   => $sale->remainingBalance - $totalAmount,
-                    "IsPaid" => $isPaid,
-                    "IsPartialPaid" => $isPartialPaid,
-                    "IsNeedStampOrSignature" => false,
-                ]);
             }
             return Response()->json($amount);
         }
@@ -166,7 +153,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function getById($Id)
     {
-        // TODO: Implement getById() method.
         $supplier_payment_details = SupplierPaymentDetail::with('user','company','supplier_payment.supplier')->where('supplier_payment_id',$Id)->get();
 //        dd($payment_receives);
         return view('admin.supplier_payment.show',compact('supplier_payment_details'));
@@ -200,20 +186,11 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
         if($payments->payment_type == 'cash')
         {
-//            $cash_transaction = new CashTransaction();
-//            $cash_transaction->Reference=$payments->id;
-//            $cash_transaction->createdDate=date('Y-m-d h:i:s');
-//            $cash_transaction->Type='supplier_payments';
-//            $cash_transaction->Details='Supplier Cash Payment';
-//            $cash_transaction->Credit=$payments->paidAmount;
-//            $cash_transaction->Debit=0.00;
-//            $cash_transaction->save();
-
             $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
             $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$Id;
-            $cash_transaction->createdDate=$payments->transferDate;
+            $cash_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
             $cash_transaction->Type='supplier_payments';
             $cash_transaction->Details='SupplierCashPayment|'.$Id;
             $cash_transaction->Credit=$payments->paidAmount;
@@ -242,21 +219,11 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         }
         elseif ($payments->payment_type == 'bank')
         {
-//            $bank_transaction = new BankTransaction();
-//            $bank_transaction->Reference=$payments->id;
-//            $bank_transaction->createdDate=date('Y-m-d h:i:s');
-//            $bank_transaction->Type='supplier_payments';
-//            $bank_transaction->Details='Supplier Bank Payment';
-//            $bank_transaction->Credit=$payments->paidAmount;
-//            $bank_transaction->Debit=0.0;
-//            $bank_transaction->Flag=1;
-//            $bank_transaction->save();
-
             $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->transferDate;
+            $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierBankPayment|'.$Id;
             $bank_transaction->Credit=$payments->paidAmount;
@@ -288,21 +255,11 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         }
         elseif ($payments->payment_type == 'cheque')
         {
-//            $bank_transaction = new BankTransaction();
-//            $bank_transaction->Reference=$payments->id;
-//            $bank_transaction->createdDate=date('Y-m-d h:i:s');
-//            $bank_transaction->Type='supplier_payments';
-//            $bank_transaction->Details='Supplier Cheque Payment';
-//            $bank_transaction->Credit=$payments->paidAmount;
-//            $bank_transaction->Debit=0.0;
-//            $bank_transaction->Flag=0;
-//            $bank_transaction->save();
-
             $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->transferDate;
+            $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
             $bank_transaction->Type='supplier_payments';
             $bank_transaction->Details='SupplierChequePayment|'.$Id;
             $bank_transaction->Credit=$payments->paidAmount;

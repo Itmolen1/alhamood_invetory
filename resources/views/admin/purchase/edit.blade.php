@@ -135,12 +135,12 @@
 {{--                                                <th style="width: 100px">Date</th>--}}
                                                 <th style="width: 150px">purchase #</th>
                                                 <th style="width: 150px">product</th>
-                                                <th style="width: 100px">Unit</th>
-                                                <th style="width: 150px">Description</th>
-                                                <th>quantity</th>
-                                                <th>Price</th>
-                                                <th>Total</th>
-                                                <th style="width: 100px">VAT</th>
+                                                <th style="width: 130px">Unit</th>
+                                                <th style="width: 300px">Description</th>
+                                                <th style="width: 150px">quantity</th>
+                                                <th style="width: 150px">Price</th>
+                                                <th style="width: 150px">Total</th>
+                                                <th style="width: 130px">VAT</th>
                                                 <th style="width: 150px">Total Amount</th>
                                                 {{--                                                <th>Action</th>--}}
                                             </tr>
@@ -246,7 +246,7 @@
                                                 <input type="hidden" value="0.00" class="form-control closing">
                                             </p>
 
-                                            <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $purchase_details[0]->purchase->remainingBalance ?? 0 }}" disabled="disabled">
+                                            <p>Remaining Balance: <input type="text" class="form-control balance" id="balance" value="{{ $purchase_details[0]->purchase->remainingBalance ?? 0 }}" disabled="disabled">
                                                 <input type="hidden" class="form-control balance" value="{{ $purchase_details[0]->purchase->remainingBalance ?? 0 }}">
                                             </p>
                                         </div>

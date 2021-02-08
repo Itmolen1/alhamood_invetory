@@ -1,26 +1,13 @@
 @extends('shared.layout-admin')
-@section('title', 'Edit Payment')
+@section('title', 'Edit Customer Payment')
 
 @section('content')
 
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h4 class="text-themecolor">Payment</h4>
+                    <h4 class="text-themecolor">Customer Payment</h4>
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -32,13 +19,6 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -49,7 +29,7 @@
                             <form action="#">
                                 <div class="form-body">
 
-                                    <div class="row">
+                                    <?php /*<div class="row">
                                         <div class="col-md-11">
                                             <div class="form-group">
                                                 {{--   <label>Select Customer</label> --}}
@@ -98,16 +78,16 @@
                                             @endif
                                             </tbody>
                                         </table>
-                                    </div>
+                                    </div> */ ?>
 
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option value="bankTransfer" {{ ($payment_receive->payment_type == "bankTransfer") ? "selected":"" }}>Bank</option>
-                                                    <option id="cash" value="cash" {{ ($payment_receive->cash == "bankTransfer") ? "selected":"" }}>Cash</option>
-                                                    <option value="checkTransfer" {{ ($payment_receive->cash == "checkTransfer") ? "selected":"" }}>Cheque</option>
+                                                    <option value="bank" {{ ($payment_receive->payment_type == "bank") ? "selected":"" }}>Bank</option>
+                                                    <option id="cash" value="cash" {{ ($payment_receive->cash == "cash") ? "selected":"" }}>Cash</option>
+                                                    <option value="cheque" {{ ($payment_receive->cash == "cheque") ? "selected":"" }}>Cheque</option>
                                                 </select>
                                             </div>
                                         </div>

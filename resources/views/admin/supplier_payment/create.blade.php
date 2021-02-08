@@ -19,10 +19,11 @@
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
             <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
+                <div class="col-md-8 align-self-center">
                     <h4 class="text-themecolor">Payment</h4>
+                    <h3 class="required"> * Select Entries Carefully after saving Update is not allowed.</h3>
                 </div>
-                <div class="col-md-7 align-self-center text-right">
+                <div class="col-md-4 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>

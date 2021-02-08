@@ -190,17 +190,19 @@
                                                 <input type="hidden" value="0.00" class="form-control TotalVat">
                                             </p>
 
-
                                             <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled>
                                                 <input type="hidden" value="0.00" class="form-control GTotal" >
                                             </p>
 
                                             <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
 
-                                            <p>Balance: <input type="text" value="0.00" id="balance" class="form-control balance" disabled>
-                                                <input type="hidden" value="0.00" id="balance" class="form-control balance">
+                                            <p>Account Closing : <input type="text" value="0.00" class="form-control closing" id="closing" readonly>
+                                                <input type="hidden" value="0.00" class="form-control closing">
                                             </p>
 
+                                            <p>Remaining Balance: <input type="text" value="0.00" id="balance" class="form-control balance" disabled>
+                                                <input type="hidden" value="0.00" id="balance" class="form-control balance">
+                                            </p>
 
                                         </div>
                                     </div>
@@ -211,16 +213,10 @@
                                 </div>
                             </form>
 
-
                         </div>
                     </div>
                 </div>
-
-
             </div>
-            <!-- Row -->
-
-
 
         </div>
         <!-- ============================================================== -->
@@ -335,6 +331,7 @@
                             grandTotal: $('.GTotal').val(),
                             paidBalance: $('.cashPaid').val(),
                             remainingBalance: $('#balance').val(),
+                            lastClosing: $('#closing').val(),
                             customer_id:$('#customer_id').val(),
                             customerNote:$('#description').val(),
                             orders: insert,
@@ -417,10 +414,7 @@
                 }
                 ////// end of validate row ///////////////////
 
-
                 $('.customer_id').change(function () {
-                    //alert();
-                    //$('.quantity').val('');
                     var Id = 0;
                     Id = $(this).val();
 
@@ -433,18 +427,15 @@
                             dataType: "json",
                             success: function (result) {
                                 if (result !== "Failed") {
-                                    console.log(result);
-                                    //console.log(result.customer_prices[0].Rate);
-                                    $('#Rate').val(result.customer_prices[0].Rate);
-                                    $('#VAT').val(result.customer_prices[0].VAT);
-
+                                    $('#Rate').val(result.customers.customer_prices[0].Rate);
+                                    $('#VAT').val(result.customers.customer_prices[0].VAT);
 
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
-                                    if (result.vehicles.length > 0)
+                                    if (result.customers.vehicles.length > 0)
                                     {
-                                        for (var i = 0; i < result.vehicles.length; i++) {
-                                            vehicleDetails += '<option value="' + result.vehicles[i].id + '">' + result.vehicles[i].registrationNumber + '</option>';
+                                        for (var i = 0; i < result.customers.vehicles.length; i++) {
+                                            vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
                                         }
                                     }
                                     else {
@@ -452,13 +443,12 @@
                                     }
                                     $("#vehicle").append(vehicleDetails);
 
-                                    var rate = result.customer_prices[0].Rate;
-                                    var vat = result.customer_prices[0].VAT;
+                                    var rate = result.customers.customer_prices[0].Rate;
+                                    var vat = result.customers.customer_prices[0].VAT;
                                     rate=parseFloat(rate).toFixed(2)
                                     vat=parseFloat(vat).toFixed(2)
                                     totalWithCustomer(vat, rate);
-
-
+                                    $('#closing').val(result.closing);
                                 } else {
                                     alert(result);
                                 }
@@ -490,20 +480,18 @@
                     dataType: "json",
                     success: function (result) {
                         if (result !== "Failed") {
-                            //console.log(result);
-
-                                    $("#unit").html('');
-                                    var unitDetails = '';
-                                    if (result.units.length > 0)
-                                    {
-                                        for (var i = 0; i < result.units.length; i++) {
-                                            unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
-                                        }
-                                    }
-                                    else {
-                                        unitDetails += '<option value="0">No Data</option>';
-                                    }
-                                    $("#unit").append(unitDetails);
+                            $("#unit").html('');
+                            var unitDetails = '';
+                            if (result.units.length > 0)
+                            {
+                                for (var i = 0; i < result.units.length; i++) {
+                                    unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
+                                }
+                            }
+                            else {
+                                unitDetails += '<option value="0">No Data</option>';
+                            }
+                            $("#unit").append(unitDetails);
                              // currentRow.find('.unit').val(result.unit.Name);
                         } else {
                             alert(result);

@@ -107,13 +107,13 @@
                                             <tr>
 {{--                                                <th style="width: 100px">Date</th>--}}
                                                 <th style="width: 150px">PRODUCT <span class="required">*</span></th>
-                                                <th style="width: 100px">UNIT</th>
-                                                <th style="width: 150px">LPO #</th>
-                                                <th style="width: 150px">Description</th>
-                                                <th>QUANTITY <span class="required">*</span></th>
-                                                <th>PRICE <span class="required">*</span></th>
-                                                <th>TOTAL</th>
-                                                <th style="width: 100px">VAT <span class="required">*</span></th>
+                                                <th style="width: 140px">UNIT</th>
+                                                <th style="width: 130px">LPO #</th>
+                                                <th style="width: 300px">Description</th>
+                                                <th style="width: 150px">QUANTITY <span class="required">*</span></th>
+                                                <th style="width: 150px">PRICE <span class="required">*</span></th>
+                                                <th style="width: 150px">TOTAL</th>
+                                                <th style="width: 130px">VAT <span class="required">*</span></th>
                                                 <th style="width: 150px">SUBTOTAL</th>
                                                 {{--                                                <th>Action</th>--}}
                                             </tr>

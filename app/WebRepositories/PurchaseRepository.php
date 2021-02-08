@@ -25,7 +25,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 {
     public function index()
     {
-//        $purchases = Purchase::with('purchase_details','supplier')->get();
         if(request()->ajax())
         {
             return datatables()->of(Purchase::with('purchase_details.product','supplier')->where('company_id',session('company_id'))->latest()->get())
@@ -199,10 +198,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     ]);
                 }
             }
-            //return Response()->json($request);
-            // return Response()->json($request->Data['orders']);
-            //return Response()->json($request->Data['PurchaseNumber']);
-            //return Response()->json($request->Data['referenceNumber']);
+
             if($purchaseRequest->Data['paidBalance'] != 0.00 || $purchaseRequest->Data['paidBalance'] != 0)
             {
                 $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
@@ -492,9 +488,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                                 // now we are payable so differance amount will be paid amount and make it partial paid
                                 $this_purchase = Purchase::find($purchased->id);
                                 $this_purchase->update([
-                                    "paidBalance"        => $request->Data['grandTotal'],
+                                    "paidBalance"        => 0,
                                     "remainingBalance"   => $difference,
-                                    "IsPaid" => 1,
+                                    "IsPaid" => 0,
                                     "IsPartialPaid" => 0,
                                     "IsNeedStampOrSignature" => false,
                                     "Description" => 'AutoPaid',
@@ -1272,6 +1268,15 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                 //payment not done
                 elseif($purchased->IsPaid==0 && $purchased->IsPartialPaid==0)
                 {
+                    if($request->Data['remainingBalance']<0)
+                    {
+                        // do something
+                    }
+                    else
+                    {
+                        // do something
+                    }
+
                     // if paid balance is not same as earlier need to update cash account as well
                     if($purchased->paidBalance!=$request->Data['paidBalance'])
                     {
@@ -2460,8 +2465,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                 $ss = PurchaseDetail::where('purchase_id', array($purchaseDetails['purchase_id']))->get();
                 return Response()->json($ss);
             }
-
-
         }
     }
 
