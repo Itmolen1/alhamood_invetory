@@ -120,8 +120,8 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label class="control-label">Reference Number</label>
-                                                        <input type="text" class="form-control referenceNumber" value="{{ $purchase_details[0]->purchase->referenceNumber ?? 0 }}" name="referenceNumber" id="referenceNumber" placeholder="Reference Number">
+                                                        <label class="control-label">LPO Number</label>
+                                                        <input type="text" class="form-control referenceNumber" value="{{ $purchase_details[0]->purchase->referenceNumber ?? 0 }}" name="referenceNumber" id="referenceNumber" placeholder="LPO Number">
                                                     </div>
                                                 </div>
                                             </div>
@@ -132,10 +132,10 @@
                                         <table class="table color-bordered-table success-bordered-table">
                                             <thead>
                                             <tr>
-{{--                                                <th style="width: 100px">Date</th>--}}
-                                                <th style="width: 150px">purchase #</th>
+{{--                                            <th style="width: 100px">Date</th>--}}
                                                 <th style="width: 150px">product</th>
                                                 <th style="width: 130px">Unit</th>
+                                                <th style="width: 150px">PAD #</th>
                                                 <th style="width: 300px">Description</th>
                                                 <th style="width: 150px">quantity</th>
                                                 <th style="width: 150px">Price</th>
@@ -151,9 +151,9 @@
                                                 @if(!is_null($details->deleted_at))
                                                     <tr style="text-decoration: line-through; color:red">
 {{--                                                        <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->createdDate }}" placeholder=""></td>--}}
-                                                        <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Product" value="{{ $details->product->Name ?? '' }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Unit" value="{{ $details->unit->Name ?? '' }}" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Description" value="{{ $details->Description ?? '' }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Quantity" value="{{ $details->Quantity }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Price" value="{{ $details->Price }}" class="form-control"></td>
@@ -170,7 +170,6 @@
                                                 @if(is_null($details->deleted_at))
                                             <tr>
 {{--                                                <td> <input type="date" name="createdDate" id="createdDate"  class="form-control createdDate" value="{{ $details->createdDate }}" placeholder=""></td>--}}
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" name="PadNumber" value="{{ $details->PadNumber }}" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="product" class="form-control product">
@@ -190,6 +189,7 @@
                                                         </select>
                                                     </div>
                                                 </td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" name="PadNumber" value="{{ $details->PadNumber }}" class="PadNumber form-control"></td>
                                                 <td><input type="text" placeholder="Description" value="{{ $details->Description }}"  class="description form-control"></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Quantity }}"  placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="{{ $details->rowVatAmount }}"  class="singleRowVat form-control">

@@ -3,20 +3,8 @@
 
 @section('content')
 
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">purchase</h4>
@@ -31,13 +19,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -93,8 +75,8 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label class="control-label">Reference Number</label>
-                                                        <input type="text" class="form-control referenceNumber" name="referenceNumber" id="referenceNumber" placeholder="Reference Number">
+                                                        <label class="control-label">LPO Number :-</label>
+                                                        <input type="text" class="form-control referenceNumber" name="referenceNumber" id="referenceNumber" placeholder="LPO Number">
                                                     </div>
                                                 </div>
                                             </div>
@@ -108,7 +90,7 @@
 {{--                                                <th style="width: 100px">Date</th>--}}
                                                 <th style="width: 150px">PRODUCT <span class="required">*</span></th>
                                                 <th style="width: 140px">UNIT</th>
-                                                <th style="width: 130px">LPO #</th>
+                                                <th style="width: 130px">PAD #</th>
                                                 <th style="width: 300px">Description</th>
                                                 <th style="width: 150px">QUANTITY <span class="required">*</span></th>
                                                 <th style="width: 150px">PRICE <span class="required">*</span></th>
@@ -205,18 +187,8 @@
                     </div>
                 </div>
             </div>
-            <!-- Row -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script>
         $(document).ready(function () {

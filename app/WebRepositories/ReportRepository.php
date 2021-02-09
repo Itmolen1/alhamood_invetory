@@ -1038,17 +1038,17 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
             $row=json_decode(json_encode($purchase), true);
             //echo "<pre>123";print_r($row);die;
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='PURCHASE REPORT';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
@@ -1059,21 +1059,21 @@ class ReportRepository implements IReportRepositoryInterface
             $rowTotal_sum=0.0;
             $VAT_sum=0.0;
 
-            $pdf::SetFont('times', 'B', 10);
+            $pdf::SetFont('helvetica', '', 8);
             $html = '<table border="0.5" cellpadding="1">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="right" width="60">S.No.</th>
-                    <th align="center" width="70">Vendor</th>
-                    <th align="center" width="50">Qty</th>
-                    <th align="center" width="40">Rate</th>
-                    <th align="center" width="50">Total</th>
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="30">LPO#</th>
+                    <th align="right" width="30">PAD#</th>
+                    <th align="center" width="130">Vendor</th>
+                    <th align="center" width="40">Qty</th>
+                    <th align="center" width="30">Rate</th>
+                    <th align="center" width="45">Total</th>
                     <th align="center" width="45">VAT</th>
                     <th align="center" width="50">SubTotal</th>
-                    <th align="center" width="50">Paid</th>
-                    <th align="center" width="50">Balance</th>
-                    <th align="center" width="70">Date</th>
+                    <th align="center" width="55">Paid</th>
+                    <th align="center" width="55">Balance</th>
                 </tr>';
-            $pdf::SetFont('times', '', 10);
             for($i=0;$i<count($row);$i++)
             {
                 $sub_total_sum+=$row[$i]['purchase_details_without_trash'][0]['rowSubTotal'];
@@ -1083,29 +1083,34 @@ class ReportRepository implements IReportRepositoryInterface
                 $rowTotal_sum+=$row[$i]['purchase_details_without_trash'][0]['rowTotal'];
                 $VAT_sum+=$row[$i]['purchase_details_without_trash'][0]['rowTotal']*$row[$i]['purchase_details_without_trash'][0]['VAT']/100;
                 $html .='<tr>
-                    <td align="right" width="60">'.($row[$i]['PurchaseNumber']).'</td>
-                    <td align="center" width="70">'.($row[$i]['api_supplier']['Name']).'</td>
-                    <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['Quantity']).'</td>
-                    <td align="right" width="40">'.($row[$i]['purchase_details_without_trash'][0]['Price']).'</td>
-                    <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['rowTotal']).'</td>
-                    <td align="right" width="45">'.(($row[$i]['purchase_details_without_trash'][0]['rowTotal']*$row[$i]['purchase_details_without_trash'][0]['VAT']/100)).'</td>
-                    <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['rowSubTotal']).'</td>
-                    <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
-                    <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
-                    <td align="center" width="70">'.($row[$i]['PurchaseDate']).'</td>
-                    </tr>';
+                            <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['PurchaseDate']))).'</td>
+                            <td align="center" width="30">'.($row[$i]['purchase_details_without_trash'][0]['PadNumber']).'</td>
+                            <td align="center" width="30">'.($row[$i]['referenceNumber']).'</td>
+                            <td align="center" width="130">'.($row[$i]['api_supplier']['Name']).'</td>
+                            <td align="right" width="40">'.($row[$i]['purchase_details_without_trash'][0]['Quantity']).'</td>
+                            <td align="right" width="30">'.($row[$i]['purchase_details_without_trash'][0]['Price']).'</td>
+                            <td align="right" width="45">'.($row[$i]['purchase_details_without_trash'][0]['rowTotal']).'</td>
+                            <td align="right" width="45">'.(($row[$i]['purchase_details_without_trash'][0]['rowTotal']*$row[$i]['purchase_details_without_trash'][0]['VAT']/100)).'</td>
+                            <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['rowSubTotal']).'</td>
+                            <td align="right" width="55">'.($row[$i]['paidBalance']).'</td>
+                            <td align="right" width="55">'.($row[$i]['remainingBalance']).'</td>
+                        </tr>';
             }
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('helvetica', '', 8);
+            $html='<table border="0.5" cellpadding="1">';
             $html.= '
              <tr color="red">
-                 <td width="130" align="center" colspan="2">Total :- </td>
-                 <td width="50" align="right">'.number_format($qty_sum,2,'.',',').'</td>
-                 <td width="40"></td>
-                 <td width="50" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
+                 <td width="235" align="right" colspan="4">Total :- </td>
+                 <td width="40" align="right">'.number_format($qty_sum,2,'.',',').'</td>
+                 <td width="30"></td>
+                 <td width="45" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
                  <td width="45" align="right">'.number_format($VAT_sum,2,'.',',').'</td>
                  <td width="50" align="right">'.number_format($sub_total_sum,2,'.',',').'</td>
-                 <td width="50" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
-                 <td width="50" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
-                 <td width="70" align="left"></td>
+                 <td width="55" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
+                 <td width="55" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
              </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';

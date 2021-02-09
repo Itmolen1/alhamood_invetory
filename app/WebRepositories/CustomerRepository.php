@@ -229,7 +229,14 @@ class CustomerRepository implements ICustomerRepositoryInterface
             ->orderBy('ac.id','asc')
             ->get();
         $row=json_decode(json_encode($row), true);
-        $row=$row[0]['Differentiate'];
+        if(empty($row))
+        {
+            $row=0.00;
+        }
+        else
+        {
+            $row=$row[0]['Differentiate'];
+        }
 
         $customers = Customer::with('vehicles','customer_prices')->find($Id);
 
