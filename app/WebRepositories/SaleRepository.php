@@ -81,7 +81,6 @@ class   SaleRepository implements ISaleRepositoryInterface
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
-
             if($request->Data['remainingBalance']<0)
             {
                 if($request->Data['paidBalance'] >= $request->Data['grandTotal'])
@@ -272,7 +271,8 @@ class   SaleRepository implements ISaleRepositoryInterface
                     }
                 }
             }
-            else{
+            else
+            {
                 if($request->Data['remainingBalance']>0 && $request->Data['lastClosing']<0)
                 {
                     if ($request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == 0) {
@@ -368,9 +368,9 @@ class   SaleRepository implements ISaleRepositoryInterface
                         $isPaid_current = false;
                         $partialPaid_current =true;
                     }
-                    elseif($request->Data['lastClosing']<0)
+                    elseif($request->Data['lastClosing']<0 && $request->Data['paidBalance'] <= $request->Data['grandTotal'])
                     {
-                        $sale->paidBalance = ($request->Data['grandTotal']-$request->Data['paidBalance']-$request->Data['lastClosing']);
+                        $sale->paidBalance = $request->Data['paidBalance']-$request->Data['lastClosing'];
                         $sale->remainingBalance = $request->Data['remainingBalance'];
                     }
                     else
@@ -538,7 +538,6 @@ class   SaleRepository implements ISaleRepositoryInterface
                         ]);
                     }
                 }
-
             }
 
 

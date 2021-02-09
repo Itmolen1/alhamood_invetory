@@ -339,12 +339,12 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             // new entry done
         }
 
-        //now since account is affected we need to auto pay same amount to purchase entries only if last closing is positive value
+        //now since account is affected we need to auto pay same amount to sales entries only if last closing is positive value
 
         if($payments->paidAmount>0)
         {
             //we have entries without payment made so make it paid until payment amount becomes zero
-            // bring all unpaid purchase records
+            // bring all unpaid sales records
             $all_sales = Sale::with('customer','sale_details')->where([
                 'customer_id'=>$payments->customer_id,
                 'IsPaid'=> false,

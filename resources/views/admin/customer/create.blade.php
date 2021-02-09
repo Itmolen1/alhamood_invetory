@@ -46,7 +46,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Owner/Representative Name</label>
-                                                <input type="text" id="Representative" name="Representative" class="form-control" placeholder="Enter Owner/Representative Name">
+                                                <input type="text" id="Representative" name="Representative" class="form-control" placeholder="Enter Owner/Representative Name" autocomplete="off">
                                             </div>
                                         </div>
                                     </div>
@@ -101,7 +101,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Opening Balance :- <span class="required">*</span></label>
-                                                <input type="number" step=".01" name="openingBalance" value="0.00" class="form-control" placeholder="Opening Balance" required>
+                                                <input type="number" step=".01" name="openingBalance" value="0.00" class="form-control" placeholder="Opening Balance" required autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -116,7 +116,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">TRN Number</label>
-                                                <input type="text" name="TRNNumber" class="form-control" placeholder="Enter TRN Number">
+                                                <input type="text" name="TRNNumber" class="form-control" placeholder="Enter TRN Number" autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -131,20 +131,20 @@
                                         <div class="col-md-4 ">
                                             <div class="form-group">
                                                 <label>Mobile</label>
-                                                <input type="text" name="Mobile" placeholder="Mobile" class="form-control">
+                                                <input type="text" name="Mobile" placeholder="Mobile" class="form-control" autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Phone</label>
-                                                <input type="text" name="Phone" placeholder="Phone" class="form-control">
+                                                <input type="text" name="Phone" placeholder="Phone" class="form-control" autocomplete="off">
                                             </div>
                                         </div>
 
                                          <div class="col-md-4 ">
                                             <div class="form-group">
                                                 <label>Email</label>
-                                                <input type="text" name="Email" placeholder="Email" class="form-control">
+                                                <input type="text" name="Email" placeholder="Email" class="form-control" autocomplete="off">
                                             </div>
                                         </div>
                                     </div>

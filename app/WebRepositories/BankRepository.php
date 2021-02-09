@@ -103,20 +103,20 @@ class BankRepository implements IBankRepositoryInterface
         ]);
 
         //initial cash or cash on hand for the company
-        $company_id = session('company_id');
-        if ($bank) {
-            BankTransaction::Create([
-                'Reference' => $bank->id,
-                'user_id' => $user_id,
-                'createdDate' => $request->openingBalanceAsOfDate,
-                'company_id' =>$company_id,
-                'Details' =>'initial',
-                'Credit' =>0.00,
-                'Debit' =>0.00,
-                'Differentiate' =>$request->openingBalance,
-                'bank_id' => $Id,
-            ]);
-        }
+//        $company_id = session('company_id');
+//        if ($bank) {
+//            BankTransaction::Create([
+//                'Reference' => $bank->id,
+//                'user_id' => $user_id,
+//                'createdDate' => $request->openingBalanceAsOfDate,
+//                'company_id' =>$company_id,
+//                'Details' =>'initial',
+//                'Credit' =>0.00,
+//                'Debit' =>0.00,
+//                'Differentiate' =>$request->openingBalance,
+//                'bank_id' => $Id,
+//            ]);
+//        }
         return redirect()->route('banks.index');
     }
 

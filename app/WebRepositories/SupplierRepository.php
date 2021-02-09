@@ -23,7 +23,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
         {
             return datatables()->of(Supplier::with('company','user','payment_type','company_type','payment_term')->latest()->get())
                ->addColumn('action', function ($data) {
-                    $button = '<form action="'.route('suppliers.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button = '<form action="'.route('suppliers.destroy', $data->id).'" method="POST">';
                     $button .= @csrf_field();
                     $button .= @method_field('DELETE');
                     $button .= '<a href="'.route('suppliers.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
@@ -34,16 +34,16 @@ class SupplierRepository implements ISupplierRepositoryInterface
                 })
                 ->addColumn('isActive', function($data) {
                         if($data->isActive == true){
-                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST" ">';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }else{
-                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST" >';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }
                     })

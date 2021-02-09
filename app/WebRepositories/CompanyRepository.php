@@ -133,18 +133,18 @@ class CompanyRepository implements ICompanyRepositoryInterface
         ]);
 
         //initial cash or cash on hand for the company
-        if ($company) {
-            CashTransaction::Create([
-                'Reference' => $company->id,
-                'user_id' => $user_id,
-                'createdDate' => $request->openingBalanceAsOfDate,
-                'company_id' =>$company->id,
-                'Details' =>'initial',
-                'Credit' =>0.00,
-                'Debit' =>0.00,
-                'Differentiate' =>$request->openingBalance,
-            ]);
-        }
+//        if ($company) {
+//            CashTransaction::Create([
+//                'Reference' => $company->id,
+//                'user_id' => $user_id,
+//                'createdDate' => $request->openingBalanceAsOfDate,
+//                'company_id' =>$company->id,
+//                'Details' =>'initial',
+//                'Credit' =>0.00,
+//                'Debit' =>0.00,
+//                'Differentiate' =>$request->openingBalance,
+//            ]);
+//        }
         return redirect()->route('companies.index');
     }
 

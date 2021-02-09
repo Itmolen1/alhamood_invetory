@@ -184,6 +184,8 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             'user_id' =>$user_id,
         ]);
 
+        $accountTransaction_ref=0;
+
         if($payments->payment_type == 'cash')
         {
             $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
@@ -215,6 +217,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     'Description'=>'SupplierCashPayment|'.$Id,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
+            $accountTransaction_ref=$AccountTransactions->id;
             // new entry done
         }
         elseif ($payments->payment_type == 'bank')
@@ -251,6 +254,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
+            $accountTransaction_ref=$AccountTransactions->id;
             // new entry done
         }
         elseif ($payments->payment_type == 'cheque')
@@ -287,7 +291,70 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
+            $accountTransaction_ref=$AccountTransactions->id;
             // new entry done
+        }
+
+        //now since account is affected we need to auto pay same amount to purchase entries only if last closing is positive value
+
+        if($payments->paidAmount>0)
+        {
+            //we have entries without payment made so make it paid until payment amount becomes zero
+            // bring all unpaid purchase records
+            $all_purchase = Purchase::with('supplier','purchase_details')->where([
+                'supplier_id'=>$payments->supplier_id,
+                'IsPaid'=> false,
+            ])->orderBy('PurchaseDate')->get();
+            //echo "<pre>";print_r($all_sales);die;
+            $total_i_have=$payments->paidAmount;
+
+            foreach($all_purchase as $purchase)
+            {
+                $total_you_need = $purchase->remainingBalance;
+                $still_payable_to_you=0;
+                $total_giving_to_you=0;
+                $isPartialPaid = 0;
+                if ($total_i_have >= $total_you_need)
+                {
+                    $isPaid = 1;
+                    $isPartialPaid = 0;
+                    $total_i_have = $total_i_have - $total_you_need;
+
+                    $this_sale = Purchase::find($purchase->id);
+                    $this_sale->update([
+                        "paidBalance"        => $purchase->grandTotal,
+                        "remainingBalance"   => $still_payable_to_you,
+                        "IsPaid" => $isPaid,
+                        "IsPartialPaid" => $isPartialPaid,
+                        "IsNeedStampOrSignature" => false,
+                        "Description" => 'AutoPaid|'.$payments->id,
+                        "account_transaction_payment_id" => $accountTransaction_ref,
+                    ]);
+                }
+                else
+                {
+                    $isPaid = 0;
+                    $isPartialPaid = 1;
+                    $total_giving_to_you=$total_i_have;
+                    $total_i_have = $total_i_have - $total_giving_to_you;
+
+                    $this_purchase = Purchase::find($purchase->id);
+                    $this_purchase->update([
+                        "paidBalance"        => $purchase->paidBalance+$total_giving_to_you,
+                        "remainingBalance"   => $purchase->remainingBalance-$total_giving_to_you,
+                        "IsPaid" => $isPaid,
+                        "IsPartialPaid" => $isPartialPaid,
+                        "IsNeedStampOrSignature" => false,
+                        "Description" => 'AutoPaid|'.$payments->id,
+                        "account_transaction_payment_id" => $accountTransaction_ref,
+                    ]);
+                }
+
+                if($total_i_have<=0)
+                {
+                    break;
+                }
+            }
         }
 
 //        ////////////////// account section ////////////////

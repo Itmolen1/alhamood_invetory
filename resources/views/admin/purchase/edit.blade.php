@@ -399,6 +399,7 @@
                             grandTotal: $('.GTotal').val(),
                             paidBalance: cashPaid,
                             remainingBalance: $('#balance').val(),
+                            lastClosing: $('#closing').val(),
                             supplier_id: $('#supplier_id').val(),
                             supplierNote: $('#PurchaseDescription').val(),
                             UpdateDescription: $('#UpdateDescription').val(),

@@ -88,114 +88,458 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
             if($purchaseRequest->Data['remainingBalance']<0)
             {
-                $isPaid = true;
-                $partialPaid =false;
+                if($purchaseRequest->Data['paidBalance'] >= $purchaseRequest->Data['grandTotal'])
+                {
+                    if ($purchaseRequest->Data['paidBalance'] == 0.00 || $purchaseRequest->Data['paidBalance'] == 0) {
+                        $isPaid_current = false;
+                        $partialPaid_current =false;
+                    }
+                    elseif($purchaseRequest->Data['paidBalance'] >= $purchaseRequest->Data['grandTotal'])
+                    {
+                        $isPaid_current = 1;
+                        $partialPaid_current=0;
+                        // if the paidBalance = cashPaid is more than grand total we need to divide extra
+                        // amount to unpaid sales if its there any entry
+                        $all_purchase = Purchase::with('supplier','purchase_details')->where([
+                            'supplier_id'=>$purchaseRequest->Data['supplier_id'],
+                            'IsPaid'=> false,
+                        ])->orderBy('PurchaseDate')->get();
+                        //dd($all_purchase);
+                        $total_i_have=$purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['grandTotal'];
 
-                $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber'];
-                $purchase->referenceNumber = $purchaseRequest->Data['referenceNumber'];
-                $purchase->PurchaseDate = $purchaseRequest->Data['PurchaseDate'];
-                $purchase->DueDate =  $purchaseRequest->Data['DueDate'];
-                $purchase->Total = $purchaseRequest->Data['Total'];
-                $purchase->subTotal = $purchaseRequest->Data['subTotal'];
-                $purchase->totalVat = $purchaseRequest->Data['totalVat'];
-                $purchase->grandTotal = $purchaseRequest->Data['grandTotal'];
-                $purchase->paidBalance = $purchaseRequest->Data['grandTotal'];
-                $purchase->remainingBalance = 0;
-                $purchase->Description = 'AutoPaid';
-                //$purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
-                $purchase->supplier_id = $purchaseRequest->Data['supplier_id'];
-                $purchase->supplierNote = $purchaseRequest->Data['supplierNote'];
-                $purchase->IsPaid = $isPaid;
-                $purchase->IsPartialPaid = $partialPaid;
-                $purchase->IsNeedStampOrSignature = false;
-                $purchase->user_id = $user_id;
-                $purchase->company_id = $company_id;
-                $purchase->save();
-                $purchase = $purchase->id;
-                //return Response()->json($purchase);
-                //$user = $sale->user_id;
-                // return $sale;
-                foreach($purchaseRequest->Data['orders'] as $detail)
-                {
-                    //return $detail['Quantity'];
-                    //return Response()->json($detail['Quantity']);
-                    $data =  PurchaseDetail::create([
-                        "product_id"        => $detail['product_id'],
-                        "unit_id"        => $detail['unit_id'],
-                        "Quantity"        => $detail['Quantity'],
-                        "Price"        => $detail['Price'],
-                        "rowTotal"        => $detail['rowTotal'],
-                        "VAT"        => $detail['Vat'],
-                        "rowVatAmount"        => $detail['rowVatAmount'],
-                        "rowSubTotal"        => $detail['rowSubTotal'],
-                        "PadNumber"        => $detail['PadNumber'],
-                        "Description"        => $detail['description'],
-                        "company_id" => $company_id,
-                        "user_id"      => $user_id,
-                        "purchase_id"      => $purchase,
-                        "createdDate" => $purchaseRequest->Data['PurchaseDate'],
-                    ]);
-                }
-            }
-            else
-            {
-                if ($purchaseRequest->Data['paidBalance'] == 0.00 || $purchaseRequest->Data['paidBalance'] == 0) {
-                    $isPaid = false;
-                    $partialPaid =false;
-                }
-                elseif($purchaseRequest->Data['paidBalance'] >= $purchaseRequest->Data['grandTotal'])
-                {
-                    $isPaid = true;
-                    $partialPaid =false;
+                        foreach($all_purchase as $purchase)
+                        {
+                            $total_you_need = $purchase->remainingBalance;
+                            $still_payable_to_you=0;
+                            $total_giving_to_you=0;
+                            $isPartialPaid = 0;
+                            if ($total_i_have >= $total_you_need)
+                            {
+                                $isPaid = 1;
+                                $isPartialPaid = 0;
+                                $total_i_have = $total_i_have - $total_you_need;
+
+                                $this_sale = Purchase::find($purchase->id);
+                                $this_sale->update([
+                                    "paidBalance"        => $purchase->grandTotal,
+                                    "remainingBalance"   => $still_payable_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                    "account_transaction_payment_id" => 'CashOverflow',
+                                ]);
+                            }
+                            else
+                            {
+                                $isPaid = 0;
+                                $isPartialPaid = 1;
+                                $total_giving_to_you=$total_i_have;
+                                $total_i_have = $total_i_have - $total_giving_to_you;
+
+                                $this_purchase = Purchase::find($purchase->id);
+                                $this_purchase->update([
+                                    "paidBalance"        => $purchase->paidBalance+$total_giving_to_you,
+                                    "remainingBalance"   => $purchase->remainingBalance-$total_giving_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                    "account_transaction_payment_id" => 'CashOverflow',
+                                ]);
+                            }
+
+                            if($total_i_have<=0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $isPaid_current = false;
+                        $partialPaid_current =true;
+                    }
+
+                    $purchase = new Purchase();
+                    $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber'];
+                    $purchase->referenceNumber = $purchaseRequest->Data['referenceNumber'];
+                    $purchase->PurchaseDate = $purchaseRequest->Data['PurchaseDate'];
+                    $purchase->DueDate =  $purchaseRequest->Data['DueDate'];
+                    $purchase->Total = $purchaseRequest->Data['Total'];
+                    $purchase->subTotal = $purchaseRequest->Data['subTotal'];
+                    $purchase->totalVat = $purchaseRequest->Data['totalVat'];
+                    $purchase->grandTotal = $purchaseRequest->Data['grandTotal'];
+
+                    if($purchaseRequest->Data['lastClosing']<0 && $purchaseRequest->Data['paidBalance']==0 || $purchaseRequest->Data['paidBalance']==0.00)
+                    {
+                        $purchase->paidBalance = ($purchaseRequest->Data['grandTotal']-$purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['remainingBalance']);
+                        $purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
+                        $isPaid_current = false;
+                        $partialPaid_current =true;
+                    }
+                    elseif($purchaseRequest->Data['lastClosing']<0)
+                    {
+                        $purchase->paidBalance = ($purchaseRequest->Data['grandTotal']-$purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['lastClosing']);
+                        $purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
+                    }
+                    else
+                    {
+                        $purchase->paidBalance = $purchaseRequest->Data['grandTotal'];
+                        $purchase->remainingBalance = 0;
+                    }
+                    $purchase->supplier_id = $purchaseRequest->Data['supplier_id'];
+                    $purchase->Description = 'AutoPaid';
+                    $purchase->supplierNote = $purchaseRequest->Data['supplierNote'];
+                    $purchase->IsPaid = $isPaid_current;
+                    $purchase->IsPartialPaid = $partialPaid_current;
+                    $purchase->IsNeedStampOrSignature = false;
+                    $purchase->user_id = $user_id;
+                    $purchase->company_id = $company_id;
+                    $purchase->save();
+                    $purchase = $purchase->id;
+
+                    foreach($purchaseRequest->Data['orders'] as $detail)
+                    {
+                        //return $detail['Quantity'];
+                        //return Response()->json($detail['Quantity']);
+                        $data =  PurchaseDetail::create([
+                            "product_id"        => $detail['product_id'],
+                            "unit_id"        => $detail['unit_id'],
+                            "Quantity"        => $detail['Quantity'],
+                            "Price"        => $detail['Price'],
+                            "rowTotal"        => $detail['rowTotal'],
+                            "VAT"        => $detail['Vat'],
+                            "rowVatAmount"        => $detail['rowVatAmount'],
+                            "rowSubTotal"        => $detail['rowSubTotal'],
+                            "PadNumber"        => $detail['PadNumber'],
+                            "Description"        => $detail['description'],
+                            "company_id" => $company_id,
+                            "user_id"      => $user_id,
+                            "purchase_id"      => $purchase,
+                            "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                        ]);
+                    }
                 }
                 else
                 {
-                    $isPaid = false;
-                    $partialPaid =true;
+                    $isPaid = true;
+                    $partialPaid =false;
+
+                    $purchase = new Purchase();
+                    $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber'];
+                    $purchase->referenceNumber = $purchaseRequest->Data['referenceNumber'];
+                    $purchase->PurchaseDate = $purchaseRequest->Data['PurchaseDate'];
+                    $purchase->DueDate =  $purchaseRequest->Data['DueDate'];
+                    $purchase->Total = $purchaseRequest->Data['Total'];
+                    $purchase->subTotal = $purchaseRequest->Data['subTotal'];
+                    $purchase->totalVat = $purchaseRequest->Data['totalVat'];
+                    $purchase->grandTotal = $purchaseRequest->Data['grandTotal'];
+                    $purchase->paidBalance = $purchaseRequest->Data['grandTotal'];
+                    $purchase->remainingBalance = 0;
+                    $purchase->Description = 'AutoPaid';
+                    //$purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
+                    $purchase->supplier_id = $purchaseRequest->Data['supplier_id'];
+                    $purchase->supplierNote = $purchaseRequest->Data['supplierNote'];
+                    $purchase->IsPaid = $isPaid;
+                    $purchase->IsPartialPaid = $partialPaid;
+                    $purchase->IsNeedStampOrSignature = false;
+                    $purchase->user_id = $user_id;
+                    $purchase->company_id = $company_id;
+                    $purchase->save();
+                    $purchase = $purchase->id;
+                    //return Response()->json($purchase);
+                    //$user = $sale->user_id;
+                    // return $sale;
+                    foreach($purchaseRequest->Data['orders'] as $detail)
+                    {
+                        //return $detail['Quantity'];
+                        //return Response()->json($detail['Quantity']);
+                        $data =  PurchaseDetail::create([
+                            "product_id"        => $detail['product_id'],
+                            "unit_id"        => $detail['unit_id'],
+                            "Quantity"        => $detail['Quantity'],
+                            "Price"        => $detail['Price'],
+                            "rowTotal"        => $detail['rowTotal'],
+                            "VAT"        => $detail['Vat'],
+                            "rowVatAmount"        => $detail['rowVatAmount'],
+                            "rowSubTotal"        => $detail['rowSubTotal'],
+                            "PadNumber"        => $detail['PadNumber'],
+                            "Description"        => $detail['description'],
+                            "company_id" => $company_id,
+                            "user_id"      => $user_id,
+                            "purchase_id"      => $purchase,
+                            "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                        ]);
+                    }
                 }
 
-                $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber'];
-                $purchase->referenceNumber = $purchaseRequest->Data['referenceNumber'];
-                $purchase->PurchaseDate = $purchaseRequest->Data['PurchaseDate'];
-                $purchase->DueDate =  $purchaseRequest->Data['DueDate'];
-                $purchase->Total = $purchaseRequest->Data['Total'];
-                $purchase->subTotal = $purchaseRequest->Data['subTotal'];
-                $purchase->totalVat = $purchaseRequest->Data['totalVat'];
-                $purchase->grandTotal = $purchaseRequest->Data['grandTotal'];
-                $purchase->paidBalance = $purchaseRequest->Data['paidBalance'];
-                $purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
-                $purchase->supplier_id = $purchaseRequest->Data['supplier_id'];
-                $purchase->supplierNote = $purchaseRequest->Data['supplierNote'];
-                $purchase->IsPaid = $isPaid;
-                $purchase->IsPartialPaid = $partialPaid;
-                $purchase->IsNeedStampOrSignature = false;
-                $purchase->user_id = $user_id;
-                $purchase->company_id = $company_id;
-                $purchase->save();
-                $purchase = $purchase->id;
-                //return Response()->json($purchase);
-                //$user = $sale->user_id;
-                // return $sale;
-                foreach($purchaseRequest->Data['orders'] as $detail)
+            }
+            else
+            {
+                if($purchaseRequest->Data['remainingBalance']>0 && $purchaseRequest->Data['lastClosing']<0)
                 {
-                    //return $detail['Quantity'];
-                    //return Response()->json($detail['Quantity']);
-                    $data =  PurchaseDetail::create([
-                        "product_id"        => $detail['product_id'],
-                        "unit_id"        => $detail['unit_id'],
-                        "Quantity"        => $detail['Quantity'],
-                        "Price"        => $detail['Price'],
-                        "rowTotal"        => $detail['rowTotal'],
-                        "VAT"        => $detail['Vat'],
-                        "rowVatAmount"        => $detail['rowVatAmount'],
-                        "rowSubTotal"        => $detail['rowSubTotal'],
-                        "PadNumber"        => $detail['PadNumber'],
-                        "Description"        => $detail['description'],
-                        "company_id" => $company_id,
-                        "user_id"      => $user_id,
-                        "purchase_id"      => $purchase,
-                        "createdDate" => $purchaseRequest->Data['PurchaseDate'],
-                    ]);
+                    if ($purchaseRequest->Data['paidBalance'] == 0.00 || $purchaseRequest->Data['paidBalance'] == 0) {
+                        $isPaid_current = false;
+                        $partialPaid_current =false;
+                    }
+                    elseif($purchaseRequest->Data['paidBalance'] >= $purchaseRequest->Data['grandTotal'])
+                    {
+                        $isPaid_current = 1;
+                        $partialPaid_current=0;
+                        // if the paidBalance = cashPaid is more than grand total we need to divide extra
+                        // amount to unpaid sales if its there any entry
+                        $all_purchase = Purchase::with('supplier','purchase_details')->where([
+                            'supplier_id'=>$purchaseRequest->Data['supplier_id'],
+                            'IsPaid'=> false,
+                        ])->orderBy('PurchaseDate')->get();
+                        //dd($all_purchase);
+                        $total_i_have=$purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['grandTotal'];
+
+                        foreach($all_purchase as $purchase)
+                        {
+                            $total_you_need = $purchase->remainingBalance;
+                            $still_payable_to_you=0;
+                            $total_giving_to_you=0;
+                            $isPartialPaid = 0;
+                            if ($total_i_have >= $total_you_need)
+                            {
+                                $isPaid = 1;
+                                $isPartialPaid = 0;
+                                $total_i_have = $total_i_have - $total_you_need;
+
+                                $this_sale = Purchase::find($purchase->id);
+                                $this_sale->update([
+                                    "paidBalance"        => $purchase->grandTotal,
+                                    "remainingBalance"   => $still_payable_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                    "account_transaction_payment_id" => 'CashOverflow',
+                                ]);
+                            }
+                            else
+                            {
+                                $isPaid = 0;
+                                $isPartialPaid = 1;
+                                $total_giving_to_you=$total_i_have;
+                                $total_i_have = $total_i_have - $total_giving_to_you;
+
+                                $this_purchase = Purchase::find($purchase->id);
+                                $this_purchase->update([
+                                    "paidBalance"        => $purchase->paidBalance+$total_giving_to_you,
+                                    "remainingBalance"   => $purchase->remainingBalance-$total_giving_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                    "account_transaction_payment_id" => 'CashOverflow',
+                                ]);
+                            }
+
+                            if($total_i_have<=0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $isPaid_current = false;
+                        $partialPaid_current =true;
+                    }
+                    $user_id = session('user_id');
+                    $company_id = session('company_id');
+
+                    $purchase = new Purchase();
+                    $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber'];
+                    $purchase->referenceNumber = $purchaseRequest->Data['referenceNumber'];
+                    $purchase->PurchaseDate = $purchaseRequest->Data['PurchaseDate'];
+                    $purchase->DueDate =  $purchaseRequest->Data['DueDate'];
+                    $purchase->Total = $purchaseRequest->Data['Total'];
+                    $purchase->subTotal = $purchaseRequest->Data['subTotal'];
+                    $purchase->totalVat = $purchaseRequest->Data['totalVat'];
+                    $purchase->grandTotal = $purchaseRequest->Data['grandTotal'];
+
+                    if($purchaseRequest->Data['lastClosing']<0 && $purchaseRequest->Data['paidBalance']==0 || $purchaseRequest->Data['paidBalance']==0.00)
+                    {
+                        $purchase->paidBalance = ($purchaseRequest->Data['grandTotal']-$purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['remainingBalance']);
+                        $purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
+                        $isPaid_current = false;
+                        $partialPaid_current =true;
+                    }
+                    elseif($purchaseRequest->Data['lastClosing']<0 && $purchaseRequest->Data['paidBalance'] <= $purchaseRequest->Data['grandTotal'])
+                    {
+                        $purchase->paidBalance = $purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['lastClosing'];
+                        $purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
+                    }
+                    else
+                    {
+                        $purchase->paidBalance = $purchaseRequest->Data['grandTotal'];
+                        $purchase->remainingBalance = 0;
+                    }
+                    $purchase->supplier_id = $purchaseRequest->Data['supplier_id'];
+                    $purchase->Description = 'AutoPaid';
+                    $purchase->supplierNote = $purchaseRequest->Data['supplierNote'];
+                    $purchase->IsPaid = $isPaid_current;
+                    $purchase->IsPartialPaid = $partialPaid_current;
+                    $purchase->IsNeedStampOrSignature = false;
+                    $purchase->user_id = $user_id;
+                    $purchase->company_id = $company_id;
+                    $purchase->save();
+                    $purchase = $purchase->id;
+
+                    foreach($purchaseRequest->Data['orders'] as $detail)
+                    {
+                        //return $detail['Quantity'];
+                        //return Response()->json($detail['Quantity']);
+                        $data =  PurchaseDetail::create([
+                            "product_id"        => $detail['product_id'],
+                            "unit_id"        => $detail['unit_id'],
+                            "Quantity"        => $detail['Quantity'],
+                            "Price"        => $detail['Price'],
+                            "rowTotal"        => $detail['rowTotal'],
+                            "VAT"        => $detail['Vat'],
+                            "rowVatAmount"        => $detail['rowVatAmount'],
+                            "rowSubTotal"        => $detail['rowSubTotal'],
+                            "PadNumber"        => $detail['PadNumber'],
+                            "Description"        => $detail['description'],
+                            "company_id" => $company_id,
+                            "user_id"      => $user_id,
+                            "purchase_id"      => $purchase,
+                            "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                        ]);
+                    }
+                }
+                else
+                {
+                    if ($purchaseRequest->Data['paidBalance'] == 0.00 || $purchaseRequest->Data['paidBalance'] == 0) {
+                        $isPaid_current = false;
+                        $partialPaid_current =false;
+                    }
+                    elseif($purchaseRequest->Data['paidBalance'] >= $purchaseRequest->Data['grandTotal'])
+                    {
+                        $isPaid_current = 1;
+                        $partialPaid_current=0;
+                        // if the paidBalance = cashPaid is more than grand total we need to divide extra
+                        // amount to unpaid sales if its there any entry
+                        $all_purchase = Purchase::with('supplier','purchase_details')->where([
+                            'supplier_id'=>$purchaseRequest->Data['supplier_id'],
+                            'IsPaid'=> false,
+                        ])->orderBy('PurchaseDate')->get();
+                        //dd($all_purchase);
+                        $total_i_have=$purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['grandTotal'];
+
+                        foreach($all_purchase as $purchase)
+                        {
+                            $total_you_need = $purchase->remainingBalance;
+                            $still_payable_to_you=0;
+                            $total_giving_to_you=0;
+                            $isPartialPaid = 0;
+                            if ($total_i_have >= $total_you_need)
+                            {
+                                $isPaid = 1;
+                                $isPartialPaid = 0;
+                                $total_i_have = $total_i_have - $total_you_need;
+
+                                $this_sale = Purchase::find($purchase->id);
+                                $this_sale->update([
+                                    "paidBalance"        => $purchase->grandTotal,
+                                    "remainingBalance"   => $still_payable_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                    "account_transaction_payment_id" => 'CashOverflow',
+                                ]);
+                            }
+                            else
+                            {
+                                $isPaid = 0;
+                                $isPartialPaid = 1;
+                                $total_giving_to_you=$total_i_have;
+                                $total_i_have = $total_i_have - $total_giving_to_you;
+
+                                $this_purchase = Purchase::find($purchase->id);
+                                $this_purchase->update([
+                                    "paidBalance"        => $purchase->paidBalance+$total_giving_to_you,
+                                    "remainingBalance"   => $purchase->remainingBalance-$total_giving_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                    "account_transaction_payment_id" => 'CashOverflow',
+                                ]);
+                            }
+
+                            if($total_i_have<=0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        $isPaid_current = false;
+                        $partialPaid_current =true;
+                    }
+
+                    $user_id = session('user_id');
+                    $company_id = session('company_id');
+
+                    $purchase = new Purchase();
+                    $purchase->PurchaseNumber = $purchaseRequest->Data['PurchaseNumber'];
+                    $purchase->referenceNumber = $purchaseRequest->Data['referenceNumber'];
+                    $purchase->PurchaseDate = $purchaseRequest->Data['PurchaseDate'];
+                    $purchase->DueDate =  $purchaseRequest->Data['DueDate'];
+                    $purchase->Total = $purchaseRequest->Data['Total'];
+                    $purchase->subTotal = $purchaseRequest->Data['subTotal'];
+                    $purchase->totalVat = $purchaseRequest->Data['totalVat'];
+                    $purchase->grandTotal = $purchaseRequest->Data['grandTotal'];
+
+                    if($purchaseRequest->Data['lastClosing']<0 )
+                    {
+                        $purchase->paidBalance = ($purchaseRequest->Data['grandTotal']-$purchaseRequest->Data['paidBalance']-$purchaseRequest->Data['lastClosing']);
+                        $purchase->remainingBalance = $purchaseRequest->Data['remainingBalance'];
+                    }
+                    else
+                    {
+                        $purchase->paidBalance = $purchaseRequest->Data['paidBalance'];
+                        $purchase->remainingBalance = $purchaseRequest->Data['grandTotal']-$purchaseRequest->Data['paidBalance'];
+                    }
+                    $purchase->supplier_id = $purchaseRequest->Data['supplier_id'];
+                    $purchase->Description = 'AutoPaid';
+                    $purchase->supplierNote = $purchaseRequest->Data['supplierNote'];
+                    $purchase->IsPaid = $isPaid_current;
+                    $purchase->IsPartialPaid = $partialPaid_current;
+                    $purchase->IsNeedStampOrSignature = false;
+                    $purchase->user_id = $user_id;
+                    $purchase->company_id = $company_id;
+                    $purchase->save();
+                    $purchase = $purchase->id;
+
+                    foreach($purchaseRequest->Data['orders'] as $detail)
+                    {
+                        //return $detail['Quantity'];
+                        //return Response()->json($detail['Quantity']);
+                        $data =  PurchaseDetail::create([
+                            "product_id"        => $detail['product_id'],
+                            "unit_id"        => $detail['unit_id'],
+                            "Quantity"        => $detail['Quantity'],
+                            "Price"        => $detail['Price'],
+                            "rowTotal"        => $detail['rowTotal'],
+                            "VAT"        => $detail['Vat'],
+                            "rowVatAmount"        => $detail['rowVatAmount'],
+                            "rowSubTotal"        => $detail['rowSubTotal'],
+                            "PadNumber"        => $detail['PadNumber'],
+                            "Description"        => $detail['description'],
+                            "company_id" => $company_id,
+                            "user_id"      => $user_id,
+                            "purchase_id"      => $purchase,
+                            "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                        ]);
+                    }
                 }
             }
 

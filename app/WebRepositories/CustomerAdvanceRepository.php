@@ -280,28 +280,17 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                     $total_you_need = $sale->remainingBalance;
                     $still_payable_to_you=0;
                     $total_giving_to_you=0;
-                    $isPartialPaid = false;
+                    $isPartialPaid = 0;
                     if ($total_i_have >= $total_you_need)
                     {
-                        $isPaid = true;
-                        $isPartialPaid = false;
-                        $total_i_have -= $total_you_need;
-                        $total_giving_to_you=$total_you_need;
-                    }
-                    elseif($total_i_have <= $total_you_need){
-                        $isPaid = false;
-                        $isPartialPaid = true;
-                        $total_giving_to_you=$total_i_have;
-                        $still_payable_to_you=$total_you_need-$total_i_have;
-                        $total_i_have -= $total_giving_to_you;
-                    }
+                        $isPaid = 1;
+                        $isPartialPaid = 0;
+                        $total_i_have = $total_i_have - $total_you_need;
 
-                    if($isPartialPaid==true)
-                    {
                         $this_sale = Sale::find($sale->id);
                         $this_sale->update([
-                            "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
-                            "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
+                            "paidBalance"        => $sale->grandTotal,
+                            "remainingBalance"   => $still_payable_to_you,
                             "IsPaid" => $isPaid,
                             "IsPartialPaid" => $isPartialPaid,
                             "IsNeedStampOrSignature" => false,
@@ -311,10 +300,15 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                     }
                     else
                     {
+                        $isPaid = 0;
+                        $isPartialPaid = 1;
+                        $total_giving_to_you=$total_i_have;
+                        $total_i_have = $total_i_have - $total_giving_to_you;
+
                         $this_sale = Sale::find($sale->id);
                         $this_sale->update([
-                            "paidBalance"        => $sale->grandTotal,
-                            "remainingBalance"   => $still_payable_to_you,
+                            "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
+                            "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
                             "IsPaid" => $isPaid,
                             "IsPartialPaid" => $isPartialPaid,
                             "IsNeedStampOrSignature" => false,
