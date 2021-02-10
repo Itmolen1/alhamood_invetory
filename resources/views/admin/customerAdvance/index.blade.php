@@ -3,20 +3,10 @@
 
 @section('content')
 
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <!-- <h4 class="text-themecolor">diensten</h4> -->
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -28,12 +18,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
+
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -45,6 +30,7 @@
                                 <table id="customer_advances_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>SR#</th>
                                         <th>Customer Name</th>
                                         <th>Amount</th>
                                         <th>Payment Type</th>
@@ -93,22 +79,10 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End PAge Content -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
 
     <div id="confirmModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -129,7 +103,6 @@
     </div>
 
     <script>
-
         $(document).ready(function () {
             $('#customer_advances_table').dataTable({
                 processing: true,
@@ -138,6 +111,11 @@
                     url: "{{ route('customer_advances.index') }}",
                 },
                 columns:[
+                    {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
                     {
                         data: 'customer',
                         name: 'customer'
@@ -168,7 +146,8 @@
                     //     name: 'action',
                     //     orderable: false
                     // },
-                ]
+                ],
+                order: [[ 0, "desc" ]]
             });
         });
     </script>
@@ -181,7 +160,4 @@
             }
         }
     </script>
-
-
-
 @endsection

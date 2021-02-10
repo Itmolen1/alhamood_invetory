@@ -38,6 +38,7 @@ route::resource('drivers','DriverController');
 route::resource('users','UserController');
 route::resource('roles','RoleController');
 route::resource('banks','BankController');
+route::resource('deposits','DepositController');
 route::get('getBankAccountDetail/{id}','BankController@getBankAccountDetail');
 route::resource('countries','CountryController');
 route::resource('states','StateController');

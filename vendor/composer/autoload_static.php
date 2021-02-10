@@ -856,6 +856,7 @@ class ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e
         'App\\Models\\Customer' => __DIR__ . '/../..' . '/app/Models/Customer.php',
         'App\\Models\\CustomerAdvance' => __DIR__ . '/../..' . '/app/Models/CustomerAdvance.php',
         'App\\Models\\CustomerPrice' => __DIR__ . '/../..' . '/app/Models/CustomerPrice.php',
+        'App\\Models\\Deposit' => __DIR__ . '/../..' . '/app/Models/Deposit.php',
         'App\\Models\\Driver' => __DIR__ . '/../..' . '/app/Models/Driver.php',
         'App\\Models\\Employee' => __DIR__ . '/../..' . '/app/Models/Employee.php',
         'App\\Models\\Expense' => __DIR__ . '/../..' . '/app/Models/Expense.php',

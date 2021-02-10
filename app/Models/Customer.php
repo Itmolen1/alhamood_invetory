@@ -11,11 +11,9 @@ class Customer extends Model
     use HasFactory;
     use SoftDeletes;
 
-
     protected $guarded=[];
     protected $primaryKey = 'id';
     protected $table = 'customers';
-
 
     public function user()
     {

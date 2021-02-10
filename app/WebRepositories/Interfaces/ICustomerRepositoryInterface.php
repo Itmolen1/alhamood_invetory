@@ -24,7 +24,7 @@ interface ICustomerRepositoryInterface
 
     public function delete(Request $request, $Id);
 
-    public function  restore($Id);
+    public function restore($Id);
 
     public function trashed();
 

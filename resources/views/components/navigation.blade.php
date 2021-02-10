@@ -129,6 +129,9 @@
                     <li class="border-bottom">
                         <a href="{{ route('payment_receives.index') }}">Customer Receive</a>
                     </li>
+                    <li class="border-bottom">
+                        <a href="{{ route('deposits.index') }}">Deposits</a>
+                    </li>
                   <!--  <li class="border-bottom">
                         <a href="#">Cash Adjustment</a>
                     </li>

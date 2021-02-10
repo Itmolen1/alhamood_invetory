@@ -10,6 +10,7 @@ use App\WebRepositories\CountryRepository;
 use App\WebRepositories\CustomerAdvanceRepository;
 use App\WebRepositories\CustomerPricesRepository;
 use App\WebRepositories\CustomerRepository;
+use App\WebRepositories\DepositRepository;
 use App\WebRepositories\DriverRepository;
 use App\WebRepositories\EmployeeRepository;
 use App\WebRepositories\ExpenseCategoryRepository;
@@ -25,6 +26,7 @@ use App\WebRepositories\Interfaces\ICountryRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerPricesRepositoryInterface;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
+use App\WebRepositories\Interfaces\IDepositRepositoryInterface;
 use App\WebRepositories\Interfaces\IDriverRepositoryInterface;
 use App\WebRepositories\Interfaces\IEmployeeRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseCategoryRepositoryInterface;
@@ -84,11 +86,6 @@ use Illuminate\Support\ServiceProvider;
 
 class WebRepositoryServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     */
     public function register()
     {
         $this->app->bind(IUserRepositoryInterface::class,UserRepository::class);
@@ -128,13 +125,9 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ISupplierPaymentRepositoryInterface::class, SupplierPaymentRepository::class);
         $this->app->bind(ISupplierPaymentRepositoryDetailInterface::class, SupplierPaymentDetailRepository::class);
         $this->app->bind(IReportRepositoryInterface::class,ReportRepository::class);
+        $this->app->bind(IDepositRepositoryInterface::class,DepositRepository::class);
     }
 
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
     public function boot()
     {
         //

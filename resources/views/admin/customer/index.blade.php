@@ -14,10 +14,10 @@
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
                             <li class="breadcrumb-item active">customer</li>
                         </ol>
-{{--                        <a href="{{ route('customers.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New customer</button></a>--}}
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -42,32 +42,6 @@
                                     </tr>
                                     </thead>
 
-                                   {{--  <tbody>
-                                    @foreach($customers as $customer)
-                                        <tr>
-                                            <td>{{ $customer->Name }}</td>
-                                            <td>{{ $customer->Mobile }}</td>
-                                            <td>{{ $customer->paymentType }}</td>
-                                            <td>{{ $customer->Address }}</td>
-                                            <td>
-                                                @if($customer->isActive == true)
-                                                    Active
-                                                    @else
-                                                    UnActive
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <form action="{{ route('customers.destroy',$customer->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <a href="{{ route('customers.edit', $customer->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
-                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-
-                                    </tbody> --}}
                                 </table>
                             </div>
                         </div>

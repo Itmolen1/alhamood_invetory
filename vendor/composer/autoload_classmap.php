@@ -272,6 +272,7 @@ return array(
     'App\\Models\\Customer' => $baseDir . '/app/Models/Customer.php',
     'App\\Models\\CustomerAdvance' => $baseDir . '/app/Models/CustomerAdvance.php',
     'App\\Models\\CustomerPrice' => $baseDir . '/app/Models/CustomerPrice.php',
+    'App\\Models\\Deposit' => $baseDir . '/app/Models/Deposit.php',
     'App\\Models\\Driver' => $baseDir . '/app/Models/Driver.php',
     'App\\Models\\Employee' => $baseDir . '/app/Models/Employee.php',
     'App\\Models\\Expense' => $baseDir . '/app/Models/Expense.php',

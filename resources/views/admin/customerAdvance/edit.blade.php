@@ -3,21 +3,8 @@
 
 @section('content')
 
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Customer Advances Modification</h4>
@@ -32,13 +19,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -169,41 +150,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Row -->
-
-            <!-- ============================================================== -->
-            <!-- End PAge Content -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script>
         $(document).ready(function () {
-            // $('#paymentTermAll').hide();
-            //
-            // $("#customRadio1 input:radio").click(function() {
-            //
-            //     alert("clicked");
-            //
-            // });
-
-            //
-            // $('.c1').click(function () {
-            //     $('#paymentTermAll').show();
-            // });
-            // $('.c2').click(function () {
-            //     $('#paymentTermAll').hide();
-            // });
 
             var val = $('#paymentType').val();
             if (val !== 'cash'){
@@ -228,6 +179,33 @@
             {
                 $('.bankTransfer').hide();
             }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#bank_id').change(function () {
+                var Id = 0;
+                Id = $(this).val();
+                if (Id > 0)
+                {
+                    $.ajax({
+                        url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                $("#accountNumber").val('');
+                                $("#accountNumber").val(result);
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
         });
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
