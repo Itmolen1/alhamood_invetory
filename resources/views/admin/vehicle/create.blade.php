@@ -49,7 +49,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration Number :- <span class="required">*</span></label>
-                                                <input type="text" id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number" required maxlength="6">
+                                                <input type="text" id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number" required maxlength="15">
                                                 @if ($errors->has('registrationNumber'))
                                                     <span class="text-danger">{{ $errors->first('registrationNumber') }}</span>
                                                 @endif

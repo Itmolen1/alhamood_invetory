@@ -718,7 +718,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                 'createdDate' => date('Y-m-d'),
                                 'user_id' => $user_id,
                                 'company_id' => $company_id,
-                                'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                'Description'=>'Sales|'.$Id,
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         if($difference<0)
@@ -809,7 +809,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                 'createdDate' => date('Y-m-d'),
                                 'user_id' => $user_id,
                                 'company_id' => $company_id,
-                                'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                'Description'=>'Sales|'.$Id,
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         $accountTransaction_ref=$AccountTransactions->id;
@@ -916,7 +916,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                 "IsPaid" => 1,
                                 "IsPartialPaid" => 0,
                                 "IsNeedStampOrSignature" => false,
-                                "Description" => 'AutoPaid_123',
+                                "Description" => 'AutoPaid',
                             ]);
                         }
                         elseif($difference>0)
@@ -931,7 +931,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     "IsPaid" => 0,
                                     "IsPartialPaid" => 0,
                                     "IsNeedStampOrSignature" => false,
-                                    "Description" => 'AutoPaid_456',
+                                    "Description" => 'AutoPaid',
                                 ]);
                             }
                             else
@@ -944,7 +944,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     "IsPaid" => 0,
                                     "IsPartialPaid" => 0,
                                     "IsNeedStampOrSignature" => false,
-                                    "Description" => 'AutoPaid_789',
+                                    "Description" => 'AutoPaid',
                                 ]);
                             }
                         }
@@ -997,7 +997,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                 'createdDate' => date('Y-m-d'),
                                 'user_id' => $user_id,
                                 'company_id' => $company_id,
-                                'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                'Description'=>'Sales|'.$Id,
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         if($difference<0)
@@ -1087,7 +1087,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                 'createdDate' => date('Y-m-d'),
                                 'user_id' => $user_id,
                                 'company_id' => $company_id,
-                                'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                'Description'=>'Sales|'.$Id,
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         $accountTransaction_ref=$AccountTransactions->id;
@@ -1180,7 +1180,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                 'createdDate' => date('Y-m-d'),
                                 'user_id' => $user_id,
                                 'company_id' => $company_id,
-                                'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                'Description'=>'Sales|'.$Id,
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         if($difference<0)
@@ -1277,7 +1277,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     'createdDate' => date('Y-m-d'),
                                     'user_id' => $user_id,
                                     'company_id' => $company_id,
-                                    'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                    'Description'=>'Sales|'.$Id,
                                 ];
                             $AccountTransactions = AccountTransaction::Create($AccData);
                             if($difference<0)
@@ -1474,7 +1474,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     "IsPaid" => 1,
                                     "IsPartialPaid" => 0,
                                     "IsNeedStampOrSignature" => false,
-                                    "Description" => 'AutoPaid123',
+                                    "Description" => 'AutoPaid',
                                 ]);
                             }
                             elseif($difference>0)
@@ -1489,7 +1489,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         "IsPaid" => 0,
                                         "IsPartialPaid" => 0,
                                         "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid456',
+                                        "Description" => 'AutoPaid',
                                     ]);
                                 }
                                 else
@@ -1502,7 +1502,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         "IsPaid" => 0,
                                         "IsPartialPaid" => 1,
                                         "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid789',
+                                        "Description" => 'AutoPaid',
                                     ]);
                                 }
                             }
@@ -2068,7 +2068,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
                                         'company_id' => $company_id,
-                                        'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                        'Description'=>'Sales|'.$Id,
                                     ];
                                 $AccountTransactions = AccountTransaction::Create($AccData);
                             }
@@ -2089,7 +2089,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
                                         'company_id' => $company_id,
-                                        'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                        'Description'=>'Sales|'.$Id,
                                     ];
                                 $AccountTransactions = AccountTransaction::Create($AccData);
 
@@ -2104,7 +2104,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
                                         'company_id' => $company_id,
-                                        'Description'=>'PartialCashSales|'.$request->Data['orders'][0]['PadNumber'],
+                                        'Description'=>'PartialCashSales|'.$Id,
                                     ];
                                 $AccountTransactions = AccountTransaction::Create($AccData);
                             }
@@ -2123,7 +2123,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     'createdDate' => date('Y-m-d'),
                                     'user_id' => $user_id,
                                     'company_id' => $company_id,
-                                    'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                    'Description'=>'Sales|'.$Id,
                                 ]);
 
                                 //make debit entry for the whatever cash is paid
@@ -2136,7 +2136,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     'createdDate' => date('Y-m-d'),
                                     'user_id' => $user_id,
                                     'company_id' => $company_id,
-                                    'Description'=>'FullCashSales|'.$request->Data['orders'][0]['PadNumber'],
+                                    'Description'=>'FullCashSales|'.$Id,
                                 ]);
                             }
                             /*new entry*/
@@ -2305,7 +2305,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
                                         'company_id' => $company_id,
-                                        'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                        'Description'=>'Sales|'.$Id,
                                     ];
                                 $AccountTransactions = AccountTransaction::Create($AccData);
                             }
@@ -2326,7 +2326,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
                                         'company_id' => $company_id,
-                                        'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                        'Description'=>'Sales|'.$Id,
                                     ];
                                 $AccountTransactions = AccountTransaction::Create($AccData);
 
@@ -2341,7 +2341,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         'createdDate' => date('Y-m-d'),
                                         'user_id' => $user_id,
                                         'company_id' => $company_id,
-                                        'Description'=>'PartialCashSales|'.$request->Data['orders'][0]['PadNumber'],
+                                        'Description'=>'PartialCashSales|'.$Id,
                                     ];
                                 $AccountTransactions = AccountTransaction::Create($AccData);
                             }
@@ -2360,7 +2360,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     'createdDate' => date('Y-m-d'),
                                     'user_id' => $user_id,
                                     'company_id' => $company_id,
-                                    'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                    'Description'=>'Sales|'.$Id,
                                 ]);
 
                                 //make debit entry for the whatever cash is paid
@@ -2373,7 +2373,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     'createdDate' => date('Y-m-d'),
                                     'user_id' => $user_id,
                                     'company_id' => $company_id,
-                                    'Description'=>'FullCashSales|'.$request->Data['orders'][0]['PadNumber'],
+                                    'Description'=>'FullCashSales|'.$Id,
                                 ]);
                             }
                             /*new entry*/
@@ -2581,7 +2581,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                             'totalVat' => $request->Data['totalVat'],
                             'grandTotal' => $request->Data['grandTotal'],
                             'paidBalance' => $request->Data['paidBalance'],
-                            'remainingBalance' => $request->Data['remainingBalance'],
+                            'remainingBalance' => $request->Data['grandTotal'],
                             'customer_id' => $request->Data['customer_id'],
                             'Description' => $request->Data['Description'],
                             'IsPaid' => $isPaid,

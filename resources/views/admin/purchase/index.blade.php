@@ -40,10 +40,10 @@
                                     <thead>
                                     <tr>
                                         <th style="width: 100px">Created Date</th>
+                                        <th style="width: 150px">LPO</th>
                                         <th style="width: 100px">Pad Number</th>
                                         <th style="width: 100px">Supplier Name</th>
                                         <th style="width: 150px">Due date</th>
-                                        <th style="width: 150px">Product</th>
                                         <th style="width: 150px">Quantity</th>
                                         <th style="width: 150px">Amount</th>
                                         <th>Vat</th>
@@ -111,6 +111,10 @@
                         name: 'createdDate'
                     },
                     {
+                        data: 'referenceNumber',
+                        name: 'referenceNumber'
+                    },
+                    {
                         data: 'PadNumber',
                         name: 'PadNumber'
                     },
@@ -121,10 +125,6 @@
                     {
                         data: 'DueDate',
                         name: 'DueDate'
-                    },
-                    {
-                        data: 'Product',
-                        name: 'Product'
                     },
                     {
                         data: 'Quantity',
