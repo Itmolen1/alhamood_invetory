@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Vehicle;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
 use Illuminate\Http\Request;
+use function PHPUnit\Framework\isEmpty;
 
 class VehicleRepository implements IVehicleRepositoryInterface
 {
@@ -99,6 +100,22 @@ class VehicleRepository implements IVehicleRepositoryInterface
         $data = Vehicle::findOrFail($Id);
         $data->delete();
         return redirect()->route('vehicles.index');
+    }
+
+    public function CheckVehicleExist($request)
+    {
+        $data = Vehicle::where('registrationNumber','=',$request->registrationNumber)->where('customer_id','=',$request->customer_id)->get();
+        //echo "<pre>";print_r($data);die;
+        if($data->first())
+        {
+            $result=array('result'=>true);
+            return Response()->json(true);
+        }
+        else
+        {
+            $result=array('result'=>false);
+            return Response()->json(false);
+        }
     }
 
     public function restore($Id)

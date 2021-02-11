@@ -144,7 +144,7 @@
                                             <div class="form-group">
                                                 <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $sale_details[0]->sale->Description ?? '' }}</textarea>
                                                 <input type="file">
-                                                <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
+                                                <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> View Previous Updates</button>
                                             </div>
                                         </div>
 

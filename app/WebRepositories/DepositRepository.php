@@ -6,13 +6,14 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\DepositRequest;
 use App\Models\Bank;
+use App\Models\BankTransaction;
+use App\Models\CashTransaction;
 use App\Models\Deposit;
 use App\WebRepositories\Interfaces\IDepositRepositoryInterface;
 use Illuminate\Http\Request;
 
 class DepositRepository implements IDepositRepositoryInterface
 {
-
     public function index()
     {
         if(request()->ajax())
@@ -62,22 +63,42 @@ class DepositRepository implements IDepositRepositoryInterface
             'company_id' =>$company_id,
         ];
         $deposit = Deposit::create($deposit);
+        $deposit = $deposit->id;
 
         // start accounting //
-//        if ($deposit)
-//        {
-//            $account = new AccountTransaction([
-//                'customer_id' => $customer->id,
-//                'user_id' => $user_id,
-//                'createdDate' => date('Y-m-d'),
-//                'company_id' =>$company_id,
-//                'Description' =>'initial',
-//                'Credit' =>0.00,
-//                'Debit' =>0.00,
-//                'Differentiate' =>$customerRequest->openingBalance,
-//            ]);
-//        }
-//        $customer->account_transaction()->save($account);
+        if ($deposit)
+        {
+            // credit cash account and debit bank account
+            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+            $difference = $cashTransaction->last()->Differentiate;
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$deposit;
+            $cash_transaction->createdDate=$depositRequest->depositDate;
+            $cash_transaction->Type='deposits';
+            $cash_transaction->Details='Deposit|'.$deposit;
+            $cash_transaction->Credit=$depositRequest->Amount;
+            $cash_transaction->Debit=0.00;
+            $cash_transaction->Differentiate=$difference-$depositRequest->Amount;
+            $cash_transaction->user_id = $user_id;
+            $cash_transaction->company_id = $company_id;
+            $cash_transaction->save();
+
+            $bankTransaction = BankTransaction::where(['bank_id'=> $depositRequest->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$deposit;
+            $bank_transaction->createdDate=$depositRequest->depositDate ?? date('Y-m-d h:i:s');
+            $bank_transaction->Type='deposits';
+            $bank_transaction->Details='Deposit|'.$deposit;
+            $bank_transaction->Credit=0.00;
+            $bank_transaction->Debit=$depositRequest->Amount;
+            $bank_transaction->Differentiate=$difference+$depositRequest->Amount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $depositRequest->bank_id;
+            $bank_transaction->updateDescription = strip_tags($depositRequest->Reference);
+            $bank_transaction->save();
+        }
         // end accounting //
 
         return redirect()->route('deposits.index');
@@ -85,19 +106,90 @@ class DepositRepository implements IDepositRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        $deposit = Deposit::find($Id);
+        $deposited = Deposit::find($Id);
 
         $user_id = session('user_id');
-        $deposit->update([
+        $company_id = session('company_id');
+
+        // start reverse accounting //
+        if($deposited)
+        {
+            // credit bank account and debit cash account
+            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+            $difference = $cashTransaction->last()->Differentiate;
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=$deposited->id;
+            $cash_transaction->createdDate=$deposited->depositDate;
+            $cash_transaction->Type='deposits';
+            $cash_transaction->Details='DepositReverse|'.$deposited->id;
+            $cash_transaction->Credit=0.00;
+            $cash_transaction->Debit=$deposited->Amount;
+            $cash_transaction->Differentiate=$difference+$deposited->Amount;
+            $cash_transaction->user_id = $user_id;
+            $cash_transaction->company_id = $company_id;
+            $cash_transaction->save();
+
+            $bankTransaction = BankTransaction::where(['bank_id'=> $deposited->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=$deposited->id;
+            $bank_transaction->createdDate=$deposited->depositDate ?? date('Y-m-d h:i:s');
+            $bank_transaction->Type='deposits';
+            $bank_transaction->Details='DepositReverse|'.$deposited->id;
+            $bank_transaction->Credit=$deposited->Amount;
+            $bank_transaction->Debit=0.00;
+            $bank_transaction->Differentiate=$difference-$deposited->Amount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $deposited->bank_id;
+            $bank_transaction->updateDescription = strip_tags($deposited->Reference);
+            $bank_transaction->save();
+        }
+        // end reverse accounting //
+
+        // start accounting //
+        if($deposited)
+        {
+            // credit cash account and debit bank account
+            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+            $difference = $cashTransaction->last()->Differentiate;
+            $cash_transaction = new CashTransaction();
+            $cash_transaction->Reference=strip_tags($request->Reference);
+            $cash_transaction->createdDate=$request->depositDate;
+            $cash_transaction->Type='deposits';
+            $cash_transaction->Details='Deposit|'.$deposited->id;
+            $cash_transaction->Credit=$request->Amount;
+            $cash_transaction->Debit=0.00;
+            $cash_transaction->Differentiate=$difference-$request->Amount;
+            $cash_transaction->user_id = $user_id;
+            $cash_transaction->company_id = $company_id;
+            $cash_transaction->save();
+
+            $bankTransaction = BankTransaction::where(['bank_id'=> $request->bank_id])->get();
+            $difference = $bankTransaction->last()->Differentiate;
+            $bank_transaction = new BankTransaction();
+            $bank_transaction->Reference=strip_tags($request->Reference);
+            $bank_transaction->createdDate=$request->depositDate ?? date('Y-m-d h:i:s');
+            $bank_transaction->Type='deposits';
+            $bank_transaction->Details='Deposit|'.$deposited->id;
+            $bank_transaction->Credit=0.00;
+            $bank_transaction->Debit=$request->Amount;
+            $bank_transaction->Differentiate=$difference+$request->Amount;
+            $bank_transaction->user_id = $user_id;
+            $bank_transaction->company_id = $company_id;
+            $bank_transaction->bank_id = $request->bank_id;
+            $bank_transaction->updateDescription = strip_tags($request->Reference);
+            $bank_transaction->save();
+        }
+        // end accounting //
+
+        $deposited->update([
             'Amount' =>$request->Amount,
             'bank_id' =>$request->bank_id,
             'Reference' =>strip_tags($request->Reference),
             'depositDate' =>$request->depositDate,
             'user_id' =>$user_id,
         ]);
-
-        // start accounting //
-        // end accounting //
         return redirect()->route('deposits.index');
     }
 

@@ -34,6 +34,7 @@ route::PUT('customer_advances_push/{Id}','CustomerAdvanceController@customer_adv
 route::resource('supplier_advances','SupplierAdvanceController');
 route::PUT('supplier_advances_push/{Id}','SupplierAdvanceController@supplier_advances_push');
 route::resource('vehicles','VehicleController');
+route::POST('/CheckVehicleExist','VehicleController@CheckVehicleExist');
 route::resource('drivers','DriverController');
 route::resource('users','UserController');
 route::resource('roles','RoleController');

@@ -49,7 +49,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration Number :- <span class="required">*</span></label>
-                                                <input type="text" id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number" required maxlength="15">
+                                                <input type="text"  id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number" required maxlength="15">
+                                                <span class="text-danger" id="already_exist">Already Exists</span>
                                                 @if ($errors->has('registrationNumber'))
                                                     <span class="text-danger">{{ $errors->first('registrationNumber') }}</span>
                                                 @endif
@@ -79,4 +80,45 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#already_exist').hide();
+            {{--$('#registrationNumber').keyup(function () {--}}
+            {{--    var customer_id = 0;--}}
+            {{--    var registrationNumber=0;--}}
+            {{--    customer_id = $('#customer_id').val();--}}
+            {{--    registrationNumber = $('#registrationNumber').val();--}}
+            {{--    if (customer_id > 0)--}}
+            {{--    {--}}
+            {{--        var data={customer_id:customer_id,registrationNumber:registrationNumber};--}}
+            {{--        $.ajaxSetup({--}}
+            {{--            headers: {--}}
+            {{--                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
+            {{--            }--}}
+            {{--        });--}}
+            {{--        $.ajax({--}}
+            {{--            url: "{{ URL('CheckVehicleExist') }}/",--}}
+            {{--            type: "post",--}}
+            {{--            data: data,--}}
+            {{--            dataType: "json",--}}
+            {{--            success: function (result) {--}}
+            {{--                if (result === true)--}}
+            {{--                {--}}
+            {{--                    $('#already_exist').show();--}}
+            {{--                }--}}
+            {{--                else--}}
+            {{--                {--}}
+            {{--                    $('#already_exist').hide();--}}
+            {{--                }--}}
+            {{--            },--}}
+            {{--            error: function (errormessage) {--}}
+            {{--                alert(errormessage);--}}
+            {{--            }--}}
+            {{--        });--}}
+            {{--    }--}}
+            {{--});--}}
+
+        });
+    </script>
 @endsection
