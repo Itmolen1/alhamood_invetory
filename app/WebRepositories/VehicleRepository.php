@@ -5,11 +5,12 @@ namespace App\WebRepositories;
 
 
 use App\Http\Requests\VehicleRequest;
+use App\Http\Resources\Vehicle\VehicleResource;
 use App\Models\Customer;
 use App\Models\Vehicle;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
 use Illuminate\Http\Request;
-use function PHPUnit\Framework\isEmpty;
+use PDF;
 
 class VehicleRepository implements IVehicleRepositoryInterface
 {
@@ -126,5 +127,107 @@ class VehicleRepository implements IVehicleRepositoryInterface
     public function trashed()
     {
         // TODO: Implement trashed() method.
+    }
+
+    public function getVehicleList()
+    {
+        $customers = Customer::where('company_id',session('company_id'))->get();
+        return view('admin.vehicle.vehicle_report_by_customer',compact('customers'));
+    }
+
+    public function PrintVehicleList(Request $request)
+    {
+        if ($request->customer_id!='all')
+        {
+            $vehicles=Vehicle::with(['customer'=>function($q){$q->select('Name','id');}])->select('id','registrationNumber','customer_id')->get()->where('customer_id', '=', $request->customer_id);
+        }
+        else
+        {
+            $vehicles=Vehicle::with(['customer'=>function($q){$q->select('Name','id');}])->select('id','registrationNumber','customer_id')->get();
+        }
+        //echo "<pre>";print_r($vehicles);die;
+
+        if(!$vehicles->isEmpty())
+        {
+            $row=json_decode(json_encode($vehicles), true);
+            $row=array_values($row);
+            //echo "<pre>";print_r($row);die;
+
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            $pdf::SetFont('helvetica', '', 15);
+            $html='CUSTOMER VEHICLE REPORT';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+
+            $pdf::SetFont('helvetica', 'B', 8);
+            if($row)
+            {
+                //for customer selection
+                $customer_ids=array();
+                $customer_name=array();
+                foreach ($row as $item)
+                {
+                    $customer_ids[]=$item['customer']['id'];
+                    $customer_name[]=$item['customer']['Name'];
+                }
+                $customer_ids=array_unique($customer_ids);
+                $customer_name=array_unique($customer_name);
+                $customer_ids=array_values($customer_ids);
+                $customer_name=array_values($customer_name);
+
+                for($i=0;$i<count($customer_ids);$i++)
+                {
+                    $customer_title='<u><b>'.'Customer :- '.$customer_name[$i].'</b></u>';
+                    $pdf::SetFont('helvetica', 'B', 10);
+                    $pdf::writeHTMLCell(0, 0, '', '', $customer_title,0, 1, 0, true, 'L', true);
+
+                    $pdf::SetFont('helvetica', '', 8);
+                    //code will come here
+                    $html = '<table border="0.5" cellpadding="3">
+                    <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                        <th align="center" width="250">Vehicle</th>
+                    </tr>';
+                    for ($j=0;$j<count($row);$j++)
+                    {
+                        if ($customer_ids[$i]==$row[$j]['customer']['id'])
+                        {
+                            $html .= '<tr>
+                                <td align="center" width="250">' . ($row[$j]['registrationNumber']) . '</td>
+                                </tr>';
+                        }
+                    }
+                    $pdf::SetFillColor(255, 0, 0);
+                    $html .= '</table>';
+                    //code will come here
+
+                    $pdf::writeHTML($html, true, false, false, false, '');
+                }
+            }
+
+
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
     }
 }

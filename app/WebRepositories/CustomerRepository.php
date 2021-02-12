@@ -7,11 +7,16 @@ namespace App\WebRepositories;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
 use App\Models\CustomerPrice;
+use App\Models\Product;
 use App\Models\Region;
 use App\Models\PaymentType;
 use App\Models\PaymentTerm;
 use App\Models\CompanyType;
 use App\Models\AccountTransaction;
+use App\Models\Sale;
+use App\Models\SaleDetail;
+use App\Models\Unit;
+use App\Models\Vehicle;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -104,26 +109,65 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'payment_type_id' =>$customerRequest->paymentType ?? 0,
         ];
         $customer = Customer::create($customer);
-        if ($customer) {
-//            $account = new AccountTransaction([
-//                'customer_id' => $customer->id,
-//                'user_id' => $user_id,
-//                'createdDate' => date('Y-m-d'),
-//                'company_id' =>$company_id,
-//                'Description' =>'initial',
-//            ]);
+        if ($customer)
+        {
+            //account entry
             $account = new AccountTransaction([
                 'customer_id' => $customer->id,
                 'user_id' => $user_id,
-                'createdDate' => date('Y-m-d'),
+                'createdDate' => $customerRequest->openingBalanceAsOfDate,
                 'company_id' =>$company_id,
                 'Description' =>'initial',
                 'Credit' =>0.00,
                 'Debit' =>0.00,
                 'Differentiate' =>$customerRequest->openingBalance,
             ]);
+            $customer->account_transaction()->save($account);
+
+            //sales entry
+            $sale = new Sale();
+            $sale->SaleNumber = 'initial';
+            $sale->SaleDate = $customerRequest->openingBalanceAsOfDate;
+            $sale->Total = $customerRequest->openingBalance;
+            $sale->subTotal = $customerRequest->openingBalance;
+            $sale->totalVat = 0.00;
+            $sale->grandTotal = $customerRequest->openingBalance;
+            $sale->paidBalance = 0.00;
+            $sale->remainingBalance = $customerRequest->openingBalance;
+            $sale->customer_id = $customer->id;
+            $sale->Description = '';
+            $sale->IsPaid = 0;
+            $sale->IsPartialPaid = 0;
+            $sale->IsReturn = false;
+            $sale->IsPartialReturn = false;
+            $sale->IsNeedStampOrSignature = false;
+            $sale->user_id = $user_id;
+            $sale->company_id = $company_id;
+            $sale->save();
+            $sale = $sale->id;
+
+            $product=Product::select('id')->get()->first();
+            $unit=Unit::select('id')->get()->first();
+            $vehicle=Vehicle::select('id')->get()->first();
+
+            $data =  SaleDetail::create([
+                "product_id" => $product->id,
+                "vehicle_id" => $vehicle->id,
+                "unit_id" => $unit->id,
+                "Quantity" => 0.00,
+                "Price" => 0.00,
+                "rowTotal" => $customerRequest->openingBalance,
+                "VAT" => 0.00,
+                "rowVatAmount" => 0.00,
+                "rowSubTotal" => $customerRequest->openingBalance,
+                "PadNumber" => '',
+                "company_id" => $company_id,
+                "user_id" => $user_id,
+                "sale_id" => $sale,
+                "createdDate" => $customerRequest->openingBalanceAsOfDate,
+                "customer_id" => $customer->id,
+            ]);
         }
-        $customer->account_transaction()->save($account);
 
         //also add customer base price
         $price = [

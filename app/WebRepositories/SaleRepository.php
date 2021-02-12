@@ -219,6 +219,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                             "user_id"      => $user_id,
                             "sale_id"      => $sale,
                             "createdDate" => $detail['createdDate'],
+                            "customer_id" => $request->Data['customer_id'],
                         ]);
                     }
                 }
@@ -267,6 +268,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                             "user_id"      => $user_id,
                             "sale_id"      => $sale,
                             "createdDate" => $detail['createdDate'],
+                            "customer_id" => $request->Data['customer_id'],
                         ]);
                     }
                 }
@@ -406,6 +408,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                             "user_id"      => $user_id,
                             "sale_id"      => $sale,
                             "createdDate" => $detail['createdDate'],
+                            "customer_id" => $request->Data['customer_id'],
                         ]);
                     }
                 }
@@ -535,6 +538,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                             "user_id"      => $user_id,
                             "sale_id"      => $sale,
                             "createdDate" => $detail['createdDate'],
+                            "customer_id" => $request->Data['customer_id'],
                         ]);
                     }
                 }
@@ -2435,6 +2439,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                         "user_id"      => $user_id,
                         "sale_id"      => $Id,
                         "createdDate" => $detail['createdDate'],
+                        "customer_id" => $request->Data['customer_id'],
                     ]);
                 }
                 $ss = SaleDetail::where('sale_id', array($saleDetails['sale_id']))->get();
@@ -2491,6 +2496,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                         "user_id"      => $user_id,
                         "sale_id"      => $Id,
                         "createdDate" => $detail['createdDate'],
+                        "customer_id" => $request->Data['customer_id'],
                     ]);
                 }
                 $ss = SaleDetail::where('sale_id', array($saleDetails['sale_id']))->get();
@@ -2549,6 +2555,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                             "user_id"      => $user_id,
                             "sale_id"      => $Id,
                             "createdDate" => $detail['createdDate'],
+                            "customer_id" => $request->Data['customer_id'],
                         ]);
                     }
                     $ss = SaleDetail::where('sale_id', array($saleDetails['sale_id']))->get();
@@ -2621,6 +2628,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                             "user_id"      => $user_id,
                             "sale_id"      => $Id,
                             "createdDate" => $detail['createdDate'],
+                            "customer_id" => $request->Data['customer_id'],
                         ]);
                     }
                     $ss = SaleDetail::where('sale_id', array($saleDetails['sale_id']))->get();
@@ -2642,7 +2650,7 @@ class   SaleRepository implements ISaleRepositoryInterface
         $customers = Customer::all();
         $products = Product::all();
         $units = Unit::all();
-        $sale_details = SaleDetail::withTrashed()->with('sale.customer.customer_prices','user','product','unit','vehicle')->where('sale_id', $Id)->get();
+        $sale_details = SaleDetail::withTrashed()->with('sale.customer.customer_prices','user','product','unit','vehicle','customer')->where('sale_id', $Id)->get();
         return view('admin.sale.edit',compact('sale_details','customers','products','update_notes','units'));
     }
 

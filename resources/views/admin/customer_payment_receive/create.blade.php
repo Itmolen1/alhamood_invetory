@@ -316,10 +316,20 @@
                                 var salesDetails = '';
                                 if (result.length > 0)
                                 {
-                                    for (var i = 0; i < result.length; i++) {
+                                    for (var i = 0; i < result.length; i++)
+                                    {
+                                        var registrationNumber='';
+                                        if(result[i].customer.vehicles.length===0)
+                                        {
+                                            registrationNumber='initial';
+                                        }
+                                        else
+                                        {
+                                            registrationNumber=result[i].customer.vehicles[0].registrationNumber;
+                                        }
                                         salesDetails += '<tr>';
                                         salesDetails += '<td>' + result[i].sale_details[0].PadNumber + '</td>';
-                                        salesDetails += '<td>' + result[i].customer.vehicles[0].registrationNumber + '</td>';
+                                        salesDetails += '<td>' + registrationNumber + '</td>';
                                         salesDetails += '<td>' + result[i].grandTotal + '</td>';
                                         salesDetails += '<td>' + result[i].paidBalance + '</td>';
                                         salesDetails += '<td>' + result[i].remainingBalance + '</td>';

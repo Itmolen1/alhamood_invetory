@@ -189,7 +189,7 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" name="PadNumber" value="{{ $details->PadNumber }}" class="PadNumber form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" name="PadNumber" value="{{ $details->PadNumber }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                 <td><input type="text" placeholder="Description" value="{{ $details->Description }}"  class="description form-control"></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->Quantity }}"  placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="{{ $details->rowVatAmount }}"  class="singleRowVat form-control">
@@ -220,9 +220,9 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="PurchaseDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $purchase_details[0]->purchase->supplierNote ?? '' }}</textarea>
+                                                <textarea name="" id="PurchaseDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note" hidden>{{ $purchase_details[0]->purchase->supplierNote ?? '' }}</textarea>
                                                 <input type="file">
-                                                <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
+                                                <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> View Previous Update Notes</button>
                                             </div>
                                         </div>
 

@@ -217,6 +217,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             "user_id"      => $user_id,
                             "purchase_id"      => $purchase,
                             "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                            "supplier_id" => $purchaseRequest->Data['supplier_id'],
                         ]);
                     }
                 }
@@ -269,6 +270,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             "user_id"      => $user_id,
                             "purchase_id"      => $purchase,
                             "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                            "supplier_id" => $purchaseRequest->Data['supplier_id'],
                         ]);
                     }
                 }
@@ -406,6 +408,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             "user_id"      => $user_id,
                             "purchase_id"      => $purchase,
                             "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                            "supplier_id" => $purchaseRequest->Data['supplier_id'],
                         ]);
                     }
                 }
@@ -533,6 +536,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             "user_id"      => $user_id,
                             "purchase_id"      => $purchase,
                             "createdDate" => $purchaseRequest->Data['PurchaseDate'],
+                            "supplier_id" => $purchaseRequest->Data['supplier_id'],
                         ]);
                     }
                 }
@@ -2936,6 +2940,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         "company_id"      => $company_id,
                         "purchase_id"      => $Id,
                         "createdDate" => $request->Data['PurchaseDate'],
+                        "supplier_id" => $request->Data['supplier_id'],
                     ]);
                 }
                 $ss = PurchaseDetail::where('purchase_id', array($purchaseDetails['purchase_id']))->get();
@@ -2991,6 +2996,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         "company_id"      => $company_id,
                         "purchase_id"      => $Id,
                         "createdDate" => $request->Data['PurchaseDate'],
+                        "supplier_id" => $request->Data['supplier_id'],
                     ]);
                 }
                 $ss = PurchaseDetail::where('purchase_id', array($purchaseDetails['purchase_id']))->get();
@@ -3049,6 +3055,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             "company_id"      => $company_id,
                             "purchase_id"      => $Id,
                             "createdDate" => $request->Data['PurchaseDate'],
+                            "supplier_id" => $request->Data['supplier_id'],
                         ]);
                     }
                     $ss = PurchaseDetail::where('purchase_id', array($purchaseDetails['purchase_id']))->get();
@@ -3119,6 +3126,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             "company_id"      => $company_id,
                             "purchase_id"      => $Id,
                             "createdDate" => $request->Data['PurchaseDate'],
+                            "supplier_id" => $request->Data['supplier_id'],
                         ]);
                     }
                     $ss = PurchaseDetail::where('purchase_id', array($purchaseDetails['purchase_id']))->get();
@@ -3173,8 +3181,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function PadNumber()
     {
-        // TODO: Implement PadNumber() method.
-
 //        $PadNumber = new PurchaseDetail();
 //        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
 //        $newPad = ($lastPad + 1);

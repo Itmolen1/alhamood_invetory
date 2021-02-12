@@ -34,6 +34,9 @@
     <!-- Dashboard 1 Page CSS -->
     <link href="{{ asset('admin_assets/assets/dist/css/pages/dashboard1.css') }}" rel="stylesheet">
 
+    <link href="{{ asset('admin_assets/assets/dist/css/chosen.min.css') }}" rel="stylesheet">
+
+
     <!-- page css -->
 {{--    <link href="{{ asset('admin_assets/assets/dist/css/pages/file-upload.css') }}" rel="stylesheet">--}}
 
@@ -48,9 +51,16 @@
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="{{ asset('admin_assets/assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/assets/dist/js/chosen.jquery.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function() {
+            $(".chosen-select").chosen();
+        });
+    </script>
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+
     <![endif]-->
     <style>
         .error{

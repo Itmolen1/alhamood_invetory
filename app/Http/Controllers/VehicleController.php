@@ -26,7 +26,6 @@ class VehicleController extends Controller
         return $this->vehicleRepository->create();
     }
 
-
     public function store(VehicleRequest $vehicleRequest)
     {
         return $this->vehicleRepository->store($vehicleRequest);
@@ -47,7 +46,6 @@ class VehicleController extends Controller
         return $this->vehicleRepository->update($request, $Id);
     }
 
-
     public function destroy(Request $request, $Id)
     {
         return $this->vehicleRepository->delete($request, $Id);
@@ -56,5 +54,15 @@ class VehicleController extends Controller
     public function CheckVehicleExist(Request $request)
     {
         return $this->vehicleRepository->CheckVehicleExist($request);
+    }
+
+    public function getVehicleList()
+    {
+        return $this->vehicleRepository->getVehicleList();
+    }
+
+    public function PrintVehicleList(Request $request)
+    {
+        return $this->vehicleRepository->PrintVehicleList($request);
     }
 }

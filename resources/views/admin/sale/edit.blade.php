@@ -59,7 +59,7 @@
                                                     <tr style="text-decoration: line-through; color:red">
                                                         <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->createdDate }}" placeholder=""></td>
                                                         <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="customer" value="{{ $details->sale->customer->Name ?? '' }}" id="" name="" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="customer" value="{{ $details->customer->Name ?? '' }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="vehicle" value="{{ $details->vehicle->registrationNumber ?? '' }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Product" value="{{ $details->product->Name  ?? '' }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Quantity" value="{{ $details->Quantity  ?? '' }}" class=" form-control"></td>
@@ -76,7 +76,7 @@
                                                 @if(is_null($details->deleted_at))
                                                     <tr>
                                                         <td> <input type="date" name="createdDate" value="{{ $details->createdDate}}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control"></td>
+                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                         <td>
                                                             <div class="form-group">
                                                                 <select name="customer" class="form-control customer_id slct" id="customer_id">
@@ -142,7 +142,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $sale_details[0]->sale->Description ?? '' }}</textarea>
+                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note" hidden>{{ $sale_details[0]->sale->Description ?? '' }}</textarea>
                                                 <input type="file">
                                                 <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> View Previous Updates</button>
                                             </div>

@@ -57,9 +57,9 @@
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-car"></i><span class="hide-menu">Vehicles</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li  class="border-bottom"><a href="{{ route('vehicles.create') }}">Add new Vehicle</a></li>
-                    <li><a href="{{ route('vehicles.index') }}">Manage Vehicles</a></li>
-                    <!--  <li><a href="app-chat.html">Chat app</a></li> -->
+                    <li class="border-bottom"><a href="{{ route('vehicles.create') }}">Add new Vehicle</a></li>
+                    <li class="border-bottom"><a href="{{ route('vehicles.index') }}">Manage Vehicles</a></li>
+                    <li><a href="{{ route('getVehicleList') }}">Print Vehicles List</a></li>
                 </ul>
             </li>
 

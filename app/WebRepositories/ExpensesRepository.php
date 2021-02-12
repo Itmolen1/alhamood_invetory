@@ -81,7 +81,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             if($expenseRequest->Data['paidBalance'] != 0.00 || $expenseRequest->Data['paidBalance'] != 0)
             {
                 $cash_transaction = new CashTransaction();
-                $cash_transaction->Reference=$expense->id;
+                $cash_transaction->Reference=$expense;
                 $cash_transaction->createdDate=date('Y-m-d h:i:s');
                 $cash_transaction->Type='expenses';
                 $cash_transaction->Type='Cash Expense';

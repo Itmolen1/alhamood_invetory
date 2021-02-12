@@ -120,7 +120,7 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" value="{{ $PadNumber ?? 0 }}" name="PadNumber" class="PadNumber form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" id="PadNumber" value="{{ $PadNumber ?? 0 }}" name="PadNumber" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                 <td><input type="text" placeholder="Description" class="description form-control"></td>
                                                 <td><input type="text"  value="0.00" placeholder="Quantity" class="quantity form-control">
 {{--                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">--}}
@@ -151,7 +151,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note"></textarea>
+                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note" hidden></textarea>
                                                 <input type="file">
                                             </div>
                                         </div>

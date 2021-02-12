@@ -33,7 +33,11 @@ route::resource('customer_advances','CustomerAdvanceController');
 route::PUT('customer_advances_push/{Id}','CustomerAdvanceController@customer_advances_push');
 route::resource('supplier_advances','SupplierAdvanceController');
 route::PUT('supplier_advances_push/{Id}','SupplierAdvanceController@supplier_advances_push');
+
 route::resource('vehicles','VehicleController');
+route::get('getVehicleList','VehicleController@getVehicleList')->name('getVehicleList');
+route::post('PrintVehicleList','VehicleController@PrintVehicleList')->name('PrintVehicleList');
+
 route::POST('/CheckVehicleExist','VehicleController@CheckVehicleExist');
 route::resource('drivers','DriverController');
 route::resource('users','UserController');
@@ -125,6 +129,7 @@ route::get('BankReport','ReportController@BankReport')->name('BankReport');
 route::post('PrintBankReport','ReportController@PrintBankReport')->name('PrintBankReport');
 route::get('GeneralLedger','ReportController@GeneralLedger')->name('GeneralLedger');
 route::post('PrintGeneralLedger','ReportController@PrintGeneralLedger')->name('PrintGeneralLedger');
+
 });
 
 route::view('welcome','welcome');
