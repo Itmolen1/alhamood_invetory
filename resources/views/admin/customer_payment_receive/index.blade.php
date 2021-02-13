@@ -106,13 +106,4 @@
             });
         });
     </script>
-    <script>
-        function ConfirmDelete()
-        {
-            var result = confirm("Are you sure you want to delete?");
-            if (result) {
-                document.getElementById("deleteData").submit();
-            }
-        }
-    </script>
 @endsection

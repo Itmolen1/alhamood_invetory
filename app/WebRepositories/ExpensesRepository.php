@@ -19,21 +19,17 @@ use Illuminate\Http\Request;
 
 class ExpensesRepository implements IExpensesRepositoryInterface
 {
-
     public function index()
     {
-        // TODO: Implement index() method.
         $expenses = Expense::with('expense_details.expense_category','supplier')->where('company_id',session('company_id'))->get();
-       // dd($expenses);
         return view('admin.expense.index',compact('expenses'));
     }
 
     public function create()
     {
-        // TODO: Implement create() method.
         $expenseNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::all()->where('company_type_id','=',3);
         $employees = Employee::all();
         $expense_categories = ExpenseCategory::all();
         return view('admin.expense.create',compact('suppliers','expenseNo','employees','expense_categories','PadNumber'));
@@ -41,15 +37,12 @@ class ExpensesRepository implements IExpensesRepositoryInterface
 
     public function store(ExpenseRequest $expenseRequest)
     {
-        // TODO: Implement store() method.
         $AllRequestCount = collect($expenseRequest->Data)->count();
         if($AllRequestCount > 0) {
-            //return Response()->json($request);
-            // return Response()->json($request->Data['orders']);
-            //return Response()->json($request->Data['PurchaseNumber']);
-            //return Response()->json($request->Data['referenceNumber']);
+
             $user_id = session('user_id');
             $company_id = session('company_id');
+
             $expense = new Expense();
             $expense->expenseNumber = $expenseRequest->Data['expenseNumber'];
             $expense->referenceNumber = $expenseRequest->Data['referenceNumber'];
@@ -67,14 +60,9 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             $expense->company_id = $company_id;
             $expense->save();
             $expense = $expense->id;
-            //return Response()->json($purchase);
-            //$user = $sale->user_id;
-            // return $sale;
+
             foreach($expenseRequest->Data['orders'] as $detail)
             {
-                //return $detail['Quantity'];
-                //return Response()->json($detail['Quantity']);
-
                 $data =  ExpenseDetail::create([
                     "Total"        => $detail['Total'],
                     "expenseDate"        => $expenseRequest->Data['expenseDate'],
@@ -88,13 +76,12 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     "expense_id"      => $expense,
                     "PadNumber" => $detail['padNumber'],
                 ]);
-
             }
 
             if($expenseRequest->Data['paidBalance'] != 0.00 || $expenseRequest->Data['paidBalance'] != 0)
             {
                 $cash_transaction = new CashTransaction();
-                $cash_transaction->Reference=$expense->id;
+                $cash_transaction->Reference=$expense;
                 $cash_transaction->createdDate=date('Y-m-d h:i:s');
                 $cash_transaction->Type='expenses';
                 $cash_transaction->Type='Cash Expense';
@@ -103,7 +90,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 $cash_transaction->save();
             }
 
-            ////////////////// account section ////////////////
+            /*////////////////// account section ////////////////
             if ($expense)
             {
                 $accountTransaction = AccountTransaction::where(
@@ -191,17 +178,12 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 return Response()->json($AccountTransactions);
                 // return Response()->json("");
             }
-            ////////////////// end of account section ////////////////
-//            if ($data)
-//            {
-//                return Response()->json($data);
-//            }
+            ////////////////// end of account section ////////////////*/
         }
     }
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
@@ -209,7 +191,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             $user_id = session('user_id');
             $company_id = session('company_id');
 
-            ////////////////// account section ////////////////
+            /*////////////////// account section ////////////////
             $accountTransaction = AccountTransaction::where(
                 [
                     'company_id'=> $company_id,
@@ -329,7 +311,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 ], $AccData);
                 //return Response()->json($accountTransaction);
             }
-            ////////////////// end of account section ////////////////
+            ////////////////// end of account section ////////////////*/
 
             //here will come cash transaction record update if scenario will come by
             $expensed->update(
@@ -379,7 +361,6 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             }
             $ss = ExpenseDetail::where('expense_id', array($expenseDetails['expense_id']))->get();
             return Response()->json($ss);
-
         }
     }
 
@@ -390,7 +371,6 @@ class ExpensesRepository implements IExpensesRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $update_notes = UpdateNote::with('company','user')->where(['RelationId' => $Id, 'RelationTable' => 'expenses'])->get();
         $suppliers = Supplier::all();
         $employees = Employee::all();

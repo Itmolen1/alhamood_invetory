@@ -5,27 +5,31 @@ namespace App\WebRepositories;
 
 
 use App\Http\Requests\CustomerRequest;
-use App\Models\Company;
 use App\Models\Customer;
 use App\Models\CustomerPrice;
+use App\Models\Product;
 use App\Models\Region;
 use App\Models\PaymentType;
 use App\Models\PaymentTerm;
 use App\Models\CompanyType;
 use App\Models\AccountTransaction;
+use App\Models\Sale;
+use App\Models\SaleDetail;
+use App\Models\Unit;
+use App\Models\Vehicle;
 use App\WebRepositories\Interfaces\ICustomerRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerRepository implements ICustomerRepositoryInterface
 {
-
     public function index()
     {
         if(request()->ajax())
         {
             return datatables()->of(Customer::with('company','user','payment_type','company_type','payment_term')->latest()->get())
                ->addColumn('action', function ($data) {
-                    $button = '<form action="'.route('customers.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button = '<form action="'.route('customers.destroy', $data->id).'" method="POST">';
                     $button .= @csrf_field();
                     $button .= @method_field('DELETE');
                     $button .= '<a href="'.route('customers.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
@@ -36,16 +40,16 @@ class CustomerRepository implements ICustomerRepositoryInterface
                 })
                 ->addColumn('isActive', function($data) {
                         if($data->isActive == true){
-                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST" >';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }else{
-                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST" >';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }
                     })
@@ -55,7 +59,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
                 ->rawColumns([
                     'action',
                     'isActive',
-                     'paymentType'
+                    'paymentType'
                 ])
                 ->make(true);
         }
@@ -105,26 +109,65 @@ class CustomerRepository implements ICustomerRepositoryInterface
             'payment_type_id' =>$customerRequest->paymentType ?? 0,
         ];
         $customer = Customer::create($customer);
-        if ($customer) {
-//            $account = new AccountTransaction([
-//                'customer_id' => $customer->id,
-//                'user_id' => $user_id,
-//                'createdDate' => date('Y-m-d'),
-//                'company_id' =>$company_id,
-//                'Description' =>'initial',
-//            ]);
+        if ($customer)
+        {
+            //account entry
             $account = new AccountTransaction([
                 'customer_id' => $customer->id,
                 'user_id' => $user_id,
-                'createdDate' => date('Y-m-d'),
+                'createdDate' => $customerRequest->openingBalanceAsOfDate,
                 'company_id' =>$company_id,
                 'Description' =>'initial',
                 'Credit' =>0.00,
                 'Debit' =>0.00,
                 'Differentiate' =>$customerRequest->openingBalance,
             ]);
+            $customer->account_transaction()->save($account);
+
+            //sales entry
+            $sale = new Sale();
+            $sale->SaleNumber = 'initial';
+            $sale->SaleDate = $customerRequest->openingBalanceAsOfDate;
+            $sale->Total = $customerRequest->openingBalance;
+            $sale->subTotal = $customerRequest->openingBalance;
+            $sale->totalVat = 0.00;
+            $sale->grandTotal = $customerRequest->openingBalance;
+            $sale->paidBalance = 0.00;
+            $sale->remainingBalance = $customerRequest->openingBalance;
+            $sale->customer_id = $customer->id;
+            $sale->Description = '';
+            $sale->IsPaid = 0;
+            $sale->IsPartialPaid = 0;
+            $sale->IsReturn = false;
+            $sale->IsPartialReturn = false;
+            $sale->IsNeedStampOrSignature = false;
+            $sale->user_id = $user_id;
+            $sale->company_id = $company_id;
+            $sale->save();
+            $sale = $sale->id;
+
+            $product=Product::select('id')->get()->first();
+            $unit=Unit::select('id')->get()->first();
+            $vehicle=Vehicle::select('id')->get()->first();
+
+            $data =  SaleDetail::create([
+                "product_id" => $product->id,
+                "vehicle_id" => $vehicle->id,
+                "unit_id" => $unit->id,
+                "Quantity" => 0.00,
+                "Price" => 0.00,
+                "rowTotal" => $customerRequest->openingBalance,
+                "VAT" => 0.00,
+                "rowVatAmount" => 0.00,
+                "rowSubTotal" => $customerRequest->openingBalance,
+                "PadNumber" => '',
+                "company_id" => $company_id,
+                "user_id" => $user_id,
+                "sale_id" => $sale,
+                "createdDate" => $customerRequest->openingBalanceAsOfDate,
+                "customer_id" => $customer->id,
+            ]);
         }
-        $customer->account_transaction()->save($account);
 
         //also add customer base price
         $price = [
@@ -214,5 +257,33 @@ class CustomerRepository implements ICustomerRepositoryInterface
     public function getCustomerVehicleDetails($Id)
     {
         // TODO: Implement getCustomerVehicleDetails() method.
+    }
+
+    public function customerDetails($Id)
+    {
+        // getting latest closing for supplier from account transaction table
+        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id')
+            ->where('ac.customer_id','=',$Id)
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        $needed_ids=array_column($row,'max_id');
+
+        $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.customer_id','ac.Differentiate')
+            ->whereIn('ac.id',$needed_ids)
+            ->orderBy('ac.id','asc')
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        if(empty($row))
+        {
+            $row=0.00;
+        }
+        else
+        {
+            $row=$row[0]['Differentiate'];
+        }
+
+        $customers = Customer::with('vehicles','customer_prices')->find($Id);
+
+        return response()->json(array('customers'=>$customers,'closing'=>$row));
     }
 }

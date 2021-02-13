@@ -3,26 +3,14 @@
 
 @section('content')
 
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
+                <div class="col-md-8 align-self-center">
                     <h4 class="text-themecolor">Payment</h4>
+                    <h3 class="required"> * Select Entries Carefully after saving Update is not allowed.</h3>
                 </div>
-                <div class="col-md-7 align-self-center text-right">
+                <div class="col-md-4 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
@@ -32,13 +20,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -218,29 +200,13 @@
                                     <button type="button" class="btn btn-inverse">Cancel</button>
                                 </div>
                             </form>
-
-
                         </div>
                     </div>
                 </div>
 
-
             </div>
-            <!-- Row -->
-
-
-
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script type="text/javascript">
 
@@ -309,11 +275,9 @@
                 }
             });
         });
-
     </script>
 
     <script>
-
         $(document).ready(function (){
             $('.supplier_id').change(function () {
                 var Id = 0;
@@ -360,7 +324,6 @@
                 }
             });
         });
-
 
         $(document).ready(function () {
             $('#submit').click(function (event) {
@@ -473,7 +436,4 @@
         });
     </script>
     <script src="{{ asset('admin_assets/assets/dist/custom/custom.js') }}" type="text/javascript" charset="utf-8" async defer></script>
-
-
-
 @endsection

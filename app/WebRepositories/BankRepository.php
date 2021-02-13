@@ -18,7 +18,7 @@ class BankRepository implements IBankRepositoryInterface
         {
             return datatables()->of(Bank::with('user','company')->latest()->get())
                ->addColumn('action', function ($data) {
-                    $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST">';
                     $button .= @method_field('DELETE');
                     $button .= @csrf_field();
                     $button .= '<button type="submit" class=" btn btn-danger btn-sm" onclick="return ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
@@ -29,16 +29,16 @@ class BankRepository implements IBankRepositoryInterface
                 })
                 ->addColumn('isActive', function($data) {
                         if($data->isActive == true){
-                            $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST" >';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }else{
-                            $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('banks.destroy', $data->id).'" method="POST" >';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive"  type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }
                     })
@@ -55,12 +55,11 @@ class BankRepository implements IBankRepositoryInterface
 
     public function store(BankRequest $bankRequest)
     {
-        echo "inside store";die;
         $user_id = session('user_id');
         $company_id = session('company_id');
         $bank = [
-            'Name' =>$bankRequest->Name,
-            'Branch' =>$bankRequest->Branch,
+            'Name' =>strip_tags($bankRequest->Name),
+            'Branch' =>strip_tags($bankRequest->Branch),
             'openingBalance' =>$bankRequest->openingBalance,
             'openingBalanceAsOfDate' =>$bankRequest->openingBalanceAsOfDate,
             'Description' =>$bankRequest->Description,
@@ -90,11 +89,10 @@ class BankRepository implements IBankRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        echo "inside update";die;
         $bank = Bank::find($Id);
         $user_id = session('user_id');
         $bank->update([
-            'Name' =>$request->Name,
+            'Name' =>strip_tags($request->Name),
             'Branch' =>$request->Branch,
             'openingBalance' =>$request->openingBalance,
             'openingBalanceAsOfDate' =>$request->openingBalanceAsOfDate,
@@ -105,20 +103,20 @@ class BankRepository implements IBankRepositoryInterface
         ]);
 
         //initial cash or cash on hand for the company
-        $company_id = session('company_id');
-        if ($bank) {
-            BankTransaction::Create([
-                'Reference' => $bank->id,
-                'user_id' => $user_id,
-                'createdDate' => $request->openingBalanceAsOfDate,
-                'company_id' =>$company_id,
-                'Details' =>'initial',
-                'Credit' =>0.00,
-                'Debit' =>0.00,
-                'Differentiate' =>$request->openingBalance,
-                'bank_id' => $Id,
-            ]);
-        }
+//        $company_id = session('company_id');
+//        if ($bank) {
+//            BankTransaction::Create([
+//                'Reference' => $bank->id,
+//                'user_id' => $user_id,
+//                'createdDate' => $request->openingBalanceAsOfDate,
+//                'company_id' =>$company_id,
+//                'Details' =>'initial',
+//                'Credit' =>0.00,
+//                'Debit' =>0.00,
+//                'Differentiate' =>$request->openingBalance,
+//                'bank_id' => $Id,
+//            ]);
+//        }
         return redirect()->route('banks.index');
     }
 

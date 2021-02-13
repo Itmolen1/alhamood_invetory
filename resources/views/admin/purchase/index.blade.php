@@ -14,21 +14,10 @@
             });
         }
     </script>
-
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <!-- <h4 class="text-themecolor">diensten</h4> -->
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -40,12 +29,6 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -57,10 +40,10 @@
                                     <thead>
                                     <tr>
                                         <th style="width: 100px">Created Date</th>
+                                        <th style="width: 150px">LPO</th>
                                         <th style="width: 100px">Pad Number</th>
                                         <th style="width: 100px">Supplier Name</th>
                                         <th style="width: 150px">Due date</th>
-                                        <th style="width: 150px">Product</th>
                                         <th style="width: 150px">Quantity</th>
                                         <th style="width: 150px">Amount</th>
                                         <th>Vat</th>
@@ -109,18 +92,11 @@
                         </div>
                     </div>
 
-
                 </div>
             </div>
 
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
 
     <script>
         $(document).ready(function () {
@@ -136,6 +112,10 @@
                         name: 'createdDate'
                     },
                     {
+                        data: 'referenceNumber',
+                        name: 'referenceNumber'
+                    },
+                    {
                         data: 'PadNumber',
                         name: 'PadNumber'
                     },
@@ -146,10 +126,6 @@
                     {
                         data: 'DueDate',
                         name: 'DueDate'
-                    },
-                    {
-                        data: 'Product',
-                        name: 'Product'
                     },
                     {
                         data: 'Quantity',
@@ -182,7 +158,7 @@
                         orderable: false
                     },
                 ],
-                order: [[ 2, "desc" ]]
+                order: [[ 1, "desc" ]]
             });
         });
     </script>
@@ -195,6 +171,4 @@
             }
         }
     </script>
-
-
 @endsection

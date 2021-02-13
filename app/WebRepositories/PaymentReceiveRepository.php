@@ -18,16 +18,15 @@ use Illuminate\Http\Request;
 
 class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 {
-
     public function index()
     {
-        // TODO: Implement index() method.
         if(request()->ajax())
         {
             return datatables()->of(PaymentReceive::with('user','company','customer')->latest()->get())
                 ->addColumn('action', function ($data) {
-
                     $button = '<a href="'.route('payment_receives.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
                     $button .='&nbsp;';
                     return $button;
                 })
@@ -61,7 +60,6 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
     public function create()
     {
-        // TODO: Implement create() method.
         $customers = Customer::all();
         $banks = Bank::all();
         return view('admin.customer_payment_receive.create',compact('customers','banks'));
@@ -69,7 +67,6 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
     public function store(Request $request)
     {
-        // TODO: Implement store() method.
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0) {
             $user_id = session('user_id');
@@ -105,12 +102,10 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     $totalAmount = $detail['amountPaid'];
                 }
                 elseif($amount >= $request->Data['paidAmount']){
-//                    if ($detail['amountPaid'] > $request->Data['paidAmount']) {
                         $isPaid = false;
                         $isPartialPaid = true;
                         $totalAmount1 = $amount - $request->Data['paidAmount'];
                        $totalAmount = $detail['amountPaid'] - $totalAmount1;
-//                    }
                 }
 
                 $data =  PaymentReceiveDetail::create([
@@ -120,18 +115,6 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     "user_id"      => $user_id,
                     "payment_receive_id"      => $paymentReceive,
                     'createdDate' => date('Y-m-d')
-                ]);
-
-
-                $sale = Sale::find($detail['sale_id']);
-                $sale->update([
-                    "paidBalance"        => $totalAmount + $sale->paidBalance,
-                    "remainingBalance"   => $sale->remainingBalance - $totalAmount,
-                    "IsPaid" => $isPaid,
-                    "IsPartialPaid" => $isPartialPaid,
-                    "IsReturn" => false,
-                    "IsPartialReturn" => false,
-                    "IsNeedStampOrSignature" => false,
                 ]);
             }
             return Response()->json($amount);
@@ -185,12 +168,25 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
+        $payment_receive = PaymentReceive::find($Id);
+        $user_id = session('user_id');
+        $payment_receive->update([
+            'payment_type' => $request->paymentType,
+            'bank_id' => $request->bank_id,
+            'accountNumber' => $request->accountNumber,
+            'TransferDate' => $request->TransferDate,
+            'receiptNumber' => $request->receiptNumber,
+            'supplierPaymentDate' => $request->paymentReceiveDate,
+            'Description' => $request->Description,
+            'amountInWords' => $request->amountInWords,
+            'receiverName' => $request->receiverName,
+            'user_id' => $user_id,
+        ]);
+        return redirect()->route('payment_receives.index')->with('update','Record Updated Successfully');
     }
 
     public function getById($Id)
     {
-        // TODO: Implement getById() method.
         $payment_receives_details = PaymentReceiveDetail::with('user','company','payment_receive.customer')->where('payment_receive_id',$Id)->get();
 //        dd($payment_receives);
         return view('admin.customer_payment_receive.show',compact('payment_receives_details'));
@@ -198,7 +194,6 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $customers = Customer::all();
         $banks = Bank::all();
         $payment_receive = PaymentReceive::with('user','company','customer','payment_receive_details.sale.sale_details')->find($Id);
@@ -233,13 +228,15 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             'user_id' =>$user_id,
         ]);
 
+        $accountTransaction_ref=0;
+
         if($payments->payment_type == 'cash')
         {
             $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
             $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$Id;
-            $cash_transaction->createdDate=$payments->TransferDate;
+            $cash_transaction->createdDate=$payments->TransferDate ?? date('Y-m-d h:i:s');
             $cash_transaction->Type='payment_receives';
             $cash_transaction->Details='CustomerCashPayment|'.$Id;
             $cash_transaction->Credit=0.00;
@@ -258,12 +255,13 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     'Debit' => 0.00,
                     'Credit' => $payments->paidAmount,
                     'Differentiate' => $last_closing-$payments->paidAmount,
-                    'createdDate' => date('Y-m-d'),
+                    'createdDate' => $payments->transferDate,
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'CustomerCashPayment|'.$Id,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
+            $accountTransaction_ref=$AccountTransactions->id;
             // new entry done
         }
         elseif ($payments->payment_type == 'bank')
@@ -272,7 +270,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->transferDate;
+            $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
             $bank_transaction->Type='payment_receives';
             $bank_transaction->Details='CustomerBankPayment|'.$Id;
             $bank_transaction->Credit=0.00;
@@ -293,13 +291,14 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     'Debit' => 0.00,
                     'Credit' => $payments->paidAmount,
                     'Differentiate' => $last_closing-$payments->paidAmount,
-                    'createdDate' => date('Y-m-d'),
+                    'createdDate' => $payments->transferDate,
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'SupplierCashPayment|'.$Id,
                     'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
+            $accountTransaction_ref=$AccountTransactions->id;
             // new entry done
         }
         elseif ($payments->payment_type == 'cheque')
@@ -308,7 +307,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
             $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->transferDate;
+            $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
             $bank_transaction->Type='payment_receives';
             $bank_transaction->Details='CustomerChequePayment|'.$Id;
             $bank_transaction->Credit=0.00;
@@ -329,14 +328,77 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     'Debit' => 0.00,
                     'Credit' => $payments->paidAmount,
                     'Differentiate' => $last_closing-$payments->paidAmount,
-                    'createdDate' => date('Y-m-d'),
+                    'createdDate' => $payments->transferDate,
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'CustomerChequePayment|'.$Id,
                     'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
+            $accountTransaction_ref=$AccountTransactions->id;
             // new entry done
+        }
+
+        //now since account is affected we need to auto pay same amount to sales entries only if last closing is positive value
+
+        if($payments->paidAmount>0)
+        {
+            //we have entries without payment made so make it paid until payment amount becomes zero
+            // bring all unpaid sales records
+            $all_sales = Sale::with('customer','sale_details')->where([
+                'customer_id'=>$payments->customer_id,
+                'IsPaid'=> false,
+            ])->orderBy('SaleDate')->get();
+            //echo "<pre>";print_r($all_sales);die;
+            $total_i_have=$payments->paidAmount;
+
+            foreach($all_sales as $sale)
+            {
+                $total_you_need = $sale->remainingBalance;
+                $still_payable_to_you=0;
+                $total_giving_to_you=0;
+                $isPartialPaid = 0;
+                if ($total_i_have >= $total_you_need)
+                {
+                    $isPaid = 1;
+                    $isPartialPaid = 0;
+                    $total_i_have = $total_i_have - $total_you_need;
+
+                    $this_sale = Sale::find($sale->id);
+                    $this_sale->update([
+                        "paidBalance"        => $sale->grandTotal,
+                        "remainingBalance"   => $still_payable_to_you,
+                        "IsPaid" => $isPaid,
+                        "IsPartialPaid" => $isPartialPaid,
+                        "IsNeedStampOrSignature" => false,
+                        "Description" => 'AutoPaid|'.$payments->id,
+                        "account_transaction_payment_id" => $accountTransaction_ref,
+                    ]);
+                }
+                else
+                {
+                    $isPaid = 0;
+                    $isPartialPaid = 1;
+                    $total_giving_to_you=$total_i_have;
+                    $total_i_have = $total_i_have - $total_giving_to_you;
+
+                    $this_sale = Sale::find($sale->id);
+                    $this_sale->update([
+                        "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
+                        "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
+                        "IsPaid" => $isPaid,
+                        "IsPartialPaid" => $isPartialPaid,
+                        "IsNeedStampOrSignature" => false,
+                        "Description" => 'AutoPaid|'.$payments->id,
+                        "account_transaction_payment_id" => $accountTransaction_ref,
+                    ]);
+                }
+
+                if($total_i_have<=0)
+                {
+                    break;
+                }
+            }
         }
 
         /*////////////////// account section ////////////////

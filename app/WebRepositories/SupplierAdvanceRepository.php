@@ -136,7 +136,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         // TODO: Implement trashed() method.
     }
 
-
     public function supplier_advances_push(Request $request, $Id)
     {
         $advance = SupplierAdvance::with('supplier')->find($Id);
@@ -176,7 +175,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                         'Debit' => $advance->Amount,
                         'Credit' => 0.00,
                         'Differentiate' => $last_closing-$advance->Amount,
-                        'createdDate' => date('Y-m-d'),
+                        'createdDate' => $advance->TransferDate,
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                         'Description'=>'SupplierCashAdvance|'.$Id,
@@ -192,7 +191,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                 $bank_transaction = new BankTransaction();
                 $bank_transaction->Reference=$Id;
                 $bank_transaction->createdDate=$advance->TransferDate;
-                $bank_transaction->Type='supplier_payments';
+                $bank_transaction->Type='supplier_advances';
                 $bank_transaction->Details='SupplierBankAdvance|'.$Id;
                 $bank_transaction->Credit=$advance->Amount;
                 $bank_transaction->Debit=0.00;
@@ -212,7 +211,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                         'Debit' => $advance->Amount,
                         'Credit' => 0.00,
                         'Differentiate' => $last_closing-$advance->Amount,
-                        'createdDate' => date('Y-m-d'),
+                        'createdDate' => $advance->TransferDate,
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                         'Description'=>'SupplierBankAdvance|'.$Id,
@@ -229,7 +228,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                 $bank_transaction = new BankTransaction();
                 $bank_transaction->Reference=$Id;
                 $bank_transaction->createdDate=$advance->TransferDate;
-                $bank_transaction->Type='supplier_payments';
+                $bank_transaction->Type='supplier_advances';
                 $bank_transaction->Details='SupplierChequeAdvance|'.$Id;
                 $bank_transaction->Credit=$advance->Amount;
                 $bank_transaction->Debit=0.00;
@@ -249,7 +248,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                         'Debit' => $advance->Amount,
                         'Credit' => 0.00,
                         'Differentiate' => $last_closing-$advance->Amount,
-                        'createdDate' => date('Y-m-d'),
+                        'createdDate' => $advance->TransferDate,
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                         'Description'=>'SupplierChequeAdvance|'.$Id,
@@ -279,31 +278,47 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                     $total_you_need = $purchase->remainingBalance;
                     $still_payable_to_you=0;
                     $total_giving_to_you=0;
+                    $isPartialPaid = 0;
                     if ($total_i_have >= $total_you_need)
                     {
-                        $isPaid = true;
-                        $isPartialPaid = false;
-                        $total_i_have -= $total_you_need;
-                        $total_giving_to_you=$total_you_need;
+                        $isPaid = 1;
+                        $isPartialPaid = 0;
+                        $total_i_have = $total_i_have - $total_you_need;
+
+                        $this_sale = Purchase::find($purchase->id);
+                        $this_sale->update([
+                            "paidBalance"        => $purchase->grandTotal,
+                            "remainingBalance"   => $still_payable_to_you,
+                            "IsPaid" => $isPaid,
+                            "IsPartialPaid" => $isPartialPaid,
+                            "IsNeedStampOrSignature" => false,
+                            "Description" => 'AutoPaid|'.$advance->id,
+                            "account_transaction_payment_id" => $accountTransaction_ref,
+                        ]);
                     }
-                    elseif($total_i_have <= $total_you_need){
-                        $isPaid = false;
-                        $isPartialPaid = true;
+                    else
+                    {
+                        $isPaid = 0;
+                        $isPartialPaid = 1;
                         $total_giving_to_you=$total_i_have;
-                        $still_payable_to_you=$total_you_need-$total_i_have;
-                        $total_i_have -= $total_giving_to_you;
+                        $total_i_have = $total_i_have - $total_giving_to_you;
+
+                        $this_purchase = Purchase::find($purchase->id);
+                        $this_purchase->update([
+                            "paidBalance"        => $purchase->paidBalance+$total_giving_to_you,
+                            "remainingBalance"   => $purchase->remainingBalance-$total_giving_to_you,
+                            "IsPaid" => $isPaid,
+                            "IsPartialPaid" => $isPartialPaid,
+                            "IsNeedStampOrSignature" => false,
+                            "Description" => 'AutoPaid|'.$advance->id,
+                            "account_transaction_payment_id" => $accountTransaction_ref,
+                        ]);
                     }
 
-                    $this_purchase = Purchase::find($purchase->id);
-                    $this_purchase->update([
-                        "paidBalance"        => $total_giving_to_you,
-                        "remainingBalance"   => $still_payable_to_you,
-                        "IsPaid" => $isPaid,
-                        "IsPartialPaid" => $isPartialPaid,
-                        "IsNeedStampOrSignature" => false,
-                        "Description" => 'AutoPaid|'.$advance->id,
-                        "account_transaction_payment_id" => $accountTransaction_ref,
-                    ]);
+                    if($total_i_have<=0)
+                    {
+                        break;
+                    }
                 }
             }
         }

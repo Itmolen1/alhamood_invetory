@@ -19,10 +19,11 @@
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
             <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
+                <div class="col-md-8 align-self-center">
                     <h4 class="text-themecolor">Payment</h4>
+                    <h3 class="required"> * Select Entries Carefully after saving Update is not allowed.</h3>
                 </div>
-                <div class="col-md-7 align-self-center text-right">
+                <div class="col-md-4 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
@@ -315,10 +316,20 @@
                                 var salesDetails = '';
                                 if (result.length > 0)
                                 {
-                                    for (var i = 0; i < result.length; i++) {
+                                    for (var i = 0; i < result.length; i++)
+                                    {
+                                        var registrationNumber='';
+                                        if(result[i].customer.vehicles.length===0)
+                                        {
+                                            registrationNumber='initial';
+                                        }
+                                        else
+                                        {
+                                            registrationNumber=result[i].customer.vehicles[0].registrationNumber;
+                                        }
                                         salesDetails += '<tr>';
                                         salesDetails += '<td>' + result[i].sale_details[0].PadNumber + '</td>';
-                                        salesDetails += '<td>' + result[i].customer.vehicles[0].registrationNumber + '</td>';
+                                        salesDetails += '<td>' + registrationNumber + '</td>';
                                         salesDetails += '<td>' + result[i].grandTotal + '</td>';
                                         salesDetails += '<td>' + result[i].paidBalance + '</td>';
                                         salesDetails += '<td>' + result[i].remainingBalance + '</td>';

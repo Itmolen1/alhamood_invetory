@@ -8,23 +8,31 @@
             background: #aed9f6;
         }
     </style>
+    <style>
+        .chosen-container-single .chosen-single {
+            height: 38px;
+            border-radius: 3px;
+            border: 1px solid #CCCCCC;
+        }
+        .chosen-container-single .chosen-single span {
+            padding-top: 5px;
+        }
+        .chosen-container-single .chosen-single div b {
+            margin-top: 5px;
+        }
+        .chosen-container-active .chosen-single,
+        .chosen-container-active.chosen-with-drop .chosen-single {
+            border-color: #ccc;
+            border-color: rgba(82, 168, 236, .8);
+            outline: 0;
+            outline: thin dotted \9;
+            -moz-box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+            box-shadow: 0 0 8px rgba(82, 168, 236, .6)
+        }
+    </style>
 
-
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Invoices</h4>
@@ -39,13 +47,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -57,8 +59,88 @@
                                 <div class="form-body">
 
                                     <input type="hidden" name="SaleNumber" id="SaleNumber" value="{{ $saleNo ?? "" }}">
+
+                                    {{--<div class="row table color-bordered-table success-bordered-table" style="background-color: #36bea6;">
+                                        <div class="col-md-1"><span></span></div>
+                                        <div class="col-md-1.5">Date</div>
+                                        <div class="col-md-1.5">Pad</div>
+                                        <div class="col-md-1.5">Customer</div>
+                                        <div class="col-md-2">Vehicle</div>
+                                        <div class="col-md-1">Quantity</div>
+                                        <div class="col-md-1">Unit Price</div>
+                                        <div class="col-md-1">VAT</div>
+                                        <div class="col-md-1">Amount</div>
+                                    </div>
+
+                                    <div class="row">
+
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <select name="Product_id" class="form-control input-sm" id="product_id">
+                                                    <option readonly="" disabled selected>--Product--</option>
+                                                    @foreach($products as $product)
+                                                        <option value="{{ $product->id }}" selected>{{ $product->Name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1.5">
+                                            <input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate " placeholder="">
+                                        </div>
+
+                                        <div class="col-md-1.5">
+                                            <input type="text" onClick="this.setSelectionRange(0, this.value.length)"  value="{{ $PadNumber ?? "" }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))">
+                                        </div>
+
+                                        <div class="col-md-1.5 mycontainer">
+                                            <div class="form-group">
+                                                <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;">
+                                                    <option readonly="" disabled selected>--Customer--</option>
+                                                    @foreach($customers as $customer)
+                                                        <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <select name="vehicle" id="vehicle" class="form-control vehicle_id slct chosen-select">
+                                                    <option class="opt" value="0">Vehicle</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="display: none;">
+                                                <select name="unit" id="unit" class="form-control unit_id">
+                                                    <option class="opt" value="0">Unit</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1">
+                                            <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
+                                            <input type="hidden" placeholder="Total" class="total form-control">
+                                            <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
+                                        </div>
+
+                                        <div class="col-md-1">
+                                            <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" id="Rate" class="price form-control">
+                                        </div>
+
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="VAT" id="VAT" class="VAT form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1">
+                                            <input type="hidden" placeholder="Total" class="rowTotal form-control">
+                                            <input type="text" placeholder="Total" class="rowTotal form-control">
+                                        </div>
+                                    </div> --}}
+
                                     <div class="table-responsive">
-                                        <table class="table color-bordered-table success-bordered-table">
+                                        <table class="table color-bordered-table success-bordered-table" style="overflow: hidden;z-index: 999;height:350px;" id="scroll_table">
                                             <thead>
                                             <tr>
                                                 <th style="width: 150px">Product</th>
@@ -70,7 +152,6 @@
                                                 <th>Unit Price</th>
                                                 <th style="width: 120px">VAT</th>
                                                 <th>Amount</th>
-{{--                                                <th>Action</th>--}}
                                             </tr>
                                             </thead>
                                             <tbody id="newRow">
@@ -85,11 +166,11 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td> <input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control"></td>
+                                                <td><input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="customer" class="form-control customer_id slct" id="customer_id">
+                                                        <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;">
                                                             <option readonly="" disabled selected>--Customer--</option>
                                                             @foreach($customers as $customer)
                                                                 <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
@@ -99,7 +180,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="vehicle" id="vehicle" class="form-control vehicle_id slct">
+                                                        <select name="vehicle" id="vehicle" class="form-control vehicle_id slct chosen-select">
                                                             <option class="opt" value="0">Vehicle</option>
                                                         </select>
                                                     </div>
@@ -108,28 +189,32 @@
                                                 <td hidden="">
                                                     <div class="form-group">
                                                         <select name="unit" id="unit" class="form-control unit_id">
-                                                            <option class="opt" value="0">Unit</option>
+                                                            <option class="opt" value="1">Unit</option>
                                                         </select>
                                                     </div>
                                                 </td>
+
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
                                                     <input type="hidden" placeholder="Total" class="total form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                                 </td>
+
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" id="Rate" class="price form-control"></td>
+
                                                 <td>
                                                     <div class="form-group">
                                                         <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="VAT" id="VAT" class="VAT form-control">
                                                     </div>
                                                 </td>
+
                                                 <td><input type="hidden" placeholder="Total" class="rowTotal form-control">
                                                     <input type="text" placeholder="Total" class="rowTotal form-control">
                                                 </td>
-{{--                                                <td><input class=" btn btn-success addRow" id="addRow" type="button" value="+" /></td>--}}
                                             </tr>
                                             </tbody>
                                         </table>
                                     </div>
+
 
                                     <div class="row">
                                         <div class="col-md-8">
@@ -184,12 +269,21 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4">
-
+                                        <div class="col-md-2">
                                             <p>Total Vat: <input type="text" value="0.00" class="form-control TotalVat" disabled="">
                                                 <input type="hidden" value="0.00" class="form-control TotalVat">
                                             </p>
 
+                                            <p>Account Closing : <input type="text" value="0.00" class="form-control closing" id="closing" readonly>
+                                                <input type="hidden" value="0.00" class="form-control closing">
+                                            </p>
+
+                                            <p>Remaining Balance: <input type="text" value="0.00" id="balance" class="form-control balance" disabled>
+                                                <input type="hidden" value="0.00" id="balance" class="form-control balance">
+                                            </p>
+                                        </div>
+
+                                        <div class="col-md-2">
 
                                             <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled>
                                                 <input type="hidden" value="0.00" class="form-control GTotal" >
@@ -197,46 +291,36 @@
 
                                             <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
 
-                                            <p>Balance: <input type="text" value="0.00" id="balance" class="form-control balance" disabled>
-                                                <input type="hidden" value="0.00" id="balance" class="form-control balance">
-                                            </p>
 
 
+                                            <div class="form-actions">
+                                                <p>&nbsp;</p>
+                                                <button type="button" class="btn btn-success" id="submit"> <i class="fa fa-check"></i> Save</button>
+                                                <button type="button" class="btn btn-inverse">Cancel</button>
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
-                                <div class="form-actions">
-                                    <button type="button" class="btn btn-success" id="submit"> <i class="fa fa-check"></i> Save</button>
-                                    <button type="button" class="btn btn-inverse">Cancel</button>
-                                </div>
+
                             </form>
-
-
                         </div>
                     </div>
                 </div>
-
-
             </div>
-            <!-- Row -->
-
-
-
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
+
     <script>
         window.onload = function () {
             document.getElementById('customer_id').focus();
         };
+
+        $(document).ready(function () {
+            $('html, body').animate({
+                scrollTop: $('.page-titles').offset().top
+            }, 'slow');
+        });
     </script>
     <script>
         $(document).ready(function () {
@@ -279,9 +363,7 @@
 
             //// accept Only Numbers /////////////////////
 
-
             //////// end Accept only Number ////////////////////
-
 
             /////////////////////////// customer select /////////////////
             $(document).ready(function () {
@@ -335,12 +417,12 @@
                             grandTotal: $('.GTotal').val(),
                             paidBalance: $('.cashPaid').val(),
                             remainingBalance: $('#balance').val(),
+                            lastClosing: $('#closing').val(),
                             customer_id:$('#customer_id').val(),
                             customerNote:$('#description').val(),
                             orders: insert,
                         }
-                        // var Datas = {Data: details}
-                        // console.log(Datas);
+
                         if (insert.length > 0) {
                             $.ajaxSetup({
                                 headers: {
@@ -356,7 +438,6 @@
                                 success: function (result) {
                                     if (result !== "Failed") {
                                         details = [];
-                                        //console.log(result);
                                         alert("Data Inserted Successfully");
                                         window.location.href = "{{ route('sales.create') }}";
 
@@ -417,10 +498,7 @@
                 }
                 ////// end of validate row ///////////////////
 
-
                 $('.customer_id').change(function () {
-                    //alert();
-                    //$('.quantity').val('');
                     var Id = 0;
                     Id = $(this).val();
 
@@ -433,32 +511,30 @@
                             dataType: "json",
                             success: function (result) {
                                 if (result !== "Failed") {
-                                    console.log(result);
-                                    //console.log(result.customer_prices[0].Rate);
-                                    $('#Rate').val(result.customer_prices[0].Rate);
-                                    $('#VAT').val(result.customer_prices[0].VAT);
-
+                                    $('#Rate').val(result.customers.customer_prices[0].Rate);
+                                    $('#VAT').val(result.customers.customer_prices[0].VAT);
 
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
-                                    if (result.vehicles.length > 0)
+                                    vehicleDetails += '<option value="">' + 'Select' + '</option>';
+                                    if (result.customers.vehicles.length > 0)
                                     {
-                                        for (var i = 0; i < result.vehicles.length; i++) {
-                                            vehicleDetails += '<option value="' + result.vehicles[i].id + '">' + result.vehicles[i].registrationNumber + '</option>';
+                                        for (var i = 0; i < result.customers.vehicles.length; i++) {
+                                            vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
                                         }
                                     }
                                     else {
                                         vehicleDetails += '<option value="0">No Data</option>';
                                     }
                                     $("#vehicle").append(vehicleDetails);
+                                    $("#vehicle").trigger("chosen:updated");
 
-                                    var rate = result.customer_prices[0].Rate;
-                                    var vat = result.customer_prices[0].VAT;
+                                    var rate = result.customers.customer_prices[0].Rate;
+                                    var vat = result.customers.customer_prices[0].VAT;
                                     rate=parseFloat(rate).toFixed(2)
                                     vat=parseFloat(vat).toFixed(2)
                                     totalWithCustomer(vat, rate);
-
-
+                                    $('#closing').val(result.closing);
                                 } else {
                                     alert(result);
                                 }
@@ -490,20 +566,18 @@
                     dataType: "json",
                     success: function (result) {
                         if (result !== "Failed") {
-                            //console.log(result);
-
-                                    $("#unit").html('');
-                                    var unitDetails = '';
-                                    if (result.units.length > 0)
-                                    {
-                                        for (var i = 0; i < result.units.length; i++) {
-                                            unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
-                                        }
-                                    }
-                                    else {
-                                        unitDetails += '<option value="0">No Data</option>';
-                                    }
-                                    $("#unit").append(unitDetails);
+                            $("#unit").html('');
+                            var unitDetails = '';
+                            if (result.units.length > 0)
+                            {
+                                for (var i = 0; i < result.units.length; i++) {
+                                    unitDetails += '<option value="' + result.units[i].id + '">' + result.units[i].Name + '</option>';
+                                }
+                            }
+                            else {
+                                unitDetails += '<option value="0">No Data</option>';
+                            }
+                            $("#unit").append(unitDetails);
                              // currentRow.find('.unit').val(result.unit.Name);
                         } else {
                             alert(result);

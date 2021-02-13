@@ -17,30 +17,33 @@
     <!-- page CSS -->
     <link href="{{ asset('admin_assets/assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('admin_assets/assets/node_modules/select2/dist/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('admin_assets/assets/node_modules/switchery/dist/switchery.min.css') }}" rel="stylesheet" />
+{{--    <link href="{{ asset('admin_assets/assets/node_modules/switchery/dist/switchery.min.css') }}" rel="stylesheet" />--}}
     <link href="{{ asset('admin_assets/assets/node_modules/bootstrap-select/bootstrap-select.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('admin_assets/assets/node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.css') }}" rel="stylesheet" />
     <link href="{{ asset('admin_assets/assets/node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('admin_assets/assets/node_modules/multiselect/css/multi-select.css') }}" rel="stylesheet" type="text/css" />
 
     <!-- chartist CSS -->
-    <link href="{{ asset('admin_assets/assets/node_modules/morrisjs/morris.css') }}" rel="stylesheet">
+{{--    <link href="{{ asset('admin_assets/assets/node_modules/morrisjs/morris.css') }}" rel="stylesheet">--}}
     <!--Toaster Popup message CSS -->
-    <link href="{{ asset('admin_assets/assets/node_modules/toast-master/css/jquery.toast.css') }}" rel="stylesheet">
+{{--    <link href="{{ asset('admin_assets/assets/node_modules/toast-master/css/jquery.toast.css') }}" rel="stylesheet">--}}
     <!--c3 plugins CSS -->
-    <link href="{{ asset('admin_assets/assets/node_modules/c3-master/c3.min.css') }}" rel="stylesheet">
+{{--    <link href="{{ asset('admin_assets/assets/node_modules/c3-master/c3.min.css') }}" rel="stylesheet">--}}
     <!-- Custom CSS -->
     <link href="{{ asset('admin_assets/assets/dist/css/style.min.css') }}" rel="stylesheet">
     <!-- Dashboard 1 Page CSS -->
     <link href="{{ asset('admin_assets/assets/dist/css/pages/dashboard1.css') }}" rel="stylesheet">
 
-    <!-- page css -->
-    <link href="{{ asset('admin_assets/assets/dist/css/pages/file-upload.css') }}" rel="stylesheet">
+    <link href="{{ asset('admin_assets/assets/dist/css/chosen.min.css') }}" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('admin_assets/assets/node_modules/dropify/dist/css/dropify.min.css') }}">
+
+    <!-- page css -->
+{{--    <link href="{{ asset('admin_assets/assets/dist/css/pages/file-upload.css') }}" rel="stylesheet">--}}
+
+{{--    <link rel="stylesheet" href="{{ asset('admin_assets/assets/node_modules/dropify/dist/css/dropify.min.css') }}">--}}
 
     <!-- summernotes CSS -->
-    <link href="{{ asset('admin_assets/assets/node_modules/summernote/dist/summernote.css') }}" rel="stylesheet" />
+{{--    <link href="{{ asset('admin_assets/assets/node_modules/summernote/dist/summernote.css') }}" rel="stylesheet" />--}}
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 
@@ -48,9 +51,16 @@
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="{{ asset('admin_assets/assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/assets/dist/js/chosen.jquery.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function() {
+            $(".chosen-select").chosen();
+        });
+    </script>
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+
     <![endif]-->
     <style>
         .error{
@@ -200,8 +210,6 @@ input:checked + .slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
-}
-
 }
 </style>
 </head>
@@ -454,7 +462,7 @@ input:checked + .slider:before {
 <!-- slimscrollbar scrollbar JavaScript -->
 <script src="{{ asset('admin_assets/assets/dist/js/perfect-scrollbar.jquery.min.js') }}"></script>
 <!--Wave Effects -->
-<script src="{{ asset('admin_assets/assets/dist/js/waves.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/dist/js/waves.js') }}"></script>--}}
 <!--Menu sidebar -->
 <script src="{{ asset('admin_assets/assets/dist/js/sidebarmenu.js') }}"></script>
 <!--Custom JavaScript -->
@@ -463,21 +471,21 @@ input:checked + .slider:before {
 <!-- This page plugins -->
 <!-- ============================================================== -->
 <!--morris JavaScript -->
-<script src="{{ asset('admin_assets/assets/node_modules/raphael/raphael-min.js') }}"></script>
-<script src="{{ asset('admin_assets/assets/node_modules/morrisjs/morris.min.js') }}"></script>
-<script src="{{ asset('admin_assets/assets/node_modules/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/node_modules/raphael/raphael-min.js') }}"></script>--}}
+{{--<script src="{{ asset('admin_assets/assets/node_modules/morrisjs/morris.min.js') }}"></script>--}}
+{{--<script src="{{ asset('admin_assets/assets/node_modules/jquery-sparkline/jquery.sparkline.min.js') }}"></script>--}}
 <!--c3 JavaScript -->
-<script src="{{ asset('admin_assets/assets/node_modules/d3/d3.min.js') }}"></script>
-<script src="{{ asset('admin_assets/assets/node_modules/c3-master/c3.min.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/node_modules/d3/d3.min.js') }}"></script>--}}
+{{--<script src="{{ asset('admin_assets/assets/node_modules/c3-master/c3.min.js') }}"></script>--}}
 <!-- Popup message jquery -->
-<script src="{{ asset('admin_assets/assets/node_modules/toast-master/js/jquery.toast.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/node_modules/toast-master/js/jquery.toast.js') }}"></script>--}}
 <!-- Chart JS -->
-<script src="{{ asset('admin_assets/assets/dist/js/dashboard1.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/dist/js/dashboard1.js') }}"></script>--}}
 
 
 
 <!--stickey kit -->
-<script src="{{ asset('admin_assets/assets/node_modules/sticky-kit-master/dist/sticky-kit.min.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/node_modules/sticky-kit-master/dist/sticky-kit.min.js') }}"></script>--}}
 
 <!-- This is data table -->
 <script src="{{ asset('admin_assets/assets/node_modules/datatables/jquery.dataTables.min.js') }}"></script>
@@ -496,7 +504,7 @@ input:checked + .slider:before {
 
 <!-- ============================================================== -->
 <!-- jQuery file upload -->
-<script src="{{ asset('admin_assets/assets/node_modules/dropify/dist/js/dropify.min.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/node_modules/dropify/dist/js/dropify.min.js') }}"></script>--}}
 
 <script language="javascript">
 
@@ -519,75 +527,75 @@ input:checked + .slider:before {
 </script>
 
 
-<script>
-    $(document).ready(function() {
-        // Basic
-        $('.dropify').dropify();
+{{--<script>--}}
+{{--    $(document).ready(function() {--}}
+{{--        // Basic--}}
+{{--        $('.dropify').dropify();--}}
 
-        // Translated
-        $('.dropify-fr').dropify({
-            messages: {
-                default: 'Glissez-déposez un fichier ici ou cliquez',
-                replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',
-                remove: 'Supprimer',
-                error: 'Désolé, le fichier trop volumineux'
-            }
-        });
+{{--        // Translated--}}
+{{--        $('.dropify-fr').dropify({--}}
+{{--            messages: {--}}
+{{--                default: 'Glissez-déposez un fichier ici ou cliquez',--}}
+{{--                replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',--}}
+{{--                remove: 'Supprimer',--}}
+{{--                error: 'Désolé, le fichier trop volumineux'--}}
+{{--            }--}}
+{{--        });--}}
 
-        // Used events
-        var drEvent = $('#input-file-events').dropify();
+{{--        // Used events--}}
+{{--        var drEvent = $('#input-file-events').dropify();--}}
 
-        drEvent.on('dropify.beforeClear', function(event, element) {
-            return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
-        });
+{{--        drEvent.on('dropify.beforeClear', function(event, element) {--}}
+{{--            return confirm("Do you really want to delete \"" + element.file.name + "\" ?");--}}
+{{--        });--}}
 
-        drEvent.on('dropify.afterClear', function(event, element) {
-            alert('File deleted');
-        });
+{{--        drEvent.on('dropify.afterClear', function(event, element) {--}}
+{{--            alert('File deleted');--}}
+{{--        });--}}
 
-        drEvent.on('dropify.errors', function(event, element) {
-            console.log('Has Errors');
-        });
+{{--        drEvent.on('dropify.errors', function(event, element) {--}}
+{{--            console.log('Has Errors');--}}
+{{--        });--}}
 
-        var drDestroy = $('#input-file-to-destroy').dropify();
-        drDestroy = drDestroy.data('dropify')
-        $('#toggleDropify').on('click', function(e) {
-            e.preventDefault();
-            if (drDestroy.isDropified()) {
-                drDestroy.destroy();
-            } else {
-                drDestroy.init();
-            }
-        })
-    });
-</script>
+{{--        var drDestroy = $('#input-file-to-destroy').dropify();--}}
+{{--        drDestroy = drDestroy.data('dropify')--}}
+{{--        $('#toggleDropify').on('click', function(e) {--}}
+{{--            e.preventDefault();--}}
+{{--            if (drDestroy.isDropified()) {--}}
+{{--                drDestroy.destroy();--}}
+{{--            } else {--}}
+{{--                drDestroy.init();--}}
+{{--            }--}}
+{{--        })--}}
+{{--    });--}}
+{{--</script>--}}
 
 
 
-<script src="{{ asset('admin_assets/assets/node_modules/summernote/dist/summernote.min.js') }}"></script>
-<script>
-    jQuery(document).ready(function() {
+{{--<script src="{{ asset('admin_assets/assets/node_modules/summernote/dist/summernote.min.js') }}"></script>--}}
+{{--<script>--}}
+{{--    jQuery(document).ready(function() {--}}
 
-        $('.summernote').summernote({
-            height: 350, // set editor height
-            minHeight: null, // set minimum height of editor
-            maxHeight: null, // set maximum height of editor
-            focus: false // set focus to editable area after initializing summernote
-        });
+{{--        $('.summernote').summernote({--}}
+{{--            height: 350, // set editor height--}}
+{{--            minHeight: null, // set minimum height of editor--}}
+{{--            maxHeight: null, // set maximum height of editor--}}
+{{--            focus: false // set focus to editable area after initializing summernote--}}
+{{--        });--}}
 
-        $('.inline-editor').summernote({
-            airMode: true
-        });
+{{--        $('.inline-editor').summernote({--}}
+{{--            airMode: true--}}
+{{--        });--}}
 
-    });
+{{--    });--}}
 
-    window.edit = function() {
-        $(".click2edit").summernote()
-    },
-        window.save = function() {
-            $(".click2edit").summernote('destroy');
-        }
-</script>
+{{--    window.edit = function() {--}}
+{{--        $(".click2edit").summernote()--}}
+{{--    },--}}
+{{--        window.save = function() {--}}
+{{--            $(".click2edit").summernote('destroy');--}}
+{{--        }--}}
+{{--</script>--}}
 
 <script>
     $(document).ready(function() {
@@ -638,119 +646,119 @@ input:checked + .slider:before {
 </script>
 
 
-<script src="{{ asset('admin_assets/assets/node_modules/switchery/dist/switchery.min.js') }}"></script>
+{{--<script src="{{ asset('admin_assets/assets/node_modules/switchery/dist/switchery.min.js') }}"></script>--}}
 <script src="{{ asset('admin_assets/assets/node_modules/select2/dist/js/select2.full.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('admin_assets/assets/node_modules/bootstrap-select/bootstrap-select.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('admin_assets/assets/node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js') }}"></script>
-<script src="{{ asset('admin_assets/assets/node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.js') }}" type="text/javascript"></script>
+{{--<script src="{{ asset('admin_assets/assets/node_modules/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js') }}"></script>--}}
+{{--<script src="{{ asset('admin_assets/assets/node_modules/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.js') }}" type="text/javascript"></script>--}}
 <script type="text/javascript" src="{{ asset('admin_assets/assets/node_modules/multiselect/js/jquery.multi-select.js') }}"></script>
-<script>
-    jQuery(document).ready(function() {
-        // Switchery
-        var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
-        $('.js-switch').each(function() {
-            new Switchery($(this)[0], $(this).data());
-        });
-        // For select 2
-        $(".select2").select2();
-        $('.selectpicker').selectpicker();
-        //Bootstrap-TouchSpin
-        $(".vertical-spin").TouchSpin({
-            verticalbuttons: true,
-            verticalupclass: 'ti-plus',
-            verticaldownclass: 'ti-minus'
-        });
-        var vspinTrue = $(".vertical-spin").TouchSpin({
-            verticalbuttons: true
-        });
-        if (vspinTrue) {
-            $('.vertical-spin').prev('.bootstrap-touchspin-prefix').remove();
-        }
-        $("input[name='tch1']").TouchSpin({
-            min: 0,
-            max: 100,
-            step: 0.1,
-            decimals: 2,
-            boostat: 5,
-            maxboostedstep: 10,
-            postfix: '%'
-        });
-        $("input[name='tch2']").TouchSpin({
-            min: -1000000000,
-            max: 1000000000,
-            stepinterval: 50,
-            maxboostedstep: 10000000,
-            prefix: '$'
-        });
-        $("input[name='tch3']").TouchSpin();
-        $("input[name='tch3_22']").TouchSpin({
-            initval: 40
-        });
-        $("input[name='tch5']").TouchSpin({
-            prefix: "pre",
-            postfix: "post"
-        });
-        // For multiselect
-        $('#pre-selected-options').multiSelect();
-        $('#optgroup').multiSelect({
-            selectableOptgroup: true
-        });
-        $('#public-methods').multiSelect();
-        $('#select-all').click(function() {
-            $('#public-methods').multiSelect('select_all');
-            return false;
-        });
-        $('#deselect-all').click(function() {
-            $('#public-methods').multiSelect('deselect_all');
-            return false;
-        });
-        $('#refresh').on('click', function() {
-            $('#public-methods').multiSelect('refresh');
-            return false;
-        });
-        $('#add-option').on('click', function() {
-            $('#public-methods').multiSelect('addOption', {
-                value: 42,
-                text: 'test 42',
-                index: 0
-            });
-            return false;
-        });
-        $(".ajax").select2({
-            ajax: {
-                url: "https://api.github.com/search/repositories",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        q: params.term, // search term
-                        page: params.page
-                    };
-                },
-                processResults: function(data, params) {
-                    // parse the results into the format expected by Select2
-                    // since we are using custom formatting functions we do not need to
-                    // alter the remote JSON data, except to indicate that infinite
-                    // scrolling can be used
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                        pagination: {
-                            more: (params.page * 30) < data.total_count
-                        }
-                    };
-                },
-                cache: true
-            },
-            escapeMarkup: function(markup) {
-                return markup;
-            }, // let our custom formatter work
-            minimumInputLength: 1,
-            // templateResult: formatRepo, // omitted for brevity, see the source of this page
-            //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
-        });
-    });
-</script>
+{{--<script>--}}
+{{--    jQuery(document).ready(function() {--}}
+{{--        // Switchery--}}
+{{--        var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));--}}
+{{--        $('.js-switch').each(function() {--}}
+{{--            new Switchery($(this)[0], $(this).data());--}}
+{{--        });--}}
+{{--        // For select 2--}}
+{{--        $(".select2").select2();--}}
+{{--        $('.selectpicker').selectpicker();--}}
+{{--        //Bootstrap-TouchSpin--}}
+{{--        $(".vertical-spin").TouchSpin({--}}
+{{--            verticalbuttons: true,--}}
+{{--            verticalupclass: 'ti-plus',--}}
+{{--            verticaldownclass: 'ti-minus'--}}
+{{--        });--}}
+{{--        var vspinTrue = $(".vertical-spin").TouchSpin({--}}
+{{--            verticalbuttons: true--}}
+{{--        });--}}
+{{--        if (vspinTrue) {--}}
+{{--            $('.vertical-spin').prev('.bootstrap-touchspin-prefix').remove();--}}
+{{--        }--}}
+{{--        $("input[name='tch1']").TouchSpin({--}}
+{{--            min: 0,--}}
+{{--            max: 100,--}}
+{{--            step: 0.1,--}}
+{{--            decimals: 2,--}}
+{{--            boostat: 5,--}}
+{{--            maxboostedstep: 10,--}}
+{{--            postfix: '%'--}}
+{{--        });--}}
+{{--        $("input[name='tch2']").TouchSpin({--}}
+{{--            min: -1000000000,--}}
+{{--            max: 1000000000,--}}
+{{--            stepinterval: 50,--}}
+{{--            maxboostedstep: 10000000,--}}
+{{--            prefix: '$'--}}
+{{--        });--}}
+{{--        $("input[name='tch3']").TouchSpin();--}}
+{{--        $("input[name='tch3_22']").TouchSpin({--}}
+{{--            initval: 40--}}
+{{--        });--}}
+{{--        $("input[name='tch5']").TouchSpin({--}}
+{{--            prefix: "pre",--}}
+{{--            postfix: "post"--}}
+{{--        });--}}
+{{--        // For multiselect--}}
+{{--        $('#pre-selected-options').multiSelect();--}}
+{{--        $('#optgroup').multiSelect({--}}
+{{--            selectableOptgroup: true--}}
+{{--        });--}}
+{{--        $('#public-methods').multiSelect();--}}
+{{--        $('#select-all').click(function() {--}}
+{{--            $('#public-methods').multiSelect('select_all');--}}
+{{--            return false;--}}
+{{--        });--}}
+{{--        $('#deselect-all').click(function() {--}}
+{{--            $('#public-methods').multiSelect('deselect_all');--}}
+{{--            return false;--}}
+{{--        });--}}
+{{--        $('#refresh').on('click', function() {--}}
+{{--            $('#public-methods').multiSelect('refresh');--}}
+{{--            return false;--}}
+{{--        });--}}
+{{--        $('#add-option').on('click', function() {--}}
+{{--            $('#public-methods').multiSelect('addOption', {--}}
+{{--                value: 42,--}}
+{{--                text: 'test 42',--}}
+{{--                index: 0--}}
+{{--            });--}}
+{{--            return false;--}}
+{{--        });--}}
+{{--        $(".ajax").select2({--}}
+{{--            ajax: {--}}
+{{--                url: "https://api.github.com/search/repositories",--}}
+{{--                dataType: 'json',--}}
+{{--                delay: 250,--}}
+{{--                data: function(params) {--}}
+{{--                    return {--}}
+{{--                        q: params.term, // search term--}}
+{{--                        page: params.page--}}
+{{--                    };--}}
+{{--                },--}}
+{{--                processResults: function(data, params) {--}}
+{{--                    // parse the results into the format expected by Select2--}}
+{{--                    // since we are using custom formatting functions we do not need to--}}
+{{--                    // alter the remote JSON data, except to indicate that infinite--}}
+{{--                    // scrolling can be used--}}
+{{--                    params.page = params.page || 1;--}}
+{{--                    return {--}}
+{{--                        results: data.items,--}}
+{{--                        pagination: {--}}
+{{--                            more: (params.page * 30) < data.total_count--}}
+{{--                        }--}}
+{{--                    };--}}
+{{--                },--}}
+{{--                cache: true--}}
+{{--            },--}}
+{{--            escapeMarkup: function(markup) {--}}
+{{--                return markup;--}}
+{{--            }, // let our custom formatter work--}}
+{{--            minimumInputLength: 1,--}}
+{{--            // templateResult: formatRepo, // omitted for brevity, see the source of this page--}}
+{{--            //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page--}}
+{{--        });--}}
+{{--    });--}}
+{{--</script>--}}
 
 </body>
 

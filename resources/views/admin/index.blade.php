@@ -32,44 +32,44 @@
                 <!-- ============================================================== -->
                 <div class="card-group">
                     <!-- card -->
-                    <div class="card o-income">
-                        <div class="card-body">
-                            <div class="d-flex m-b-30 no-block">
-                                <h4 class="card-title m-b-0 align-self-center">Daily Income</h4>
-                                <div class="ml-auto">
-                                    <select class="custom-select border-0">
-                                        <option selected="">Today</option>
-                                        <option value="1">Tomorrow</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div id="income" style="height:260px; width:100%;"></div>
-                            <ul class="list-inline m-t-30 text-center font-12">
-                                <li><i class="fa fa-circle text-success"></i> Growth</li>
-                                <li><i class="fa fa-circle text-info"></i> Net</li>
-                            </ul>
-                        </div>
-                    </div>
+{{--                    <div class="card o-income">--}}
+{{--                        <div class="card-body">--}}
+{{--                            <div class="d-flex m-b-30 no-block">--}}
+{{--                                <h4 class="card-title m-b-0 align-self-center">Daily Income</h4>--}}
+{{--                                <div class="ml-auto">--}}
+{{--                                    <select class="custom-select border-0">--}}
+{{--                                        <option selected="">Today</option>--}}
+{{--                                        <option value="1">Tomorrow</option>--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div id="income" style="height:260px; width:100%;"></div>--}}
+{{--                            <ul class="list-inline m-t-30 text-center font-12">--}}
+{{--                                <li><i class="fa fa-circle text-success"></i> Growth</li>--}}
+{{--                                <li><i class="fa fa-circle text-info"></i> Net</li>--}}
+{{--                            </ul>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
                     <!-- card -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex m-b-30 no-block">
-                                <h4 class="card-title m-b-0 align-self-center">Visitors</h4>
-                                <div class="ml-auto">
-                                    <select class="custom-select border-0">
-                                        <option selected="">Today</option>
-                                        <option value="1">Tomorrow</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div id="visitor" style="height:260px; width:100%;"></div>
-                            <ul class="list-inline m-t-30 text-center font-12">
-                                <li><i class="fa fa-circle text-primary"></i> Tablet</li>
-                                <li><i class="fa fa-circle text-danger"></i> Desktops</li>
-                                <li><i class="fa fa-circle text-info"></i> Mobile</li>
-                            </ul>
-                        </div>
-                    </div>
+{{--                    <div class="card">--}}
+{{--                        <div class="card-body">--}}
+{{--                            <div class="d-flex m-b-30 no-block">--}}
+{{--                                <h4 class="card-title m-b-0 align-self-center">Visitors</h4>--}}
+{{--                                <div class="ml-auto">--}}
+{{--                                    <select class="custom-select border-0">--}}
+{{--                                        <option selected="">Today</option>--}}
+{{--                                        <option value="1">Tomorrow</option>--}}
+{{--                                    </select>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                            <div id="visitor" style="height:260px; width:100%;"></div>--}}
+{{--                            <ul class="list-inline m-t-30 text-center font-12">--}}
+{{--                                <li><i class="fa fa-circle text-primary"></i> Tablet</li>--}}
+{{--                                <li><i class="fa fa-circle text-danger"></i> Desktops</li>--}}
+{{--                                <li><i class="fa fa-circle text-info"></i> Mobile</li>--}}
+{{--                            </ul>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
                     <!-- card -->
                     <div class="card">
                         <div class="p-20 p-t-25">

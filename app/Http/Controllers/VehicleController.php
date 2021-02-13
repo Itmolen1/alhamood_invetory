@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
-    /**
-     * @var IVehicleRepositoryInterface
-     */
     private $vehicleRepository;
 
     public function __construct(IVehicleRepositoryInterface $vehicleRepository)
@@ -29,18 +26,15 @@ class VehicleController extends Controller
         return $this->vehicleRepository->create();
     }
 
-
     public function store(VehicleRequest $vehicleRequest)
     {
         return $this->vehicleRepository->store($vehicleRequest);
     }
 
-
     public function show(Vehicle $vehicle)
     {
         //
     }
-
 
     public function edit($Id)
     {
@@ -52,9 +46,23 @@ class VehicleController extends Controller
         return $this->vehicleRepository->update($request, $Id);
     }
 
-
     public function destroy(Request $request, $Id)
     {
         return $this->vehicleRepository->delete($request, $Id);
+    }
+
+    public function CheckVehicleExist(Request $request)
+    {
+        return $this->vehicleRepository->CheckVehicleExist($request);
+    }
+
+    public function getVehicleList()
+    {
+        return $this->vehicleRepository->getVehicleList();
+    }
+
+    public function PrintVehicleList(Request $request)
+    {
+        return $this->vehicleRepository->PrintVehicleList($request);
     }
 }

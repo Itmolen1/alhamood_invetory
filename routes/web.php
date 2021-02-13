@@ -16,32 +16,34 @@ use Illuminate\Support\Facades\Route;
 
 //Route::prefix('admin')->middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
-    route::resource('companies','CompanyController');
-    route::get('/','AdminController@index');
-
+route::resource('companies','CompanyController');
+route::get('/','AdminController@index');
 
 Route::get('/admin','AdminController@index')->name('admin');
 route::get('/register','AdminController@register');
 
-
 route::resource('customers','CustomerController');
-route::get('customerDetails/{id}','DriverController@customerDetails');
+route::get('customerDetails/{id}','CustomerController@customerDetails');
 route::resource('company_types','CompanyTypeController');
 route::resource('payment_types','PaymentTypeController');
 route::resource('payment_terms','PaymentTermController');
-
-
 
 route::resource('suppliers','SupplierController');
 route::resource('customer_advances','CustomerAdvanceController');
 route::PUT('customer_advances_push/{Id}','CustomerAdvanceController@customer_advances_push');
 route::resource('supplier_advances','SupplierAdvanceController');
 route::PUT('supplier_advances_push/{Id}','SupplierAdvanceController@supplier_advances_push');
+
 route::resource('vehicles','VehicleController');
+route::get('getVehicleList','VehicleController@getVehicleList')->name('getVehicleList');
+route::post('PrintVehicleList','VehicleController@PrintVehicleList')->name('PrintVehicleList');
+
+route::POST('/CheckVehicleExist','VehicleController@CheckVehicleExist');
 route::resource('drivers','DriverController');
 route::resource('users','UserController');
 route::resource('roles','RoleController');
 route::resource('banks','BankController');
+route::resource('deposits','DepositController');
 route::get('getBankAccountDetail/{id}','BankController@getBankAccountDetail');
 route::resource('countries','CountryController');
 route::resource('states','StateController');
@@ -68,7 +70,6 @@ route::resource('expense_categories','ExpenseCategoryController');
 route::post('expenseUpdate/{id}','ExpenseController@expenseUpdate');
 route::resource('employees','EmployeeController');
 
-
 ////////////// sales /////////////////////
 route::resource('sales','SaleController');
 route::post('salesUpdate/{Id}','SaleController@salesUpdate');
@@ -76,19 +77,15 @@ route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehi
 route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
 route::resource('customer_prices','CustomerPriceController');
 
-
-
 //////////////// meterReading ///////////////
 route::resource('meter_readers','MeterReaderController');
 route::resource('meter_readings','MeterReadingController');
 route::post('meterReadingUpdate/{Id}','MeterReadingController@meterReadingUpdate');
 
-
 /////// loan ///////////////
 route::resource('loans','LoanController');
 route::get('customerRemaining/{Id}','LoanController@customerRemaining');
 route::get('employeeRemaining/{Id}','LoanController@employeeRemaining');
-
 
 route::resource('payment_receives','PaymentReceiveController');
 route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
@@ -132,47 +129,13 @@ route::get('BankReport','ReportController@BankReport')->name('BankReport');
 route::post('PrintBankReport','ReportController@PrintBankReport')->name('PrintBankReport');
 route::get('GeneralLedger','ReportController@GeneralLedger')->name('GeneralLedger');
 route::post('PrintGeneralLedger','ReportController@PrintGeneralLedger')->name('PrintGeneralLedger');
+
 });
 
-
-
-
-///////////// sales samples ////////////////////
-//route::view('sales1','admin.sale.create');
-//route::view('sales/index','admin.sale.index');
-//route::view('sales/edit','admin.sale.edit');
-//
-//route::view('expenses1','admin.expense.create');
-//route::view('expenses/edit','admin.expense.edit');
-//route::view('expenses/index','admin.expense.index');
-
-
-//route::view('purchases1','admin.purchase.create');
-//route::view('purchases/edit','admin.purchase.edit');
-//route::view('purchases/index','admin.purchase.index');
-
-
-//route::view('add_meter','admin.meter.create');
-//
-//route::view('meterReading1','admin.meterReading.create');
-//route::view('meterReading/index','admin.meterReading.index');
-//route::view('meterReading/edit','admin.meterReading.edit');
-
-//
-//route::view('loan','admin.loan.create');
-//route::view('loan/edit','admin.loan.edit');
-//route::view('loan/index','admin.loan.index');
-
 route::view('welcome','welcome');
-
-
-/// end of sales samples /////////////////
-
 
 Auth::routes([
     'register' => false, // Registration Routes...
     'reset' => false, // Password Reset Routes...
     'verify' => false, // Email Verification Routes...
 ]);
-//
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

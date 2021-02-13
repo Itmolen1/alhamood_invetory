@@ -129,11 +129,11 @@
 
                                 $("#vehicle_id").html('');
                                 var vehicleDetails = '';
-                                if (result.vehicles.length > 0)
+                                if (result.customers.vehicles.length > 0)
                                 {
                                     vehicleDetails += '<option value="all">All</option>';
-                                    for (var i = 0; i < result.vehicles.length; i++) {
-                                        vehicleDetails += '<option value="' + result.vehicles[i].id + '">' + result.vehicles[i].registrationNumber + '</option>';
+                                    for (var i = 0; i < result.customers.vehicles.length; i++) {
+                                        vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
                                     }
                                 }
                                 else {

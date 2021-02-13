@@ -156,19 +156,19 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='SALES REPORT';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
 
-            $pdf::SetFont('times', 'B', 8);
+            $pdf::SetFont('helvetica', 'B', 8);
             if($request->customer_id==='all')
             {
                 //for customer selection
@@ -193,10 +193,10 @@ class ReportRepository implements IReportRepositoryInterface
                     $qty_sum=0.0;
 
                     $customer_title='<u><b>'.'Customer :- '.$customer_name[$i].'</b></u>';
-                    $pdf::SetFont('times', 'B', 10);
+                    $pdf::SetFont('helvetica', 'B', 10);
                     $pdf::writeHTMLCell(0, 0, '', '', $customer_title,0, 1, 0, true, 'L', true);
 
-                    $pdf::SetFont('times', '', 8);
+                    $pdf::SetFont('helvetica', '', 8);
                     //code will come here
                     $html = '<table border="0.5" cellpadding="3">
                     <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
@@ -280,10 +280,10 @@ class ReportRepository implements IReportRepositoryInterface
                         $qty_sum=0.0;
 
                         $customer_title='<u><b>'.'Customer :- '.$customer_name[$i].'</b></u>';
-                        $pdf::SetFont('times', 'B', 10);
+                        $pdf::SetFont('helvetica', 'B', 10);
                         $pdf::writeHTMLCell(0, 0, '', '', $customer_title,0, 1, 0, true, 'L', true);
 
-                        $pdf::SetFont('times', '', 8);
+                        $pdf::SetFont('helvetica', '', 8);
 
                         //code will come here
                         $html = '<table border="0.5" cellpadding="3">
@@ -368,9 +368,9 @@ class ReportRepository implements IReportRepositoryInterface
 
                         $vehicle_name=$veh_name[$i];
                         $veh_title='<u><b>'.'Vehicle :- '.$vehicle_name.'</b></u>';
-                        $pdf::SetFont('times', 'B', 10);
+                        $pdf::SetFont('helvetica', 'B', 10);
                         $pdf::writeHTMLCell(0, 0, '', '', $veh_title,0, 1, 0, true, 'L', true);
-                        $pdf::SetFont('times', '', 8);
+                        $pdf::SetFont('helvetica', '', 8);
 
                         $html = '<table border="0.5" cellpadding="3">
                         <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
@@ -501,7 +501,7 @@ class ReportRepository implements IReportRepositoryInterface
         $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
         $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-        $pdf::AddPage();$pdf::SetFont('times', '', 6);
+        $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
         $pdf::SetFillColor(255,255,0);
 
         //$row=$sales->sale_details;
@@ -512,11 +512,11 @@ class ReportRepository implements IReportRepositoryInterface
             return FALSE;
         }
 
-        $pdf::SetFont('times', '', 15);
+        $pdf::SetFont('helvetica', '', 15);
         $html='General Ledger';
         $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-        $pdf::SetFont('times', '', 12);
+        $pdf::SetFont('helvetica', '', 12);
         $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
         $pdf::writeHTMLCell(0, 0, ''    , '', $html,0, 1, 0, true, 'R', true);
 
@@ -524,7 +524,7 @@ class ReportRepository implements IReportRepositoryInterface
         $debit_total=0.0;
         $credit_total=0.0;
 
-        $pdf::SetFont('times', 'B', 14);
+        $pdf::SetFont('helvetica', 'B', 14);
         $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="50">#</th>
@@ -535,7 +535,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="60">Debit</th>
                 <th align="center" width="60">Closing</th>
             </tr>';
-        $pdf::SetFont('times', '', 10);
+        $pdf::SetFont('helvetica', '', 10);
         for($i=0;$i<count($row);$i++)
         {
             if($row[$i]['Debit']!=0)
@@ -602,18 +602,19 @@ class ReportRepository implements IReportRepositoryInterface
         $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
         $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-        $pdf::AddPage();$pdf::SetFont('times', '', 6);
+        $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
         $pdf::SetFillColor(255,255,0);
 
         //$row=$sales->sale_details;
         $row=json_decode(json_encode($all_bank_transactions), true);
+        $row=array_values($row);
         //echo "<pre>123";print_r($row);die;
 
-        $pdf::SetFont('times', '', 15);
+        $pdf::SetFont('helvetica', '', 15);
         $html='Bank Name :-'.$request->bank_name;
         $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-        $pdf::SetFont('times', '', 12);
+        $pdf::SetFont('helvetica', '', 12);
         $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
         $pdf::writeHTMLCell(0, 0, ''    , '', $html,0, 1, 0, true, 'R', true);
 
@@ -621,7 +622,7 @@ class ReportRepository implements IReportRepositoryInterface
         $debit_total=0.0;
         $credit_total=0.0;
 
-        $pdf::SetFont('times', 'B', 14);
+        $pdf::SetFont('helvetica', 'B', 14);
         $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="80">Date</th>
@@ -631,7 +632,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="80">Credit</th>
                 <th align="center" width="90">Closing</th>
             </tr>';
-        $pdf::SetFont('times', '', 10);
+        $pdf::SetFont('helvetica', '', 10);
         $last_closing=0.0;
         for($i=0;$i<count($row);$i++)
         {
@@ -661,7 +662,7 @@ class ReportRepository implements IReportRepositoryInterface
         $html.='</table>';
         $pdf::writeHTML($html, true, false, false, false, '');
 
-        $pdf::SetFont('times', 'B', 13);
+        $pdf::SetFont('helvetica', 'B', 13);
         if($last_closing<0)
         {
             $html='<table border="0.5" cellpadding="2">';
@@ -720,18 +721,18 @@ class ReportRepository implements IReportRepositoryInterface
         $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
         $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-        $pdf::AddPage();$pdf::SetFont('times', '', 6);
+        $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
         $pdf::SetFillColor(255,255,0);
 
         //$row=$sales->sale_details;
         $row=json_decode(json_encode($all_cash_transactions), true);
         //echo "<pre>123";print_r($row);die;
 
-        $pdf::SetFont('times', '', 15);
+        $pdf::SetFont('helvetica', '', 15);
         $html='Cash Transactions';
         $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-        $pdf::SetFont('times', '', 12);
+        $pdf::SetFont('helvetica', '', 12);
         $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
         $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
@@ -739,7 +740,7 @@ class ReportRepository implements IReportRepositoryInterface
         $debit_total=0.0;
         $credit_total=0.0;
 
-        $pdf::SetFont('times', 'B', 14);
+        $pdf::SetFont('helvetica', 'B', 14);
         $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="80">Date</th>
@@ -748,7 +749,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="right" width="80">Credit</th>
                 <th align="right" width="90">Closing</th>
             </tr>';
-        $pdf::SetFont('times', '', 10);
+        $pdf::SetFont('helvetica', '', 10);
         $last_closing=0.0;
         for($i=0;$i<count($row);$i++)
         {
@@ -777,7 +778,7 @@ class ReportRepository implements IReportRepositoryInterface
         $html.='</table>';
         $pdf::writeHTML($html, true, false, false, false, '');
 
-        $pdf::SetFont('times', 'B', 13);
+        $pdf::SetFont('helvetica', 'B', 13);
         if($last_closing<0)
         {
             $html='<table border="0.5" cellpadding="2">';
@@ -865,16 +866,16 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
             //$row=$sales->sale_details;
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='Expenses';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
@@ -882,7 +883,7 @@ class ReportRepository implements IReportRepositoryInterface
             $vat_sum=0.0;
             $sub_total_sum=0.0;
 
-            $pdf::SetFont('times', '', 8);
+            $pdf::SetFont('helvetica', '', 8);
 
             // if category is selected as all go for this code
             if($request->category==='all')
@@ -935,7 +936,7 @@ class ReportRepository implements IReportRepositoryInterface
                 {
                     $category_name=$cats_name[$i];
                     $cat_title='<u><b>'.$category_name.'</b></u>';
-                    $pdf::SetFont('times', '', 8);
+                    $pdf::SetFont('helvetica', '', 8);
                     $pdf::writeHTMLCell(0, 0, '', '', $cat_title,0, 1, 0, true, 'L', true);
 
                     $html = '<table border="0.5" cellpadding="3">
@@ -1033,22 +1034,22 @@ class ReportRepository implements IReportRepositoryInterface
             $company_email='Email : info@alhamood.ae';
             $company_mobile='Mobile : +971-25550870  +971-557383866  +971-569777861';
             $pdf = new PDF();
+            $pdf::SetXY(5,5);
             $pdf::setPrintHeader(false);
             $pdf::setPrintFooter(false);
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
             $row=json_decode(json_encode($purchase), true);
             //echo "<pre>123";print_r($row);die;
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='PURCHASE REPORT';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
@@ -1059,21 +1060,21 @@ class ReportRepository implements IReportRepositoryInterface
             $rowTotal_sum=0.0;
             $VAT_sum=0.0;
 
-            $pdf::SetFont('times', 'B', 10);
+            $pdf::SetFont('helvetica', '', 8);
             $html = '<table border="0.5" cellpadding="1">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="right" width="60">S.No.</th>
-                    <th align="center" width="70">Vendor</th>
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="30">LPO#</th>
+                    <th align="right" width="30">PAD#</th>
+                    <th align="center" width="110">Vendor</th>
                     <th align="center" width="50">Qty</th>
-                    <th align="center" width="40">Rate</th>
-                    <th align="center" width="50">Total</th>
+                    <th align="center" width="30">Rate</th>
+                    <th align="center" width="55">Total</th>
                     <th align="center" width="45">VAT</th>
                     <th align="center" width="50">SubTotal</th>
-                    <th align="center" width="50">Paid</th>
-                    <th align="center" width="50">Balance</th>
-                    <th align="center" width="70">Date</th>
+                    <th align="center" width="55">Paid</th>
+                    <th align="center" width="55">Balance</th>
                 </tr>';
-            $pdf::SetFont('times', '', 10);
             for($i=0;$i<count($row);$i++)
             {
                 $sub_total_sum+=$row[$i]['purchase_details_without_trash'][0]['rowSubTotal'];
@@ -1083,29 +1084,34 @@ class ReportRepository implements IReportRepositoryInterface
                 $rowTotal_sum+=$row[$i]['purchase_details_without_trash'][0]['rowTotal'];
                 $VAT_sum+=$row[$i]['purchase_details_without_trash'][0]['rowTotal']*$row[$i]['purchase_details_without_trash'][0]['VAT']/100;
                 $html .='<tr>
-                    <td align="right" width="60">'.($row[$i]['PurchaseNumber']).'</td>
-                    <td align="center" width="70">'.($row[$i]['api_supplier']['Name']).'</td>
-                    <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['Quantity']).'</td>
-                    <td align="right" width="40">'.($row[$i]['purchase_details_without_trash'][0]['Price']).'</td>
-                    <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['rowTotal']).'</td>
-                    <td align="right" width="45">'.(($row[$i]['purchase_details_without_trash'][0]['rowTotal']*$row[$i]['purchase_details_without_trash'][0]['VAT']/100)).'</td>
-                    <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['rowSubTotal']).'</td>
-                    <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
-                    <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
-                    <td align="center" width="70">'.($row[$i]['PurchaseDate']).'</td>
-                    </tr>';
+                            <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['PurchaseDate']))).'</td>
+                            <td align="center" width="30">'.($row[$i]['purchase_details_without_trash'][0]['PadNumber']).'</td>
+                            <td align="center" width="30">'.($row[$i]['referenceNumber']).'</td>
+                            <td align="center" width="110">'.($row[$i]['api_supplier']['Name']).'</td>
+                            <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['Quantity']).'</td>
+                            <td align="right" width="30">'.($row[$i]['purchase_details_without_trash'][0]['Price']).'</td>
+                            <td align="right" width="55">'.($row[$i]['purchase_details_without_trash'][0]['rowTotal']).'</td>
+                            <td align="right" width="45">'.(($row[$i]['purchase_details_without_trash'][0]['rowTotal']*$row[$i]['purchase_details_without_trash'][0]['VAT']/100)).'</td>
+                            <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['rowSubTotal']).'</td>
+                            <td align="right" width="55">'.($row[$i]['paidBalance']).'</td>
+                            <td align="right" width="55">'.($row[$i]['remainingBalance']).'</td>
+                        </tr>';
             }
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::SetFont('helvetica', '', 8);
+            $html='<table border="0.5" cellpadding="1">';
             $html.= '
              <tr color="red">
-                 <td width="130" align="center" colspan="2">Total :- </td>
+                 <td width="215" align="right" colspan="4">Total :- </td>
                  <td width="50" align="right">'.number_format($qty_sum,2,'.',',').'</td>
-                 <td width="40"></td>
-                 <td width="50" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
+                 <td width="30"></td>
+                 <td width="55" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
                  <td width="45" align="right">'.number_format($VAT_sum,2,'.',',').'</td>
                  <td width="50" align="right">'.number_format($sub_total_sum,2,'.',',').'</td>
-                 <td width="50" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
-                 <td width="50" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
-                 <td width="70" align="left"></td>
+                 <td width="55" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
+                 <td width="55" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
              </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -1153,17 +1159,17 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
             //$row=$sales->sale_details;
             $row=json_decode(json_encode($sales), true);
             //echo "<pre>123";print_r($row);die;
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='SALES REPORT';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
@@ -1171,7 +1177,7 @@ class ReportRepository implements IReportRepositoryInterface
             $paid_total_sum=0.0;
             $balance_total_sum=0.0;
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0" cellpadding="5">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                     <th align="center" width="60">S.No.</th>
@@ -1187,7 +1193,7 @@ class ReportRepository implements IReportRepositoryInterface
                     <th align="center" width="60">Date</th>
 
                 </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             for($i=0;$i<count($row);$i++)
             {
                 if($request->vehicle_id!='')
@@ -1303,12 +1309,11 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage('L', 'A4');$pdf::SetFont('times', '', 6);
+            $pdf::AddPage('', 'A4');
+            $pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            //$row=$sales->sale_details;
             $row=json_decode(json_encode($sales), true);
-            //echo "<pre>";print_r($row);die;
 
             // copy all data to new array and sort it according to pad number and then print
             $new_master_array=array();
@@ -1332,35 +1337,32 @@ class ReportRepository implements IReportRepositoryInterface
             array_multisort($keys, SORT_ASC, $new_master_array);
             $row=$new_master_array;
 
-
-            //echo "<pre>123";print_r($row);die;
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 8);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 8);
             $html='SALES REPORT';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
 
 
-            $pdf::SetFont('times', 'B', 14);
-            $html = '<table border="0.5" cellpadding="5">
+            $pdf::SetFont('helvetica', 'B', 8);
+            $html = '<table border="0.5" cellpadding="1">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="60">S.No.</th>
-                    <th align="center" width="200">Customer</th>
-                    <th align="center" width="50">Vehicle</th>
-                    <th align="center" width="50">Qty</th>
-                    <th align="center" width="40">Rate</th>
-                    <th align="center" width="55">Total</th>
-                    <th align="center" width="50">VAT</th>
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="35">PAD#</th>
+                    <th align="center" width="130">Customer</th>
+                    <th align="center" width="40">Vehicle</th>
+                    <th align="center" width="40">Qty</th>
+                    <th align="center" width="20">Rate</th>
+                    <th align="center" width="45">Total</th>
+                    <th align="center" width="40">VAT</th>
                     <th align="center" width="60">SubTotal</th>
                     <th align="center" width="50">Paid</th>
                     <th align="center" width="50">Balance</th>
-                    <th align="center" width="60">Date</th>
-
                 </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 8);
 
             $VAT_sum=0.0;
             $rowTotal_sum=0.0;
@@ -1379,17 +1381,17 @@ class ReportRepository implements IReportRepositoryInterface
                 $VAT_sum+=$row[$i]['VAT'];
                 $rowSubTotal+=$row[$i]['rowSubTotal'];
                 $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['PadNumber']).'</td>
-                    <td align="center" width="200">'.($row[$i]['Name']).'</td>
-                    <td align="center" width="50">'.($row[$i]['registrationNumber']).'</td>
-                    <td align="right" width="50">'.($row[$i]['Quantity']).'</td>
-                    <td align="right" width="40">'.($row[$i]['Price']).'</td>
-                    <td align="right" width="55">'.($row[$i]['rowTotal']).'</td>
-                    <td align="right" width="50">'.($row[$i]['VAT']).'</td>
+                    <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
+                    <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
+                    <td align="left" width="130">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="40">'.($row[$i]['registrationNumber']).'</td>
+                    <td align="right" width="40">'.($row[$i]['Quantity']).'</td>
+                    <td align="right" width="20">'.($row[$i]['Price']).'</td>
+                    <td align="right" width="45">'.($row[$i]['rowTotal']).'</td>
+                    <td align="right" width="40">'.(number_format($row[$i]['VAT'],2,'.',',')).'</td>
                     <td align="right" width="60">'.($row[$i]['rowSubTotal']).'</td>
                     <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
                     <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
-                    <td align="center" width="60">'.($row[$i]['SaleDate']).'</td>
                     </tr>';
             }
 
@@ -1419,32 +1421,31 @@ class ReportRepository implements IReportRepositoryInterface
 
             $html.= '
                  <tr color="red">
-                     <td width="60"></td>
-                     <td width="200"></td>
-                     <td width="50"></td>
-                     <td width="50" align="right">'.number_format($qty_sum,2,'.',',').'</td>
+                     <td width="45" align="right"></td>
+                     <td width="35"></td>
+                     <td width="130"></td>
                      <td width="40"></td>
-                     <td width="55" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
-                     <td width="50" align="right">'.number_format($VAT_sum,2,'.',',').'</td>
+                     <td width="40" align="right">'.number_format($qty_sum,2,'.',',').'</td>
+                     <td width="20"></td>
+                     <td width="45" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
+                     <td width="40" align="right">'.number_format($VAT_sum,2,'.',',').'</td>
                      <td width="60" align="right">'.number_format($rowSubTotal,2,'.',',').'</td>
                      <td width="50" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
                      <td width="50" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
-                     <td width="60" align="right"></td>
                  </tr>';
 
             $html.='<tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="60">S.No.</th>
-                    <th align="center" width="200">Customer</th>
-                    <th align="center" width="50">Vehicle</th>
-                    <th align="center" width="50">Qty</th>
-                    <th align="center" width="40">Rate</th>
-                    <th align="center" width="55">Total</th>
-                    <th align="center" width="50">VAT</th>
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="35">PAD#</th>
+                    <th align="center" width="130">Customer</th>
+                    <th align="center" width="40">Vehicle</th>
+                    <th align="center" width="40">Qty</th>
+                    <th align="center" width="20">Rate</th>
+                    <th align="center" width="45">Total</th>
+                    <th align="center" width="40">VAT</th>
                     <th align="center" width="60">SubTotal</th>
                     <th align="center" width="50">Paid</th>
                     <th align="center" width="50">Balance</th>
-                    <th align="center" width="60">Date</th>
-
                 </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -1475,8 +1476,9 @@ class ReportRepository implements IReportRepositoryInterface
         //$data=$row;
         //echo "<pre>";print_r($row);die;
 
-        // getting latest closing for all suppliers from account transaction table
+        // getting latest closing for all customer from account transaction table
         $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id','ac.Differentiate','s.Name','s.Mobile')
+            ->where('ac.customer_id','!=',0)
             ->groupBy('ac.customer_id')
             ->orderBy('ac.id','asc')
             ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')
@@ -1501,18 +1503,18 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='CUSTOMER RECEIVABLE SUMMARY';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html='Date : '.date('d-m-Y h:i:s');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="50">S.No</th>
@@ -1520,7 +1522,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="100">Cell</th>
                 <th align="right" width="80">Balance</th>
             </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             $total_balance=0.0;
             for($i=0;$i<count($row);$i++)
             {
@@ -1535,7 +1537,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $pdf::SetFont('times', 'B', 13);
+            $pdf::SetFont('helvetica', 'B', 13);
             $html='<table border="0" cellpadding="0">';
             $html.= '
                  <tr color="red">
@@ -1549,13 +1551,13 @@ class ReportRepository implements IReportRepositoryInterface
             $data=CustomerAdvanceResource::collection(CustomerAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
             if($data)
             {
-                $pdf::SetFont('times', '', 15);
+                $pdf::SetFont('helvetica', '', 15);
                 $html='CUSTOMER ADVANCES';
                 $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
                 $row=json_decode(json_encode($data), true);
                 //echo "<pre>";print_r($row);die;
-                $pdf::SetFont('times', '', 10);
+                $pdf::SetFont('helvetica', '', 10);
                 $html = '<table border="0.5" cellpadding="2">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                     <th align="center" width="50">S.No</th>
@@ -1581,7 +1583,7 @@ class ReportRepository implements IReportRepositoryInterface
                 $html.='</table>';
                 $pdf::writeHTML($html, true, false, false, false, '');
 
-                $pdf::SetFont('times', 'B', 13);
+                $pdf::SetFont('helvetica', 'B', 13);
                 $html='<table border="0" cellpadding="0">';
                 $html.= '
                  <tr color="red">
@@ -1591,7 +1593,7 @@ class ReportRepository implements IReportRepositoryInterface
                 $html.='</table>';
                 $pdf::writeHTML($html, true, false, false, false, '');
             }
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html='Receivable Total : '.number_format($total_balance,2,'.',',');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
@@ -1630,6 +1632,7 @@ class ReportRepository implements IReportRepositoryInterface
 
         // getting latest closing for all suppliers from account transaction table
         $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id','ac.Differentiate','s.Name','s.Mobile')
+            ->where('ac.supplier_id','!=',0)
             ->groupBy('ac.supplier_id')
             ->orderBy('ac.id','asc')
             ->leftjoin('suppliers as s', 's.id', '=', 'ac.supplier_id')
@@ -1655,22 +1658,22 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
             //$row=$sales->sale_details;
             //$row=json_decode(json_encode($data), true);
             //echo "<pre>123";print_r($row);die;
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='SUPPLIER PAYABLE SUMMARY';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html='Date : '.date('d-m-Y h:i:s');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="50">S.No</th>
@@ -1678,7 +1681,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="100">Cell</th>
                 <th align="right" width="80">Balance</th>
             </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             $total_balance=0.0;
             for($i=0;$i<count($row);$i++)
             {
@@ -1696,7 +1699,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $pdf::SetFont('times', 'B', 13);
+            $pdf::SetFont('helvetica', 'B', 13);
             $html='<table border="0" cellpadding="0">';
             $html.= '
                  <tr color="red">
@@ -1710,13 +1713,13 @@ class ReportRepository implements IReportRepositoryInterface
 //            $data=SupplierAdvanceResource::collection(SupplierAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
 //            if($data)
 //            {
-//                $pdf::SetFont('times', '', 15);
+//                $pdf::SetFont('helvetica', '', 15);
 //                $html='SUPPLIER ADVANCES';
 //                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 //
 //                $row=json_decode(json_encode($data), true);
 //                //echo "<pre>";print_r($row);die;
-//                $pdf::SetFont('times', '', 10);
+//                $pdf::SetFont('helvetica', '', 10);
 //                $html = '<table border="0.5" cellpadding="2">
 //                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
 //                    <th align="center" width="50">S.No</th>
@@ -1739,7 +1742,7 @@ class ReportRepository implements IReportRepositoryInterface
 //                $html.='</table>';
 //                $pdf::writeHTML($html, true, false, false, false, '');
 //
-//                $pdf::SetFont('times', 'B', 13);
+//                $pdf::SetFont('helvetica', 'B', 13);
 //                $html='<table border="0" cellpadding="0">';
 //                $html.= '
 //                 <tr color="red">
@@ -1750,7 +1753,7 @@ class ReportRepository implements IReportRepositoryInterface
 //                $pdf::writeHTML($html, true, false, false, false, '');
 //            }
 //
-//            $pdf::SetFont('times', '', 12);
+//            $pdf::SetFont('helvetica', '', 12);
 //            $html='Outstanding Total : '.number_format($total_balance,2,'.',',');
 //            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 //
@@ -1816,18 +1819,18 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='Supplier Name : '.$request->supplier_name;
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="60">Date</th>
@@ -1837,7 +1840,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="70">Credit</th>
                 <th align="right" width="80">Closing</th>
             </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             $sum_of_credit=0.0;
             $sum_of_debit=0.0;
             $sum_of_differance=0.0;
@@ -1875,7 +1878,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $pdf::SetFont('times', 'B', 13);
+            $pdf::SetFont('helvetica', 'B', 13);
             if($sum_of_differance<0)
             {
                 $html='<table border="0.5" cellpadding="0">';
@@ -1976,18 +1979,18 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='Supplier Name : '.$request->supplier_name;
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="60">Date</th>
@@ -1997,7 +2000,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="70">Credit</th>
                 <th align="right" width="80">Closing</th>
             </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             $sum_of_credit=0.0;
             $sum_of_debit=0.0;
             $closing_amount=0.0;
@@ -2033,7 +2036,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $pdf::SetFont('times', 'B', 13);
+            $pdf::SetFont('helvetica', 'B', 13);
             if($closing_amount<0)
             {
                 $html='<table border="0.5" cellpadding="0">';
@@ -2108,18 +2111,18 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='Customer Name : '.$request->customer_name;
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="60">Date</th>
@@ -2129,7 +2132,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="70">Credit</th>
                 <th align="right" width="80">Closing</th>
             </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             $sum_of_credit=0.0;
             $sum_of_debit=0.0;
             $closing_amount=0.0;
@@ -2165,7 +2168,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $pdf::SetFont('times', 'B', 13);
+            $pdf::SetFont('helvetica', 'B', 13);
             if($closing_amount<0)
             {
                 $html='<table border="0.5" cellpadding="0">';
@@ -2241,18 +2244,18 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='SUPPLIER ADVANCE SUMMARY';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html='Date : '.date('d-m-Y h:i:s');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="50">S.No</th>
@@ -2260,7 +2263,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="100">Cell</th>
                 <th align="right" width="80">Balance</th>
             </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             $total_balance=0.0;
             for($i=0;$i<count($row);$i++)
             {
@@ -2278,7 +2281,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $pdf::SetFont('times', 'B', 13);
+            $pdf::SetFont('helvetica', 'B', 13);
             $html='<table border="0" cellpadding="0">';
             $html.= '
                  <tr color="red">
@@ -2334,18 +2337,18 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('times', '', 6);
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            $pdf::SetFont('times', '', 15);
+            $pdf::SetFont('helvetica', '', 15);
             $html='CUSTOMER ADVANCE SUMMARY';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
-            $pdf::SetFont('times', '', 12);
+            $pdf::SetFont('helvetica', '', 12);
             $html='Date : '.date('d-m-Y h:i:s');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $pdf::SetFont('times', 'B', 14);
+            $pdf::SetFont('helvetica', 'B', 14);
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="50">S.No</th>
@@ -2353,7 +2356,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="center" width="100">Cell</th>
                 <th align="right" width="80">Balance</th>
             </tr>';
-            $pdf::SetFont('times', '', 10);
+            $pdf::SetFont('helvetica', '', 10);
             $total_balance=0.0;
             for($i=0;$i<count($row);$i++)
             {
@@ -2371,7 +2374,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $pdf::SetFont('times', 'B', 13);
+            $pdf::SetFont('helvetica', 'B', 13);
             $html='<table border="0" cellpadding="0">';
             $html.= '
                  <tr color="red">

@@ -11,9 +11,6 @@ use Illuminate\Http\Request;
 class DriverController extends Controller
 {
 
-    /**
-     * @var IDriverRepositoryInterface
-     */
     private $driverRepository;
 
     public function __construct(IDriverRepositoryInterface $driverRepository)
@@ -54,20 +51,8 @@ class DriverController extends Controller
         return $this->driverRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Driver  $driver
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Driver $driver)
     {
         //
-    }
-
-    public function customerDetails($id)
-    {
-        $customers = Customer::with('vehicles','customer_prices')->find($id);
-        return response()->json($customers);
     }
 }

@@ -2,28 +2,13 @@
 @section('title', 'Invoice Edit')
 
 @section('content')
-
     <style>
         .slct:focus{
             background: #aed9f6;
         }
     </style>
-
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Invoices</h4>
@@ -38,13 +23,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -80,7 +59,7 @@
                                                     <tr style="text-decoration: line-through; color:red">
                                                         <td> <input type="text" name="" id=""  class="form-control " value="{{ $details->createdDate }}" placeholder=""></td>
                                                         <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
-                                                        <td><input type="text" placeholder="customer" value="{{ $details->sale->customer->Name ?? '' }}" id="" name="" class=" form-control"></td>
+                                                        <td><input type="text" placeholder="customer" value="{{ $details->customer->Name ?? '' }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="vehicle" value="{{ $details->vehicle->registrationNumber ?? '' }}" id="" name="" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Product" value="{{ $details->product->Name  ?? '' }}" class=" form-control"></td>
                                                         <td><input type="text" placeholder="Quantity" value="{{ $details->Quantity  ?? '' }}" class=" form-control"></td>
@@ -97,7 +76,7 @@
                                                 @if(is_null($details->deleted_at))
                                                     <tr>
                                                         <td> <input type="date" name="createdDate" value="{{ $details->createdDate}}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control"></td>
+                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                         <td>
                                                             <div class="form-group">
                                                                 <select name="customer" class="form-control customer_id slct" id="customer_id">
@@ -163,9 +142,9 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $sale_details[0]->sale->Description ?? '' }}</textarea>
+                                                <textarea name="" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note" hidden>{{ $sale_details[0]->sale->Description ?? '' }}</textarea>
                                                 <input type="file">
-                                                <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
+                                                <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> View Previous Updates</button>
                                             </div>
                                         </div>
 
@@ -175,17 +154,23 @@
                                                 <input type="hidden" class="form-control TotalVat" value="{{ $sale_details[0]->sale->totalVat ?? '' }}">
                                             </p>
 
-
                                             <p>Grand Total: <input type="text" class="form-control GTotal" value="{{ $sale_details[0]->sale->grandTotal ?? 0 }}" disabled>
                                                 <input type="hidden" class="form-control GTotal" value="{{ $sale_details[0]->sale->grandTotal ?? '' }}" >
                                             </p>
 
-                                            <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $sale_details[0]->sale->paidBalance ?? 0 }}"></p>
+                                            @if($sale_details[0]->sale->Description=='AutoPaid')
+                                                <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="0.00" readonly></p>
+                                            @else
+                                                <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $sale_details[0]->sale->paidBalance ?? 0 }}" readonly></p>
+                                            @endif
 
-                                            <p>Balance: <input type="text" class="form-control balance" id="balance" value="{{ $sale_details[0]->sale->remainingBalance ?? 0 }}" disabled="disabled">
-                                                <input type="hidden" class="form-control balance" value="{{ $sale_details[0]->sale->remainingBalance ?? 0 }}">
+                                            <p>Account Closing : <input type="text" value="0.00" class="form-control closing" id="closing" readonly>
+                                                <input type="hidden" value="0.00" class="form-control closing">
                                             </p>
 
+                                            <p>Remaining Balance: <input type="text" class="form-control balance" id="balance" value="{{ $sale_details[0]->sale->remainingBalance ?? 0 }}" disabled="disabled">
+                                                <input type="hidden" class="form-control balance" value="{{ $sale_details[0]->sale->remainingBalance ?? 0 }}">
+                                            </p>
 
                                         </div>
                                     </div>
@@ -198,27 +183,9 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
-            <!-- Row -->
-
-
-
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
-
-
-
     <div class="modal fade" id="updateMessage" tabindex="-1" role="dialog" aria-labelledby="modalForm">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -243,7 +210,6 @@
         </div>
     </div>
 
-
     <div class="modal fade" id="ShowUpdates" tabindex="-1" role="dialog" aria-labelledby="modalForm">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -255,7 +221,6 @@
                     <table class="table color-bordered-table success-bordered-table">
                         <thead>
                         <tr>
-
                             <th>User Name</th>
                             <th>Description</th>
                         </tr>
@@ -320,10 +285,50 @@
             // /////////////end remove row //////////////
 
 
-            //// accept Only Numbers /////////////////////
+            //// refresh customer data /////////////////////
+            $(document).ready(function () {
+                var Id = 0;
+                Id = $('#customer_id').val();
+                if (Id > 0)
+                {
+                    $.ajax({
+                        // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url: "{{ URL('customerDetails') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                $('#Rate').val(result.customers.customer_prices[0].Rate);
+                                $('#VAT').val(result.customers.customer_prices[0].VAT);
+                                $("#vehicle").html('');
+                                var vehicleDetails = '';
+                                if (result.customers.vehicles.length > 0)
+                                {
+                                    for (var i = 0; i < result.customers.vehicles.length; i++) {
+                                        vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
+                                    }
+                                }
+                                else {
+                                    vehicleDetails += '<option value="0">No Data</option>';
+                                }
+                                $("#vehicle").append(vehicleDetails);
+                                var rate = result.customers.customer_prices[0].Rate;
+                                var vat = result.customers.customer_prices[0].VAT;
+                                totalWithCustomer(vat, rate);
+                                $('#closing').val(result.closing);
 
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
 
-            //////// end Accept only Number ////////////////////
+            //////// end refresh customer data ////////////////////
 
 
             /////////////////////////// customer select /////////////////
@@ -390,6 +395,7 @@
                                 grandTotal: $('.GTotal').val(),
                                 paidBalance: cashPaid,
                                 remainingBalance: $('#balance').val(),
+                                lastClosing: $('#closing').val(),
                                 customer_id:$('#customer_id').val(),
                                 Description:$('#description').val(),
                                 UpdateDescription: $('#UpdateDescription').val(),
@@ -484,25 +490,24 @@
                             dataType: "json",
                             success: function (result) {
                                 if (result !== "Failed") {
-                                    console.log(result);
-                                     $('#Rate').val(result.customer_prices[0].Rate);
-                                    $('#VAT').val(result.customer_prices[0].VAT);
+                                    $('#Rate').val(result.customers.customer_prices[0].Rate);
+                                    $('#VAT').val(result.customers.customer_prices[0].VAT);
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
-                                    if (result.vehicles.length > 0)
+                                    if (result.customers.vehicles.length > 0)
                                     {
-                                        for (var i = 0; i < result.vehicles.length; i++) {
-                                            vehicleDetails += '<option value="' + result.vehicles[i].id + '">' + result.vehicles[i].registrationNumber + '</option>';
+                                        for (var i = 0; i < result.customers.vehicles.length; i++) {
+                                            vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
                                         }
                                     }
                                     else {
                                         vehicleDetails += '<option value="0">No Data</option>';
                                     }
                                     $("#vehicle").append(vehicleDetails);
-                                    var rate = result.customer_prices[0].Rate;
-                                    var vat = result.customer_prices[0].VAT;
+                                    var rate = result.customers.customer_prices[0].Rate;
+                                    var vat = result.customers.customer_prices[0].VAT;
                                     totalWithCustomer(vat, rate);
-
+                                    $('#closing').val(result.closing);
 
                                 } else {
                                     alert(result);

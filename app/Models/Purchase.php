@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Purchase extends Model
 {
-        use HasFactory;
-        use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
-
-        protected $guarded=[];
-        protected $primaryKey = 'id';
-        protected $table = 'purchases';
+    protected $guarded=[];
+    protected $primaryKey = 'id';
+    protected $table = 'purchases';
 
     public function user()
     {

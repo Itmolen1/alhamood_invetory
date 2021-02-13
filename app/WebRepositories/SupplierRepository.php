@@ -8,9 +8,13 @@ use App\Http\Requests\SupplierRequest;
 use App\Models\CompanyType;
 use App\Models\PaymentType;
 use App\Models\PaymentTerm;
+use App\Models\Product;
+use App\Models\Purchase;
+use App\Models\PurchaseDetail;
 use App\Models\Region;
 use App\Models\Supplier;
 use App\Models\AccountTransaction;
+use App\Models\Unit;
 use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +27,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
         {
             return datatables()->of(Supplier::with('company','user','payment_type','company_type','payment_term')->latest()->get())
                ->addColumn('action', function ($data) {
-                    $button = '<form action="'.route('suppliers.destroy', $data->id).'" method="POST"  id="deleteData">';
+                    $button = '<form action="'.route('suppliers.destroy', $data->id).'" method="POST">';
                     $button .= @csrf_field();
                     $button .= @method_field('DELETE');
                     $button .= '<a href="'.route('suppliers.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
@@ -34,16 +38,16 @@ class SupplierRepository implements ISupplierRepositoryInterface
                 })
                 ->addColumn('isActive', function($data) {
                         if($data->isActive == true){
-                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST" ">';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }else{
-                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST"  id="deleteData">';
+                            $button = '<form action="'.route('suppliers.update', $data->id).'" method="POST" >';
                             $button .= @csrf_field();
                             $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" id="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
                             return $button;
                         }
                     })
@@ -103,19 +107,65 @@ class SupplierRepository implements ISupplierRepositoryInterface
             'payment_type_id' =>$supplierRequest->paymentType ?? 0,
         ];
         $supplier = Supplier::create($supplier);
-        if ($supplier) {
+        if ($supplier)
+        {
+            //account entry
             $account = new AccountTransaction([
                 'supplier_id' => $supplier->id,
                 'user_id' => $user_id,
-                'createdDate' => date('Y-m-d'),
+                'createdDate' => $supplierRequest->openingBalanceAsOfDate,
                 'company_id' =>$company_id,
                 'Description' =>'initial',
                 'Credit' =>0.00,
                 'Debit' =>0.00,
                 'Differentiate' =>$supplierRequest->openingBalance,
             ]);
+            $supplier->account_transaction()->save($account);
+
+            //purchase entry
+            $purchase = new Purchase();
+            $purchase->PurchaseNumber = 'initial';
+            $purchase->referenceNumber = 'initial';
+            $purchase->PurchaseDate = $supplierRequest->openingBalanceAsOfDate;
+            $purchase->DueDate =  $supplierRequest->openingBalanceAsOfDate;
+            $purchase->Total = $supplierRequest->openingBalance;
+            $purchase->subTotal = $supplierRequest->openingBalance;
+            $purchase->totalVat = 0.00;
+            $purchase->grandTotal = $supplierRequest->openingBalance;
+            $purchase->paidBalance = 0.00;
+            $purchase->remainingBalance = $supplierRequest->openingBalance;
+            $purchase->supplier_id = $supplier->id;
+            $purchase->Description = '';
+            $purchase->supplierNote = '';
+            $purchase->IsPaid = 0;
+            $purchase->IsPartialPaid = 0;
+            $purchase->IsNeedStampOrSignature = false;
+            $purchase->user_id = $user_id;
+            $purchase->company_id = $company_id;
+            $purchase->save();
+            $purchase = $purchase->id;
+
+            $product=Product::select('id')->get()->first();
+            $unit=Unit::select('id')->get()->first();
+
+            $data =  PurchaseDetail::create([
+                "product_id" => $product->id,
+                "unit_id" => $unit->id,
+                "Quantity" => 0.00,
+                "Price" => 0.00,
+                "rowTotal" => $supplierRequest->openingBalance,
+                "VAT" => 0.00,
+                "rowVatAmount" => 0.00,
+                "rowSubTotal" => $supplierRequest->openingBalance,
+                "PadNumber" => '',
+                "Description" => 'initial',
+                "company_id" => $company_id,
+                "user_id" => $user_id,
+                "purchase_id" => $purchase,
+                "createdDate" => $supplierRequest->openingBalanceAsOfDate,
+                "supplier_id" => $supplier->id,
+            ]);
         }
-        $supplier->account_transaction()->save($account);
         return redirect()->route('suppliers.index');
     }
 
