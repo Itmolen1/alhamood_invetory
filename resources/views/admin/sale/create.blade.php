@@ -291,8 +291,6 @@
 
                                             <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
 
-
-
                                             <div class="form-actions">
                                                 <p>&nbsp;</p>
                                                 <button type="button" class="btn btn-success" id="submit"> <i class="fa fa-check"></i> Save</button>

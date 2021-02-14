@@ -197,7 +197,6 @@
                 $('#submit').text('please wait...');
                 $('#submit').attr('disabled',true);
                 var supplierNew = $('.supplier_id').val();
-                //alert(supplierNew);
                 if (supplierNew != null)
                 {
                     var insert = [], orderItem = [], nonArrayData = "";
@@ -242,8 +241,7 @@
                         supplierNote:$('#description').val(),
                         orders: insert,
                     }
-                    // var Datas = {Data: details}
-                    // console.log(Datas);
+
                     if (insert.length > 0) {
                         $.ajaxSetup({
                             headers: {
@@ -321,7 +319,6 @@
                         dataType: "json",
                         success: function (result) {
                             if (result !== "Failed") {
-                                //console.log(result);
                                  $('#Address').text(result.supplier.Address);
                                  $('#Mobile').text(result.supplier.Mobile);
                                  $('#Email').text(result.supplier.postCode);

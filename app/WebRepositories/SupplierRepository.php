@@ -6,6 +6,10 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\SupplierRequest;
 use App\Models\CompanyType;
+use App\Models\Employee;
+use App\Models\Expense;
+use App\Models\ExpenseCategory;
+use App\Models\ExpenseDetail;
 use App\Models\PaymentType;
 use App\Models\PaymentTerm;
 use App\Models\Product;
@@ -122,49 +126,90 @@ class SupplierRepository implements ISupplierRepositoryInterface
             ]);
             $supplier->account_transaction()->save($account);
 
-            //purchase entry
-            $purchase = new Purchase();
-            $purchase->PurchaseNumber = 'initial';
-            $purchase->referenceNumber = 'initial';
-            $purchase->PurchaseDate = $supplierRequest->openingBalanceAsOfDate;
-            $purchase->DueDate =  $supplierRequest->openingBalanceAsOfDate;
-            $purchase->Total = $supplierRequest->openingBalance;
-            $purchase->subTotal = $supplierRequest->openingBalance;
-            $purchase->totalVat = 0.00;
-            $purchase->grandTotal = $supplierRequest->openingBalance;
-            $purchase->paidBalance = 0.00;
-            $purchase->remainingBalance = $supplierRequest->openingBalance;
-            $purchase->supplier_id = $supplier->id;
-            $purchase->Description = '';
-            $purchase->supplierNote = '';
-            $purchase->IsPaid = 0;
-            $purchase->IsPartialPaid = 0;
-            $purchase->IsNeedStampOrSignature = false;
-            $purchase->user_id = $user_id;
-            $purchase->company_id = $company_id;
-            $purchase->save();
-            $purchase = $purchase->id;
+            if($supplierRequest->companyType==2 && $supplierRequest->openingBalance!=0)
+            {
+                //purchase entry
+                $purchase = new Purchase();
+                $purchase->PurchaseNumber = 'initial';
+                $purchase->referenceNumber = 'initial';
+                $purchase->PurchaseDate = $supplierRequest->openingBalanceAsOfDate;
+                $purchase->DueDate =  $supplierRequest->openingBalanceAsOfDate;
+                $purchase->Total = $supplierRequest->openingBalance;
+                $purchase->subTotal = $supplierRequest->openingBalance;
+                $purchase->totalVat = 0.00;
+                $purchase->grandTotal = $supplierRequest->openingBalance;
+                $purchase->paidBalance = 0.00;
+                $purchase->remainingBalance = $supplierRequest->openingBalance;
+                $purchase->supplier_id = $supplier->id;
+                $purchase->Description = '';
+                $purchase->supplierNote = '';
+                $purchase->IsPaid = 0;
+                $purchase->IsPartialPaid = 0;
+                $purchase->IsNeedStampOrSignature = false;
+                $purchase->user_id = $user_id;
+                $purchase->company_id = $company_id;
+                $purchase->save();
+                $purchase = $purchase->id;
 
-            $product=Product::select('id')->get()->first();
-            $unit=Unit::select('id')->get()->first();
+                $product=Product::select('id')->get()->first();
+                $unit=Unit::select('id')->get()->first();
 
-            $data =  PurchaseDetail::create([
-                "product_id" => $product->id,
-                "unit_id" => $unit->id,
-                "Quantity" => 0.00,
-                "Price" => 0.00,
-                "rowTotal" => $supplierRequest->openingBalance,
-                "VAT" => 0.00,
-                "rowVatAmount" => 0.00,
-                "rowSubTotal" => $supplierRequest->openingBalance,
-                "PadNumber" => '',
-                "Description" => 'initial',
-                "company_id" => $company_id,
-                "user_id" => $user_id,
-                "purchase_id" => $purchase,
-                "createdDate" => $supplierRequest->openingBalanceAsOfDate,
-                "supplier_id" => $supplier->id,
-            ]);
+                $data =  PurchaseDetail::create([
+                    "product_id" => $product->id,
+                    "unit_id" => $unit->id,
+                    "Quantity" => 0.00,
+                    "Price" => 0.00,
+                    "rowTotal" => $supplierRequest->openingBalance,
+                    "VAT" => 0.00,
+                    "rowVatAmount" => 0.00,
+                    "rowSubTotal" => $supplierRequest->openingBalance,
+                    "PadNumber" => '',
+                    "Description" => 'initial',
+                    "company_id" => $company_id,
+                    "user_id" => $user_id,
+                    "purchase_id" => $purchase,
+                    "createdDate" => $supplierRequest->openingBalanceAsOfDate,
+                    "supplier_id" => $supplier->id,
+                ]);
+            }
+            elseif($supplierRequest->companyType==2 && $supplierRequest->openingBalance!=0)
+            {
+                $employee=Employee::select('id')->get()->first();
+                $expense_category=ExpenseCategory::select('id')->get()->first();
+
+                //expense entry
+                $expense = new Expense();
+                $expense->expenseNumber = 'initial';
+                $expense->referenceNumber = 'initial';
+                $expense->expenseDate = $supplierRequest->openingBalanceAsOfDate;
+                $expense->Total = $supplierRequest->openingBalance;
+                $expense->subTotal = $supplierRequest->openingBalance;
+                $expense->totalVat = 0.00;
+                $expense->grandTotal = $supplierRequest->openingBalance;
+                $expense->paidBalance = 0.00;
+                $expense->remainingBalance = $supplierRequest->openingBalance;
+                $expense->supplier_id = $supplier->id;
+                $expense->employee_id = $employee->id;
+                $expense->Description = '';
+                $expense->user_id = $user_id;
+                $expense->company_id = $company_id;
+                $expense->save();
+                $expense = $expense->id;
+
+                $data =  ExpenseDetail::create([
+                    "Total" => $supplierRequest->openingBalance,
+                    "expenseDate" => $supplierRequest->openingBalanceAsOfDate,
+                    "expense_category_id" => $expense_category->id,
+                    "Description" => 'initial',
+                    "Vat" => 0.00,
+                    "rowVatAmount" => 0.00,
+                    "rowSubTotal" => $supplierRequest->openingBalance,
+                    "company_id" => $company_id,
+                    "user_id" => $user_id,
+                    "expense_id" => $expense,
+                    "PadNumber" => '',
+                ]);
+            }
         }
         return redirect()->route('suppliers.index');
     }

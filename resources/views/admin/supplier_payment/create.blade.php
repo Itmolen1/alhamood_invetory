@@ -83,6 +83,7 @@
                                                 </select>
                                             </div>
                                         </div>
+
                                         <div class="col-md-2 bankTransfer">
                                             <div class="form-group">
                                                 <label>Bank Name :- <span class="required">*</span></label>

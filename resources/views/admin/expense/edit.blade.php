@@ -3,6 +3,29 @@
 
 @section('content')
 
+<style>
+    .chosen-container-single .chosen-single {
+        height: 38px;
+        border-radius: 3px;
+        border: 1px solid #CCCCCC;
+    }
+    .chosen-container-single .chosen-single span {
+        padding-top: 5px;
+    }
+    .chosen-container-single .chosen-single div b {
+        margin-top: 5px;
+    }
+    .chosen-container-active .chosen-single,
+    .chosen-container-active.chosen-with-drop .chosen-single {
+        border-color: #ccc;
+        border-color: rgba(82, 168, 236, .8);
+        outline: 0;
+        outline: thin dotted \9;
+        -moz-box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+        box-shadow: 0 0 8px rgba(82, 168, 236, .6)
+    }
+</style>
+
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row page-titles">
@@ -15,7 +38,6 @@
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
                         <li class="breadcrumb-item active">expense</li>
                     </ol>
-                    <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Create New</button>
                 </div>
             </div>
         </div>
@@ -34,9 +56,9 @@
                                 <div class="row p-t-20">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Supplier Name</label>
-                                            <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id">
-                                                <option>--Select Supplier--</option>
+                                            <label>Supplier Name :- <span class="required">*</span></label>
+                                            <select class="form-control custom-select supplier_id select2 chosen-select" name="supplier_id" id="supplier_id" required>
+                                                <option value="">--Select Supplier--</option>
                                                 @foreach($suppliers as $supplier)
                                                     <option value="{{ $supplier->id }}" {{ ($supplier->id == $expense_details[0]->expense->supplier_id) ? 'selected':'' }}>{{ $supplier->Name }}</option>
                                                 @endforeach
@@ -46,9 +68,9 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Employee Name</label>
-                                            <select class="form-control custom-select employee_id select2" name="employee_id" id="employee_id">
-                                                <option>--Select Employee--</option>
+                                            <label>Employee Name :- <span class="required">*</span></label>
+                                            <select class="form-control custom-select employee_id select2 chosen-select" name="employee_id" id="employee_id" required>
+                                                <option value="">--Select Employee--</option>
                                                 @foreach($employees as $employee)
                                                     <option value="{{ $employee->id }}" {{ ($employee->id == $expense_details[0]->expense->employee_id) ? 'selected':'' }}>{{ $employee->Name }}</option>
                                                 @endforeach
@@ -93,7 +115,7 @@
 
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="control-label">Expense date</label>
+                                            <label class="control-label">Expense date :- <span class="required">*</span></label>
                                             <input type="date" name="expenseDate" id="expenseDate" class="form-control" value="{{ $expense_details[0]->expense->expenseDate ?? '' }}" placeholder="dd/mm/yyyy">
                                         </div>
                                         <div class="row">
@@ -106,7 +128,7 @@
 
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label class="control-label">Reference Number</label>
+                                                    <label class="control-label">Reference Number :- <span class="required">*</span></label>
                                                     <input type="text" class="form-control" id="referenceNumber" value="{{ $expense_details[0]->expense->referenceNumber ?? '' }}"  name="referenceNumber" placeholder="Reference Number">
                                                 </div>
                                             </div>
@@ -119,11 +141,11 @@
                                         <thead>
                                         <tr>
                                             <th style="width: 150px">Voucher Number</th>
-                                            <th style="width: 150px">Category</th>
+                                            <th style="width: 150px">Category <span class="required">*</span></th>
                                             <th style="width: 300px">Description</th>
-                                            <th>Sub Total</th>
-                                            <th>VAT</th>
-                                            <th>Total Amount</th>
+                                            <th style="width: 200px">Sub Total <span class="required">*</span></th>
+                                            <th style="width: 120px">VAT <span class="required">*</span></th>
+                                            <th style="width: 200px">Total Amount</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -181,36 +203,74 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <textarea name="" id="mainDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $expense_details[0]->expense->Description ?? 0 }}</textarea>
+                                            <textarea name="" id="mainDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note" hidden>{{ $expense_details[0]->expense->Description ?? 0 }}</textarea>
                                             <input type="file">
-                                            <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> Update Notes</button>
+                                            <button type="button" class="btn btn-success" id="showUpdateModel" > <i class="fa fa-eye"></i> View Previous Update Notes</button>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <p>Total Vat: <input type="text" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat ?? 0 }}" disabled="">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Total Vat: </label>
+                                            <input type="text" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat ?? 0 }}" disabled="">
                                             <input type="hidden" class="form-control TotalVat" value="{{ $expense_details[0]->expense->totalVat ?? 0 }}" >
-                                        </p>
+                                        </div>
 
-                                        <p>Grand Total: <input type="text" value="{{ $expense_details[0]->expense->grandTotal ?? 0 }}" class="form-control GTotal" disabled>
+                                        <div class="form-group bankTransfer">
+                                            <label>Bank Name :- <span class="required">*</span></label>
+                                            <select class="form-control custom-select" id="bank_id" name="bank_id">
+                                                <option selected readonly="" disabled>--Select Bank Name--</option>
+                                                @foreach($banks as $bank)
+                                                    <option value="{{ $bank->id }}" {{ ($bank->id == $expense_details[0]->expense->bank_id) ? 'selected':'' }}>{{ $bank->Name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group bankTransfer">
+                                            <label class="control-label">Cheque or Ref. Number ?  <span class="required">*</span></label>
+                                            <input type="text" class="form-control" name="ChequeNumber" id="ChequeNumber" placeholder="Cheque or Ref. Number" value="{{ $expense_details[0]->expense->ChequeNumber ?? '' }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label> Grand Total: </label>
+                                            <input type="text" value="{{ $expense_details[0]->expense->grandTotal ?? 0 }}" class="form-control GTotal" disabled>
                                             <input type="hidden" vvalue="{{ $expense_details[0]->expense->grandTotal ?? 0 }}" class="form-control GTotal">
-                                        </p>
+                                        </div>
 
-                                        <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $expense_details[0]->expense->paidBalance  ?? 0 }}" class="form-control cashPaid"></p>
+                                        <div class="form-group bankTransfer">
+                                            <label class="control-label">Account Number :- <span class="required">*</span></label>
+                                            <input type="text" id="accountNumber" name="accountNumber" class="form-control accountNumber" placeholder="Enter Account Number" readonly>
+                                        </div>
+                                    </div>
 
-                                        <p>Balance: <input type="text" value="{{ $expense_details[0]->expense->remainingBalance ?? 0 }}" class="form-control balance" disabled>
-                                            <input type="hidden" value="{{ $expense_details[0]->expense->remainingBalance ?? 0 }}" class="form-control balance">
-                                        </p>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Payment Type :- <span class="required">*</span></label>
+                                            <select class="form-control custom-select" id="payment_type" name="payment_type" required>
+                                                <option value="">--Select your Payment Type--</option>
+                                                <option value="bank" {{ ($expense_details[0]->expense->payment_type == 'bank') ? 'selected':'' }}>Bank</option>
+                                                <option value="cash" id="cash"  {{ ($expense_details[0]->expense->payment_type == 'cash') ? 'selected':'' }}>Cash</option>
+                                                <option value="cheque" {{ ($expense_details[0]->expense->payment_type == 'cheque') ? 'selected':'' }}>Cheque</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group bankTransfer">
+                                            <label class="control-label">Transfer or Deposit Date :- <span class="required">*</span></label>
+                                            <input type="date" id="transferDate" name="transferDate" value="{{ $expense_details[0]->expense->transferDate ?? date('Y-m-d') }}" class="form-control" placeholder="">
+                                        </div>
+
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-success" id="showModel" > <i class="fa fa-check"></i> Update</button>
+                                            <button type="button" class="btn btn-inverse">Cancel</button>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
 
-                            </div>
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-success" id="showModel" > <i class="fa fa-check"></i> Update</button>
-                                <button type="button" class="btn btn-inverse">Cancel</button>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -277,7 +337,70 @@
     </div>
 </div>
 
+@if($expense_details[0]->expense->payment_type == 'cash')
 <script>
+    $(document).ready(function () {
+        $('.bankTransfer').hide();
+    });
+</script>
+@else
+<script>
+    $(document).ready(function () {
+        $('.bankTransfer').show();
+    });
+</script>
+@endif
+
+<script>
+    $(document).ready(function () {
+        var Id=$('#bank_id').val();
+        if(Id!=null)
+        {
+            $.ajax({
+                url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                type: "get",
+                dataType: "json",
+                success: function (result) {
+                    if (result !== "Failed") {
+                        $("#accountNumber").val('');
+                        $("#accountNumber").val(result);
+                    } else {
+                        alert(result);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage);
+                }
+            });
+        }
+    });
+
+    $(document).ready(function () {
+        $('#bank_id').change(function () {
+            var Id = 0;
+            Id = $(this).val();
+            if (Id > 0)
+            {
+                $.ajax({
+                    url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result !== "Failed") {
+                            $("#accountNumber").val('');
+                            $("#accountNumber").val(result);
+                        } else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        });
+    });
+
     $(document).ready(function () {
         $('#showUpdateModel').click(function () {
             $('#ShowUpdates').modal();
@@ -286,6 +409,23 @@
         $('#showModel').click(function () {
             $('#updateMessage').modal();
         });
+
+        $(document).on("change", '#payment_type', function () {
+            var cashDetails = $('#payment_type').val();
+
+            if (cashDetails === 'bank'){
+                $('.bankTransfer').show();
+            }
+            else if(cashDetails === 'cheque')
+            {
+                $('.bankTransfer').show();
+            }
+            else
+            {
+                $('.bankTransfer').hide();
+            }
+        });
+
         /////////////// Add Record //////////////////////
         $('#submit').click(function () {
             $('#submit').val('please wait...');
@@ -333,8 +473,11 @@
                     subTotal: $('.rowTotal').val(),
                     totalVat: $('.TotalVat').val(),
                     grandTotal: $('.GTotal').val(),
-                    paidBalance: cashPaid,
-                    remainingBalance: $('.balance').val(),
+                    payment_type: $('#payment_type').val(),
+                    bank_id: $('#bank_id').val(),
+                    accountNumber: $('#accountNumber').val(),
+                    transferDate: $('#transferDate').val(),
+                    ChequeNumber: $('#ChequeNumber').val(),
                     supplier_id:$('#supplier_id').val(),
                     supplierNote:$('#mainDescription').val(),
                     employee_id:$('#employee_id').val(),
@@ -348,7 +491,6 @@
                         }
                     });
                     var Datas = {Data: details};
-                    console.log(Datas);
                     $.ajax({
                         url: "{{ URL('expenseUpdate') }}/" + Id,
                         type: "post",

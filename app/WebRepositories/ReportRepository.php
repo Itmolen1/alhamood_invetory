@@ -398,7 +398,7 @@ class ReportRepository implements IReportRepositoryInterface
                                 $qty_sum+=$row[$j]['sale_details'][0]['Quantity'];
                                 $html .= '<tr>
                                 <td align="center" width="50">' . ($row[$j]['sale_details'][0]['PadNumber']) . '</td>
-                                <td align="center" width="140">' . ($row[$j]['api_customer']['Name']) . '</td>
+                                <td align="left" width="140">' . ($row[$j]['api_customer']['Name']) . '</td>
                                 <td align="right" width="40">' . ($row[$j]['sale_details'][0]['Quantity']) . '</td>
                                 <td align="center" width="40">' . ($row[$j]['sale_details'][0]['Price']) . '</td>
                                 <td align="center" width="45">' . ($row[$j]['sale_details'][0]['rowTotal']) . '</td>
@@ -651,7 +651,7 @@ class ReportRepository implements IReportRepositoryInterface
             //$balance = $balance + $row[$i]['Differentiate'];
             $html .='<tr>
                 <td align="center" width="80">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
-                <td align="center" width="100">'.($row[$i]['Type']).'</td>
+                <td align="left" width="100">'.($row[$i]['Type']).'</td>
                 <td align="center" width="100">'.$row[$i]['updateDescription'].'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
@@ -744,7 +744,7 @@ class ReportRepository implements IReportRepositoryInterface
         $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="80">Date</th>
-                <th align="center" width="200">Details</th>
+                <th align="left" width="200">Details</th>
                 <th align="right" width="80">Debit</th>
                 <th align="right" width="80">Credit</th>
                 <th align="right" width="90">Closing</th>
@@ -1205,7 +1205,7 @@ class ReportRepository implements IReportRepositoryInterface
                         $balance_total_sum+=$row[$i]['remainingBalance'];
                         $html .='<tr>
                     <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
-                    <td align="center" width="70">'.($row[$i]['api_customer']['Name']).'</td>
+                    <td align="left" width="70">'.($row[$i]['api_customer']['Name']).'</td>
                     <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
                     <td align="center" width="40">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
                     <td align="center" width="40">'.($row[$i]['sale_details'][0]['Price']).'</td>
@@ -1225,7 +1225,7 @@ class ReportRepository implements IReportRepositoryInterface
                     $balance_total_sum+=$row[$i]['remainingBalance'];
                     $html .='<tr>
                     <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
-                    <td align="center" width="70">'.($row[$i]['api_customer']['Name']).'</td>
+                    <td align="left" width="70">'.($row[$i]['api_customer']['Name']).'</td>
                     <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
                     <td align="right" width="40">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
                     <td align="right" width="40">'.($row[$i]['sale_details'][0]['Price']).'</td>

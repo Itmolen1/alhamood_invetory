@@ -521,8 +521,10 @@ class   SaleRepository implements ISaleRepositoryInterface
                     $sale->company_id = $company_id;
                     $sale->save();
                     $sale = $sale->id;
+                    $pad_number=0;
                     foreach($request->Data['orders'] as $detail)
                     {
+                        $pad_number=$detail['PadNumber'];
                         $data =  SaleDetail::create([
                             "product_id"        => $detail['product_id'],
                             "vehicle_id"        => $detail['vehicle_id'],
@@ -559,6 +561,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                 $cash_transaction->Differentiate=$difference+$request->Data['paidBalance'];
                 $cash_transaction->user_id = $user_id;
                 $cash_transaction->company_id = $company_id;
+                $cash_transaction->PadNumber = $pad_number;
                 $cash_transaction->save();
             }
 
@@ -1623,6 +1626,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                 $cash_transaction->Differentiate=$difference+$request->Data['paidBalance'];
                                 $cash_transaction->user_id = $user_id;
                                 $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $request->Data['orders'][0]['PadNumber'];
                                 $cash_transaction->save();
                                 // end new entry
 

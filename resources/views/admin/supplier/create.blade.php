@@ -3,21 +3,8 @@
 
 @section('content')
 
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Supplier Registration</h4>
@@ -32,13 +19,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -56,7 +37,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Company Name :- <span class="required">*</span></label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Supplier Company Name" required>
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Supplier Company Name" required autocomplete="off">
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                 @endif
@@ -240,41 +221,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Row -->
-
-            <!-- ============================================================== -->
-            <!-- End PAge Content -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script>
         $(document).ready(function () {
-            // $('#paymentTermAll').hide();
-            //
-            // $("#customRadio1 input:radio").click(function() {
-            //
-            //     alert("clicked");
-            //
-            // });
-
-            //
-            // $('.c1').click(function () {
-            //     $('#paymentTermAll').show();
-            // });
-            // $('.c2').click(function () {
-            //     $('#paymentTermAll').hide();
-            // });
             $('#paymentTermAll').hide();
         });
         $(document).on("change", '.paymentType', function () {
@@ -325,6 +276,4 @@
         });
         ////////////// end of location select ////////////////
     </script>
-
-
 @endsection

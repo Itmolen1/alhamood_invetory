@@ -248,13 +248,9 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     $purchase->company_id = $company_id;
                     $purchase->save();
                     $purchase = $purchase->id;
-                    //return Response()->json($purchase);
-                    //$user = $sale->user_id;
-                    // return $sale;
+
                     foreach($purchaseRequest->Data['orders'] as $detail)
                     {
-                        //return $detail['Quantity'];
-                        //return Response()->json($detail['Quantity']);
                         $data =  PurchaseDetail::create([
                             "product_id"        => $detail['product_id'],
                             "unit_id"        => $detail['unit_id'],
@@ -274,7 +270,6 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         ]);
                     }
                 }
-
             }
             else
             {

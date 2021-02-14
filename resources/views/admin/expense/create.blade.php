@@ -3,6 +3,29 @@
 
 @section('content')
 
+<style>
+    .chosen-container-single .chosen-single {
+        height: 38px;
+        border-radius: 3px;
+        border: 1px solid #CCCCCC;
+    }
+    .chosen-container-single .chosen-single span {
+        padding-top: 5px;
+    }
+    .chosen-container-single .chosen-single div b {
+        margin-top: 5px;
+    }
+    .chosen-container-active .chosen-single,
+    .chosen-container-active.chosen-with-drop .chosen-single {
+        border-color: #ccc;
+        border-color: rgba(82, 168, 236, .8);
+        outline: 0;
+        outline: thin dotted \9;
+        -moz-box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+        box-shadow: 0 0 8px rgba(82, 168, 236, .6)
+    }
+</style>
+
 <div class="page-wrapper">
     <div class="container-fluid">
         <div class="row page-titles">
@@ -35,7 +58,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Supplier Name :- <span class="required">*</span></label>
-                                            <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id" required>
+                                            <select class="form-control custom-select supplier_id select2 chosen-select" name="supplier_id" id="supplier_id" required>
                                                 <option value="">--Select Supplier--</option>
                                                 @foreach($suppliers as $supplier)
                                                     <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>
@@ -46,7 +69,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Employee Name :- <span class="required">*</span></label>
-                                            <select class="form-control custom-select employee_id select2" name="employee_id" id="employee_id" required>
+                                            <select class="form-control custom-select employee_id select2 chosen-select" name="employee_id" id="employee_id" required>
                                                 <option value="">--Select Employee--</option>
                                                 @foreach($employees as $employee)
                                                     <option value="{{ $employee->id }}">{{ $employee->Name }}</option>
@@ -97,9 +120,9 @@
                                             <th style="width: 150px">Voucher Number</th>
                                             <th style="width: 150px">Category  <span class="required">*</span></th>
                                             <th style="width: 300px">Description</th>
-                                            <th>Sub Total <span class="required">*</span></th>
+                                            <th style="width: 200px">Sub Total <span class="required">*</span></th>
                                             <th style="width: 120px">VAT <span class="required">*</span></th>
-                                            <th>Total Amount</th>
+                                            <th style="width: 200px">Total Amount</th>
                                         </tr>
                                         </thead>
                                         <tbody id="newRow">
@@ -136,32 +159,78 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <textarea name="" id="mainDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note"></textarea>
+                                            <textarea name="" id="mainDescription" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note" hidden></textarea>
                                             <input type="file">
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <p>Total Vat: <input type="text" value="0.00" class="form-control TotalVat" disabled="">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Total Vat: </label>
+                                            <input type="text" value="0.00" class="form-control TotalVat" disabled="">
                                             <input type="hidden" value="0.00" class="form-control TotalVat" >
-                                        </p>
-                                        <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled>
-                                            <input type="hidden" value="0.00" class="form-control GTotal">
-                                        </p>
-                                        <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
-                                        <p>Balance: <input type="text" value="0.00" class="form-control balance" disabled>
-                                            <input type="hidden" value="0.00" class="form-control balance">
-                                        </p>
+                                        </div>
+
+                                        <div class="form-group bankTransfer">
+                                            <label>Bank Name :- <span class="required">*</span></label>
+                                            <select class="form-control custom-select" id="bank_id" name="bank_id">
+                                                <option selected readonly="" disabled>--Select Bank Name--</option>
+                                                @foreach($banks as $bank)
+                                                    <option value="{{ $bank->id }}">{{ $bank->Name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group bankTransfer">
+                                            <label class="control-label">Cheque or Ref. Number ?  <span class="required">*</span></label>
+                                            <input type="text" class="form-control" name="ChequeNumber" id="ChequeNumber" placeholder="Cheque or Ref. Number">
+                                        </div>
+
                                     </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label> Grand Total: </label>
+                                            <input type="text" value="0.00" class="form-control GTotal" disabled>
+                                            <input type="hidden" value="0.00" class="form-control GTotal">
+                                        </div>
+
+                                        <div class="form-group bankTransfer">
+                                            <label class="control-label">Account Number :- <span class="required">*</span></label>
+                                            <input type="text" id="accountNumber" name="accountNumber" class="form-control accountNumber" placeholder="Enter Account Number" readonly>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Payment Type :- <span class="required">*</span></label>
+                                            <select class="form-control custom-select" id="payment_type" name="payment_type" required>
+                                                <option value="">--Select your Payment Type--</option>
+                                                <option value="bank">Bank</option>
+                                                <option id="cash" value="cash">Cash</option>
+                                                <option value="cheque">Cheque</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group bankTransfer">
+                                            <label class="control-label">Transfer or Deposit Date :- <span class="required">*</span></label>
+                                            <input type="date" id="transferDate" name="transferDate" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
+                                        </div>
+
+                                        <div class="form-actions">
+                                            <p>&nbsp;</p>
+                                            <button type="button" id="submit" class="btn btn-success"> <i class="fa fa-check" ></i> Save</button>
+                                            <button type="button" class="btn btn-inverse">Cancel</button>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
-                            <div class="form-actions">
-                                <button type="button" id="submit" class="btn btn-success"> <i class="fa fa-check" ></i> Save</button>
-                                <button type="button" class="btn btn-inverse">Cancel</button>
-                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -171,6 +240,56 @@
 </div>
 
 <script>
+
+    $(document).ready(function () {
+        $('.bankTransfer').hide();
+
+    });
+
+    $(document).on("change", '#payment_type', function () {
+        var cashDetails = $('#payment_type').val();
+
+        if (cashDetails === 'bank'){
+            $('.bankTransfer').show();
+        }
+        else if(cashDetails === 'cheque')
+        {
+            $('.bankTransfer').show();
+        }
+        else
+        {
+            $('.bankTransfer').hide();
+        }
+    });
+
+    $(document).ready(function () {
+        $('#bank_id').change(function () {
+            var Id = 0;
+            Id = $(this).val();
+            if (Id > 0)
+            {
+                $.ajax({
+                    // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result !== "Failed") {
+                            $("#accountNumber").val('');
+                            $("#accountNumber").val(result);
+                        } else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        });
+    });
+
+
     function DoTrim(strComp) {
         ltrim = /^\s+/
         rtrim = /\s+$/
@@ -186,25 +305,6 @@
         var fields;
         fields = "";
 
-        // if (document.add_expense.supplier_id.selectedIndex=="")
-        // {
-        //     if(fields != 1)
-        //     {
-        //         document.getElementById("supplier_id").focus();
-        //     }
-        //     fields = '1';
-        //     $("#supplier_id").addClass("error");
-        // }
-
-        // if (document.add_expense.employee_id.selectedIndex=="")
-        // {
-        //     if(fields != 1)
-        //     {
-        //         document.getElementById("employee_id").focus();
-        //     }
-        //     fields = '1';
-        //     $("#employee_id").addClass("error");
-        // }
 
         if (DoTrim(document.getElementById('referenceNumber').value).length == 0)
         {
@@ -299,15 +399,17 @@
                         subTotal: $('.rowTotal').val(),
                         totalVat: $('.TotalVat').val(),
                         grandTotal: $('.GTotal').val(),
-                        paidBalance: $('.cashPaid').val(),
-                        remainingBalance: $('.balance').val(),
+                        payment_type: $('#payment_type').val(),
+                        bank_id: $('#bank_id').val(),
+                        accountNumber: $('#accountNumber').val(),
+                        transferDate: $('#transferDate').val(),
+                        ChequeNumber: $('#ChequeNumber').val(),
                         supplier_id:$('#supplier_id').val(),
                         supplierNote:$('#mainDescription').val(),
                         employee_id:$('#employee_id').val(),
                         orders: insert,
                     }
-                    // var Datas = {Data: details}
-                    //console.log(Datas);
+
                     if (insert.length > 0) {
                         $.ajaxSetup({
                             headers: {
@@ -315,15 +417,13 @@
                             }
                         });
                         var Datas = {Data: details};
-                        // console.log(Datas);
                         $.ajax({
                             url: "{{ route('expenses.store') }}",
                             type: "post",
                             data: Datas,
                             success: function (result) {
-                                if (result !== "Failed") {
+                                if (result !== false) {
                                     details = [];
-                                    //console.log(result);
                                     alert("Data Inserted Successfully");
                                     window.location.href = "{{ route('expenses.index') }}";
                                 } else {
@@ -352,7 +452,6 @@
         //////// end of submit Records /////////////////
     });
 
-
     //////// validate rows ////////
     function validateRow(currentRow) {
 
@@ -378,7 +477,6 @@
     }
     ////// end of validate row ///////////////////
 
-
     /////////////////////////// customer select /////////////////
     $(document).ready(function () {
 
@@ -389,7 +487,6 @@
             if (Id > 0)
             {
                 $.ajax({
-                    // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     url: "{{ URL('supplierDetails') }}/" + Id,
                     type: "get",
                     dataType: "json",
@@ -399,6 +496,7 @@
                              $('#Mobile').text(result.supplier.Mobile);
                              $('#Email').text(result.supplier.Email);
                              $('#TRN').text(result.supplier.TRNNumber);
+                             $('#closing').val(result.closing);
                         } else {
                             alert(result);
                         }

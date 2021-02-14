@@ -2,20 +2,9 @@
 @section('title', 'PURCHASE UPDATE')
 
 @section('content')
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
+
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">purchase</h4>
@@ -30,13 +19,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -78,11 +61,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!--/row-->
 
                                     <div class="row">
-
-                                        <!--/span-->
                                         <div class="col-md-6">
                                             <ul class="feeds p-b-20">
                                                 <li>Address <span class="text-muted" id="Address">
@@ -262,18 +242,8 @@
                     </div>
                 </div>
             </div>
-
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <div class="modal fade" id="updateMessage" tabindex="-1" role="dialog" aria-labelledby="modalForm">
         <div class="modal-dialog" role="document">
@@ -298,7 +268,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" id="ShowUpdates" tabindex="-1" role="dialog" aria-labelledby="modalForm">
         <div class="modal-dialog" role="document">
@@ -405,8 +374,7 @@
                             UpdateDescription: $('#UpdateDescription').val(),
                             orders: insert,
                         }
-                        // var Datas = {Data: details}
-                        // console.log(Datas);
+
                         if (insert.length > 0) {
                             $.ajaxSetup({
                                 headers: {
@@ -447,7 +415,6 @@
             });
             //////// end of submit Records /////////////////
         });
-
 
         //////// validate rows ////////
         function validateRow(currentRow) {

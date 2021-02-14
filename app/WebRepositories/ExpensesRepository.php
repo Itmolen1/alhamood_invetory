@@ -6,6 +6,8 @@ namespace App\WebRepositories;
 
 use App\Http\Requests\ExpenseRequest;
 use App\Models\AccountTransaction;
+use App\Models\Bank;
+use App\Models\BankTransaction;
 use App\Models\CashTransaction;
 use App\Models\Employee;
 use App\Models\Expense;
@@ -32,7 +34,8 @@ class ExpensesRepository implements IExpensesRepositoryInterface
         $suppliers = Supplier::all()->where('company_type_id','=',3);
         $employees = Employee::all();
         $expense_categories = ExpenseCategory::all();
-        return view('admin.expense.create',compact('suppliers','expenseNo','employees','expense_categories','PadNumber'));
+        $banks = Bank::all();
+        return view('admin.expense.create',compact('suppliers','expenseNo','employees','expense_categories','PadNumber','banks'));
     }
 
     public function store(ExpenseRequest $expenseRequest)
@@ -51,11 +54,19 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             $expense->subTotal = $expenseRequest->Data['subTotal'];
             $expense->totalVat = $expenseRequest->Data['totalVat'];
             $expense->grandTotal = $expenseRequest->Data['grandTotal'];
-            $expense->paidBalance = $expenseRequest->Data['paidBalance'];
-            $expense->remainingBalance = $expenseRequest->Data['remainingBalance'];
+            $expense->paidBalance = $expenseRequest->Data['grandTotal'];
+            $expense->remainingBalance = 0.00;
+
+            $expense->payment_type = $expenseRequest->Data['payment_type'];
+            if($expenseRequest->Data['payment_type']!='cash')
+            {
+                $expense->bank_id = $expenseRequest->Data['bank_id'];
+                $expense->accountNumber = $expenseRequest->Data['accountNumber'];
+                $expense->transferDate = $expenseRequest->Data['transferDate'];
+                $expense->ChequeNumber = $expenseRequest->Data['ChequeNumber'];
+            }
             $expense->supplier_id = $expenseRequest->Data['supplier_id'];
             $expense->employee_id = $expenseRequest->Data['employee_id'];
-            $expense->Description = $expenseRequest->Data['supplierNote'];
             $expense->user_id = $user_id;
             $expense->company_id = $company_id;
             $expense->save();
@@ -78,108 +89,110 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 ]);
             }
 
-            if($expenseRequest->Data['paidBalance'] != 0.00 || $expenseRequest->Data['paidBalance'] != 0)
+            $accountDescriptionString='';
+            if($expenseRequest->Data['payment_type']=='cash')
             {
+                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                $difference = $cashTransaction->last()->Differentiate;
                 $cash_transaction = new CashTransaction();
                 $cash_transaction->Reference=$expense;
-                $cash_transaction->createdDate=date('Y-m-d h:i:s');
+                $cash_transaction->createdDate=$expenseRequest->Data['expenseDate'];
                 $cash_transaction->Type='expenses';
-                $cash_transaction->Type='Cash Expense';
-                $cash_transaction->Credit=$expenseRequest->Data['paidBalance'];
+                $cash_transaction->Details='CashExpense|'.$expense;
+                $cash_transaction->Credit=$expenseRequest->Data['grandTotal'];
                 $cash_transaction->Debit=0.00;
+                $cash_transaction->Differentiate=$difference-$expenseRequest->Data['grandTotal'];
+                $cash_transaction->user_id = $user_id;
+                $cash_transaction->company_id = $company_id;
+                $cash_transaction->PadNumber = $expenseRequest->Data['referenceNumber'];
                 $cash_transaction->save();
+
+                $accountDescriptionString='CashExpense|';
+            }
+            else
+            {
+                if($expenseRequest->Data['payment_type']=='bank')
+                {
+                    $bankTransaction = BankTransaction::where(['bank_id'=> $expenseRequest->Data['bank_id']])->get();
+                    $difference = $bankTransaction->last()->Differentiate;
+                    $bank_transaction = new BankTransaction();
+                    $bank_transaction->Reference=$expense;
+                    $bank_transaction->createdDate=$expenseRequest->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                    $bank_transaction->Type='expenses';
+                    $bank_transaction->Details='BankTransferExpense|'.$expense;
+                    $bank_transaction->Credit=$expenseRequest->Data['grandTotal'];
+                    $bank_transaction->Debit=0.00;
+                    $bank_transaction->Differentiate=$difference-$expenseRequest->Data['grandTotal'];
+                    $bank_transaction->user_id = $user_id;
+                    $bank_transaction->company_id = $company_id;
+                    $bank_transaction->bank_id = $expenseRequest->Data['bank_id'];
+                    $bank_transaction->updateDescription = $expenseRequest->Data['ChequeNumber'];
+                    $bank_transaction->save();
+
+                    $accountDescriptionString='BankTransferExpense|';
+                }
+                elseif($expenseRequest->Data['payment_type']=='cheque')
+                {
+                    $bankTransaction = BankTransaction::where(['bank_id'=> $expenseRequest->Data['bank_id']])->get();
+                    $difference = $bankTransaction->last()->Differentiate;
+                    $bank_transaction = new BankTransaction();
+                    $bank_transaction->Reference=$expense;
+                    $bank_transaction->createdDate=$expenseRequest->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                    $bank_transaction->Type='expenses';
+                    $bank_transaction->Details='ChequeExpense|'.$expense;
+                    $bank_transaction->Credit=$expenseRequest->Data['grandTotal'];
+                    $bank_transaction->Debit=0.00;
+                    $bank_transaction->Differentiate=$difference-$expenseRequest->Data['grandTotal'];
+                    $bank_transaction->user_id = $user_id;
+                    $bank_transaction->company_id = $company_id;
+                    $bank_transaction->bank_id = $expenseRequest->Data['bank_id'];
+                    $bank_transaction->updateDescription = $expenseRequest->Data['ChequeNumber'];
+                    $bank_transaction->save();
+
+                    $accountDescriptionString='ChequeExpense|';
+                }
             }
 
-            /*////////////////// account section ////////////////
+            ////////////////// start account section gautam ////////////////
             if ($expense)
             {
-                $accountTransaction = AccountTransaction::where(
-                    [
-                        'company_id'=> $company_id,
-                        'createdDate' => date('Y-m-d'),
-                        'employee_id' => $expenseRequest->Data['employee_id']
-                    ])->first();
-                if (!is_null($accountTransaction))
-                {
-                    if ($expenseRequest->Data['paidBalance'] == 0 || $expenseRequest->Data['paidBalance'] == 0.00) {
-                        if ($accountTransaction->createdDate != date('Y-m-d')) {
-                            $totalDebit = $expenseRequest->Data['grandTotal'];
-                        } else {
-                            $totalDebit = $accountTransaction->Debit + $expenseRequest->Data['grandTotal'];
-                        }
-                        $totalCredit = $accountTransaction->Credit;
-                        $difference = $accountTransaction->Differentiate - $expenseRequest->Data['grandTotal'];
-                    }
-                    elseif($expenseRequest->Data['paidBalance'] > 0 AND $expenseRequest->Data['paidBalance'] < $expenseRequest->Data['grandTotal'] )
-                    {
-                        if ($accountTransaction->createdDate != date('Y-m-d')) {
-                            $totalCredit = $expenseRequest->Data['paidBalance'];
-                            $totalDebit = $expenseRequest->Data['grandTotal'];
-                        } else {
-                            $totalCredit = $accountTransaction->Credit + $expenseRequest->Data['paidBalance'];
-                            $totalDebit = $accountTransaction->Debit + $expenseRequest->Data['grandTotal'];
-                        }
-                        $differenceValue = $accountTransaction->Differentiate + $expenseRequest->Data['paidBalance'];
-                        $difference = $differenceValue - $expenseRequest->Data['grandTotal'];
-                    }
-                    else{
+                $accountTransaction = AccountTransaction::where(['supplier_id'=> $expenseRequest->Data['supplier_id'],])->get();
 
-                        if ($accountTransaction->createdDate != date('Y-m-d')) {
-                            $totalCredit = $expenseRequest->Data['paidBalance'];
-                        } else {
-                            $totalCredit = $accountTransaction->Credit + $expenseRequest->Data['paidBalance'];
-                        }
-                        $totalDebit = $accountTransaction->Debit;
-                        $difference = $accountTransaction->Differentiate + $expenseRequest->Data['paidBalance'];
-                    }
-                }
-                else
-                {
-                    $accountTransaction = AccountTransaction::where(
-                        [
-                            'company_id'=> $company_id,
-                        ])->get();
-                    if ($expenseRequest->Data['paidBalance'] == 0 || $expenseRequest->Data['paidBalance'] == 0.00) {
-                        $totalDebit = $expenseRequest->Data['grandTotal'];
-                        $totalCredit = $accountTransaction->last()->Credit;
-                        $difference = $accountTransaction->last()->Differentiate + $expenseRequest->Data['grandTotal'];
-                    }
-                    elseif($expenseRequest->Data['paidBalance'] > 0 AND $expenseRequest->Data['paidBalance'] < $expenseRequest->Data['grandTotal'] )
-                    {
+                // fully paid with cash or bank
 
-                        $totalCredit = $expenseRequest->Data['paidBalance'];
-                        $totalDebit = $expenseRequest->Data['grandTotal'];
-                        $differenceValue = $accountTransaction->last()->Differentiate - $expenseRequest->Data['paidBalance'];
-                        $difference = $differenceValue + $expenseRequest->Data['grandTotal'];
-                    }
-                    else{
-                        $totalCredit = $expenseRequest->Data['paidBalance'];
-                        $totalDebit = $accountTransaction->last()->Debit;
-                        $difference = $accountTransaction->last()->Differentiate - $expenseRequest->Data['paidBalance'];
-                    }
-                }
-                $AccData =
-                    [
-                        'company_id' => $company_id,
-                        'Credit' => $totalCredit,
-                        'employee_id' => $expenseRequest->Data['employee_id'],
-                        'Debit' => $totalDebit,
-                        'Differentiate' => $difference,
-                        'createdDate' => date('Y-m-d'),
-                        'user_id' => $user_id,
-                    ];
-                $AccountTransactions = AccountTransaction::updateOrCreate(
-                    [
-                        'createdDate'   => date('Y-m-d'),
-                        'company_id'   => $company_id,
-                        'employee_id' => $expenseRequest->Data['employee_id']
-                    ],
-                    $AccData);
+                $totalCredit = $expenseRequest->Data['grandTotal'];
+                $difference = $accountTransaction->last()->Differentiate + $expenseRequest->Data['grandTotal'];
+
+                //make credit entry for the expense
+                $AccountTransactions=AccountTransaction::Create([
+                    'supplier_id' => $expenseRequest->Data['supplier_id'],
+                    'Credit' => $totalCredit,
+                    'Debit' => 0.00,
+                    'Differentiate' => $difference,
+                    'createdDate' => $expenseRequest->Data['expenseDate'],
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>'Expense|'.$expense,
+                ]);
+
+                //make debit entry for the whatever cash or bank account is credited
+                $difference=$difference-$expenseRequest->Data['grandTotal'];
+                $AccountTransactions=AccountTransaction::Create([
+                    'supplier_id' => $expenseRequest->Data['supplier_id'],
+                    'Credit' => 0.00,
+                    'Debit' => $expenseRequest->Data['grandTotal'],
+                    'Differentiate' => $difference,
+                    'createdDate' => $expenseRequest->Data['expenseDate'],
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
+                    'Description'=>$accountDescriptionString.$expense,
+                    'updateDescription'=>$expenseRequest->Data['ChequeNumber'] ?? '',
+                ]);
                 return Response()->json($AccountTransactions);
-                // return Response()->json("");
             }
-            ////////////////// end of account section ////////////////*/
+            ////////////////// end account section gautam ////////////////
         }
+        //return false;
     }
 
     public function update(Request $request, $Id)
@@ -191,129 +204,403 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             $user_id = session('user_id');
             $company_id = session('company_id');
 
-            /*////////////////// account section ////////////////
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'company_id'=> $company_id,
-                ])->get();
-            if (!is_null($accountTransaction)) {
-                $lastAccountTransection = $accountTransaction->Last();
-                if ($lastAccountTransection->company_id != $expensed->company_id)
+            ////////////////// account section gautam ////////////////
+            $accountTransaction = AccountTransaction::where(['supplier_id'=> $expensed->supplier_id,])->get();
+            if (!is_null($accountTransaction))
+            {
+                // identify only and only payment method is changing
+                if($expensed->payment_type!=$request->Data['payment_type'] && $expensed->supplier_id==$request->Data['supplier_id'] && $expensed->grandTotal==$request->Data['grandTotal'])
                 {
-                    if ($expensed->paidBalance == 0 || $expensed->paidBalance == 0.00) {
-                        $OldValue1 = $expensed->company->account_transaction->Last()->Debit - $expensed->grandTotal;
-                        $OldTotalDebit = $OldValue1;
-                        $OldTotalCredit = $expensed->company->account_transaction->Last()->Credit;
-                        $OldValue = $expensed->company->account_transaction->Last()->Differentiate + $expensed->grandTotal;
-                        $OldDifference = $OldValue;
-                    }
-                    elseif ($expensed->paidBalance > 0 AND $expensed->paidBalance < $expensed->grandTotal)
+                    // start reverse entry for wrong payment method
+                    if($expensed->payment_type=='cash')
                     {
-                        $OldTotalCredit = $expensed->company->account_transaction->Last()->Credit - $expensed->paidBalance;
-                        $OldTotalDebit = $expensed->company->account_transaction->Last()->Debit - $expensed->grandTotal;
-                        $differenceValue = $expensed->company->account_transaction->Last()->Differentiate - $expensed->paidBalance;
-                        $OldDifference = $differenceValue + $expensed->grandTotal;
+                        $description_string='CashExpense|'.$Id;
+
+                        $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                        $difference = $cashTransaction->last()->Differentiate;
+                        $cash_transaction = new CashTransaction();
+                        $cash_transaction->Reference=$Id;
+                        $cash_transaction->createdDate=$request->Data['expenseDate'];
+                        $cash_transaction->Type='expenses';
+                        $cash_transaction->Details='CashExpenseReversal|'.$Id;
+                        $cash_transaction->Credit=0.00;
+                        $cash_transaction->Debit=$request->Data['grandTotal'];
+                        $cash_transaction->Differentiate=$difference+$request->Data['grandTotal'];
+                        $cash_transaction->user_id = $user_id;
+                        $cash_transaction->company_id = $company_id;
+                        $cash_transaction->save();
                     }
-                    else{
-                        $OldValue1 = $expensed->company->account_transaction->Last()->Credit - $expensed->paidBalance;
-                        $OldTotalCredit = $OldValue1;
-                        $OldTotalDebit = $expensed->company->account_transaction->Last()->Debit;
-                        $OldValue = $expensed->company->account_transaction->Last()->Differentiate - $expensed->paidBalance;
-                        $OldDifference = $OldValue;
+                    elseif($expensed->payment_type=='bank')
+                    {
+                        $description_string='BankTransferExpense|'.$Id;
+
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $expensed->bank_id])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$Id;
+                        $bank_transaction->createdDate=$request->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='BankTransferExpenseReversal|'.$Id;
+                        $bank_transaction->Credit=0.00;
+                        $bank_transaction->Debit=$request->Data['grandTotal'];
+                        $bank_transaction->Differentiate=$difference+$request->Data['grandTotal'];
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $expensed->bank_id;
+                        $bank_transaction->updateDescription = '';
+                        $bank_transaction->save();
                     }
-                    $OldAccData =
+                    elseif($expensed->payment_type=='cheque')
+                    {
+                        $description_string='ChequeExpense|'.$Id;
+
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $expensed->bank_id])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$Id;
+                        $bank_transaction->createdDate=$request->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='ChequeExpenseReversal|'.$Id;
+                        $bank_transaction->Credit=0.00;
+                        $bank_transaction->Debit=$request->Data['grandTotal'];
+                        $bank_transaction->Differentiate=$difference+$request->Data['grandTotal'];
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $expensed->bank_id;
+                        $bank_transaction->updateDescription = '';
+                        $bank_transaction->save();
+                    }
+                    $previous_entry = AccountTransaction::get()->where('company_id','=',$company_id)->where('supplier_id','=',$expensed->supplier_id)->where('Description','like',$description_string)->last();
+                    if($previous_entry)
+                    {
+                        $new_description_string='';
+                        $new_update_description='';
+                        if($request->Data['payment_type']=='cash')
+                        {
+                            $new_description_string='CashExpense|'.$Id;
+                            $new_update_description=$request->Data['referenceNumber'];
+
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$Id;
+                            $cash_transaction->createdDate=$request->Data['expenseDate'];
+                            $cash_transaction->Type='expenses';
+                            $cash_transaction->Details='CashExpense|'.$Id;
+                            $cash_transaction->Credit=$request->Data['grandTotal'];
+                            $cash_transaction->Debit=0.00;
+                            $cash_transaction->Differentiate=$difference-$request->Data['grandTotal'];
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                        }
+                        elseif($request->Data['payment_type']=='bank')
+                        {
+                            $new_description_string='BankTransferExpense|'.$Id;
+                            $new_update_description=$request->Data['ChequeNumber'];
+
+                            $bankTransaction = BankTransaction::where(['bank_id'=> $request->Data['bank_id']])->get();
+                            $difference = $bankTransaction->last()->Differentiate;
+                            $bank_transaction = new BankTransaction();
+                            $bank_transaction->Reference=$Id;
+                            $bank_transaction->createdDate=$request->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                            $bank_transaction->Type='expenses';
+                            $bank_transaction->Details='BankTransferExpense|'.$Id;
+                            $bank_transaction->Credit=$request->Data['grandTotal'];
+                            $bank_transaction->Debit=0.00;
+                            $bank_transaction->Differentiate=$difference-$request->Data['grandTotal'];
+                            $bank_transaction->user_id = $user_id;
+                            $bank_transaction->company_id = $company_id;
+                            $bank_transaction->bank_id = $request->Data['bank_id'];
+                            $bank_transaction->updateDescription = $request->Data['ChequeNumber'];
+                            $bank_transaction->save();
+                        }
+                        elseif($request->Data['payment_type']=='cheque')
+                        {
+                            $new_description_string='ChequeExpense|'.$Id;
+                            $new_update_description=$request->Data['ChequeNumber'];
+
+                            $bankTransaction = BankTransaction::where(['bank_id'=> $request->Data['bank_id']])->get();
+                            $difference = $bankTransaction->last()->Differentiate;
+                            $bank_transaction = new BankTransaction();
+                            $bank_transaction->Reference=$Id;
+                            $bank_transaction->createdDate=$request->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                            $bank_transaction->Type='expenses';
+                            $bank_transaction->Details='ChequeExpense|'.$Id;
+                            $bank_transaction->Credit=$request->Data['grandTotal'];
+                            $bank_transaction->Debit=0.00;
+                            $bank_transaction->Differentiate=$difference-$request->Data['grandTotal'];
+                            $bank_transaction->user_id = $user_id;
+                            $bank_transaction->company_id = $company_id;
+                            $bank_transaction->bank_id = $request->Data['bank_id'];
+                            $bank_transaction->updateDescription = $request->Data['ChequeNumber'];
+                            $bank_transaction->save();
+                        }
+                        $previous_entry->update(
+                            [
+                                'Description' => $new_description_string,
+                                'updateDescription' => $new_update_description,
+                            ]);
+                    }
+                }
+                // identify only payment method is not changing
+                elseif($expensed->payment_type!=$request->Data['payment_type'] || $expensed->supplier_id!=$request->Data['supplier_id'] || $expensed->grandTotal!=$request->Data['grandTotal'])
+                {
+                    $description_string='Expense|'.$Id;
+                    $previous_entry = AccountTransaction::get()->where('supplier_id','=',$expensed->supplier_id)->where('Description','like',$description_string)->last();
+                    $last_closing = $accountTransaction->last()->Differentiate;
+                    $previously_credited = $previous_entry->Credit;
+                    $AccData =
                         [
-                            'company_id' => $expensed->company_id,
-                            'employee_id' => $expensed->employee_id,
-                            'Debit' => $OldTotalDebit,
-                            'Credit' => $OldTotalCredit,
-                            'Differentiate' => $OldDifference,
-                            'createdDate' => $expensed->company->account_transaction->Last()->createdDate,
-                            'user_id' =>$user_id,
+                            'supplier_id' => $expensed->supplier_id,
+                            'Debit' => $previously_credited,
+                            'Credit' => 0.00,
+                            'Differentiate' => $last_closing-$previously_credited,
+                            'createdDate' => $request->Data['expenseDate'],
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Expense|'.$Id,
+                            'updateDescription'=>'hide',
                         ];
-                    $AccountTransactions = AccountTransaction::updateOrCreate([
-                        'id'   => $expensed->company->account_transaction->Last()->id,
-                    ], $OldAccData);
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                    // also hide previous entry start
+                    AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                    // also hide previous entry end
 
-                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00) {
-                        $totalDebit = $lastAccountTransection->Debit + $request->Data['grandTotal'];
-                        $totalCredit = $lastAccountTransection->Credit;
-                        $difference = $lastAccountTransection->Differentiate - $request->Data['grandTotal'];
-                    }
-                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    if($expensed->payment_type=='cash')
                     {
-                        $totalDebit = $lastAccountTransection->Debit - $request->Data['paidBalance'];
-                        $totalCredit = $lastAccountTransection->Credit - $request->Data['grandTotal'];
-                        $differenceValue = $accountTransaction->last()->Differentiate - $request->Data['paidBalance'];
-                        $difference = $differenceValue + $request->Data['grandTotal'];
+                        $description_string='CashExpense|'.$Id;
+
+                        $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                        $difference = $cashTransaction->last()->Differentiate;
+                        $cash_transaction = new CashTransaction();
+                        $cash_transaction->Reference=$Id;
+                        $cash_transaction->createdDate=$expensed->expenseDate;
+                        $cash_transaction->Type='expenses';
+                        $cash_transaction->Details='CashExpenseReversal|'.$Id;
+                        $cash_transaction->Credit=0.00;
+                        $cash_transaction->Debit=$expensed->grandTotal;
+                        $cash_transaction->Differentiate=$difference+$expensed->grandTotal;
+                        $cash_transaction->user_id = $user_id;
+                        $cash_transaction->company_id = $company_id;
+                        $cash_transaction->PadNumber = $request->Data['referenceNumber'];
+                        $cash_transaction->save();
+
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$expensed->supplier_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $expensed->supplier_id,])->get();
+                        $last_closing = $accountTransaction->last()->Differentiate;
+                        $AccData =
+                            [
+                                'supplier_id' => $expensed->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => $request->Data['expenseDate'],
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'CashExpense|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
                     }
-                    else{
-                        $totalCredit = $lastAccountTransection->Credit + $request->Data['paidBalance'];
-                        $totalDebit = $lastAccountTransection->Debit;
-                        $difference = $lastAccountTransection->Differentiate + $request->Data['paidBalance'];
-                    }
-                }
-                else
-                {
-                    if ($request->Data['paidBalance'] == 0 || $request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == "") {
-                        if ($lastAccountTransection->createdDate != $expensed->company->account_transaction->last()->createdDate) {
-                            $totalDebit = $request->Data['grandTotal'];
-                        } else {
-                            $value1 = $lastAccountTransection->Debit - $expensed->grandTotal;
-                            $totalDebit = $value1 + $request->Data['grandTotal'];
-                        }
-                        $totalCredit = $lastAccountTransection->Credit;
-                        $value = $lastAccountTransection->Differentiate + $expensed->grandTotal;
-                        $difference = $value - $request->Data['grandTotal'];
-//                                        return Response()->json($difference);
-                    }
-                    elseif ($request->Data['paidBalance'] > 0 AND $request->Data['paidBalance'] < $request->Data['grandTotal'])
+                    elseif($expensed->payment_type=='bank')
                     {
+                        $description_string='BankTransferExpense|'.$Id;
 
-                        if ($lastAccountTransection->createdDate != $expensed->company->account_transaction->last()->createdDate) {
-                            $totalCredit = $request->Data['paidBalance'];
-                            $totalDebit = $request->Data['grandTotal'];
-                        } else {
-                            $value1 = $lastAccountTransection->Credit - $expensed->paidBalance;
-                            $totalCredit = $value1 + $request->Data['paidBalance'];
-                            $valueC = $lastAccountTransection->Debit - $expensed->grandTotal;
-                            $totalDebit = $valueC + $request->Data['grandTotal'];
-                        }
-                        $differenceValue = $lastAccountTransection->Differentiate - $request->Data['paidBalance'];
-                        $difference = $differenceValue + $request->Data['grandTotal'];
-                    }
-                    else{
-                        if ($lastAccountTransection->createdDate != $expensed->company->account_transaction->last()->createdDate) {
-                            $totalCredit = $request->Data['paidBalance'];
-                        } else {
-                            $value1 = $lastAccountTransection->Credit - $expensed->paidBalance;
-                            $totalCredit = $value1 + $request->Data['paidBalance'];
-                        }
-                        $totalDebit = $lastAccountTransection->Debit;
-                        $value = $lastAccountTransection->Differentiate - $expensed->paidBalance;
-                        $difference = $value + $request->Data['paidBalance'];
-                    }
-                }
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $request->Data['bank_id']])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$Id;
+                        $bank_transaction->createdDate=$expensed->transferDate ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='BankTransferExpenseReversal|'.$Id;
+                        $bank_transaction->Credit=0.00;
+                        $bank_transaction->Debit=$expensed->grandTotal;
+                        $bank_transaction->Differentiate=$difference+$expensed->grandTotal;
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $expensed->bank_id;
+                        $bank_transaction->updateDescription = '';
+                        $bank_transaction->save();
 
-                $AccData =
-                    [
-                        'company_id' => $company_id,
-                        'employee_id' => $request->Data['employee_id'],
-                        'Credit' => $totalCredit,
-                        'Debit' => $totalDebit,
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$expensed->supplier_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $expensed->supplier_id,])->get();
+                        $last_closing = $accountTransaction->last()->Differentiate;
+                        $AccData =
+                            [
+                                'supplier_id' => $expensed->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => $request->Data['expenseDate'],
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'BankTransferExpense|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                    }
+                    elseif($expensed->payment_type=='cheque')
+                    {
+                        $description_string='ChequeExpense|'.$Id;
+
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $request->Data['bank_id']])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$Id;
+                        $bank_transaction->createdDate=$expensed->transferDate ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='ChequeExpenseReversal|'.$Id;
+                        $bank_transaction->Credit=0.00;
+                        $bank_transaction->Debit=$expensed->grandTotal;
+                        $bank_transaction->Differentiate=$difference+$expensed->grandTotal;
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $expensed->bank_id;
+                        $bank_transaction->updateDescription = '';
+                        $bank_transaction->save();
+
+                        $previous_entry = AccountTransaction::get()->where('supplier_id','=',$expensed->supplier_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $accountTransaction = AccountTransaction::where(['supplier_id'=> $expensed->supplier_id,])->get();
+                        $last_closing = $accountTransaction->last()->Differentiate;
+                        $AccData =
+                            [
+                                'supplier_id' => $expensed->supplier_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing+$previously_debited,
+                                'createdDate' => $request->Data['expenseDate'],
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'ChequeExpense|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                    }
+
+                    // new entry start
+                    $accountTransaction = AccountTransaction::where(['supplier_id'=> $request->Data['supplier_id'],])->get();
+                    $difference = $accountTransaction->last()->Differentiate + $request->Data['grandTotal'];
+                    $AccData =
+                        [
+                            'supplier_id' => $request->Data['supplier_id'],
+                            'Credit' => $request->Data['grandTotal'],
+                            'Debit' => 0.00,
+                            'Differentiate' => $difference,
+                            'createdDate' => $request->Data['expenseDate'],
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Expense|'.$Id,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+
+                    $new_description_string='';
+                    $new_update_description='';
+                    if($request->Data['payment_type']=='cash')
+                    {
+                        $new_description_string='CashExpense|'.$Id;
+                        $new_update_description=$request->Data['referenceNumber'];
+
+                        $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                        $difference = $cashTransaction->last()->Differentiate;
+                        $cash_transaction = new CashTransaction();
+                        $cash_transaction->Reference=$Id;
+                        $cash_transaction->createdDate=$request->Data['expenseDate'];
+                        $cash_transaction->Type='expenses';
+                        $cash_transaction->Details='CashExpense|'.$Id;
+                        $cash_transaction->Credit=$request->Data['grandTotal'];
+                        $cash_transaction->Debit=0.00;
+                        $cash_transaction->Differentiate=$difference-$request->Data['grandTotal'];
+                        $cash_transaction->user_id = $user_id;
+                        $cash_transaction->company_id = $company_id;
+                        $cash_transaction->save();
+                    }
+                    elseif($request->Data['payment_type']=='bank')
+                    {
+                        $new_description_string='BankTransferExpense|'.$Id;
+                        $new_update_description=$request->Data['ChequeNumber'];
+
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $request->Data['bank_id']])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$Id;
+                        $bank_transaction->createdDate=$request->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='BankTransferExpense|'.$Id;
+                        $bank_transaction->Credit=$request->Data['grandTotal'];
+                        $bank_transaction->Debit=0.00;
+                        $bank_transaction->Differentiate=$difference-$request->Data['grandTotal'];
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $request->Data['bank_id'];
+                        $bank_transaction->updateDescription = $request->Data['ChequeNumber'];
+                        $bank_transaction->save();
+                    }
+                    elseif($request->Data['payment_type']=='cheque')
+                    {
+                        $new_description_string='ChequeExpense|'.$Id;
+                        $new_update_description=$request->Data['ChequeNumber'];
+
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $request->Data['bank_id']])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$Id;
+                        $bank_transaction->createdDate=$request->Data['transferDate'] ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='ChequeExpense|'.$Id;
+                        $bank_transaction->Credit=$request->Data['grandTotal'];
+                        $bank_transaction->Debit=0.00;
+                        $bank_transaction->Differentiate=$difference-$request->Data['grandTotal'];
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $request->Data['bank_id'];
+                        $bank_transaction->updateDescription = $request->Data['ChequeNumber'];
+                        $bank_transaction->save();
+                    }
+                    //make debit entry for the whatever cash or bank account is credited
+                    $accountTransaction = AccountTransaction::where(['supplier_id'=> $request->Data['supplier_id'],])->get();
+                    $difference = $accountTransaction->last()->Differentiate - $request->Data['grandTotal'];
+                    $AccountTransactions=AccountTransaction::Create([
+                        'supplier_id' => $request->Data['supplier_id'],
+                        'Credit' => 0.00,
+                        'Debit' => $request->Data['grandTotal'],
                         'Differentiate' => $difference,
-                        'createdDate' => $lastAccountTransection->createdDate,
-                        'user_id' =>$user_id,
-                    ];
-                $AccountTransactions = AccountTransaction::updateOrCreate([
-                    'createdDate'   => $lastAccountTransection->createdDate,
-                    'id'   => $lastAccountTransection->id,
-                ], $AccData);
-                //return Response()->json($accountTransaction);
+                        'createdDate' => $request->Data['expenseDate'],
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>$new_description_string,
+                        'updateDescription'=>$new_update_description ?? '',
+                    ]);
+
+                    //new entry end
+                }
             }
-            ////////////////// end of account section ////////////////*/
+            ////////////////// end of account section gautam ////////////////
 
             //here will come cash transaction record update if scenario will come by
+            $bank_id=0;
+            $accountNumber=NULL;
+            $transferDate=$request->Data['expenseDate'];
+            $ChequeNumber=NULL;
+            if($request->Data['payment_type']!='cash')
+            {
+                $bank_id=$request->Data['bank_id'];
+                $accountNumber=$request->Data['accountNumber'];
+                $transferDate=$request->Data['transferDate'];
+                $ChequeNumber=$request->Data['ChequeNumber'];
+            }
             $expensed->update(
                 [
                     'expenseNumber' => $request->Data['expenseNumber'],
@@ -323,10 +610,14 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     'subTotal' => $request->Data['subTotal'],
                     'totalVat' => $request->Data['totalVat'],
                     'grandTotal' => $request->Data['grandTotal'],
-                    'paidBalance' => $request->Data['paidBalance'],
-                    'remainingBalance' => $request->Data['remainingBalance'],
+                    'paidBalance' => $request->Data['grandTotal'],
+                    'remainingBalance' => 0.00,
+                    'payment_type' => $request->Data['payment_type'],
+                    'bank_id' => $bank_id,
+                    'accountNumber' => $accountNumber,
+                    'transferDate' => $transferDate,
+                    'ChequeNumber' => $ChequeNumber,
                     'supplier_id' => $request->Data['supplier_id'],
-                    'Description' => $request->Data['supplierNote'],
                     'employee_id' => $request->Data['employee_id'],
                     'user_id' => $user_id,
                     'company_id' => $company_id,
@@ -345,17 +636,15 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             foreach ($request->Data['orders'] as $detail)
             {
                 $expenseDetails = ExpenseDetail::create([
-                    //"Id" => $detail['Id'],
-                    "Total"        => $detail['Total'],
-                    "expenseDate"        => $detail['expenseDate'],
-                    "expense_category_id"        => $detail['expense_category_id'],
-                    "Description"        => $detail['Description'],
-                    "Vat"        => $detail['Vat'],
-                    "rowVatAmount"        => $detail['rowVatAmount'],
-                    "rowSubTotal"        => $detail['rowSubTotal'],
+                    "Total" => $detail['Total'],
+                    "expenseDate" => $request->Data['expenseDate'],
+                    "expense_category_id" => $detail['expense_category_id'],
+                    "Vat" => $detail['Vat'],
+                    "rowVatAmount" => $detail['rowVatAmount'],
+                    "rowSubTotal" => $detail['rowSubTotal'],
                     "company_id" => $company_id,
-                    "user_id"      => $user_id,
-                    "expense_id"      => $Id,
+                    "user_id" => $user_id,
+                    "expense_id" => $Id,
                     "PadNumber" => $detail['padNumber'],
                 ]);
             }
@@ -376,8 +665,8 @@ class ExpensesRepository implements IExpensesRepositoryInterface
         $employees = Employee::all();
         $expense_categories = ExpenseCategory::all();
         $expense_details = ExpenseDetail::withTrashed()->with('expense.supplier','user')->where('expense_id', $Id)->get();
-        //dd($expense_details);
-        return view('admin.expense.edit',compact('expense_details','suppliers','update_notes','employees','expense_categories'));
+        $banks = Bank::all();
+        return view('admin.expense.edit',compact('expense_details','suppliers','update_notes','employees','expense_categories','banks'));
     }
 
     public function delete(Request $request, $Id)
