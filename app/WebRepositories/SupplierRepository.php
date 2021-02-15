@@ -55,13 +55,14 @@ class SupplierRepository implements ISupplierRepositoryInterface
                             return $button;
                         }
                     })
-                ->addColumn('paymentType', function($data) {
-                    return $data->payment_type->Name ?? "No Data";
+                ->addColumn('companyType', function($data) {
+                    return $data->company_type->Name ?? "No Data";
                 })
                 ->rawColumns([
                     'action',
                     'isActive',
-                    'paymentType'
+                    'paymentType',
+                    'TRNNumber',
                 ])
                 ->make(true);
         }
@@ -144,6 +145,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
                 $purchase->Description = '';
                 $purchase->supplierNote = '';
                 $purchase->IsPaid = 0;
+                $purchase->isActive = 0;
                 $purchase->IsPartialPaid = 0;
                 $purchase->IsNeedStampOrSignature = false;
                 $purchase->user_id = $user_id;

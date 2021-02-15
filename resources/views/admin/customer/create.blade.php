@@ -37,7 +37,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Company Name :- <span class="required">*</span></label>
-                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Customer Company Name" required>
+                                                <input type="text" id="Name" name="Name" class="form-control" placeholder="Enter Customer Company Name" required autocomplete="off">
                                                 @if ($errors->has('Name'))
                                                     <span class="text-danger">{{ $errors->first('Name') }}</span>
                                                 @endif

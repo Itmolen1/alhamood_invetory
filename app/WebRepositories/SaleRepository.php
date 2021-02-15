@@ -20,7 +20,7 @@ class   SaleRepository implements ISaleRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->where('company_id',session('company_id'))->latest()->get())
+            return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->where('company_id',session('company_id'))->where('isActive',1)->latest()->get())
 
                 ->addColumn('action', function ($data) {
 
@@ -72,12 +72,12 @@ class   SaleRepository implements ISaleRepositoryInterface
         $customers = Customer::with('customer_prices')->get();
         $products = Product::all();
         $salesRecords = Sale::with('sale_details.vehicle','customer')->where('company_id',session('company_id'))->orderBy('id', 'desc')->skip(0)->take(3)->get();
-        //dd($saleNo);
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','PadNumber'));
     }
 
     public function store(Request $request)
     {
+        $pad_number=0;
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
@@ -521,7 +521,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                     $sale->company_id = $company_id;
                     $sale->save();
                     $sale = $sale->id;
-                    $pad_number=0;
+
                     foreach($request->Data['orders'] as $detail)
                     {
                         $pad_number=$detail['PadNumber'];
@@ -2691,7 +2691,14 @@ class   SaleRepository implements ISaleRepositoryInterface
         //new pad number generation according to company last pad
         $PadNumber = new SaleDetail();
         $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
-        $newPad = ($lastPad + 1);
+        if(!is_numeric($lastPad))
+        {
+            $newPad=1;
+        }
+        else
+        {
+            $newPad = ($lastPad + 1);
+        }
         return $newPad;
     }
 }

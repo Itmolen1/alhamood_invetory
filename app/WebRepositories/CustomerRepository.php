@@ -139,6 +139,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
                 $sale->customer_id = $customer->id;
                 $sale->Description = '';
                 $sale->IsPaid = 0;
+                $sale->isActive = 0;
                 $sale->IsPartialPaid = 0;
                 $sale->IsReturn = false;
                 $sale->IsPartialReturn = false;
@@ -150,11 +151,11 @@ class CustomerRepository implements ICustomerRepositoryInterface
 
                 $product=Product::select('id')->get()->first();
                 $unit=Unit::select('id')->get()->first();
-                $vehicle=Vehicle::select('id')->get()->first();
+
 
                 $data =  SaleDetail::create([
                     "product_id" => $product->id,
-                    "vehicle_id" => $vehicle->id,
+                    "vehicle_id" => 0,
                     "unit_id" => $unit->id,
                     "Quantity" => 0.00,
                     "Price" => 0.00,

@@ -2,6 +2,28 @@
 @section('title', 'Vehicle create')
 
 @section('content')
+    <style>
+        .chosen-container-single .chosen-single {
+            height: 38px;
+            border-radius: 3px;
+            border: 1px solid #CCCCCC;
+        }
+        .chosen-container-single .chosen-single span {
+            padding-top: 5px;
+        }
+        .chosen-container-single .chosen-single div b {
+            margin-top: 5px;
+        }
+        .chosen-container-active .chosen-single,
+        .chosen-container-active.chosen-with-drop .chosen-single {
+            border-color: #ccc;
+            border-color: rgba(82, 168, 236, .8);
+            outline: 0;
+            outline: thin dotted \9;
+            -moz-box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+            box-shadow: 0 0 8px rgba(82, 168, 236, .6)
+        }
+    </style>
 
     <div class="page-wrapper">
 
@@ -38,7 +60,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Customer :- <span class="required">*</span></label>
-                                                <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id" required>
+                                                <select class="form-control custom-select customer_id select2 chosen-select" name="customer_id" id="customer_id" required>
                                                     <option value="">--Select your Customer--</option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
@@ -84,40 +106,40 @@
     <script>
         $(document).ready(function () {
             $('#already_exist').hide();
-            {{--$('#registrationNumber').keyup(function () {--}}
-            {{--    var customer_id = 0;--}}
-            {{--    var registrationNumber=0;--}}
-            {{--    customer_id = $('#customer_id').val();--}}
-            {{--    registrationNumber = $('#registrationNumber').val();--}}
-            {{--    if (customer_id > 0)--}}
-            {{--    {--}}
-            {{--        var data={customer_id:customer_id,registrationNumber:registrationNumber};--}}
-            {{--        $.ajaxSetup({--}}
-            {{--            headers: {--}}
-            {{--                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')--}}
-            {{--            }--}}
-            {{--        });--}}
-            {{--        $.ajax({--}}
-            {{--            url: "{{ URL('CheckVehicleExist') }}/",--}}
-            {{--            type: "post",--}}
-            {{--            data: data,--}}
-            {{--            dataType: "json",--}}
-            {{--            success: function (result) {--}}
-            {{--                if (result === true)--}}
-            {{--                {--}}
-            {{--                    $('#already_exist').show();--}}
-            {{--                }--}}
-            {{--                else--}}
-            {{--                {--}}
-            {{--                    $('#already_exist').hide();--}}
-            {{--                }--}}
-            {{--            },--}}
-            {{--            error: function (errormessage) {--}}
-            {{--                alert(errormessage);--}}
-            {{--            }--}}
-            {{--        });--}}
-            {{--    }--}}
-            {{--});--}}
+            $('#registrationNumber').keyup(function () {
+                var customer_id = 0;
+                var registrationNumber=0;
+                customer_id = $('#customer_id').val();
+                registrationNumber = $('#registrationNumber').val();
+                if (customer_id > 0)
+                {
+                    var data={customer_id:customer_id,registrationNumber:registrationNumber};
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        url: "{{ URL('CheckVehicleExist') }}",
+                        type: "post",
+                        data: data,
+                        dataType: "json",
+                        success: function (result) {
+                            if (result === true)
+                            {
+                                $('#already_exist').show();
+                            }
+                            else
+                            {
+                                $('#already_exist').hide();
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
 
         });
     </script>

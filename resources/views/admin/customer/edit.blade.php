@@ -100,13 +100,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Opening Balance :- <span class="required">*</span></label>
-                                                <input type="number" step=".01" name="openingBalance" value="{{ $customer->openingBalance }}" class="form-control" placeholder="Opening Balance" required>
+                                                <input type="number" step=".01" name="openingBalance" value="{{ $customer->openingBalance }}" class="form-control" placeholder="Opening Balance" required readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Opening Balance As of Date :- <span class="required">*</span></label>
-                                                <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ $customer->openingBalanceAsOfDate }}" placeholder="Opening Balance As of Date" required>
+                                                <input type="date" name="openingBalanceAsOfDate" class="form-control" value="{{ $customer->openingBalanceAsOfDate }}" placeholder="Opening Balance As of Date" required readonly>
                                             </div>
                                         </div>
                                     </div>

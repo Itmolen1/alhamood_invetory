@@ -244,6 +244,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $cash_transaction->Differentiate=$difference+$payments->paidAmount;
             $cash_transaction->user_id = $user_id;
             $cash_transaction->company_id = $company_id;
+            $cash_transaction->PadNumber = $payments->referenceNumber;
             $cash_transaction->save();
 
             // start new entry
@@ -259,6 +260,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'CustomerCashPayment|'.$Id,
+                    'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
             $accountTransaction_ref=$AccountTransactions->id;

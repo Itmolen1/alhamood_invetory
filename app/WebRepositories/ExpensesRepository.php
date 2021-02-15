@@ -23,8 +23,38 @@ class ExpensesRepository implements IExpensesRepositoryInterface
 {
     public function index()
     {
-        $expenses = Expense::with('expense_details.expense_category','supplier')->where('company_id',session('company_id'))->get();
-        return view('admin.expense.index',compact('expenses'));
+        if(request()->ajax())
+        {
+            return datatables()->of(Expense::with('expense_details.expense_category','supplier')->where('company_id',session('company_id'))->latest()->get())
+                ->addColumn('action', function ($data) {
+                    $button = '<form action="'.route('expenses.destroy', $data->id).'" method="POST">';
+                    $button .= @csrf_field();
+                    $button .= @method_field('DELETE');
+                    $button .= '<a href="'.route('expenses.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+                    $button .= '</form>';
+                    return $button;
+                })
+                ->addColumn('expenseCategory', function($data) {
+                    return $data->expense_details[0]->expense_category->Name ?? "No Data";
+                })
+                ->addColumn('supplier', function($data) {
+                    return $data->supplier->Name ?? "No Data";
+                })
+                ->rawColumns([
+                    'action',
+                    'referenceNumber',
+                    'subTotal',
+                    'totalVat',
+                    'grandTotal',
+                    'expenseDate',
+                    'supplier',
+                ])
+                ->make(true);
+        }
+        //$expenses = Expense::with('expense_details.expense_category','supplier')->where('company_id',session('company_id'))->get();
+        return view('admin.expense.index');
     }
 
     public function create()

@@ -71,7 +71,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         $purchaseNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::get();
         $products = Product::all();
         return view('admin.purchase.create',compact('suppliers','purchaseNo','products','PadNumber'));
     }

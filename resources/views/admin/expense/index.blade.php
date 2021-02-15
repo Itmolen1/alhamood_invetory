@@ -26,13 +26,14 @@
                             <h4 class="card-title">Expenses</h4>
                             <h6 class="card-subtitle">All Expenses</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="expense_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>SR#</th>
                                         <th style="width: 100px">Date</th>
+                                        <th>Suppler</th>
                                         <th style="width: 150px">Reference Number</th>
                                         <th style="width: 150px">Category</th>
-                                        <th style="width: 300px">Description</th>
                                         <th>Sub Total</th>
                                         <th>VAT</th>
                                         <th>Total Amount</th>
@@ -40,7 +41,7 @@
                                     </tr>
                                     </thead>
 
-                                    <tbody>
+                                    {{--<tbody>
                                     @foreach($expenses as $expense)
                                     <tr>
                                         <td>
@@ -62,7 +63,7 @@
                                         </td>
                                     </tr>
                                     @endforeach
-                                    </tbody>
+                                    </tbody>--}}
                                 </table>
                             </div>
                         </div>
@@ -71,4 +72,56 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#expense_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('expenses.index') }}",
+                },
+                columns:[
+                    {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
+                    {
+                        data: 'expenseDate',
+                        name: 'expenseDate'
+                    },
+                    {
+                        data: 'supplier',
+                        name: 'supplier'
+                    },
+                    {
+                        data: 'referenceNumber',
+                        name: 'referenceNumber'
+                    },
+                    {
+                        data: 'expenseCategory',
+                        name: 'expenseCategory'
+                    },
+                    {
+                        data: 'subTotal',
+                        name: 'subTotal'
+                    },
+                    {
+                        data: 'totalVat',
+                        name: 'totalVat'
+                    },
+                    {
+                        data: 'grandTotal',
+                        name: 'grandTotal'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    },
+                ],
+                order: [[ 0, "desc" ]]
+            });
+        });
+    </script>
 @endsection

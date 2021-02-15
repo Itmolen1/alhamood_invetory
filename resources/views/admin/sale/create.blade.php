@@ -166,7 +166,7 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="date" name="createdDate" value="{{ date('2021-01-02') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                 <td>
                                                     <div class="form-group">
@@ -484,10 +484,10 @@
                         isvalid = false;
 
                     }
-                    if (parseFloat(quantity) == 0 || quantity == "")
-                    {
-                        isvalid = false;
-                    }
+                    // if (parseFloat(quantity) == 0 || quantity == "")
+                    // {
+                    //     isvalid = false;
+                    // }
                     if (parseFloat(rate) == 0 || rate == "")
                     {
                         isvalid = false
@@ -514,7 +514,7 @@
 
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
-                                    vehicleDetails += '<option value="">' + 'Select' + '</option>';
+                                    // vehicleDetails += '<option value="">' + 'Select' + '</option>';
                                     if (result.customers.vehicles.length > 0)
                                     {
                                         for (var i = 0; i < result.customers.vehicles.length; i++) {

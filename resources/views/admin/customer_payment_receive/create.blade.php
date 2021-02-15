@@ -388,7 +388,7 @@
                     'payment_type': $('#paymentType').val(),
                     'bank_id': bank_id,
                     'accountNumber': $('#accountNumber').val(),
-                    'TransferDate': $('#TransferDate').val(),
+                    'TransferDate': $('#paymentReceiveDate').val(),
                     'amountInWords': $('#SumOf').val(),
                     'receiptNumber': $('#receiptNumber').val(),
                     'receiverName': $('#receiver').val(),

@@ -28,9 +28,11 @@
                                 <table id="suppliers_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>SR#</th>
                                         <th>Name</th>
                                         <th>Mobile</th>
-                                         <th>Payment type</th>
+                                        <th>TRN</th>
+                                        <th>Category</th>
                                         <th>Address</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -100,6 +102,11 @@
                 },
                 columns:[
                     {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
+                    {
                         data: 'Name',
                         name: 'Name'
                     },
@@ -108,8 +115,12 @@
                         name: 'Mobile'
                     },
                     {
-                        data: 'paymentType',
-                        name: 'paymentType'
+                        data: 'TRNNumber',
+                        name: 'TRNNumber'
+                    },
+                    {
+                        data: 'companyType',
+                        name: 'companyType'
                     },
                     {
                         data: 'Address',
@@ -125,7 +136,8 @@
                         name: 'action',
                         orderable: false
                     },
-                ]
+                ],
+                order: [[ 0, "desc" ]]
             });
         });
     </script>
