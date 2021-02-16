@@ -215,6 +215,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     'createdDate' => $expenseRequest->Data['expenseDate'],
                     'user_id' => $user_id,
                     'company_id' => $company_id,
+                    'referenceNumber'=>$expenseRequest->Data['ChequeNumber'] ?? '',
                     'Description'=>$accountDescriptionString.$expense,
                     'updateDescription'=>$expenseRequest->Data['ChequeNumber'] ?? '',
                 ]);
@@ -612,6 +613,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                         'company_id' => $company_id,
                         'Description'=>$new_description_string,
                         'updateDescription'=>$new_update_description ?? '',
+                        'referenceNumber'=>$new_update_description ?? '',
                     ]);
 
                     //new entry end

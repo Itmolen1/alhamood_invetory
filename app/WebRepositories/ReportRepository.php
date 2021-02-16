@@ -1350,24 +1350,29 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetFillColor(255,255,0);
 
             $row=json_decode(json_encode($sales), true);
+            $row=array_values($row);
+            //echo "<pre>";print_r($row);die;
 
             // copy all data to new array and sort it according to pad number and then print
             $new_master_array=array();
             for($i=0;$i<count($row);$i++)
             {
-                $master_row=array();
-                $master_row['PadNumber']=$row[$i]['sale_details'][0]['PadNumber'];
-                $master_row['Name']=$row[$i]['api_customer']['Name'];
-                $master_row['registrationNumber']=$row[$i]['sale_details'][0]['api_vehicle']['registrationNumber'] ?? '';
-                $master_row['Quantity']=$row[$i]['sale_details'][0]['Quantity'];
-                $master_row['Price']=$row[$i]['sale_details'][0]['Price'];
-                $master_row['rowTotal']=$row[$i]['sale_details'][0]['rowTotal'];
-                $master_row['VAT']=($row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100);
-                $master_row['rowSubTotal']=$row[$i]['sale_details'][0]['rowSubTotal'];
-                $master_row['paidBalance']=$row[$i]['paidBalance'];
-                $master_row['remainingBalance']=$row[$i]['remainingBalance'];
-                $master_row['SaleDate']=$row[$i]['SaleDate'];
-                $new_master_array[]=$master_row;
+                if($row[$i]['sale_details'][0]['PadNumber']!='0')
+                {
+                    $master_row=array();
+                    $master_row['PadNumber']=$row[$i]['sale_details'][0]['PadNumber'] ?? 'NA';
+                    $master_row['Name']=$row[$i]['api_customer']['Name'];
+                    $master_row['registrationNumber']=$row[$i]['sale_details'][0]['api_vehicle']['registrationNumber'] ?? '';
+                    $master_row['Quantity']=$row[$i]['sale_details'][0]['Quantity'] ?? 0;
+                    $master_row['Price']=$row[$i]['sale_details'][0]['Price'] ?? 0;
+                    $master_row['rowTotal']=$row[$i]['sale_details'][0]['rowTotal'] ?? 0;
+                    $master_row['VAT']=($row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100);
+                    $master_row['rowSubTotal']=$row[$i]['sale_details'][0]['rowSubTotal'];
+                    $master_row['paidBalance']=$row[$i]['paidBalance'];
+                    $master_row['remainingBalance']=$row[$i]['remainingBalance'];
+                    $master_row['SaleDate']=$row[$i]['SaleDate'];
+                    $new_master_array[]=$master_row;
+                }
             }
             $keys = array_column($new_master_array, 'PadNumber');
             array_multisort($keys, SORT_ASC, $new_master_array);
@@ -1416,7 +1421,9 @@ class ReportRepository implements IReportRepositoryInterface
                 $rowTotal_sum+=$row[$i]['rowTotal'];
                 $VAT_sum+=$row[$i]['VAT'];
                 $rowSubTotal+=$row[$i]['rowSubTotal'];
-                $html .='<tr>
+                if($i%2==0)
+                {
+                    $html .='<tr style="background-color: #e3e3e3">
                     <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
                     <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
                     <td align="left" width="130">'.($row[$i]['Name']).'</td>
@@ -1429,6 +1436,23 @@ class ReportRepository implements IReportRepositoryInterface
                     <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
                     <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
                     </tr>';
+                }
+                else
+                {
+                    $html .='<tr>
+                    <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
+                    <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
+                    <td align="left" width="130">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="50">'.($row[$i]['registrationNumber']).'</td>
+                    <td align="right" width="40">'.($row[$i]['Quantity']).'</td>
+                    <td align="right" width="20">'.($row[$i]['Price']).'</td>
+                    <td align="right" width="45">'.($row[$i]['rowTotal']).'</td>
+                    <td align="right" width="40">'.(number_format($row[$i]['VAT'],2,'.',',')).'</td>
+                    <td align="right" width="50">'.($row[$i]['rowSubTotal']).'</td>
+                    <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
+                    <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
+                    </tr>';
+                }
             }
 
 //            for($i=0;$i<count($row);$i++)
@@ -1460,12 +1484,12 @@ class ReportRepository implements IReportRepositoryInterface
                      <td width="45" align="right"></td>
                      <td width="35"></td>
                      <td width="130"></td>
-                     <td width="40"></td>
+                     <td width="50"></td>
                      <td width="40" align="right">'.number_format($qty_sum,2,'.',',').'</td>
                      <td width="20"></td>
                      <td width="45" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
                      <td width="40" align="right">'.number_format($VAT_sum,2,'.',',').'</td>
-                     <td width="60" align="right">'.number_format($rowSubTotal,2,'.',',').'</td>
+                     <td width="50" align="right">'.number_format($rowSubTotal,2,'.',',').'</td>
                      <td width="50" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
                      <td width="50" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
                  </tr>';
@@ -1474,12 +1498,12 @@ class ReportRepository implements IReportRepositoryInterface
                     <th align="center" width="45">Date</th>
                     <th align="center" width="35">PAD#</th>
                     <th align="center" width="130">Customer</th>
-                    <th align="center" width="40">Vehicle</th>
+                    <th align="center" width="50">Vehicle</th>
                     <th align="center" width="40">Qty</th>
                     <th align="center" width="20">Rate</th>
                     <th align="center" width="45">Total</th>
                     <th align="center" width="40">VAT</th>
-                    <th align="center" width="60">SubTotal</th>
+                    <th align="center" width="50">SubTotal</th>
                     <th align="center" width="50">Paid</th>
                     <th align="center" width="50">Balance</th>
                 </tr>';
@@ -2031,10 +2055,10 @@ class ReportRepository implements IReportRepositoryInterface
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="60">Date</th>
                 <th align="center" width="70">Ref#</th>
-                <th align="center" width="200">Description</th>
-                <th align="center" width="70">Debit</th>
-                <th align="center" width="70">Credit</th>
-                <th align="right" width="80">Closing</th>
+                <th align="center" width="170">Description</th>
+                <th align="center" width="80">Debit</th>
+                <th align="center" width="80">Credit</th>
+                <th align="right" width="90">Closing</th>
             </tr>';
             $pdf::SetFont('helvetica', '', 10);
             $sum_of_credit=0.0;
@@ -2060,14 +2084,28 @@ class ReportRepository implements IReportRepositoryInterface
                 $sum_of_debit+=$row[$i]['Debit'];
                 $sum_of_credit+=$row[$i]['Credit'];
 
-                $html .='<tr>
-                    <td align="center" width="60">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
-                    <td align="left" width="70">'.$row[$i]['referenceNumber'].'</td>
-                    <td align="left" width="200">'.$row[$i]['Description'].'</td>
-                    <td align="right" width="70">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
-                    <td align="right" width="70">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
-                    <td align="right" width="80">'.(number_format($closing_amount,2,'.',',')).'</td>
-                    </tr>';
+                if($i%2==0)
+                {
+                    $html .='<tr style="background-color: #e3e3e3;">
+                        <td align="center" width="60">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                        <td align="left" width="70">'.$row[$i]['referenceNumber'].'</td>
+                        <td align="left" width="170">'.$row[$i]['Description'].'</td>
+                        <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
+                        <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
+                        <td align="right" width="90">'.(number_format($closing_amount,2,'.',',')).'</td>
+                        </tr>';
+                }
+                else
+                {
+                    $html .='<tr>
+                        <td align="center" width="60">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                        <td align="left" width="70">'.$row[$i]['referenceNumber'].'</td>
+                        <td align="left" width="170">'.$row[$i]['Description'].'</td>
+                        <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
+                        <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
+                        <td align="right" width="90">'.(number_format($closing_amount,2,'.',',')).'</td>
+                        </tr>';
+                }
             }
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
@@ -2078,10 +2116,10 @@ class ReportRepository implements IReportRepositoryInterface
                 $html='<table border="0.5" cellpadding="0">';
                 $html.= '
                  <tr>
-                     <td width="330" align="right" colspan="3">Total : </td>
-                     <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
-                     <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
-                     <td width="80" align="right" color="red">'.number_format($closing_amount,2,'.',',').'</td>
+                     <td width="300" align="right" colspan="3">Total : </td>
+                     <td width="80" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
+                     <td width="90" align="right" color="red">'.number_format($closing_amount,2,'.',',').'</td>
                  </tr>';
                 $pdf::SetFillColor(255, 0, 0);
                 $html.='</table>';
@@ -2092,10 +2130,10 @@ class ReportRepository implements IReportRepositoryInterface
                 $html='<table border="0.5" cellpadding="0">';
                 $html.= '
                  <tr>
-                     <td width="330" align="right" colspan="3">Total : </td>
-                     <td width="70" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
-                     <td width="70" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
-                     <td width="80" align="right">'.number_format($closing_amount,2,'.',',').'</td>
+                     <td width="300" align="right" colspan="3">Total : </td>
+                     <td width="80" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
+                     <td width="90" align="right">'.number_format($closing_amount,2,'.',',').'</td>
                  </tr>';
                 $pdf::SetFillColor(255, 0, 0);
                 $html.='</table>';

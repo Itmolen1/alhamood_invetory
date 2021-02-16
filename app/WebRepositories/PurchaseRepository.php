@@ -27,7 +27,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(Purchase::with('purchase_details_without_trash.product','supplier')->where('company_id',session('company_id'))->latest()->get())
+            return datatables()->of(Purchase::with('purchase_details_without_trash.product','supplier')->where('company_id',session('company_id'))->where('isActive',1)->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<a href="'.route('purchases.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
 //                    $button .='<a href="javascript:void(0)"  onclick="return'. get_pdf($data->id).'"  class=" btn btn-secondary btn-sm"><i style="font-size: 20px" class="fa fa-file-pdf-o"></i></a>';
@@ -84,6 +84,15 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $user_id = session('user_id');
             $company_id = session('company_id');
             $purchase = new Purchase();
+
+            if(isset($purchaseRequest->Data['orders'][0]['PadNumber']))
+            {
+                $this_pad_no=$purchaseRequest->Data['orders'][0]['PadNumber'];
+            }
+            else
+            {
+                $this_pad_no=0;
+            }
 
             if($purchaseRequest->Data['remainingBalance']<0)
             {
@@ -573,6 +582,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description'=>'Purchase|'.$purchase,
+                            'referenceNumber'=>$this_pad_no,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                 }
@@ -594,6 +604,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description'=>'Purchase|'.$purchase,
+                            'referenceNumber'=>$this_pad_no,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
 
@@ -609,6 +620,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description'=>'PartialCashPurchase|'.$purchase,
+                            'referenceNumber'=>$this_pad_no,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                 }
@@ -628,6 +640,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                         'Description'=>'Purchase|'.$purchase,
+                        'referenceNumber'=>$this_pad_no,
                     ]);
 
                     //make debit entry for the whatever cash is paid
@@ -641,6 +654,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                         'Description'=>'FullCashPurchase|'.$purchase,
+                        'referenceNumber'=>$this_pad_no,
                     ]);
                 }
                 return Response()->json($AccountTransactions);

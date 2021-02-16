@@ -12,6 +12,7 @@ use App\Models\SaleDetail;
 use App\Models\UpdateNote;
 use App\WebRepositories\Interfaces\ISaleRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class   SaleRepository implements ISaleRepositoryInterface
 {
@@ -69,7 +70,7 @@ class   SaleRepository implements ISaleRepositoryInterface
     {
         $saleNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $customers = Customer::with('customer_prices')->get();
+        $customers = Customer::with('customer_prices')->orderBy('id', 'desc')->get();
         $products = Product::all();
         $salesRecords = Sale::with('sale_details.vehicle','customer')->where('company_id',session('company_id'))->orderBy('id', 'desc')->skip(0)->take(3)->get();
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','PadNumber'));
@@ -77,7 +78,14 @@ class   SaleRepository implements ISaleRepositoryInterface
 
     public function store(Request $request)
     {
-        $pad_number=0;
+        if(isset($request->Data['orders'][0]['PadNumber']))
+        {
+            $pad_number=$request->Data['orders'][0]['PadNumber'];
+        }
+        else
+        {
+            $pad_number=0;
+        }
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
@@ -651,7 +659,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                         'Credit' => $request->Data['paidBalance'],
                         'Debit' => 0.00,
                         'Differentiate' => $difference,
-                        'createdDate' => date('Y-m-d'),
+                        'createdDate' => $request->Data['SaleDate'],
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                         'Description'=>'FullCashSales|'.$sale,
@@ -2689,8 +2697,21 @@ class   SaleRepository implements ISaleRepositoryInterface
 //        return $newPad;
 
         //new pad number generation according to company last pad
-        $PadNumber = new SaleDetail();
-        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        $PadNumber = new SaleDetail();
+//        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        if(!is_numeric($lastPad))
+//        {
+//            $newPad=1;
+//        }
+//        else
+//        {
+//            $newPad = ($lastPad + 1);
+//        }
+//        return $newPad;
+
+        // pad number according to max sales id
+        $max_sales_id = SaleDetail::where('company_id',session('company_id'))->find(DB::table('sale_details')->max('id'));
+        $lastPad = $max_sales_id->PadNumber;
         if(!is_numeric($lastPad))
         {
             $newPad=1;

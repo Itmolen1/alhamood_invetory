@@ -166,7 +166,7 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="date" name="createdDate" value="{{ date('2021-01-02') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="date" name="createdDate" value="{{ date('2021-01-04') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                 <td>
                                                     <div class="form-group">
@@ -436,9 +436,8 @@
                                 success: function (result) {
                                     if (result !== "Failed") {
                                         details = [];
-                                        alert("Data Inserted Successfully");
+                                        //alert("Data Inserted Successfully");
                                         window.location.href = "{{ route('sales.create') }}";
-
                                     } else {
                                         alert(JSON.stringify(result));
                                     }

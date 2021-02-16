@@ -81,6 +81,7 @@ class DepositRepository implements IDepositRepositoryInterface
             $cash_transaction->Differentiate=$difference-$depositRequest->Amount;
             $cash_transaction->user_id = $user_id;
             $cash_transaction->company_id = $company_id;
+            $cash_transaction->PadNumber = strip_tags($depositRequest->Reference);
             $cash_transaction->save();
 
             $bankTransaction = BankTransaction::where(['bank_id'=> $depositRequest->bank_id])->get();
@@ -127,6 +128,7 @@ class DepositRepository implements IDepositRepositoryInterface
             $cash_transaction->Differentiate=$difference+$deposited->Amount;
             $cash_transaction->user_id = $user_id;
             $cash_transaction->company_id = $company_id;
+            $cash_transaction->PadNumber = $deposited->PadNumber;
             $cash_transaction->save();
 
             $bankTransaction = BankTransaction::where(['bank_id'=> $deposited->bank_id])->get();
@@ -163,6 +165,7 @@ class DepositRepository implements IDepositRepositoryInterface
             $cash_transaction->Differentiate=$difference-$request->Amount;
             $cash_transaction->user_id = $user_id;
             $cash_transaction->company_id = $company_id;
+            $cash_transaction->PadNumber = strip_tags($request->Reference);
             $cash_transaction->save();
 
             $bankTransaction = BankTransaction::where(['bank_id'=> $request->bank_id])->get();
