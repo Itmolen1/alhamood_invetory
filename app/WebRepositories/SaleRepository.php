@@ -86,6 +86,13 @@ class   SaleRepository implements ISaleRepositoryInterface
         {
             $pad_number=0;
         }
+        //check pad number already exist or not
+        $already_exist = SaleDetail::where('company_id',session('company_id'))->where('PadNumber',$pad_number)->get();
+        if(!$already_exist->isEmpty())
+        {
+            $data=array('result'=>false,'message'=>'PAD NUMBER ALREADY EXIST');
+            echo json_encode($data);
+        }
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {

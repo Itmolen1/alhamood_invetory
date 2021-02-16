@@ -128,7 +128,7 @@ class DepositRepository implements IDepositRepositoryInterface
             $cash_transaction->Differentiate=$difference+$deposited->Amount;
             $cash_transaction->user_id = $user_id;
             $cash_transaction->company_id = $company_id;
-            $cash_transaction->PadNumber = $deposited->PadNumber;
+            $cash_transaction->PadNumber = $deposited->Reference;
             $cash_transaction->save();
 
             $bankTransaction = BankTransaction::where(['bank_id'=> $deposited->bank_id])->get();
@@ -156,7 +156,7 @@ class DepositRepository implements IDepositRepositoryInterface
             $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
             $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
-            $cash_transaction->Reference=strip_tags($request->Reference);
+            $cash_transaction->Reference=$deposited->id;
             $cash_transaction->createdDate=$request->depositDate;
             $cash_transaction->Type='deposits';
             $cash_transaction->Details='Deposit|'.$deposited->id;
@@ -171,7 +171,7 @@ class DepositRepository implements IDepositRepositoryInterface
             $bankTransaction = BankTransaction::where(['bank_id'=> $request->bank_id])->get();
             $difference = $bankTransaction->last()->Differentiate;
             $bank_transaction = new BankTransaction();
-            $bank_transaction->Reference=strip_tags($request->Reference);
+            $bank_transaction->Reference=$deposited->id;
             $bank_transaction->createdDate=$request->depositDate ?? date('Y-m-d h:i:s');
             $bank_transaction->Type='deposits';
             $bank_transaction->Details='Deposit|'.$deposited->id;

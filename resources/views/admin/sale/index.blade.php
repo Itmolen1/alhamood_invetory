@@ -44,6 +44,7 @@
                                 <table id="sales_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th style="width: 100px">SR#</th>
                                         <th style="width: 100px">Date</th>
                                         <th style="width: 150px">Pad #</th>
                                         <th style="width: 150px">Customer</th>
@@ -154,6 +155,11 @@
                 },
                 columns:[
                     {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
+                    {
                         data: 'SaleDate',
                         name: 'SaleDate'
                     },
@@ -203,7 +209,8 @@
                         name: 'action',
                         orderable: false
                     },
-                ]
+                ],
+                order: [[ 0, "desc" ]]
             });
         });
     </script>

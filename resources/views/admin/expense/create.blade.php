@@ -106,7 +106,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label">Reference Number :- <span class="required">*</span></label>
-                                                    <input type="text" class="form-control" id="referenceNumber" name="referenceNumner" placeholder="Reference Number" required>
+                                                    <input type="text" class="form-control" id="referenceNumber" name="referenceNumner" placeholder="Reference Number" required autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -127,7 +127,7 @@
                                         </thead>
                                         <tbody id="newRow">
                                         <tr>
-                                            <td><input type="text" placeholder="" value="{{ $PadNumber }}" name="padNumber" class="padNumber form-control"></td>
+                                            <td><input type="text" placeholder="" value="{{ $PadNumber }}" name="padNumber" class="padNumber form-control" autocomplete="off"></td>
                                             <td>
                                                 <div class="form-group">
                                                     <select name="customer" class="form-control expense_category_id">
@@ -137,7 +137,7 @@
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td><input type="text" placeholder="Description" name="description" class="description form-control"></td>
+                                            <td><input type="text" placeholder="Description" name="description" class="description form-control" autocomplete="off"></td>
 
                                             <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="subTotal" class="total form-control">
                                                 <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
@@ -185,7 +185,7 @@
 
                                         <div class="form-group bankTransfer">
                                             <label class="control-label">Cheque or Ref. Number ?  <span class="required">*</span></label>
-                                            <input type="text" class="form-control" name="ChequeNumber" id="ChequeNumber" placeholder="Cheque or Ref. Number">
+                                            <input type="text" class="form-control" name="ChequeNumber" id="ChequeNumber" placeholder="Cheque or Ref. Number" autocomplete="off">
                                         </div>
 
                                     </div>

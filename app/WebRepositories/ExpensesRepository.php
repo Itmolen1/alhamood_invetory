@@ -203,6 +203,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'Expense|'.$expense,
+                    'referenceNumber'=>$expenseRequest->Data['referenceNumber'],
                 ]);
 
                 //make debit entry for the whatever cash or bank account is credited
@@ -215,7 +216,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     'createdDate' => $expenseRequest->Data['expenseDate'],
                     'user_id' => $user_id,
                     'company_id' => $company_id,
-                    'referenceNumber'=>$expenseRequest->Data['ChequeNumber'] ?? '',
+                    'referenceNumber'=>$expenseRequest->Data['referenceNumber'] ?? '',
                     'Description'=>$accountDescriptionString.$expense,
                     'updateDescription'=>$expenseRequest->Data['ChequeNumber'] ?? '',
                 ]);
@@ -259,6 +260,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                         $cash_transaction->Differentiate=$difference+$request->Data['grandTotal'];
                         $cash_transaction->user_id = $user_id;
                         $cash_transaction->company_id = $company_id;
+                        $cash_transaction->PadNumber = $expensed->referenceNumber;
                         $cash_transaction->save();
                     }
                     elseif($expensed->payment_type=='bank')
@@ -278,7 +280,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                         $bank_transaction->user_id = $user_id;
                         $bank_transaction->company_id = $company_id;
                         $bank_transaction->bank_id = $expensed->bank_id;
-                        $bank_transaction->updateDescription = '';
+                        $bank_transaction->updateDescription = $expensed->referenceNumber;
                         $bank_transaction->save();
                     }
                     elseif($expensed->payment_type=='cheque')
@@ -298,7 +300,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                         $bank_transaction->user_id = $user_id;
                         $bank_transaction->company_id = $company_id;
                         $bank_transaction->bank_id = $expensed->bank_id;
-                        $bank_transaction->updateDescription = '';
+                        $bank_transaction->updateDescription = $expensed->referenceNumber;
                         $bank_transaction->save();
                     }
                     $previous_entry = AccountTransaction::get()->where('company_id','=',$company_id)->where('supplier_id','=',$expensed->supplier_id)->where('Description','like',$description_string)->last();
@@ -323,6 +325,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                             $cash_transaction->Differentiate=$difference-$request->Data['grandTotal'];
                             $cash_transaction->user_id = $user_id;
                             $cash_transaction->company_id = $company_id;
+                            $cash_transaction->PadNumber = $request->Data['referenceNumber'];
                             $cash_transaction->save();
                         }
                         elseif($request->Data['payment_type']=='bank')
@@ -392,6 +395,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                             'company_id' => $company_id,
                             'Description'=>'Expense|'.$Id,
                             'updateDescription'=>'hide',
+                            'referenceNumber'=>$expensed->referenceNumber,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                     // also hide previous entry start
@@ -432,6 +436,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                                 'company_id' => $company_id,
                                 'Description'=>'CashExpense|'.$Id,
                                 'updateDescription'=>'hide',
+                                'referenceNumber'=>$expensed->referenceNumber,
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         // also hide previous entry start
@@ -473,6 +478,8 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                                 'company_id' => $company_id,
                                 'Description'=>'BankTransferExpense|'.$Id,
                                 'updateDescription'=>'hide',
+                                'referenceNumber'=>$expensed->referenceNumber,
+
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         // also hide previous entry start
@@ -496,7 +503,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                         $bank_transaction->user_id = $user_id;
                         $bank_transaction->company_id = $company_id;
                         $bank_transaction->bank_id = $expensed->bank_id;
-                        $bank_transaction->updateDescription = '';
+                        $bank_transaction->updateDescription = $expensed->referenceNumber;
                         $bank_transaction->save();
 
                         $previous_entry = AccountTransaction::get()->where('supplier_id','=',$expensed->supplier_id)->where('Description','like',$description_string)->last();
@@ -514,6 +521,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                                 'company_id' => $company_id,
                                 'Description'=>'ChequeExpense|'.$Id,
                                 'updateDescription'=>'hide',
+                                'referenceNumber'=>$expensed->referenceNumber,
                             ];
                         $AccountTransactions = AccountTransaction::Create($AccData);
                         // also hide previous entry start
@@ -534,6 +542,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description'=>'Expense|'.$Id,
+                            'referenceNumber'=>$request->Data['referenceNumber'],
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
 
@@ -556,6 +565,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                         $cash_transaction->Differentiate=$difference-$request->Data['grandTotal'];
                         $cash_transaction->user_id = $user_id;
                         $cash_transaction->company_id = $company_id;
+                        $cash_transaction->PadNumber = $request->Data['referenceNumber'];
                         $cash_transaction->save();
                     }
                     elseif($request->Data['payment_type']=='bank')

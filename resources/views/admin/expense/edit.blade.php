@@ -129,7 +129,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label">Reference Number :- <span class="required">*</span></label>
-                                                    <input type="text" class="form-control" id="referenceNumber" value="{{ $expense_details[0]->expense->referenceNumber ?? '' }}"  name="referenceNumber" placeholder="Reference Number">
+                                                    <input type="text" class="form-control" id="referenceNumber" value="{{ $expense_details[0]->expense->referenceNumber ?? '' }}"  name="referenceNumber" placeholder="Reference Number" autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -154,7 +154,7 @@
                                                 <tr style="text-decoration: line-through; color:red">
                                                     <td><input type="text" placeholder="Pad Number" value="{{ $details->PadNumber }}" id="" name="" class=" form-control"></td>
                                                     <td><input type="text" placeholder="expense_category" value="{{ $details->expense_category->Name ?? 0 }}" class=" form-control"></td>
-                                                    <td><input type="text" placeholder="Description" value="{{ $details->Description }}" class=" form-control"></td>
+                                                    <td><input type="text" placeholder="Description" value="{{ $details->Description }}" class=" form-control" autocomplete="off"></td>
                                                     <td><input type="text" placeholder="Total" value="{{ $details->Total ?? 0 }}" class="form-control"></td>
                                                     <td><input type="text" placeholder="vat" value="{{ $details->VAT ?? 0 }}" class="form-control" disabled>
                                                     <td><input type="text" placeholder="rowSubTotal" value="{{ $details->rowSubTotal ?? 0 }}" class="form-control" disabled="disabled"></td>
@@ -230,7 +230,7 @@
 
                                         <div class="form-group bankTransfer">
                                             <label class="control-label">Cheque or Ref. Number ?  <span class="required">*</span></label>
-                                            <input type="text" class="form-control" name="ChequeNumber" id="ChequeNumber" placeholder="Cheque or Ref. Number" value="{{ $expense_details[0]->expense->ChequeNumber ?? '' }}">
+                                            <input type="text" class="form-control" name="ChequeNumber" id="ChequeNumber" placeholder="Cheque or Ref. Number" value="{{ $expense_details[0]->expense->ChequeNumber ?? '' }}" autocomplete="off">
                                         </div>
                                     </div>
 

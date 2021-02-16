@@ -434,12 +434,13 @@
                                 type: "post",
                                 data: Datas,
                                 success: function (result) {
-                                    if (result !== "Failed") {
-                                        details = [];
+                                    var result=JSON.parse(result);
+                                    if (result.result !== false) {
                                         //alert("Data Inserted Successfully");
                                         window.location.href = "{{ route('sales.create') }}";
                                     } else {
-                                        alert(JSON.stringify(result));
+                                        alert(result.message);
+                                        window.location.href = "{{ route('sales.create') }}";
                                     }
                                 },
                                 error: function (errormessage) {

@@ -161,7 +161,7 @@
                                             @if($sale_details[0]->sale->Description=='AutoPaid')
                                                 <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="0.00" readonly></p>
                                             @else
-                                                <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $sale_details[0]->sale->paidBalance ?? 0 }}" readonly></p>
+                                                <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" class="form-control cashPaid" value="{{ $sale_details[0]->sale->paidBalance ?? 0 }}"></p>
                                             @endif
 
                                             <p>Account Closing : <input type="text" value="0.00" class="form-control closing" id="closing" readonly>

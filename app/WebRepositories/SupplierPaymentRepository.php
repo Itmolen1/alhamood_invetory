@@ -175,7 +175,17 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function supplier_payments_push(Request $request, $Id)
     {
-        $payments = SupplierPayment::with('supplier')->find($Id);
+        $payments = SupplierPayment::with('supplier','supplier_payment_details')->find($Id);
+
+        foreach($payments->supplier_payment_details as $single)
+        {
+            $purchase=Purchase::where('id',$single->purchase_id)->get()->first();
+            $purchase->update([
+                'paidBalance'=>$purchase->paidBalance+$single->amountPaid,
+                'remainingBalance'=>$purchase->remainingBalance-$single->amountPaid,
+                'Description'=>$payments->referenceNumber,
+            ]);
+        }
 
         $user_id = session('user_id');
         $company_id = session('company_id');
@@ -295,9 +305,10 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             // new entry done
         }
 
-        //now since account is affected we need to auto pay same amount to purchase entries only if last closing is positive value
+        //now since account is affected we need to apply payment for selected entries
 
-        if($payments->paidAmount>0)
+
+        /*if($payments->paidAmount>0)
         {
             //we have entries without payment made so make it paid until payment amount becomes zero
             // bring all unpaid purchase records
@@ -355,7 +366,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     break;
                 }
             }
-        }
+        }*/
 
 //        ////////////////// account section ////////////////
 //        if ($payments)

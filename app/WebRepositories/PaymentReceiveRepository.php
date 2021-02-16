@@ -219,7 +219,17 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
     public function customer_payments_push(Request $request, $Id)
     {
-        $payments = PaymentReceive::with('customer')->find($Id);
+        $payments = PaymentReceive::with('customer','payment_receive_details')->find($Id);
+
+        foreach($payments->payment_receive_details as $single)
+        {
+            $sales=Sale::where('id',$single->sale_id)->get()->first();
+            $sales->update([
+                'paidBalance'=>$sales->paidBalance+$single->amountPaid,
+                'remainingBalance'=>$sales->remainingBalance-$single->amountPaid,
+                'Description'=>$payments->referenceNumber,
+            ]);
+        }
 
         $user_id = session('user_id');
         $company_id = session('company_id');
@@ -343,7 +353,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
         //now since account is affected we need to auto pay same amount to sales entries only if last closing is positive value
 
-        if($payments->paidAmount>0)
+        /*if($payments->paidAmount>0)
         {
             //we have entries without payment made so make it paid until payment amount becomes zero
             // bring all unpaid sales records
@@ -401,7 +411,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     break;
                 }
             }
-        }
+        }*/
 
         /*////////////////// account section ////////////////
         if ($paymets)
