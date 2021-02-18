@@ -91,7 +91,7 @@ class   SaleRepository implements ISaleRepositoryInterface
         if(!$already_exist->isEmpty())
         {
             $data=array('result'=>false,'message'=>'PAD NUMBER ALREADY EXIST');
-            echo json_encode($data);
+            echo json_encode($data);exit();
         }
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
@@ -673,8 +673,10 @@ class   SaleRepository implements ISaleRepositoryInterface
                         'referenceNumber'=>'P#'.$detail['PadNumber'],
                     ]);
                 }
-                return Response()->json($AccountTransactions);
-                // return Response()->json("");
+                //return Response()->json($AccountTransactions);
+
+                $data=array('result'=>true,'message'=>'Record Inserted Successfully.');
+                echo json_encode($data);
             }
             ////////////////// end account section gautam ////////////////
         }

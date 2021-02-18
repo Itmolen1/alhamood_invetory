@@ -224,10 +224,22 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         foreach($payments->payment_receive_details as $single)
         {
             $sales=Sale::where('id',$single->sale_id)->get()->first();
+            $is_paid=0;
+            if($sales->remainingBalance-$single->amountPaid==0)
+            {
+                $is_paid=1;
+                $is_partial_paid=0;
+            }
+            else
+            {
+                $is_partial_paid=1;
+            }
             $sales->update([
                 'paidBalance'=>$sales->paidBalance+$single->amountPaid,
                 'remainingBalance'=>$sales->remainingBalance-$single->amountPaid,
                 'Description'=>$payments->referenceNumber,
+                'IsPaid'=>$is_paid,
+                'IsPartialPaid'=>$is_partial_paid,
             ]);
         }
 
@@ -306,7 +318,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                     'createdDate' => $payments->transferDate,
                     'user_id' => $user_id,
                     'company_id' => $company_id,
-                    'Description'=>'SupplierCashPayment|'.$Id,
+                    'Description'=>'CustomerBankPayment|'.$Id,
                     'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);

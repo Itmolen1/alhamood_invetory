@@ -166,7 +166,7 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="date" name="createdDate" value="{{ date('2021-01-04') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="date" name="createdDate" value="{{ date('2021-01-10') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
                                                 <td>
                                                     <div class="form-group">
@@ -435,11 +435,11 @@
                                 data: Datas,
                                 success: function (result) {
                                     var result=JSON.parse(result);
-                                    if (result.result !== false) {
-                                        //alert("Data Inserted Successfully");
-                                        window.location.href = "{{ route('sales.create') }}";
-                                    } else {
+                                    if (result.result === false) {
                                         alert(result.message);
+                                        window.location.href = "{{ route('sales.create') }}";
+
+                                    } else {
                                         window.location.href = "{{ route('sales.create') }}";
                                     }
                                 },

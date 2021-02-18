@@ -180,10 +180,22 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         foreach($payments->supplier_payment_details as $single)
         {
             $purchase=Purchase::where('id',$single->purchase_id)->get()->first();
+            $is_paid=0;
+            if($purchase->remainingBalance-$single->amountPaid==0)
+            {
+                $is_paid=1;
+                $is_partial_paid=0;
+            }
+            else
+            {
+                $is_partial_paid=1;
+            }
             $purchase->update([
                 'paidBalance'=>$purchase->paidBalance+$single->amountPaid,
                 'remainingBalance'=>$purchase->remainingBalance-$single->amountPaid,
                 'Description'=>$payments->referenceNumber,
+                'IsPaid'=>$is_paid,
+                'IsPartialPaid'=>$is_partial_paid,
             ]);
         }
 
@@ -260,7 +272,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     'createdDate' => $payments->transferDate,
                     'user_id' => $user_id,
                     'company_id' => $company_id,
-                    'Description'=>'SupplierCashPayment|'.$Id,
+                    'Description'=>'SupplierBankPayment|'.$Id,
                     'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
