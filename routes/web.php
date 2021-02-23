@@ -68,6 +68,7 @@ Route::post('purchaseUpdate/{Id}','PurchaseController@purchaseUpdate');
 route::resource('expenses','ExpenseController');
 route::resource('expense_categories','ExpenseCategoryController');
 route::post('expenseUpdate/{id}','ExpenseController@expenseUpdate');
+route::POST('/CheckExpenseReferenceExist','ExpenseController@CheckExpenseReferenceExist');
 route::resource('employees','EmployeeController');
 
 ////////////// sales /////////////////////

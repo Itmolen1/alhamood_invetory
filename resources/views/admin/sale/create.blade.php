@@ -166,8 +166,8 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="date" name="createdDate" value="{{ date('2021-01-10') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
+                                                <td><input type="date" name="createdDate" value="{{ date('2021-01-31') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;">
@@ -199,7 +199,7 @@
                                                     <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                                 </td>
 
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" id="Rate" class="price form-control"></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" id="Rate" class="price form-control" autocomplete="off"></td>
 
                                                 <td>
                                                     <div class="form-group">
@@ -509,16 +509,17 @@
                             dataType: "json",
                             success: function (result) {
                                 if (result !== "Failed") {
-                                    $('#Rate').val(result.customers.customer_prices[0].Rate);
-                                    $('#VAT').val(result.customers.customer_prices[0].VAT);
+                                    console.log(result.customers);
+                                    $('#Rate').val(result.customers[0].customer_prices[0].Rate);
+                                    $('#VAT').val(result.customers[0].customer_prices[0].VAT);
 
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
                                     // vehicleDetails += '<option value="">' + 'Select' + '</option>';
-                                    if (result.customers.vehicles.length > 0)
+                                    if (result.customers[0].vehicles.length > 0)
                                     {
-                                        for (var i = 0; i < result.customers.vehicles.length; i++) {
-                                            vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
+                                        for (var i = 0; i < result.customers[0].vehicles.length; i++) {
+                                            vehicleDetails += '<option value="' + result.customers[0].vehicles[i].id + '">' + result.customers[0].vehicles[i].registrationNumber + '</option>';
                                         }
                                     }
                                     else {
@@ -527,8 +528,8 @@
                                     $("#vehicle").append(vehicleDetails);
                                     $("#vehicle").trigger("chosen:updated");
 
-                                    var rate = result.customers.customer_prices[0].Rate;
-                                    var vat = result.customers.customer_prices[0].VAT;
+                                    var rate = result.customers[0].customer_prices[0].Rate;
+                                    var vat = result.customers[0].customer_prices[0].VAT;
                                     rate=parseFloat(rate).toFixed(2)
                                     vat=parseFloat(vat).toFixed(2)
                                     totalWithCustomer(vat, rate);

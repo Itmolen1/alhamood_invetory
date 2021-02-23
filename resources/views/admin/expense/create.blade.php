@@ -106,7 +106,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label">Reference Number :- <span class="required">*</span></label>
-                                                    <input type="text" class="form-control" id="referenceNumber" name="referenceNumner" placeholder="Reference Number" required autocomplete="off">
+                                                    <input type="text" class="form-control" id="referenceNumber" name="referenceNumber" placeholder="Reference Number" required autocomplete="off">
+                                                    <span class="text-danger" id="already_exist">Already Exists</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -422,12 +423,14 @@
                             type: "post",
                             data: Datas,
                             success: function (result) {
-                                if (result !== false) {
-                                    details = [];
-                                    alert("Data Inserted Successfully");
-                                    window.location.href = "{{ route('expenses.index') }}";
+                                var result=JSON.parse(result);
+                                if (result.result === false) {
+                                    alert(result.message);
+                                    window.location.href = "{{ route('expenses.create') }}";
+
                                 } else {
-                                    alert(result);
+                                    alert(result.message);
+                                    window.location.href = "{{ route('expenses.index') }}";
                                 }
                             },
                             error: function (errormessage) {
@@ -510,6 +513,46 @@
 
     });
     ////////////// end of customer select ////////////////
+</script>
+<script>
+    $(document).ready(function () {
+        $('#already_exist').hide();
+        $('#referenceNumber').keyup(function () {
+            var supplier_id = 0;
+            supplier_id = $('#supplier_id').val();
+            var referenceNumber = $('#referenceNumber').val();
+            console.log(referenceNumber);
+            if (supplier_id > 0)
+            {
+                var data={supplier_id:supplier_id,referenceNumber:referenceNumber};
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ URL('CheckExpenseReferenceExist') }}",
+                    type: "post",
+                    data: data,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result === true)
+                        {
+                            $('#already_exist').show();
+                        }
+                        else
+                        {
+                            $('#already_exist').hide();
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        });
+
+    });
 </script>
 <script src="{{ asset('admin_assets/assets/dist/invoice/invoice.js') }}"></script>
 @endsection

@@ -111,7 +111,7 @@
                 var registrationNumber=0;
                 customer_id = $('#customer_id').val();
                 registrationNumber = $('#registrationNumber').val();
-                if (customer_id > 0)
+                if (supplier_id > 0)
                 {
                     var data={customer_id:customer_id,registrationNumber:registrationNumber};
                     $.ajaxSetup({

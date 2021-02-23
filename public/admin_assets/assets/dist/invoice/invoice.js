@@ -243,10 +243,11 @@
 
         var remaining_balance=grand_total+closing-cash_paid;
         $('.balance').val((remaining_balance.toFixed(2)));
+        var customer = $("#customer_id option:selected").text();
 
-        if(remaining_balance<0)
+        if(remaining_balance<0 && customer!=='cash' || customer!=='CASH')
         {
-            $('.cashPaid').attr('readonly', true);
+            //$('.cashPaid').attr('readonly', true);
         }
         else
         {

@@ -37,25 +37,21 @@ class ExpenseController extends Controller
         //
     }
 
-
     public function edit($Id)
     {
         return $this->expensesRepository->edit($Id);
     }
-
 
     public function expenseUpdate(Request $request, $Id)
     {
         return $this->expensesRepository->update($request, $Id);
     }
 
+    public function CheckExpenseReferenceExist(Request $request)
+    {
+        return $this->expensesRepository->CheckExpenseReferenceExist($request);
+    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Expense  $expense
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Expense $expense)
     {
         //

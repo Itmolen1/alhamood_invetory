@@ -286,7 +286,8 @@ class SupplierRepository implements ISupplierRepositoryInterface
 
     public function supplierDetails($Id)
     {
-        $suppliers = Supplier::find($Id);
+        //$suppliers = Supplier::find($Id);
+        $suppliers = Supplier::select('id','Name','Address','Mobile','postCode','TRNNumber')->where('id',$Id)->get();
 
         // getting latest closing for supplier from account transaction table
         $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id')

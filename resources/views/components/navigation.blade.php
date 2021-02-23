@@ -1,15 +1,6 @@
 <div>
-    <!-- Sidebar navigation-->
     <nav class="sidebar-nav">
         <ul id="sidebarnav">
-{{--            <li> <a  class=" waves-effect waves-dark" href="index.php" aria-expanded="false"><i class="icon-speedometer"></i>Dashboard </a>--}}
-                <!--   <ul aria-expanded="false" class="collapse">
-                      <li><a href="index-2.html">Minimal</a></li>
-                      <li><a href="index2.html">Analytical</a></li>
-                      <li><a href="index3.html">Demographical</a></li>
-                      <li><a href="index4.html">Modern</a></li>
-                      <li><a href="index5.html">Cryptocurrency</a></li>
-                  </ul> -->
             </li>
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-layout-grid2"></i><span class="hide-menu">Master</span></a>
                 <ul aria-expanded="false" class="collapse">
@@ -27,8 +18,6 @@
 {{--                    <li class="border-bottom"><a href="{{ route('company_types.index') }}">Company Type list</a></li>--}}
 {{--                    <li class="border-bottom"><a href="{{ route('payment_types.index') }}">Payment Type list</a></li>--}}
                     <li><a href="{{ route('payment_terms.index') }}">Payment Terms list</a></li>
-                    <!--  <li><a href="app-chat.html">Chat app</a></li> -->
-
                 </ul>
             </li>
 
@@ -50,10 +39,8 @@
                             <li class="border-bottom"><a href="{{ route('suppliers.index') }}">Manage Suppliers</a></li>
                         </ul>
                     </li>
-
                 </ul>
             </li>
-
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-car"></i><span class="hide-menu">Vehicles</span></a>
                 <ul aria-expanded="false" class="collapse">
@@ -67,7 +54,6 @@
                 <ul aria-expanded="false" class="collapse">
                     <li  class="border-bottom"><a href="{{ route('drivers.create') }}">Add new Driver</a></li>
                     <li><a href="{{ route('drivers.index') }}">Manage Drivers</a></li>
-                    <!--  <li><a href="app-chat.html">Chat app</a></li> -->
                 </ul>
             </li>
 
@@ -76,9 +62,6 @@
                 <ul aria-expanded="false" class="collapse">
                     <li  class="border-bottom"><a href="{{ route('purchases.create') }}">Add Purchase</a></li>
                     <li><a href="{{ route('purchases.index') }}">Manage Purchase</a></li>
-{{--                    <li><a href="app-calendar.html">Payables</a></li>--}}
-                    <!--  <li><a href="app-chat.html">Chat app</a></li> -->
-
                 </ul>
             </li>
 
@@ -86,10 +69,8 @@
                 <ul aria-expanded="false" class="collapse">
                     <li  class="border-bottom"><a href="{{ route('sales.create') }}">Add Sales</a></li>
                     <li><a href="{{ route('sales.index') }}">Manage Sales</a></li>
-{{--                    <li><a href="app-calendar.html">Receivables</a></li>--}}
                 </ul>
             </li>
-
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-money"></i><span class="hide-menu">Expenses</span></a>
                 <ul aria-expanded="false" class="collapse">
@@ -98,7 +79,6 @@
                     <li><a href="{{ route('expense_categories.index') }}">Expenses Categories</a></li>
                 </ul>
             </li>
-
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-sort-numeric-asc"></i><span class="hide-menu">Meter Readings</span></a>
                 <ul aria-expanded="false" class="collapse">
@@ -117,12 +97,6 @@
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-bar-chart"></i><span class="hide-menu">Accounts</span></a>
                 <ul aria-expanded="false" class="collapse">
-                   <!-- <li  class="border-bottom">
-                        <a href="#">Chart of Account</a>
-                    </li>
-                    <li class="border-bottom">
-                        <a href="#">Manufacturer Payment</a>
-                    </li>-->
                     <li class="border-bottom">
                         <a href="{{ route('supplier_payments.index') }}">Supplier Payment</a>
                     </li>
@@ -132,24 +106,6 @@
                     <li class="border-bottom">
                         <a href="{{ route('deposits.index') }}">Deposits</a>
                     </li>
-                  <!--  <li class="border-bottom">
-                        <a href="#">Cash Adjustment</a>
-                    </li>
-                    <li class="border-bottom">
-                        <a href="#">Debit Voucher</a>
-                    </li>
-                    <li class="border-bottom">
-                        <a href="#">Credit Voucher</a>
-                    </li>
-                    <li class="border-bottom">
-                        <a href="#">Conta Voucher</a>
-                    </li> -->
-{{--                    <li class="border-bottom">--}}
-{{--                        <a href="#">Journal Voucher</a>--}}
-{{--                    </li>--}}
-                    {{--<li class="border-bottom">--}}
-                        {{--<a href="#"> Voucher Approval</a>--}}
-                    {{--</li>--}}
                     <li class="border-bottom"><a href="{{ route('loans.create') }}">Add Loan</a></li>
                     <li><a href="{{ route('loans.index') }}">Manage Loan</a></li>
                 </ul>
@@ -230,9 +186,7 @@
                     </li>
                 </ul>
             </li>
-
             <li class="nav-small-cap"></li>
         </ul>
     </nav>
-    <!-- End Sidebar navigation -->
 </div>

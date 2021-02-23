@@ -47,6 +47,11 @@ class Expense extends Model
 
     public function expense_details()
     {
+        return $this->hasMany('App\Models\ExpenseDetail','expense_id');
+    }
+
+    public function expense_details_with_trashed()
+    {
         return $this->hasMany('App\Models\ExpenseDetail','expense_id')->withTrashed();
     }
 

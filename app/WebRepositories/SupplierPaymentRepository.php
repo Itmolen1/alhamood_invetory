@@ -222,6 +222,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $cash_transaction->Differentiate=$difference-$payments->paidAmount;
             $cash_transaction->user_id = $user_id;
             $cash_transaction->company_id = $company_id;
+            $cash_transaction->PadNumber = $payments->referenceNumber;
             $cash_transaction->save();
 
             // start new entry
@@ -237,6 +238,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     'user_id' => $user_id,
                     'company_id' => $company_id,
                     'Description'=>'SupplierCashPayment|'.$Id,
+                    'referenceNumber'=>$payments->referenceNumber,
                 ];
             $AccountTransactions = AccountTransaction::Create($AccData);
             $accountTransaction_ref=$AccountTransactions->id;

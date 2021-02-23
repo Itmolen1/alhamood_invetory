@@ -286,7 +286,8 @@ class CustomerRepository implements ICustomerRepositoryInterface
             $row=$row[0]['Differentiate'];
         }
 
-        $customers = Customer::with('vehicles','customer_prices')->find($Id);
+        //$customers = Customer::with('vehicles','customer_prices')->select('id','Name')->find($Id);
+        $customers = Customer::with(['vehicles'=>function($q){$q->select('id','registrationNumber','customer_id');},'customer_prices'=>function($q){$q->select('id','Rate','VAT','customerLimit','customer_id');},])->select('id','Name')->where('id',$Id)->get();
 
         return response()->json(array('customers'=>$customers,'closing'=>$row));
     }

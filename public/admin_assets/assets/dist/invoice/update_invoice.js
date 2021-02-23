@@ -249,7 +249,7 @@
 
         if(closing==0.00 || closing==0 || closing==0.0)
         {
-            $('.cashPaid').val(parseFloat(0).toFixed(2));
+            //$('.cashPaid').val(parseFloat(0).toFixed(2));
         }
 
         // if(remaining_balance<=0)

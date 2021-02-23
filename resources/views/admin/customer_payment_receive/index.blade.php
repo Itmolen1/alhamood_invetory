@@ -32,8 +32,9 @@
                                     <tr>
                                         <th>SR#</th>
                                         <th>Customer</th>
-                                        <th>Date</th>
+                                        <th>Transaction Date</th>
                                         <th>Amount</th>
+                                        <th>REF#</th>
                                         <th width="100">Push Payment</th>
                                         <th width="100">Action</th>
                                     </tr>
@@ -67,12 +68,16 @@
                         name: 'customer'
                     },
                     {
-                        data: 'createdDate',
-                        name: 'createdDate'
+                        data: 'transferDate',
+                        name: 'transferDate'
                     },
                     {
                         data: 'paidAmount',
                         name: 'paidAmount'
+                    },
+                    {
+                        data: 'referenceNumber',
+                        name: 'referenceNumber'
                     },
                     {
                         data: 'push',

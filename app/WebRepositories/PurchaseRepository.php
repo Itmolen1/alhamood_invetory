@@ -3195,9 +3195,22 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 //        $newPad = ($lastPad + 1);
 //        return $newPad;
 
-        $PadNumber = new PurchaseDetail();
-        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
-        $newPad = ($lastPad + 1);
+//        $PadNumber = new PurchaseDetail();
+//        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        $newPad = ($lastPad + 1);
+
+        // pad number according to max sales id
+        $max_purchase_id = PurchaseDetail::where('company_id',session('company_id'))->find(DB::table('purchase_details')->max('id'));
+        $lastPad = $max_purchase_id->PadNumber;
+        if(!is_numeric($lastPad))
+        {
+            $newPad=1;
+        }
+        else
+        {
+            $newPad = ($lastPad + 1);
+        }
+
         return $newPad;
     }
 

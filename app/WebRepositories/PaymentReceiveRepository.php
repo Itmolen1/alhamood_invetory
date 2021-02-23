@@ -52,6 +52,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                         'action',
                          'push',
                         'customer',
+                        'referenceNumber'
                     ])
                 ->make(true);
         }

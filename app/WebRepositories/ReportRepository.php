@@ -904,16 +904,16 @@ class ReportRepository implements IReportRepositoryInterface
             // if category is selected as all go for this code
             if($request->category==='all')
             {
-                $html = '<table border="0.5" cellpadding="3">
+                $html = '<table border="0.5" cellpadding="1">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="60">Date</th>
+                    <th align="center" width="45">Date</th>
                     <th align="center" width="60">Expense#</th>
                     <th align="center" width="60">Employee</th>
                     <th align="center" width="50">Category</th>
-                    <th align="center" width="120">Vendor</th>
+                    <th align="center" width="140">Vendor</th>
                     <th align="center" width="70">TRN</th>
                     <th align="center" width="40">Taxable</th>
-                    <th align="center" width="35">VAT</th>
+                    <th align="center" width="25">VAT</th>
                     <th align="center" width="45">NetTotal</th>
                 </tr>';
                 for($i=0;$i<count($row);$i++)
@@ -923,18 +923,35 @@ class ReportRepository implements IReportRepositoryInterface
                     $sub_total_sum+=$row[$i]['expense_details'][0]['rowSubTotal'];
                     $this_row_vat_amount=$row[$i]['expense_details'][0]['Total']*$row[$i]['expense_details'][0]['VAT']/100;
                     $vat_sum+=$this_row_vat_amount;
-                    $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['expenseDate']).'</td>
-                    <td align="center" width="60">'.($row[$i]['referenceNumber']).'</td>
-                    <td align="center" width="60">'.($row[$i]['api_employee']['Name']).'</td>
-                    <td align="center" width="50">'.($row[$i]['expense_details'][0]['api_expense_category']['Name']).'</td>
-                    <td align="center" width="120">'.($row[$i]['api_supplier']['Name']).'</td>
-                    <td align="center" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
-                    <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.',',')).'</td>
-                    <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
-                    <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
+                    if($i%2==0)
+                    {
+                        $html .='<tr style="background-color: #e3e3e3;">
+                        <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['expenseDate']))).'</td>
+                        <td align="left" width="60">'.($row[$i]['referenceNumber']).'</td>
+                        <td align="left" width="60">'.($row[$i]['api_employee']['Name']).'</td>
+                        <td align="left" width="50">'.($row[$i]['expense_details'][0]['api_expense_category']['Name']).'</td>
+                        <td align="left" width="140">'.($row[$i]['api_supplier']['Name']).'</td>
+                        <td align="left" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
+                        <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.',',')).'</td>
+                        <td align="right" width="25">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
+                        <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
+                        </tr>';
+                    }
+                    else
+                    {
+                        $html .='<tr>
+                        <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['expenseDate']))).'</td>
+                        <td align="left" width="60">'.($row[$i]['referenceNumber']).'</td>
+                        <td align="left" width="60">'.($row[$i]['api_employee']['Name']).'</td>
+                        <td align="left" width="50">'.($row[$i]['expense_details'][0]['api_expense_category']['Name']).'</td>
+                        <td align="left" width="140">'.($row[$i]['api_supplier']['Name']).'</td>
+                        <td align="left" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
+                        <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.',',')).'</td>
+                        <td align="right" width="25">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
+                        <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
+                        </tr>';
+                    }
 
-                    </tr>';
                 }
                 $html.= '
                  <tr color="red">
@@ -1080,8 +1097,8 @@ class ReportRepository implements IReportRepositoryInterface
             $html = '<table border="0.5" cellpadding="1">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                     <th align="center" width="45">Date</th>
-                    <th align="center" width="30">LPO#</th>
-                    <th align="right" width="30">PAD#</th>
+                    <th align="center" width="30">PAD#</th>
+                    <th align="right" width="30">LPO#</th>
                     <th align="center" width="110">Vendor</th>
                     <th align="center" width="50">Qty</th>
                     <th align="center" width="30">Rate</th>

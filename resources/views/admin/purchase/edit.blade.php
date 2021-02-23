@@ -488,6 +488,10 @@
                     success: function (result) {
                         if (result !== "Failed") {
                             $('#closing').val(result.closing);
+                            $('#Address').text(result.Address);
+                            $('#Mobile').text(result.Mobile);
+                            $('#Email').text(result.postCode);
+                            $('#TRN').text(result.TRNNumber);
                         } else {
                             alert(result);
                         }

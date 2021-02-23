@@ -30,6 +30,7 @@
                                 <table id="supplier_payments_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>SR#</th>
                                         <th>Supplier</th>
                                         <th>Date</th>
                                         <th>Amount</th>
@@ -56,6 +57,11 @@
                     url: "{{ route('supplier_payments.index') }}",
                 },
                 columns:[
+                    {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
                     {
                         data: 'supplier',
                         name: 'supplier'

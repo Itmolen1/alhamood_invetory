@@ -68,10 +68,34 @@ class ExpensesRepository implements IExpensesRepositoryInterface
         return view('admin.expense.create',compact('suppliers','expenseNo','employees','expense_categories','PadNumber','banks'));
     }
 
+    public function CheckExpenseReferenceExist($request)
+    {
+        $data = Expense::where('referenceNumber','=',$request->referenceNumber)->where('supplier_id','=',$request->supplier_id)->get();
+        //echo "<pre>";print_r($data);die;
+        if($data->first())
+        {
+            $result=array('result'=>true);
+            return Response()->json(true);
+        }
+        else
+        {
+            $result=array('result'=>false);
+            return Response()->json(false);
+        }
+    }
+
     public function store(ExpenseRequest $expenseRequest)
     {
         $AllRequestCount = collect($expenseRequest->Data)->count();
-        if($AllRequestCount > 0) {
+        if($AllRequestCount > 0)
+        {
+            //check reference number already exist or not
+            $already_exist = Expense::where('company_id',session('company_id'))->where('referenceNumber',$expenseRequest->Data['referenceNumber'])->get();
+            if(!$already_exist->isEmpty())
+            {
+                $data=array('result'=>false,'message'=>'Reference NUMBER ALREADY EXIST');
+                echo json_encode($data);exit();
+            }
 
             $user_id = session('user_id');
             $company_id = session('company_id');
@@ -220,7 +244,9 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                     'Description'=>$accountDescriptionString.$expense,
                     'updateDescription'=>$expenseRequest->Data['ChequeNumber'] ?? '',
                 ]);
-                return Response()->json($AccountTransactions);
+                //return Response()->json($AccountTransactions);
+                $data=array('result'=>true,'message'=>'Record Inserted Successfully.');
+                echo json_encode($data);
             }
             ////////////////// end account section gautam ////////////////
         }
