@@ -74,6 +74,7 @@ route::resource('employees','EmployeeController');
 ////////////// sales /////////////////////
 route::resource('sales','SaleController');
 route::post('salesUpdate/{Id}','SaleController@salesUpdate');
+route::get('get_data','SaleController@get_data')->name('get_data');
 route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehicle');
 route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
 route::resource('customer_prices','CustomerPriceController');
@@ -130,6 +131,12 @@ route::get('BankReport','ReportController@BankReport')->name('BankReport');
 route::post('PrintBankReport','ReportController@PrintBankReport')->name('PrintBankReport');
 route::get('GeneralLedger','ReportController@GeneralLedger')->name('GeneralLedger');
 route::post('PrintGeneralLedger','ReportController@PrintGeneralLedger')->name('PrintGeneralLedger');
+
+route::get('Profit_loss','ReportController@Profit_loss')->name('Profit_loss');
+route::post('PrintProfit_loss','ReportController@PrintProfit_loss')->name('PrintProfit_loss');
+
+route::get('Garage_value','ReportController@Garage_value')->name('Garage_value');
+route::post('PrintGarage_value','ReportController@PrintGarage_value')->name('PrintGarage_value');
 
 });
 

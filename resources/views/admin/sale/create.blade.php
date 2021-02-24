@@ -51,93 +51,11 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
-{{--                        <div class="card-header bg-info">--}}
-{{--                            <h4 class="m-b-0 text-white">Invoice</h4>--}}
-{{--                        </div>--}}
                         <div class="card-body">
                             <form action="#">
                                 <div class="form-body">
 
                                     <input type="hidden" name="SaleNumber" id="SaleNumber" value="{{ $saleNo ?? "" }}">
-
-                                    {{--<div class="row table color-bordered-table success-bordered-table" style="background-color: #36bea6;">
-                                        <div class="col-md-1"><span></span></div>
-                                        <div class="col-md-1.5">Date</div>
-                                        <div class="col-md-1.5">Pad</div>
-                                        <div class="col-md-1.5">Customer</div>
-                                        <div class="col-md-2">Vehicle</div>
-                                        <div class="col-md-1">Quantity</div>
-                                        <div class="col-md-1">Unit Price</div>
-                                        <div class="col-md-1">VAT</div>
-                                        <div class="col-md-1">Amount</div>
-                                    </div>
-
-                                    <div class="row">
-
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <select name="Product_id" class="form-control input-sm" id="product_id">
-                                                    <option readonly="" disabled selected>--Product--</option>
-                                                    @foreach($products as $product)
-                                                        <option value="{{ $product->id }}" selected>{{ $product->Name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-1.5">
-                                            <input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate " placeholder="">
-                                        </div>
-
-                                        <div class="col-md-1.5">
-                                            <input type="text" onClick="this.setSelectionRange(0, this.value.length)"  value="{{ $PadNumber ?? "" }}" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))">
-                                        </div>
-
-                                        <div class="col-md-1.5 mycontainer">
-                                            <div class="form-group">
-                                                <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;">
-                                                    <option readonly="" disabled selected>--Customer--</option>
-                                                    @foreach($customers as $customer)
-                                                        <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <select name="vehicle" id="vehicle" class="form-control vehicle_id slct chosen-select">
-                                                    <option class="opt" value="0">Vehicle</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group" style="display: none;">
-                                                <select name="unit" id="unit" class="form-control unit_id">
-                                                    <option class="opt" value="0">Unit</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-1">
-                                            <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
-                                            <input type="hidden" placeholder="Total" class="total form-control">
-                                            <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
-                                        </div>
-
-                                        <div class="col-md-1">
-                                            <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Price" id="Rate" class="price form-control">
-                                        </div>
-
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="VAT" id="VAT" class="VAT form-control">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-1">
-                                            <input type="hidden" placeholder="Total" class="rowTotal form-control">
-                                            <input type="text" placeholder="Total" class="rowTotal form-control">
-                                        </div>
-                                    </div> --}}
 
                                     <div class="table-responsive">
                                         <table class="table color-bordered-table success-bordered-table" style="overflow: hidden;z-index: 999;height:350px;" id="scroll_table">

@@ -264,7 +264,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
             //now since account is affected we need to auto pay same amount to purchase entries only if last closing is positive value
 
-            if($closing_before_advance_credit>0)
+            /*if($closing_before_advance_credit>0)
             {
                 //we have entries without payment made so make it paid until advance amount becomes zero
                 // bring all unpaid purchase records
@@ -322,7 +322,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                         break;
                     }
                 }
-            }
+            }*/
         }
 
         /* account section by gautam */

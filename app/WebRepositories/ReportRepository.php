@@ -20,7 +20,9 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\PaymentReceive;
 use App\Models\Purchase;
+use App\Models\PurchaseDetail;
 use App\Models\Sale;
+use App\Models\SaleDetail;
 use App\Models\Supplier;
 use App\Models\SupplierAdvance;
 use App\Models\SupplierPayment;
@@ -94,6 +96,16 @@ class ReportRepository implements IReportRepositoryInterface
     public function GeneralLedger()
     {
         return view('admin.report.general_ledger_report');
+    }
+
+    public function Profit_loss()
+    {
+        return view('admin.report.profit_loss_report');
+    }
+
+    public function Garage_value()
+    {
+        return view('admin.report.garage_value_report');
     }
 
     public function SalesReportByVehicle()
@@ -2486,6 +2498,167 @@ class ReportRepository implements IReportRepositoryInterface
             //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+
+    public function PrintProfit_loss(Request $request)
+    {
+        if($request->month!='')
+        {
+            $dt = $request->month.'-01';
+            $start_date=date("Y-m-01", strtotime($dt));
+            $end_date=date("Y-m-t", strtotime($dt));
+            $company_id = session('company_id');
+
+            // start getting total sales amount with vat
+            $total_sales=Sale::where('SaleDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('SaleDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->where('isActive','=',1)->sum('grandTotal');
+            $total_purchase=Purchase::where('PurchaseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('PurchaseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->where('isActive','=',1)->sum('grandTotal');
+            $total_expense=Expense::where('expenseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('expenseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('grandTotal');
+
+            $pdf = new PDF();
+            $pdf::SetXY(5,5);
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            $pdf::SetFont('helvetica', '', 15);
+            $html='PROFIT AND LOSS REPORT '.date('M Y', strtotime($request->month));
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $html='<table border="0.5" cellpadding="2">';
+            $html.= '<tr style="color: #1358C8">
+                     <td width="300" align="right" colspan="3">Total Sales </td>
+                     <td width="200" align="right">'.number_format($total_sales,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr>
+                     <td width="300" align="right" colspan="3">Total Purchase </td>
+                     <td width="200" align="right">'.number_format($total_purchase,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Total Expenses </td>
+                     <td width="200" align="right">'.number_format($total_expense,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#0e4714">
+                     <td width="300" align="right" colspan="3">Net Income </td>
+                     <td width="200" align="right">'.number_format($total_sales-$total_purchase-$total_expense,2,'.',',').'</td>
+                    </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+
+    public function PrintGarage_value(Request $request)
+    {
+        if($request->month!='' && $request->currentRate!='')
+        {
+            $dt = $request->month.'-01';
+            $start_date=date("Y-m-01", strtotime($dt));
+            $end_date=date("Y-m-t", strtotime($dt));
+            $company_id = session('company_id');
+
+            //total receivable from customers
+            $total_receivable=Sale::where('SaleDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('SaleDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('remainingBalance');
+            //cash in hand
+            $cash_in_hand=CashTransaction::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->max('id');
+            $lastTransaction = CashTransaction::where(['id'=> $cash_in_hand,])->get()->first();
+            $cash_in_hand=$lastTransaction->Differentiate;
+            //sum of all bank balances
+            $all_banks = Bank::where(['deleted_at'=> NULL,])->get();
+            $total_balance_in_bank=0.00;
+            foreach($all_banks as $bank)
+            {
+                $last_transaction=BankTransaction::where('bank_id','=',$bank->id)->where('deleted_at','=',NULL)->max('id');
+                $lastTransaction = BankTransaction::where(['id'=> $last_transaction,])->get()->first();
+                $total_balance_in_bank+=$lastTransaction->Differentiate;
+            }
+            //stock value
+                //total purchase quantity
+                $total_purchase_qty=PurchaseDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
+                //total sales quantity
+                $total_sales_qty=SaleDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
+                $stock_qty=$total_purchase_qty-$total_sales_qty;
+                $stock_value=$stock_qty*$request->currentRate;
+            //supplier outstanding
+            $total_supplier_outstanding=Purchase::where('PurchaseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('PurchaseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('remainingBalance');
+
+
+            $total_expense=Expense::where('expenseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('expenseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('grandTotal');
+
+            $pdf = new PDF();
+            $pdf::SetXY(5,5);
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+            $pdf::SetFont('helvetica', '', 15);
+            $html='GARAGE VALUE REPORT '.date('M Y', strtotime($request->month));
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $html='<table border="0.5" cellpadding="2">';
+            $html.= '<tr style="color: #1358C8">
+                     <td width="300" align="right" colspan="3">Total Receivable </td>
+                     <td width="200" align="right">'.number_format($total_receivable,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr>
+                     <td width="300" align="right" colspan="3">Total Cash </td>
+                     <td width="200" align="right">'.number_format($cash_in_hand,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Total Bank </td>
+                     <td width="200" align="right">'.number_format($total_balance_in_bank,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Current Stock Value </td>
+                     <td width="200" align="right">'.number_format($stock_value,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Total Supplier Outstanding</td>
+                     <td width="200" align="right">'.number_format($total_supplier_outstanding,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#0e4714">
+                     <td width="300" align="right" colspan="3">Garage Value </td>
+                     <td width="200" align="right">'.number_format((($total_receivable+$cash_in_hand+$total_balance_in_bank+$stock_value)-$total_supplier_outstanding),2,'.',',').'</td>
+                    </tr>';
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::lastPage();
+            $time=time();
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+
         }
         else
         {

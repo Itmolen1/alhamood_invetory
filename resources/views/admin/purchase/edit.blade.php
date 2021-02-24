@@ -2,6 +2,28 @@
 @section('title', 'PURCHASE UPDATE')
 
 @section('content')
+    <style>
+        .chosen-container-single .chosen-single {
+            height: 38px;
+            border-radius: 3px;
+            border: 1px solid #CCCCCC;
+        }
+        .chosen-container-single .chosen-single span {
+            padding-top: 5px;
+        }
+        .chosen-container-single .chosen-single div b {
+            margin-top: 5px;
+        }
+        .chosen-container-active .chosen-single,
+        .chosen-container-active.chosen-with-drop .chosen-single {
+            border-color: #ccc;
+            border-color: rgba(82, 168, 236, .8);
+            outline: 0;
+            outline: thin dotted \9;
+            -moz-box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+            box-shadow: 0 0 8px rgba(82, 168, 236, .6)
+        }
+    </style>
 
     <div class="page-wrapper">
         <div class="container-fluid">
@@ -34,7 +56,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Supplier Name</label>
-                                                <select class="form-control custom-select supplier_id" id="supplier_id" name="supplier_id">
+                                                <select class="form-control custom-select supplier_id chosen-select" id="supplier_id" name="supplier_id">
                                                     @foreach($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}" {{ ($supplier->id == $purchase_details[0]->purchase->supplier_id) ? 'selected':'' }}>{{ $supplier->Name }}</option>
                                                     @endforeach

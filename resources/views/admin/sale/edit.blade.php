@@ -298,22 +298,22 @@
                         dataType: "json",
                         success: function (result) {
                             if (result !== "Failed") {
-                                $('#Rate').val(result.customers.customer_prices[0].Rate);
-                                $('#VAT').val(result.customers.customer_prices[0].VAT);
+                                //$('#Rate').val(result.customers[0].customer_prices[0].Rate);
+                                //$('#VAT').val(result.customers[0].customer_prices[0].VAT);
                                 $("#vehicle").html('');
                                 var vehicleDetails = '';
-                                if (result.customers.vehicles.length > 0)
+                                if (result.customers[0].vehicles.length > 0)
                                 {
-                                    for (var i = 0; i < result.customers.vehicles.length; i++) {
-                                        vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
+                                    for (var i = 0; i < result.customers[0].vehicles.length; i++) {
+                                        vehicleDetails += '<option value="' + result.customers[0].vehicles[i].id + '">' + result.customers[0].vehicles[i].registrationNumber + '</option>';
                                     }
                                 }
                                 else {
                                     vehicleDetails += '<option value="0">No Data</option>';
                                 }
                                 $("#vehicle").append(vehicleDetails);
-                                var rate = result.customers.customer_prices[0].Rate;
-                                var vat = result.customers.customer_prices[0].VAT;
+                                var rate = result.customers[0].customer_prices[0].Rate;
+                                var vat = result.customers[0].customer_prices[0].VAT;
                                 totalWithCustomer(vat, rate);
                                 $('#closing').val(result.closing);
 
@@ -490,22 +490,22 @@
                             dataType: "json",
                             success: function (result) {
                                 if (result !== "Failed") {
-                                    $('#Rate').val(result.customers.customer_prices[0].Rate);
-                                    $('#VAT').val(result.customers.customer_prices[0].VAT);
+                                    $('#Rate').val(result.customers[0].customer_prices[0].Rate);
+                                    $('#VAT').val(result.customers[0].customer_prices[0].VAT);
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
-                                    if (result.customers.vehicles.length > 0)
+                                    if (result.customers[0].vehicles.length > 0)
                                     {
-                                        for (var i = 0; i < result.customers.vehicles.length; i++) {
-                                            vehicleDetails += '<option value="' + result.customers.vehicles[i].id + '">' + result.customers.vehicles[i].registrationNumber + '</option>';
+                                        for (var i = 0; i < result.customers[0].vehicles.length; i++) {
+                                            vehicleDetails += '<option value="' + result.customers[0].vehicles[i].id + '">' + result.customers[0].vehicles[i].registrationNumber + '</option>';
                                         }
                                     }
                                     else {
                                         vehicleDetails += '<option value="0">No Data</option>';
                                     }
                                     $("#vehicle").append(vehicleDetails);
-                                    var rate = result.customers.customer_prices[0].Rate;
-                                    var vat = result.customers.customer_prices[0].VAT;
+                                    var rate = result.customers[0].customer_prices[0].Rate;
+                                    var vat = result.customers[0].customer_prices[0].VAT;
                                     totalWithCustomer(vat, rate);
                                     $('#closing').val(result.closing);
 

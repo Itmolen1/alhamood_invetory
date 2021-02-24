@@ -52,6 +52,11 @@ class SaleController extends Controller
         //
     }
 
+    public function get_data(Request $request)
+    {
+        return $this->saleRepository->get_data($request);
+    }
+
     public function customerSaleDetails($Id)
     {
         $sales = Sale::with('customer.vehicles','sale_details')

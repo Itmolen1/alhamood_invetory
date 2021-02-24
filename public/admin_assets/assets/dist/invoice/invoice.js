@@ -245,6 +245,11 @@
         $('.balance').val((remaining_balance.toFixed(2)));
         var customer = $("#customer_id option:selected").text();
 
+        if(cash_paid>grand_total)
+        {
+            $('.cashPaid').val((grand_total.toFixed(2)));
+        }
+
         if(remaining_balance<0 && customer!=='cash' || customer!=='CASH')
         {
             //$('.cashPaid').attr('readonly', true);

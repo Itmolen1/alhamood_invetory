@@ -174,13 +174,13 @@
                                 <a href="#">Cash flow</a>
                             </li>
                             <li class="border-bottom">
-                                <a href="#">Profit Loss Statement</a>
+                                <a href="{{ route('Profit_loss') }}">Profit Loss Statement</a>
                             </li>
                             <li class="border-bottom">
                                 <a href="#">Trial balance</a>
                             </li>
                             <li>
-                                <a href="#">Monthly Closings</a>
+                                <a href="{{ route('Garage_value') }}">Garage Value</a>
                             </li>
                         </ul>
                     </li>

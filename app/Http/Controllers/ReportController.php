@@ -154,4 +154,24 @@ class ReportController extends Controller
     {
         return $this->reportRepository->PrintGeneralLedger($request);
     }
+
+    public function Profit_loss()
+    {
+        return $this->reportRepository->Profit_loss();
+    }
+
+    public function PrintProfit_loss(Request $request)
+    {
+        return $this->reportRepository->PrintProfit_loss($request);
+    }
+
+    public function Garage_value()
+    {
+        return $this->reportRepository->Garage_value();
+    }
+
+    public function PrintGarage_value(Request $request)
+    {
+        return $this->reportRepository->PrintGarage_value($request);
+    }
 }

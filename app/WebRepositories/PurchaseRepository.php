@@ -71,7 +71,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         $purchaseNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $suppliers = Supplier::get();
+        $suppliers = Supplier::where('company_type_id',2)->get();
         $products = Product::all();
         return view('admin.purchase.create',compact('suppliers','purchaseNo','products','PadNumber'));
     }
@@ -3156,7 +3156,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         $update_notes = UpdateNote::with('company','user')->where(['RelationId' => $Id, 'RelationTable' => 'purchases'])->get();
         //dd($update_notes[0]->Description);
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::where('company_type_id',2)->get();
         $products = Product::all();
         $units = Unit::all();
         $purchase_details = PurchaseDetail::withTrashed()->with('purchase.supplier','user','product','unit')->where('purchase_id', $Id)->get();

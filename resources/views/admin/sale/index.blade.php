@@ -54,7 +54,6 @@
                                         <th>Unit Price</th>
                                         <th>VAT</th>
                                         <th>Amount</th>
-                                       {{--  <th>Paid</th> --}}
                                         <th>Paid</th>
                                         <th style="width: 40px">Action</th>
                                     </tr>
