@@ -70,20 +70,22 @@ class SaleController extends Controller
     public function salesByDateDetails($id)
     {
         // $customers = Customer::with('vehicles')->find($id);
-
-
-        $salesData = Sale::with('sale_details')->where('SaleDate', $id)->get();
+        $salesData = Sale::with('sale_details')->where('SaleDate', $id)->where('isActive','=',1)->get();
         if ($salesData != null)
         {
-
             $salesByDate['total'] = 0;
+            $all_pads=array();
             foreach ($salesData as $data){
                 $salesByDate['total'] += $data->sale_details[0]->Quantity;
+                $all_pads[]=$data->sale_details[0]->PadNumber;
             }
+            $filtered = array_diff($all_pads, array(null, 0));
+            $max = max($filtered);
+            $min = min($filtered);
             //$salesByDate['sale_details'] = $salesData->first()->sale_details->sum('Quantity');
             //$salesByDate['sale_details'] = $salesData->first()->sale_details->sum('Quantity');
-            $salesByDate['firstPad'] = $salesData->first()->first()->sale_details->first()->PadNumber;
-            $salesByDate['lastPad'] = $salesData->last()->sale_details->last()->PadNumber;
+            $salesByDate['firstPad'] = $min;
+            $salesByDate['lastPad'] = $max;
         }
         else
         {

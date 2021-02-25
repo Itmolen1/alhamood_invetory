@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rizwanafridi
- * Date: 11/25/20
- * Time: 11:10
- */
 
 namespace App\WebRepositories;
-
 
 use App\Http\Requests\MeterReaderRequest;
 use App\Models\MeterReader;
@@ -21,20 +14,15 @@ use Illuminate\Http\Request;
 
 class MeterReadingRepository implements IMeterReadingRepositoryInterface
 {
-
-
     public function index()
     {
-        // TODO: Implement index() method.
         $meter_readings = MeterReading::with('meter_reading_details')->get();
-        //dd($meter_readings);
         return view('admin.meterReading.index',compact('meter_readings'));
     }
 
     public function create()
     {
-        // TODO: Implement create() method.
-        //$salesByDate['totalSale'] = Sale::with('sale_details')->where('SaleDate', date('Y-m-d'))->get()->sum('grandTotal');
+//        $salesByDate['totalSale'] = Sale::with('sale_details')->where('SaleDate', date('Y-m-d'))->get()->sum('grandTotal');
 //        $salesByDate['firstPad'] = Sale::with('sale_details')->where('SaleDate', date('Y-m-d'))->get()->first()->sale_details->first()->PadNumber;
 //        $salesByDate['lastPad'] = Sale::with('sale_details')->where('SaleDate', date('Y-m-d'))->get()->last()->sale_details->last()->PadNumber;
 
@@ -42,7 +30,6 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
         $total = 0;
         if ($salesData->first() != null)
         {
-
             foreach ($salesData as $data){
                 $total += $data->sale_details[0]->Quantity;
              }
@@ -63,7 +50,6 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
 
     public function store(Request $request)
     {
-        // TODO: Implement store() method.
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0) {
             //return Response()->json($request);
@@ -102,7 +88,6 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
                     "user_id" => $user_id,
                     "company_id" => $company_id,
                 ]);
-
             }
             if ($data)
             {
@@ -113,7 +98,6 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0)
         {
@@ -170,13 +154,10 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $update_notes = UpdateNote::with('company','user')->where(['RelationId' => $Id, 'RelationTable' => 'meter_readings'])->get();
         $meter_readers = MeterReader::all();
         $meter_details = MeterReadingDetail::withTrashed()->with('meter_reading','user','meter_reader')->where('meter_reading_id', $Id)->get();
-       // dd($meter_details);
         return view('admin.meterReading.edit',compact('meter_details','meter_readers','update_notes'));
-
     }
 
     public function delete(Request $request, $Id)

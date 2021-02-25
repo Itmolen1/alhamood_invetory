@@ -183,7 +183,6 @@ class UserRepository implements IUserRepositoryInterface
         // TODO: Implement ResetPassword() method.
     }
 
-
     public function login()
     {
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {

@@ -39,6 +39,20 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                         return $button;
                     }
                 })
+                ->addColumn('disburse', function($data) {
+                    if($data->IsSpent == 0){
+                        $button = '<form action="'. url('customer_advances_push',$data->id) .'" method="POST"  id="">';
+                        $button .= @csrf_field();
+                        $button .= @method_field('PUT');
+                        $button .= '<a href="'.route('customer_advances.edit', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                        $button .='&nbsp;';
+                        $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm()"><i style="font-size: 20px" class="fa fa-battery-full"> Disburse</i></button>';
+                        return $button;
+                    }else{
+                        $button = '<button type="submit" class="btn btn-default btn-sm"><i style="font-size: 20px" class="fa fa-battery-empty"> Disbursed</i></button>';
+                        return $button;
+                    }
+                })
                 ->rawColumns(
                     [
                         'push',
@@ -65,6 +79,10 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
             'receiptNumber' =>$customerAdvanceRequest->receiptNumber,
             'paymentType' =>$customerAdvanceRequest->paymentType,
             'Amount' =>$customerAdvanceRequest->amount,
+            'spentBalance' =>0.00,
+            'remainingBalance' =>$customerAdvanceRequest->amount,
+            'IsSpent' =>0,
+            'IsPartialSpent' =>0,
             'sumOf' =>$customerAdvanceRequest->amountInWords,
             'receiverName' =>$customerAdvanceRequest->receiverName,
             'accountNumber' =>$customerAdvanceRequest->accountNumber ?? 0,
@@ -90,6 +108,10 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
             'receiptNumber' =>$request->receiptNumber,
             'paymentType' =>$request->paymentType,
             'Amount' =>$request->amount,
+            'spentBalance' =>0.00,
+            'remainingBalance' =>$request->amount,
+            'IsSpent' =>0,
+            'IsPartialSpent' =>0,
             'sumOf' =>$request->amountInWords,
             'receiverName' =>$request->receiverName,
             'accountNumber' =>$request->accountNumber ?? null,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
@@ -24,18 +25,8 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
     protected $redirectTo = RouteServiceProvider::HOME;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
@@ -43,7 +34,6 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-
         $this->redirectTo = RouteServiceProvider::HOME;
     }
 
@@ -53,21 +43,15 @@ class LoginController extends Controller
             return view('admin.user.login');
         else
             return view('/');
-
     }
 
-    /**
-     * Send the response after the user was authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
     protected function sendLoginResponse(Request $request)
     {
-       // dd(Auth::user()->id);
+        $user=User::with('roles')->where('id',Auth::user()->id)->first();
         session(['user_id' => Auth::user()->id]);
         session(['company_id' => Auth::user()->company_id]);
-        //session(['user_id' => $UserData->id]);
+        session(['role_id' => $user->role_id]);
+        session(['role_name' => $user->roles->Name]);
         $request->session()->regenerate();
 
         $this->clearLoginAttempts($request);

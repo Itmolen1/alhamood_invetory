@@ -22,6 +22,9 @@ route::get('/','AdminController@index');
 Route::get('/admin','AdminController@index')->name('admin');
 route::get('/register','AdminController@register');
 
+route::get('/UserChangePassword','UserController@UserChangePassword')->name('UserChangePassword');
+route::PUT('UserUpdatePassword/{id}','UserController@UserUpdatePassword')->name('UserUpdatePassword');
+
 route::resource('customers','CustomerController');
 route::get('customerDetails/{id}','CustomerController@customerDetails');
 route::resource('company_types','CompanyTypeController');

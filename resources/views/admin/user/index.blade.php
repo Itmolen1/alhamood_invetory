@@ -3,20 +3,10 @@
 
 @section('content')
 
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <!-- <h4 class="text-themecolor">diensten</h4> -->
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -28,12 +18,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
+
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -41,9 +26,10 @@
                             <h4 class="card-title">Users</h4>
                             <h6 class="card-subtitle">All Users</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="example23" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="users_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>SR#</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Mobile Number</th>
@@ -51,49 +37,17 @@
                                         <th>Action</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    @foreach($users as $user)
-                                        <tr>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->contactNumber }}</td>
-                                            <td>
-                                                @if(!$user->roles->IsEmpty())
-
-                                                    {{ $user->roles->implode('Name',', ') }},
-
-                                                @else
-                                                    <p>No role</p>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <form action="{{ route('users.destroy',$user->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <a href="{{ route('users.edit', $user->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
-                                                    <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
 
-
                 </div>
             </div>
 
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
+
     <div id="confirmModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -113,19 +67,56 @@
     </div>
 
     <script>
+        $(document).ready(function () {
+            $('#users_table').dataTable({
+                processing: true,
+                ServerSide: true,
+                ajax:{
+                    url: "{{ route('users.index') }}",
+                },
+                columns:[
+                    {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'contactNumber',
+                        name: 'contactNumber'
+                    },
+                    {
+                        data: 'role',
+                        name: 'role'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false
+                    },
+                ],
+                order: [[ 0, "desc" ]]
+            });
+        });
+    </script>
+    <script>
         var id;
-
         $(document).on('click', '.delete', function(){
             id = $(this).attr('id');
             $('#confirmModal').modal('show');
         });
 
         $('#ok_button').click(function(){
-
-                    $('#ok_button').text('Deleting...');
-                    window.location.reload();
+            $('#ok_button').text('Deleting...');
+            window.location.reload();
         });
-
     </script>
 
 @endsection

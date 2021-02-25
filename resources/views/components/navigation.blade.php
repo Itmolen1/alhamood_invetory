@@ -4,10 +4,8 @@
             </li>
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-layout-grid2"></i><span class="hide-menu">Master</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li class="border-bottom"><a href="{{ route('companies.index') }}">Companies list</a></li>
+
                     <li class="border-bottom"><a href="{{ route('users.index') }}">Users list</a></li>
-                    <li class="border-bottom"><a href="{{ route('roles.index') }}">Roles list</a></li>
-                    <li class="border-bottom"><a href="{{ route('banks.index') }}">Banks list</a></li>
                     <li class="border-bottom"><a href="{{ route('countries.index') }}">Countries list</a></li>
                     <li class="border-bottom"><a href="{{ route('states.index') }}">States list</a></li>
                     <li class="border-bottom"><a href="{{ route('cities.index') }}">Cities list</a></li>
@@ -17,6 +15,11 @@
 {{--                    <li class="border-bottom"><a href="{{ route('products.index') }}">Products list</a></li>--}}
 {{--                    <li class="border-bottom"><a href="{{ route('company_types.index') }}">Company Type list</a></li>--}}
 {{--                    <li class="border-bottom"><a href="{{ route('payment_types.index') }}">Payment Type list</a></li>--}}
+                    @if(Session::get('role_name')=='superadmin')
+                        <li class="border-bottom"><a href="{{ route('companies.index') }}">Companies list</a></li>
+                        <li class="border-bottom"><a href="{{ route('roles.index') }}">Roles list</a></li>
+                        <li class="border-bottom"><a href="{{ route('banks.index') }}">Banks list</a></li>
+                    @endif
                     <li><a href="{{ route('payment_terms.index') }}">Payment Terms list</a></li>
                 </ul>
             </li>
@@ -157,10 +160,10 @@
                         </ul>
                     </li>
 
+                    @if(Session::get('role_name')=='superadmin' || Session::get('role_name')=='admin')
                     <li><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Accounts Reports</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
-
                             <li  class="border-bottom">
                                 <a href="{{ route('CashReport') }}">Cash Book</a>
                             </li>
@@ -174,16 +177,19 @@
                                 <a href="#">Cash flow</a>
                             </li>
                             <li class="border-bottom">
-                                <a href="{{ route('Profit_loss') }}">Profit Loss Statement</a>
-                            </li>
-                            <li class="border-bottom">
                                 <a href="#">Trial balance</a>
+                            </li>
+                            @if(Session::get('role_name')=='superadmin')
+                            <li class="border-bottom">
+                                <a href="{{ route('Profit_loss') }}">Profit Loss Statement</a>
                             </li>
                             <li>
                                 <a href="{{ route('Garage_value') }}">Garage Value</a>
                             </li>
+                            @endif
                         </ul>
                     </li>
+                    @endif
                 </ul>
             </li>
             <li class="nav-small-cap"></li>

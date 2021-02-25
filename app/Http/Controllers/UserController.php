@@ -11,9 +11,6 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /**
-     * @var IUserRepositoryInterface
-     */
     private $userRepository;
 
     public function __construct(IUserRepositoryInterface $userRepository)
@@ -37,46 +34,31 @@ class UserController extends Controller
         return $this->userRepository->store($userRequest);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($Id)
     {
         return $this->userRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $Id)
     {
         return $this->userRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function UserChangePassword()
+    {
+        return $this->userRepository->changePassword();
+    }
+
+    public function UserUpdatePassword(Request $request, $Id)
+    {
+        return $this->userRepository->UserUpdatePassword($request, $Id);
+    }
+
     public function destroy(Request $request, $Id)
     {
         return$this->userRepository->delete($request, $Id);

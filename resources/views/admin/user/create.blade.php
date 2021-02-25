@@ -3,21 +3,8 @@
 
 @section('content')
 
-
-<!-- ============================================================== -->
-<!-- End Left Sidebar - style you can find in sidebar.scss  -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- Page wrapper  -->
-<!-- ============================================================== -->
 <div class="page-wrapper">
-    <!-- ============================================================== -->
-    <!-- Container fluid  -->
-    <!-- ============================================================== -->
     <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
                 <h4 class="text-themecolor">User  Registration</h4>
@@ -32,13 +19,7 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- End Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Start Page Content -->
-        <!-- ============================================================== -->
-        <!-- Row -->
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
@@ -70,14 +51,9 @@
                                             </select>
                                         </div>
                                     </div>
-
-
-
                                 </div>
-                                <!--/row-->
+
                                 <div class="row">
-
-
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Email Address</label>
@@ -87,7 +63,6 @@
                                             @endif
                                         </div>
                                     </div>
-                                    <!--/span-->
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -95,37 +70,28 @@
                                             <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password">
                                         </div>
                                     </div>
-                                    <!--/span-->
                                 </div>
-                                <!--/row-->
-
 
                                 <div class="row">
-
-                                    <!--/span-->
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Phone</label>
                                             <input type="text" name="contactNumber" placeholder="Mobile Number" class="form-control">
                                         </div>
                                     </div>
-                                    <!--/span-->
-                                    <!--/span-->
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Address</label>
                                             <input type="text" name="address" placeholder="Enter Address" class="form-control">
                                         </div>
                                     </div>
-                                    <!--/span-->
                                 </div>
 
                                 <div class="row">
-
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="selectRoles">Select Roles</label>
-                                            <select name="roles[]" id="selectRoles" class="form-control" multiple>
+                                            <select name="roles" id="selectRoles" class="form-control">
                                                 {{--                    <option value="0">Parent Category</option>--}}
                                                 @if(!$roles->IsEmpty())
                                                     @foreach($roles as $role)
@@ -135,7 +101,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <!--/span-->
 
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -144,7 +109,6 @@
                                         </div>
                                     </div>
                                 </div>
-
 
                             </div>
                             <div class="form-actions">
@@ -156,40 +120,12 @@
                 </div>
             </div>
         </div>
-        <!-- Row -->
-
-
     </div>
-    <!-- ============================================================== -->
-    <!-- End Container fluid  -->
-    <!-- ============================================================== -->
 </div>
-<!-- ============================================================== -->
-<!-- End Page wrapper  -->
-<!-- ============================================================== -->
-<!-- ============================================================== -->
-<!-- footer -->
-<!-- ============================================================== -->
 
 <script>
     $(document).ready(function () {
-        // $('#paymentTermAll').hide();
-        //
-        // $("#customRadio1 input:radio").click(function() {
-        //
-        //     alert("clicked");
-        //
-        // });
 
-        //
-        // $('.c1').click(function () {
-        //     $('#paymentTermAll').show();
-        // });
-        // $('.c2').click(function () {
-        //     $('#paymentTermAll').hide();
-        // });
     });
 </script>
-
-
 @endsection

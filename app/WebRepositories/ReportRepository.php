@@ -2599,7 +2599,7 @@ class ReportRepository implements IReportRepositoryInterface
                 $total_purchase_qty=PurchaseDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
                 //total sales quantity
                 $total_sales_qty=SaleDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
-                $stock_qty=$total_purchase_qty-$total_sales_qty;
+                $stock_qty=$total_sales_qty-$total_purchase_qty;
                 $stock_value=$stock_qty*$request->currentRate;
             //supplier outstanding
             $total_supplier_outstanding=Purchase::where('PurchaseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('PurchaseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('remainingBalance');

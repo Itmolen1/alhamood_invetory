@@ -3,21 +3,8 @@
 
 @section('content')
 
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Meter Reading</h4>
@@ -32,13 +19,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -53,7 +34,7 @@
                                         <div class="col-md-8">
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="date" value="{{ date('Y-m-d') }}" id="meterReadingDate" class="form-control">
+                                            <input type="date" value="{{ date('Y-m-d') }}" id="meterReadingDate" name="meterReadingDate" class="form-control">
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -122,15 +103,12 @@
                                                 <input type="hidden" value="{{ $total }}" class="form-control totalPad">
                                             </p>
 
-
                                             <p>Difference: <input type="text" value="0.00" class="form-control balance" disabled>
                                                 <input type="hidden" value="0.00" class="form-control balance">
                                             </p>
 
-
                                         </div>
                                     </div>
-
 
                                 </div>
                                 <div class="form-actions">
@@ -139,32 +117,16 @@
                                 </div>
                             </form>
 
-
                         </div>
                     </div>
                 </div>
 
-
             </div>
-            <!-- Row -->
-
-
-
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script>
         $(document).ready(function () {
-
                 /////////////// Add Record //////////////////////
                 $('#submit').click(function () {
 
@@ -195,7 +157,6 @@
                             {
                                 return false;
                             }
-
                         });
                         let details = {
                             meterReadingDate: $('#meterReadingDate').val(),
@@ -252,8 +213,6 @@
                 });
                 //////// end of submit Records /////////////////
 
-
-
 /////////////////// change date //////////////////////////
             $('#meterReadingDate').change(function () {
               // alert($(this).val());
@@ -261,40 +220,36 @@
                        // var Id = 0;
                        var Id = $(this).val();
 
-                            $.ajax({
-                                // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                                url: "{{ URL('getSalesByDate') }}/" + Id,
-                                type: "get",
-                                dataType: "json",
-                                statusCode: {
-                                    500: function() {
-                                        alert("No Data Available On same Date");
-                                        $('.startPad').val('');
-                                        $('.endPad').val('');
-                                        $('.totalPad').val('');
-                                    }
-                                },
-                                success: function (result) {
-                                    if (result !== "Failed") {
-                                        console.log(result);
-                                        $('.startPad').val(result.firstPad);
-                                        $('.endPad').val(result.lastPad);
-                                        $('.totalPad').val((result.total));
+                        $.ajax({
+                            // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            url: "{{ URL('getSalesByDate') }}/" + Id,
+                            type: "get",
+                            dataType: "json",
+                            statusCode: {
+                                500: function() {
+                                    alert("No Data Available On same Date");
+                                    $('.startPad').val('');
+                                    $('.endPad').val('');
+                                    $('.totalPad').val('');
+                                }
+                            },
+                            success: function (result) {
+                                if (result !== "Failed") {
+                                    console.log(result);
+                                    $('.startPad').val(result.firstPad);
+                                    $('.endPad').val(result.lastPad);
+                                    $('.totalPad').val((result.total));
 
-                                    }
-                                },
+                                }
+                            },
 //                                error: function (errormessage) {
 //                                    alert(errormessage);
 //                                }
-                            });
+                        });
             });
-
-
-
 
             // ///////////////////// Add new Row //////////////////////
             $(document).on("click",'.addRow', function () {
-
                 var currentRow = $(this).closest("tr");
                 if (validateRow(currentRow))
                 {
@@ -316,7 +271,6 @@
                     html += '</tr>';
                     $('#newRow').append(html);
                 }
-
             });
             ///////// end of add new row //////////////
             ////////////// Remove row ///////////////
@@ -326,12 +280,8 @@
                 CountTotal()
             });
             // /////////////end remove row //////////////
-
         });
-
     </script>
 
     <script src="{{ asset('admin_assets/assets/dist/invoice/meterReading.js') }}"></script>
-
-
 @endsection

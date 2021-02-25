@@ -33,10 +33,13 @@
                                         <th>SR#</th>
                                         <th>Customer Name</th>
                                         <th>Amount</th>
+                                        <th>Disbursed</th>
+                                        <th>Remaining</th>
                                         <th>Payment Type</th>
                                         <th>Register Date</th>
                                         <th>Transfer Date</th>
                                         <th width="50px">Push Advance</th>
+                                        <th>Disburse</th>
                                     </tr>
                                     </thead>
 
@@ -125,6 +128,14 @@
                         name: 'Amount'
                     },
                     {
+                        data: 'spentBalance',
+                        name: 'spentBalance'
+                    },
+                    {
+                        data: 'remainingBalance',
+                        name: 'remainingBalance'
+                    },
+                    {
                         data: 'paymentType',
                         name: 'paymentType'
                     },
@@ -139,6 +150,11 @@
                     {
                         data: 'push',
                         name: 'push',
+                        orderable: false
+                    },
+                    {
+                        data: 'disburse',
+                        name: 'disburse',
                         orderable: false
                     },
                     // {
