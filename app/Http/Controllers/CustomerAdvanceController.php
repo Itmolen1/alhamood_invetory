@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class CustomerAdvanceController extends Controller
 {
-    /**
-     * @var ICustomerAdvanceRepositoryInterface
-     */
     private $customerAdvanceRepository;
 
     public function __construct(ICustomerAdvanceRepositoryInterface $customerAdvanceRepository)
@@ -24,30 +21,25 @@ class CustomerAdvanceController extends Controller
         return $this->customerAdvanceRepository->index();
     }
 
-
     public function create()
     {
         return $this->customerAdvanceRepository->create();
     }
-
 
     public function store(CustomerAdvanceRequest $customerAdvanceRequest)
     {
         return $this->customerAdvanceRepository->store($customerAdvanceRequest);
     }
 
-
-    public function show(CustomerAdvance $customerAdvance)
+    public function show($Id)
     {
-        //
+        return $this->customerAdvanceRepository->getById($Id);
     }
-
 
     public function edit($Id)
     {
         return $this->customerAdvanceRepository->edit($Id);
     }
-
 
     public function update(Request $request, $Id)
     {
@@ -62,5 +54,15 @@ class CustomerAdvanceController extends Controller
     public function customer_advances_push(Request $request,$Id)
     {
         return $this->customerAdvanceRepository->customer_advances_push($request, $Id);
+    }
+
+    public function customer_advances_get_disburse($Id)
+    {
+        return $this->customerAdvanceRepository->customer_advances_get_disburse($Id);
+    }
+
+    public function customer_advances_save_disburse(Request $request)
+    {
+        return $this->customerAdvanceRepository->customer_advances_save_disburse($request);
     }
 }

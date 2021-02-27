@@ -12,7 +12,6 @@ class CustomerAdvance extends Model
     use HasFactory;
     use SoftDeletes;
 
-
     protected $guarded=[];
     protected $primaryKey = 'id';
     protected $table = 'customer_advances';

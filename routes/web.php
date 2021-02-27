@@ -34,6 +34,8 @@ route::resource('payment_terms','PaymentTermController');
 route::resource('suppliers','SupplierController');
 route::resource('customer_advances','CustomerAdvanceController');
 route::PUT('customer_advances_push/{Id}','CustomerAdvanceController@customer_advances_push');
+route::get('customer_advances_get_disburse/{Id}','CustomerAdvanceController@customer_advances_get_disburse')->name('customer_advances_get_disburse');
+route::POST('customer_advances_save_disburse','CustomerAdvanceController@customer_advances_save_disburse')->name('customer_advances_save_disburse');
 route::resource('supplier_advances','SupplierAdvanceController');
 route::PUT('supplier_advances_push/{Id}','SupplierAdvanceController@supplier_advances_push');
 

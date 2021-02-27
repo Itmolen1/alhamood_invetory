@@ -14,4 +14,19 @@ class CustomerAdvanceDetail extends Model
     protected $guarded=[];
     protected $primaryKey = 'id';
     protected $table = 'customer_advance_details';
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User','user_id','id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Company','company_id','id');
+    }
+
+    public function customer_advance()
+    {
+        return $this->belongsTo('App\Models\CustomerAdvance','customer_advances_id','id');
+    }
 }

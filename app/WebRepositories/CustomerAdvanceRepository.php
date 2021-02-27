@@ -11,6 +11,7 @@ use App\Models\BankTransaction;
 use App\Models\CashTransaction;
 use App\Models\Customer;
 use App\Models\CustomerAdvance;
+use App\Models\CustomerAdvanceDetail;
 use App\Models\Sale;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use Illuminate\Http\Request;
@@ -40,22 +41,26 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                     }
                 })
                 ->addColumn('disburse', function($data) {
-                    if($data->IsSpent == 0){
-                        $button = '<form action="'. url('customer_advances_push',$data->id) .'" method="POST"  id="">';
-                        $button .= @csrf_field();
-                        $button .= @method_field('PUT');
-                        $button .= '<a href="'.route('customer_advances.edit', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
-                        $button .='&nbsp;';
-                        $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm()"><i style="font-size: 20px" class="fa fa-battery-full"> Disburse</i></button>';
-                        return $button;
-                    }else{
-                        $button = '<button type="submit" class="btn btn-default btn-sm"><i style="font-size: 20px" class="fa fa-battery-empty"> Disbursed</i></button>';
-                        return $button;
+                    if($data->isPushed == true){
+                        if($data->IsSpent == 0){
+                            $button = '<a href="'.route('customer_advances_get_disburse', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-battery-full"></i>Disburse</a>';
+                            return $button;
+                        }else{
+                            $button = '<button type="submit" class="btn btn-default btn-sm"><i style="font-size: 20px" class="fa fa-battery-empty"> Disbursed</i></button>';
+                            $button .= '<a href="'.route('customer_advances.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                            return $button;
+                        }
                     }
+                    else
+                    {
+                        return 'Not Available';
+                    }
+
                 })
                 ->rawColumns(
                     [
                         'push',
+                        'disburse',
                         'customer',
                     ])
                 ->make(true);
@@ -126,17 +131,125 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
         return redirect()->route('customer_advances.index');
     }
 
-    public function getById($Id)
-    {
-        // TODO: Implement getById() method.
-    }
-
     public function edit($Id)
     {
         $customers = Customer::all();
         $banks = Bank::all();
         $customerAdvance = CustomerAdvance::with('customer')->find($Id);
         return view('admin.customerAdvance.edit',compact('customers','customerAdvance','banks'));
+    }
+
+    public function customer_advances_get_disburse($Id)
+    {
+        $customerAdvance = CustomerAdvance::with('customer')->find($Id);
+        return view('admin.customerAdvance.create_disburse',compact('customerAdvance'));
+    }
+
+    public function getById($Id)
+    {
+        $customer_advance_details = CustomerAdvanceDetail::with('user','company','customer_advance.customer')->where('customer_advances_id',$Id)->get();
+        return view('admin.customerAdvance.show',compact('customer_advance_details'));
+    }
+
+    public function customer_advances_save_disburse(Request $request)
+    {
+        $user_id = session('user_id');
+        $company_id = session('company_id');
+        $AllRequestCount = collect($request->Data)->count();
+        if($AllRequestCount > 0)
+        {
+            $advance = CustomerAdvance::with('customer')->find($request->Data['customer_advance_id']);
+            if($advance->IsSpent==0 AND $advance->remainingBalance>0)
+            {
+                $total_i_have=$advance->remainingBalance;
+
+                foreach($request->Data['orders'] as $detail)
+                {
+                    $this_sale=Sale::where('id',$detail['sale_id'])->get()->first();
+                    if($this_sale->IsPaid==0 AND $this_sale->remainingBalance!=0)
+                    {
+                        $total_you_need = $this_sale->remainingBalance;
+                        $still_payable_to_you=0;
+                        $total_giving_to_you=0;
+                        $isPartialPaid = 0;
+                        if ($total_i_have >= $total_you_need)
+                        {
+                            $isPaid = 1;
+                            $isPartialPaid = 0;
+                            $total_i_have = $total_i_have - $total_you_need;
+
+                            $this_sale->update([
+                                "paidBalance"        => $this_sale->grandTotal,
+                                "remainingBalance"   => $still_payable_to_you,
+                                "IsPaid" => $isPaid,
+                                "IsPartialPaid" => $isPartialPaid,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'FromAdvance|'.$advance->id,
+                            ]);
+
+                            $data =  CustomerAdvanceDetail::create([
+                                "amountPaid" => $this_sale->grandTotal,
+                                "customer_advances_id" => $advance->id,
+                                "user_id" => $user_id,
+                                "company_id" => $company_id,
+                                "sale_id" => $this_sale->id,
+                                'advanceReceiveDetailDate' => $advance->TransferDate,
+                                'createdDate' => date('Y-m-d')
+                            ]);
+                        }
+                        else
+                        {
+                            $isPaid = 0;
+                            $isPartialPaid = 1;
+                            $total_giving_to_you=$total_i_have;
+                            $total_i_have = $total_i_have - $total_giving_to_you;
+
+                            $this_sale->update([
+                                "paidBalance"        => $this_sale->paidBalance+$total_giving_to_you,
+                                "remainingBalance"   => $this_sale->remainingBalance-$total_giving_to_you,
+                                "IsPaid" => $isPaid,
+                                "IsPartialPaid" => $isPartialPaid,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'FromAdvance|'.$advance->id,
+                            ]);
+
+                            $data =  CustomerAdvanceDetail::create([
+                                "amountPaid" => $total_giving_to_you,
+                                "customer_advances_id" => $advance->id,
+                                "user_id" => $user_id,
+                                "company_id" => $company_id,
+                                "sale_id" => $this_sale->id,
+                                'advanceReceiveDetailDate' => $advance->TransferDate,
+                                'createdDate' => date('Y-m-d')
+                            ]);
+                        }
+                    }
+                    if($total_i_have<=0)
+                    {
+                        break;
+                    }
+                }
+                if($total_i_have!=0)
+                {
+                    $advance->update([
+                        'IsSpent' =>0,
+                        'IsPartialSpent'=>1,
+                        'spentBalance'=>$advance->spentBalance+($advance->remainingBalance-$total_i_have),
+                        'remainingBalance'=>$advance->remainingBalance-$total_i_have,
+                    ]);
+                }
+                else
+                {
+                    $advance->update([
+                        'IsSpent' =>1,
+                        'IsPartialSpent'=>0,
+                        'spentBalance'=>$advance->Amount,
+                        'remainingBalance'=>0,
+                    ]);
+                }
+            }
+            return redirect()->route('customer_advances.index')->with('pushed','Your Account Debit Successfully');
+        }
     }
 
     public function delete(Request $request, $Id)
