@@ -27,7 +27,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(Customer::with('company','user','payment_type','company_type','payment_term')->latest()->get())
+            return datatables()->of(Customer::with('company','user','payment_type','company_type','payment_term')->where('company_id',session('company_id'))->latest()->get())
                ->addColumn('action', function ($data) {
                     $button = '<form action="'.route('customers.destroy', $data->id).'" method="POST">';
                     $button .= @csrf_field();

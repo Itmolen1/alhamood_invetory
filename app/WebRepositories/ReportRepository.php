@@ -601,7 +601,7 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $all_bank_transactions=BankTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('bank_id','=',$request->bank_id);
+            $all_bank_transactions=BankTransaction::get()->where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('bank_id','=',$request->bank_id);
         }
         else
         {
@@ -770,7 +770,7 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $all_cash_transactions=CashTransaction::where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->orderBy('createdDate')->get();
+            $all_cash_transactions=CashTransaction::where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->orderBy('createdDate')->get();
         }
         else
         {
@@ -902,7 +902,7 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $all_cash_transactions=CashTransaction::where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->orderBy('createdDate')->get();
+            $all_cash_transactions=CashTransaction::where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('company_id',session('company_id'))->where('Details','not like','%hide%')->orderBy('createdDate')->get();
         }
         else
         {
@@ -956,15 +956,15 @@ class ReportRepository implements IReportRepositoryInterface
         {
             if($request->filter=='with')
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
             }
             elseif($request->filter=='without')
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
             }
             else
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate));
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate));
             }
         }
         else
@@ -1158,15 +1158,15 @@ class ReportRepository implements IReportRepositoryInterface
         {
             if($request->filter=='with')
             {
-                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
             }
             elseif($request->filter=='without')
             {
-                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
             }
             else
             {
-                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
             }
         }
         else
@@ -1302,11 +1302,11 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if($request->vehicle_id!='' && $request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
+            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
         }
         elseif ($request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
+            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
         }
         else
         {
@@ -1448,15 +1448,15 @@ class ReportRepository implements IReportRepositoryInterface
         {
             if($request->filter=='with')
             {
-                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '!=', 0.00)->where('isActive','=',1)->sortBy('sale_details.'));
+                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '!=', 0.00)->where('isActive','=',1)->sortBy('sale_details.'));
             }
             elseif($request->filter=='without')
             {
-                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '==', 0.00)->where('isActive','=',1)->sortBy('sale_details.'));
+                $sales = SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate', '>=', $request->fromDate)->where('SaleDate', '<=', $request->toDate)->where('totalVat', '==', 0.00)->where('isActive','=',1)->sortBy('sale_details.'));
             }
             else
             {
-                $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('isActive','=','1')->sortBy('sale_details.'));
+                $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('isActive','=','1')->sortBy('sale_details.'));
             }
         }
         else
@@ -1668,8 +1668,9 @@ class ReportRepository implements IReportRepositoryInterface
         //echo "<pre>";print_r($row);die;
 
         // getting latest closing for all customer from account transaction table
-        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id','ac.Differentiate','s.Name','s.Mobile')
+        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id','ac.company_id','ac.Differentiate','s.Name','s.Mobile')
             ->where('ac.customer_id','!=',0)
+            ->where('ac.company_id',session('company_id'))
             ->groupBy('ac.customer_id')
             ->orderBy('ac.id','asc')
             ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')
@@ -1822,8 +1823,9 @@ class ReportRepository implements IReportRepositoryInterface
 //        $row=json_decode(json_encode($row), true);
 
         // getting latest closing for all suppliers from account transaction table
-        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id','ac.Differentiate','s.Name','s.Mobile')
+        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id','ac.company_id','ac.Differentiate','s.Name','s.Mobile')
             ->where('ac.supplier_id','!=',0)
+            ->where('ac.company_id',session('company_id'))
             ->groupBy('ac.supplier_id')
             ->orderBy('ac.id','asc')
             ->leftjoin('suppliers as s', 's.id', '=', 'ac.supplier_id')

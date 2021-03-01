@@ -48,7 +48,6 @@ class UserRepository implements IUserRepositoryInterface
         $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
         if ($userRequest->hasFile('fileUpload'))
             $filename = $userRequest->file('fileUpload')->storeAs('profile', $filename,'public');
-
         else
             $filename = 'admin_assets/assets/images/users/default.png';
 
@@ -60,21 +59,19 @@ class UserRepository implements IUserRepositoryInterface
             'address' =>$userRequest->address,
             'imageUrl' =>$filename,
             'password' =>bcrypt($userRequest->password),
-            'role_id' =>$userRequest->contactNumer,
+            'role_id' =>$userRequest->roles,
         ];
         $user = User::create($user);
-            //$user->roles()->attach($userRequest->roles);
-            return redirect()->route('users.index');
+        //$user->roles()->attach($userRequest->roles);
+        return redirect()->route('users.index');
     }
 
     public function update(Request $request, $Id)
     {
         $user = User::find($Id);
-
         $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
         if ($request->hasFile('fileUpload'))
             $filename = $request->file('fileUpload')->storeAs('profile', $filename,'public');
-
         else
             $filename = $user->imageUrl;
 
@@ -85,9 +82,8 @@ class UserRepository implements IUserRepositoryInterface
         $user->contactNumber = $request->contactNumber;
 
         $user->save();
-            $user->roles()->sync($request->roles);
-            return redirect()->route('users.index');
-
+        $user->roles()->sync($request->roles);
+        return redirect()->route('users.index');
     }
 
     public function getById($Id)

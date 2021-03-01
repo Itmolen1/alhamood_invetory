@@ -18,7 +18,7 @@ class DepositRepository implements IDepositRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(Deposit::with('bank')->latest()->get())
+            return datatables()->of(Deposit::with('bank')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<form action="'.route('deposits.destroy', $data->id).'" method="POST">';
                     $button .= @csrf_field();

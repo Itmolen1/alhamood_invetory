@@ -23,7 +23,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(SupplierPayment::with('user','company','supplier')->latest()->get())
+            return datatables()->of(SupplierPayment::with('user','company','supplier')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<a href="'.route('supplier_payments.show', $data->id).'"  class=" btn btn-info btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
                     $button .= '&nbsp;&nbsp;';

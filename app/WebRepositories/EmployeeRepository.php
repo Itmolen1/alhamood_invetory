@@ -21,7 +21,7 @@ class EmployeeRepository implements IEmployeeRepositoryInterface
         // return view('admin.employee.index',compact('employees'));
         if(request()->ajax())
         {
-            return datatables()->of(Employee::latest()->get())
+            return datatables()->of(Employee::where('company_id',session('company_id'))->latest()->get())
                ->addColumn('action', function ($data) {
                     $button = '<form action="'.route('employees.destroy', $data->id).'" method="POST"  id="deleteData">';
                     $button .= @csrf_field();

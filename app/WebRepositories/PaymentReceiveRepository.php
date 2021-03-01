@@ -22,7 +22,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(PaymentReceive::with('user','company','customer')->latest()->get())
+            return datatables()->of(PaymentReceive::with('user','company','customer')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<a href="'.route('payment_receives.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
                     $button .= '&nbsp;&nbsp;';

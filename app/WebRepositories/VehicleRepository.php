@@ -19,7 +19,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(Vehicle::with('customer')->latest()->get())
+            return datatables()->of(Vehicle::with('customer')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<form action="'.route('vehicles.destroy', $data->id).'" method="POST">';
                     $button .= @csrf_field();

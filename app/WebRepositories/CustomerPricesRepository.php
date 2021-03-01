@@ -14,8 +14,7 @@ class CustomerPricesRepository implements ICustomerPricesRepositoryInterface
 
     public function index()
     {
-        // TODO: Implement index() method.
-        $customers = Customer::with('customer_prices')->where(['isActive' => true,])->orderBy('id', 'Asc')->get();
+        $customers = Customer::with('customer_prices')->where(['isActive' => true,])->where('company_id',session('company_id'))->orderBy('id', 'Asc')->get();
         return view('admin.customer_prices.index',compact('customers'));
     }
 

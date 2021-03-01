@@ -29,7 +29,7 @@ class SupplierRepository implements ISupplierRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(Supplier::with('company','user','payment_type','company_type','payment_term')->latest()->get())
+            return datatables()->of(Supplier::with('company','user','payment_type','company_type','payment_term')->where('company_id',session('company_id'))->latest()->get())
                ->addColumn('action', function ($data) {
                     $button = '<form action="'.route('suppliers.destroy', $data->id).'" method="POST">';
                     $button .= @csrf_field();
