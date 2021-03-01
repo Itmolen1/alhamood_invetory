@@ -92,31 +92,39 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $paymentReceive->save();
             $paymentReceive = $paymentReceive->id;
             $amount = 0;
+            $total_i_have=$request->Data['paidAmount'];
             foreach($request->Data['orders'] as $detail)
             {
-                $amount += $detail['amountPaid'];
-
-                if ($amount <= $request->Data['paidAmount'])
+                $this_sale=Sale::where('id',$detail['sale_id'])->get()->first();
+                if($this_sale->IsPaid==0 AND $this_sale->remainingBalance!=0)
                 {
-                    $isPaid = true;
-                    $isPartialPaid = false;
-                    $totalAmount = $detail['amountPaid'];
+                    $total_you_need = $this_sale->remainingBalance;
+                    $still_payable_to_you=0;
+                    $total_giving_to_you=0;
+                    $isPartialPaid = 0;
+                    if ($total_i_have >= $total_you_need)
+                    {
+                        $total_i_have = $total_i_have - $total_you_need;
+                        $total_giving_to_you=$total_you_need;
+                    }
+                    else
+                    {
+                        $total_giving_to_you=$total_i_have;
+                        $total_i_have = $total_i_have - $total_giving_to_you;
+                    }
+                    PaymentReceiveDetail::create([
+                        "amountPaid" => $total_giving_to_you,
+                        "sale_id" => $detail['sale_id'],
+                        "company_id" => $company_id,
+                        "user_id" => $user_id,
+                        "payment_receive_id" => $paymentReceive,
+                        'createdDate' => $request->Data['paymentReceiveDate'],
+                    ]);
+                    if($total_i_have<=0)
+                    {
+                        break;
+                    }
                 }
-                elseif($amount >= $request->Data['paidAmount']){
-                        $isPaid = false;
-                        $isPartialPaid = true;
-                        $totalAmount1 = $amount - $request->Data['paidAmount'];
-                       $totalAmount = $detail['amountPaid'] - $totalAmount1;
-                }
-
-                $data =  PaymentReceiveDetail::create([
-                    "amountPaid"        => $totalAmount,
-                    "sale_id"        => $detail['sale_id'],
-                    "company_id" => $company_id,
-                    "user_id"      => $user_id,
-                    "payment_receive_id"      => $paymentReceive,
-                    'createdDate' => date('Y-m-d')
-                ]);
             }
             return Response()->json($amount);
 //            ////////////////// account section ////////////////
@@ -259,7 +267,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             $difference = $cashTransaction->last()->Differentiate;
             $cash_transaction = new CashTransaction();
             $cash_transaction->Reference=$Id;
-            $cash_transaction->createdDate=$payments->TransferDate ?? date('Y-m-d h:i:s');
+            $cash_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
             $cash_transaction->Type='payment_receives';
             $cash_transaction->Details='CustomerCashPayment|'.$Id;
             $cash_transaction->Credit=0.00;

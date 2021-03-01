@@ -118,22 +118,35 @@ route::get('PrintReceivedAdvancesSummary','ReportController@PrintReceivedAdvance
 
 route::get('GetDetailCustomerStatement','ReportController@GetDetailCustomerStatement')->name('GetDetailCustomerStatement');
 route::post('PrintDetailCustomerStatement','ReportController@PrintDetailCustomerStatement')->name('PrintDetailCustomerStatement');
+route::post('ViewDetailCustomerStatement','ReportController@ViewDetailCustomerStatement')->name('ViewDetailCustomerStatement');
+
 route::get('GetDetailSupplierStatement','ReportController@GetDetailSupplierStatement')->name('GetDetailSupplierStatement');
 route::post('PrintDetailSupplierStatement','ReportController@PrintDetailSupplierStatement')->name('PrintDetailSupplierStatement');
+route::post('ViewDetailSupplierStatement','ReportController@ViewDetailSupplierStatement')->name('ViewDetailSupplierStatement');
+
 route::get('SalesReport','ReportController@SalesReport')->name('SalesReport');
 route::post('PrintSalesReport','ReportController@PrintSalesReport')->name('PrintSalesReport');
+
 route::get('SalesReportByVehicle','ReportController@SalesReportByVehicle')->name('SalesReportByVehicle');
 route::post('PrintSalesReportByVehicle','ReportController@PrintSalesReportByVehicle')->name('PrintSalesReportByVehicle');
+
 route::get('SalesReportByCustomer','ReportController@SalesReportByCustomer')->name('SalesReportByCustomer');
 route::post('PrintSalesReportByCustomer','ReportController@PrintSalesReportByCustomer')->name('PrintSalesReportByCustomer');
+
 route::get('PurchaseReport','ReportController@PurchaseReport')->name('PurchaseReport');
 route::post('PrintPurchaseReport','ReportController@PrintPurchaseReport')->name('PrintPurchaseReport');
+
 route::get('ExpenseReport','ReportController@ExpenseReport')->name('ExpenseReport');
 route::post('PrintExpenseReport','ReportController@PrintExpenseReport')->name('PrintExpenseReport');
+
 route::get('CashReport','ReportController@CashReport')->name('CashReport');
 route::post('PrintCashReport','ReportController@PrintCashReport')->name('PrintCashReport');
+route::post('ViewCashReport','ReportController@ViewCashReport')->name('ViewCashReport');
+
 route::get('BankReport','ReportController@BankReport')->name('BankReport');
 route::post('PrintBankReport','ReportController@PrintBankReport')->name('PrintBankReport');
+route::post('ViewBankReport','ReportController@ViewBankReport')->name('ViewBankReport');
+
 route::get('GeneralLedger','ReportController@GeneralLedger')->name('GeneralLedger');
 route::post('PrintGeneralLedger','ReportController@PrintGeneralLedger')->name('PrintGeneralLedger');
 

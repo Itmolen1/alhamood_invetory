@@ -86,7 +86,7 @@
                                                 <label>Payment Type</label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
                                                     <option value="bank" {{ ($payment_receive->payment_type == "bank") ? "selected":"" }}>Bank</option>
-                                                    <option id="cash" value="cash" {{ ($payment_receive->cash == "cash") ? "selected":"" }}>Cash</option>
+                                                    <option id="cash" value="cash" {{ ($payment_receive->payment_type == "cash") ? "selected":"" }}>Cash</option>
                                                     <option value="cheque" {{ ($payment_receive->cash == "cheque") ? "selected":"" }}>Cheque</option>
                                                 </select>
                                             </div>
@@ -182,16 +182,7 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -206,7 +197,7 @@
 
         $(document).ready(function () {
             var Id=$('#bank_id').val();
-            if(Id!='')
+            if(Id!=null)
             {
                 $.ajax({
                     // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

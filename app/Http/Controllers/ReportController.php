@@ -55,6 +55,11 @@ class ReportController extends Controller
         return $this->reportRepository->PrintDetailCustomerStatement($request);
     }
 
+    public function ViewDetailCustomerStatement(Request $request)
+    {
+        return $this->reportRepository->ViewDetailCustomerStatement($request);
+    }
+
     public function GetSupplierStatement()
     {
         return $this->reportRepository->GetSupplierStatement();
@@ -73,6 +78,11 @@ class ReportController extends Controller
     public function PrintDetailSupplierStatement(Request $request)
     {
         return $this->reportRepository->PrintDetailSupplierStatement($request);
+    }
+
+    public function ViewDetailSupplierStatement(Request $request)
+    {
+        return $this->reportRepository->ViewDetailSupplierStatement($request);
     }
 
     public function SalesReport()
@@ -135,6 +145,11 @@ class ReportController extends Controller
         return $this->reportRepository->PrintCashReport($request);
     }
 
+    public function ViewCashReport(Request $request)
+    {
+        return $this->reportRepository->ViewCashReport($request);
+    }
+
     public function BankReport()
     {
         return $this->reportRepository->BankReport();
@@ -143,6 +158,11 @@ class ReportController extends Controller
     public function PrintBankReport(Request $request)
     {
         return $this->reportRepository->PrintBankReport($request);
+    }
+
+    public function ViewBankReport(Request $request)
+    {
+        return $this->reportRepository->ViewBankReport($request);
     }
 
     public function GeneralLedger()

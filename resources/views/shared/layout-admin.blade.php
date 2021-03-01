@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="ALHAMOOD GENERAL TRANSPORT">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('admin_assets/assets/images/favicon.png') }}">
-    <title>Dashboard - @yield('title')</title>
+    <title>@yield('title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="{{ asset('admin_assets/assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('admin_assets/assets/node_modules/select2/dist/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -18,7 +18,7 @@
     <link href="{{ asset('admin_assets/assets/dist/css/style.min.css') }}" rel="stylesheet">
     <link href="{{ asset('admin_assets/assets/dist/css/pages/dashboard1.css') }}" rel="stylesheet">
     <link href="{{ asset('admin_assets/assets/dist/css/chosen.min.css') }}" rel="stylesheet">
-    <script src="{{ asset('admin_assets/assets/node_modules/jquery/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/assets/node_modules/jquery/jquery-3.5.1.min.js') }}"></script>
     <script type="text/javascript">
         $(function() {
             $(".chosen-select").chosen();
@@ -253,7 +253,13 @@ input:checked + .slider:before {
 <script src="{{ asset('admin_assets/assets/dist/js/perfect-scrollbar.jquery.min.js') }}"></script>
 <script src="{{ asset('admin_assets/assets/dist/js/sidebarmenu.js') }}"></script>
 <script src="{{ asset('admin_assets/assets/dist/js/custom.min.js') }}"></script>
-<script src="{{ asset('admin_assets/assets/node_modules/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/node_modules/datatables/DataTables-1.10.23/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/node_modules/datatables/Buttons-1.6.5/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/node_modules/datatables/jszip.min.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/node_modules/datatables/pdfmake.min.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/node_modules/datatables/vfs_fonts.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/node_modules/datatables/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/node_modules/datatables/buttons.print.min.js') }}"></script>
 <script src="{{ asset('admin_assets/assets/dist/js/pages/jasny-bootstrap.js') }}"></script>
 <script language="javascript">
     $(document).ready(function(){
@@ -317,6 +323,11 @@ input:checked + .slider:before {
         buttons: [
             'copy', 'csv', 'excel', 'pdf', 'print'
         ]
+    });
+</script>
+<script>
+    $(".alert-danger").fadeTo(2000, 500).slideUp(500, function(){
+        $(".alert-danger").slideUp(500);
     });
 </script>
 <script src="{{ asset('admin_assets/assets/dist/js/chosen.jquery.min.js') }}" type="text/javascript"></script>

@@ -4,20 +4,8 @@
 @section('content')
 
 
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-8 align-self-center">
                     <h4 class="text-themecolor">Payment</h4>
@@ -33,13 +21,6 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -94,8 +75,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Payment Type :- <span class="required">*</span></label>
-                                                <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option disabled readonly="" selected>--Select your Payment Type--</option>
+                                                <select class="form-control custom-select" id="paymentType" name="paymentType" required>
+                                                    <option value="">--Select your Payment Type--</option>
                                                     <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
                                                     <option value="cheque">Cheque</option>
@@ -221,16 +202,7 @@
                 </div>
             </div>
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script type="text/javascript">
         $(document).ready(function () {

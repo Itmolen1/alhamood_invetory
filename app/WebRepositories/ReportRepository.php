@@ -716,11 +716,61 @@ class ReportRepository implements IReportRepositoryInterface
         return $url;
     }
 
+    public function ViewBankReport(Request $request)
+    {
+        if ($request->fromDate!='' && $request->toDate!='')
+        {
+            $all_bank_transactions=BankTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('bank_id','=',$request->bank_id);
+        }
+        else
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+        $row=json_decode(json_encode($all_bank_transactions), true);
+        $row=array_values($row);
+        if(empty($row))
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+        $title='Bank Name :-'.$request->bank_name.' | FROM '.date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+
+        $balance=0.0;
+        $debit_total=0.0;
+        $credit_total=0.0;
+
+        $html = '<table class="display" id="report_table"><thead>
+            <tr>
+                <th align="center">Date</th>
+                <th align="center">Type</th>
+                <th align="center">Ref#</th>
+                <th align="center">Debit</th>
+                <th align="center">Credit</th>
+                <th align="center">Closing</th>
+            </tr></thead><tbody>';
+        $last_closing=0.0;
+        for($i=0;$i<count($row);$i++)
+        {
+            $debit_total += $row[$i]['Debit'];
+            $credit_total += $row[$i]['Credit'];
+            $html .='<tr>
+                <td align="center">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                <td align="left">'.($row[$i]['Type']).'</td>
+                <td align="center">'.$row[$i]['updateDescription'].'</td>
+                <td align="right">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
+                <td align="right">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
+                <td align="right">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
+                </tr>';
+            $last_closing=$row[$i]['Differentiate'];
+        }
+        $html.='</tbody></table>';
+        return view('admin.report.html_viewer',compact('html','title'))->render();
+    }
+
     public function PrintCashReport(Request $request)
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $all_cash_transactions=CashTransaction::where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->get();
+            $all_cash_transactions=CashTransaction::where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->orderBy('createdDate')->get();
         }
         else
         {
@@ -846,6 +896,58 @@ class ReportRepository implements IReportRepositoryInterface
         //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
         $url=array('url'=>$url);
         return $url;
+    }
+
+    public function ViewCashReport(Request $request)
+    {
+        if ($request->fromDate!='' && $request->toDate!='')
+        {
+            $all_cash_transactions=CashTransaction::where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->orderBy('createdDate')->get();
+        }
+        else
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+
+        $row=json_decode(json_encode($all_cash_transactions), true);
+
+        if(empty($row))
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+
+        $title='CASH TRANSACTIONS : FROM '.date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+
+        $balance=0.0;
+        $debit_total=0.0;
+        $credit_total=0.0;
+        $html = '<table class="display" id="report_table"><thead>
+            <tr>
+                <th align="center">Date</th>
+                <th align="center">PAD/REF</th>
+                <th align="center">Details</th>
+                <th align="right">Debit</th>
+                <th align="right">Credit</th>
+                <th align="right">Closing</th>
+            </tr></thead><tbody>';
+        $last_closing=0.0;
+        for($i=0;$i<count($row);$i++)
+        {
+            $debit_total += $row[$i]['Debit'];
+            $credit_total += $row[$i]['Credit'];
+            $balance = $balance + $row[$i]['Differentiate'];
+                $html .='<tr>
+                <td align="center">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                <td align="center">'.($row[$i]['PadNumber']).'</td>
+                <td align="left">'.($row[$i]['Details']).'</td>
+                <td align="right">'.($row[$i]['Debit']).'</td>
+                <td align="right">'.($row[$i]['Credit']).'</td>
+                <td align="right">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
+                </tr>';
+            $last_closing=$row[$i]['Differentiate'];
+        }
+        $html.='</tbody></table>';
+        return view('admin.report.html_viewer',compact('html','title'))->render();
     }
 
     public function PrintExpenseReport(Request $request)
@@ -2187,6 +2289,72 @@ class ReportRepository implements IReportRepositoryInterface
         }
     }
 
+    public function ViewDetailSupplierStatement(Request $request)
+    {
+        //get daily sum of grandTotal from purchases for the given supplier from date to date
+        if ($request->fromDate!='' && $request->toDate!='')
+        {
+            $account_transactions=AccountTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id)->where('updateDescription','!=','hide');
+        }
+        else
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+        $row=json_decode(json_encode($account_transactions), true);
+        $row=array_values($row);
+        if(empty($row))
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+        else
+        {
+            $title='Supplier Name :-'.$request->supplier_name.' | FROM '.date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+            $html = '<table class="display" id="report_table"><thead>
+            <tr>
+                <th align="center">Date</th>
+                <th align="center">Ref#</th>
+                <th align="center">Description</th>
+                <th align="center">Debit</th>
+                <th align="center">Credit</th>
+                <th align="right">Closing</th>
+            </tr></thead><tbody>';
+
+            $sum_of_credit=0.0;
+            $sum_of_debit=0.0;
+            $closing_amount=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                if($i==0)
+                {
+                    $closing_amount=$closing_amount+$row[$i]['Differentiate'];
+                }
+                else
+                {
+                    if($row[$i]['Debit']==0)
+                    {
+                        $closing_amount+=$row[$i]['Credit'];
+                    }
+                    else
+                    {
+                        $closing_amount-=$row[$i]['Debit'];
+                    }
+                }
+                $sum_of_debit+=$row[$i]['Debit'];
+                $sum_of_credit+=$row[$i]['Credit'];
+                $html .='<tr>
+                    <td align="center" width="60">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                    <td align="left" width="70">'.$row[$i]['referenceNumber'].'</td>
+                    <td align="left" width="170">'.$row[$i]['Description'].'</td>
+                    <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
+                    <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
+                    <td align="right" width="90">'.(number_format($closing_amount,2,'.',',')).'</td>
+                    </tr>';
+            }
+            $html.='</tbody></table>';
+            return view('admin.report.html_viewer',compact('html','title'))->render();
+        }
+    }
+
     public function PrintDetailCustomerStatement(Request $request)
     {
         //get daily sum of grandTotal from sales for the given customer from date to date
@@ -2196,7 +2364,7 @@ class ReportRepository implements IReportRepositoryInterface
 
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $account_transactions=AccountTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('customer_id','=',$request->customer_id)->where('updateDescription','!=','hide');
+            $account_transactions=AccountTransaction::oldest('createdDate')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('customer_id','=',$request->customer_id)->where('updateDescription','!=','hide');
         }
         else
         {
@@ -2316,6 +2484,74 @@ class ReportRepository implements IReportRepositoryInterface
         else
         {
             return FALSE;
+        }
+    }
+
+    public function ViewDetailCustomerStatement(Request $request)
+    {
+        //get daily sum of grandTotal from sales for the given customer from date to date
+        if ($request->fromDate!='' && $request->toDate!='')
+        {
+            $account_transactions=AccountTransaction::oldest('createdDate')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('customer_id','=',$request->customer_id)->where('updateDescription','!=','hide');
+        }
+        else
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+        $row=json_decode(json_encode($account_transactions), true);
+        $row=array_values($row);
+        if(empty($row))
+        {
+            return redirect()->back()->with('error', 'NO RECORDS FOUND');
+        }
+        else
+        {
+            $title='Customer Name :-'.$request->customer_name.' | FROM '.date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+
+            $html = '<table class="display" id="report_table"><thead>
+            <tr>
+                <th align="center">Date</th>
+                <th align="center">Ref#</th>
+                <th align="center">Description</th>
+                <th align="center">Debit</th>
+                <th align="center">Credit</th>
+                <th align="right">Closing</th>
+            </tr></thead><tbody>';
+
+            $sum_of_credit=0.0;
+            $sum_of_debit=0.0;
+            $closing_amount=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                if($i==0)
+                {
+                    $closing_amount=$closing_amount+$row[$i]['Differentiate'];
+                }
+                else
+                {
+                    if($row[$i]['Debit']==0)
+                    {
+                        $closing_amount-=$row[$i]['Credit'];
+                    }
+                    else
+                    {
+                        $closing_amount+=$row[$i]['Debit'];
+                    }
+                }
+                $sum_of_debit+=$row[$i]['Debit'];
+                $sum_of_credit+=$row[$i]['Credit'];
+
+                $html .='<tr>
+                    <td align="center">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                    <td align="left">'.$row[$i]['referenceNumber'].'</td>
+                    <td align="left">'.$row[$i]['Description'].'</td>
+                    <td align="right">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
+                    <td align="right">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
+                    <td align="right">'.(number_format($closing_amount,2,'.',',')).'</td>
+                    </tr>';
+            }
+            $html.='</tbody></table>';
+            return view('admin.report.html_viewer',compact('html','title'))->render();
         }
     }
 

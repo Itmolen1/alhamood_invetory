@@ -24,6 +24,17 @@
                 </div>
             </div>
 
+            @if (Session::has('error'))
+                <div class="alert alert-danger">
+                    <ul>
+                        <li>{!! Session::get('error') !!}</li>
+                        {{Session::forget('error')}}
+                    </ul>
+                </div>
+            @endif
+
+            <form id="report_form" method="post" action="{{ route('ViewDetailSupplierStatement') }}" enctype="multipart/form-data">
+                @csrf
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -50,22 +61,37 @@
                                 @endif
                             @endforeach
                         </select>
+                        <input type="hidden" id="supplier_name" name="supplier_name">
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-info" type="submit"><i class="fa fa-plus-circle"></i> View Supplier Statement</button>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
                     <div class="form-group">
                         <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Supplier Statement</button></a>
                     </div>
                 </div>
             </div>
-
+            </form>
         </div>
     </div>
 
     <script>
+        $( document ).ready(function() {
+            var supplier_name=$( "#supplier_id option:selected" ).text();
+            $('#supplier_name').val(supplier_name);
+        });
+        $( "#supplier_id" ).change(function() {
+            var supplier_name=$( "#supplier_id option:selected" ).text();
+            $('#supplier_name').val(supplier_name);
+        });
         function get_pdf()
         {
             var fromDate = $('#fromDate').val();

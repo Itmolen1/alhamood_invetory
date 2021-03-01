@@ -18,14 +18,25 @@
                 </div>
             </div>
 
+            @if (Session::has('error'))
+                <div class="alert alert-danger">
+                    <ul>
+                        <li>{!! Session::get('error') !!}</li>
+                        {{Session::forget('error')}}
+                    </ul>
+                </div>
+            @endif
+
+            <form id="report_form" method="post" action="{{ route('ViewBankReport') }}" enctype="multipart/form-data">
+                @csrf
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label class="control-label">From date</label>
                         <input type="date" value="{{ date('Y-m-d') }}" id="fromDate" name="fromDate" class="form-control" placeholder="dd/mm/yyyy" required>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label class="control-label">To date</label>
                         <input type="date" value="{{ date('Y-m-d') }}" id="toDate" name="toDate" class="form-control" placeholder="dd/mm/yyyy" required>
@@ -44,22 +55,37 @@
                                 @endif
                             @endforeach
                         </select>
+                        <input type="hidden" id="bank_name" name="bank_name">
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-info" type="submit"><i class="fa fa-plus-circle"></i> View Bank Report</button>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
                     <div class="form-group">
                         <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Bank Report</button></a>
                     </div>
                 </div>
             </div>
-
+            </form>
         </div>
     </div>
 
     <script>
+        $( document ).ready(function() {
+            var bank_name=$( "#bank_id option:selected" ).text();
+            $('#bank_name').val(bank_name);
+        });
+        $( "#bank_id" ).change(function() {
+            var bank_name=$( "#bank_id option:selected" ).text();
+            $('#bank_name').val(bank_name);
+        });
         function get_pdf()
         {
             var fromDate = $('#fromDate').val();

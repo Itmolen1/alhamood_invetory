@@ -24,6 +24,17 @@
                 </div>
             </div>
 
+            @if (Session::has('error'))
+                <div class="alert alert-danger">
+                    <ul>
+                        <li>{!! Session::get('error') !!}</li>
+                        {{Session::forget('error')}}
+                    </ul>
+                </div>
+            @endif
+
+            <form id="report_form" method="post" action="{{ route('ViewDetailCustomerStatement') }}" enctype="multipart/form-data">
+                @csrf
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -50,22 +61,36 @@
                                 @endif
                             @endforeach
                         </select>
+                        <input type="hidden" id="customer_name" name="customer_name">
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-info" type="submit"><i class="fa fa-plus-circle"></i> View Customer Statement</button>
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <div class="form-group">
                         <a href="javascript:void(0)" onclick="return get_pdf()"><button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Get Customer Statement</button></a>
                     </div>
                 </div>
             </div>
-
+            </form>
         </div>
     </div>
 
     <script>
+        $( document ).ready(function() {
+            var customer_name=$( "#customer_id option:selected" ).text();
+            $('#customer_name').val(customer_name);
+        });
+        $( "#customer_id" ).change(function() {
+            var customer_name=$( "#customer_id option:selected" ).text();
+            $('#customer_name').val(customer_name);
+        });
         function get_pdf()
         {
             var fromDate = $('#fromDate').val();
