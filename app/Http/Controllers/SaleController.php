@@ -47,6 +47,11 @@ class SaleController extends Controller
         return $this->saleRepository->update($request, $Id);
     }
 
+    public function all_sales(Request $request)
+    {
+        return $this->saleRepository->all_sales($request);
+    }
+
     public function destroy(Sale $sale)
     {
         //

@@ -22,9 +22,7 @@ class   SaleRepository implements ISaleRepositoryInterface
         if(request()->ajax())
         {
             return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->where('company_id',session('company_id'))->where('isActive',1)->latest()->get())
-
                 ->addColumn('action', function ($data) {
-
                     $button = '<a href="'.route('sales.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
                     return $button;
                 })
@@ -40,9 +38,9 @@ class   SaleRepository implements ISaleRepositoryInterface
                  ->addColumn('registrationNumber', function($data) {
                         return $data->sale_details[0]->vehicle->registrationNumber ?? "No Number";
                     })
-                 ->addColumn('Product', function($data) {
-                        return $data->sale_details[0]->product->Name ?? "No product";
-                    })
+//                 ->addColumn('Product', function($data) {
+//                        return $data->sale_details[0]->product->Name ?? "No product";
+//                    })
                   ->addColumn('Quantity', function($data) {
                         return $data->sale_details[0]->Quantity ?? "No Quantity";
                     })
@@ -57,7 +55,6 @@ class   SaleRepository implements ISaleRepositoryInterface
                     'PadNumber',
                     'customer',
                     'registrationNumber',
-                    'Product',
                     'Quantity',
                     'Price'
                     ])
@@ -66,6 +63,82 @@ class   SaleRepository implements ISaleRepositoryInterface
         return view('admin.sale.index');
     }
 
+    public function all_sales(Request $request)
+    {
+        $columns = array(
+            0 =>'id',
+            1 =>'SaleDate',
+            2=> 'customer_id',
+            3=> 'id',
+        );
+
+        $totalData = Sale::where('company_id',session('company_id'))->where('isActive',1)->count();
+
+        $totalFiltered = $totalData;
+
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if(empty($request->input('search.value')))
+        {
+            $sales = Sale::with('sale_details.product','sale_details.vehicle','customer')->where('company_id',session('company_id'))->where('isActive',1)->offset($start)
+                ->limit($limit)
+                ->orderBy($order,$dir)
+                ->get();
+            //echo "<pre>";print_r($sales);die;
+        }
+        else {
+            $search = $request->input('search.value');
+
+            $sales =  Sale::with('sale_details.product','sale_details.vehicle',)->where('company_id',session('company_id'))->where('isActive',1)->where('id','LIKE',"%{$search}%")
+                ->orWhere('customer_id', 'LIKE',"%{$search}%")
+                ->offset($start)
+                ->limit($limit)
+                ->orderBy($order,$dir)
+                ->get();
+
+//            $sales= DB::table('sales as s')->select('s.id','s.customer_id','s.SaleDate','s.totalVat','s.grandTotal','s.paidBalance','s.remainingBalance','s.isActive','s.totalVat','s.totalVat','s.totalVat','s.company_id','c.Name','sale_details.PadNumber','sale_details.deleted_at','sale_details.id as detail_id')->join('customers as c', 'c.id', '=', 's.customer_id')->leftJoin('sale_details', 's.id', '=', 'sale_details.id')->where('s.company_id',session('company_id'))->where('s.isActive',1)->whereNotNull('sale_details.deleted_at')->where('c.Name','LIKE',"%{$search}%")->orWhere('sale_details.PadNumber','LIKE',"%{$search}%")->offset($start)
+//                ->limit($limit)->orderBy($order,$dir)->get();
+            //echo "<pre>";print_r($sales);die;
+
+            $totalFiltered = Sale::where('id','LIKE',"%{$search}%")
+                ->orWhere('customer_id', 'LIKE',"%{$search}%")
+                ->count();
+        }
+
+        $data = array();
+        if(!empty($sales))
+        {
+            foreach ($sales as $sale)
+            {
+                $edit =  route('sales.edit',$sale->id);
+
+                $nestedData['id'] = $sale->id;
+                $nestedData['SaleDate'] = $sale->SaleDate;
+                $nestedData['PadNumber'] = $sale->sale_details[0]->PadNumber ?? "No Pad";
+                $nestedData['customer'] = $sale->customer->Name ?? "No Name";
+                $nestedData['registrationNumber'] = $sale->sale_details[0]->vehicle->registrationNumber ?? "No Number";
+                $nestedData['Quantity'] = $sale->sale_details[0]->Quantity ?? 0.00;
+                $nestedData['Price'] = $sale->sale_details[0]->Price ?? 0.00;
+                $nestedData['totalVat'] = $sale->totalVat ?? 0.00;
+                $nestedData['grandTotal'] = $sale->grandTotal ?? 0.00;
+                $nestedData['paidBalance'] = $sale->paidBalance ?? 0.00;
+                $nestedData['action'] = '<a href="'.route('sales.edit', $sale->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+
+        echo json_encode($json_data);
+    }
 
     public function create()
     {

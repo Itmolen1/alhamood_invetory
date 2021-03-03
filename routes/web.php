@@ -79,6 +79,7 @@ route::resource('employees','EmployeeController');
 ////////////// sales /////////////////////
 route::resource('sales','SaleController');
 route::post('salesUpdate/{Id}','SaleController@salesUpdate');
+Route::post('all_sales', 'SaleController@all_sales' )->name('all_sales');
 route::get('get_data','SaleController@get_data')->name('get_data');
 route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehicle');
 route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
