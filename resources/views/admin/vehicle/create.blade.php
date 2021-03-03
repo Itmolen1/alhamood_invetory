@@ -60,7 +60,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Customer :- <span class="required">*</span></label>
-                                                <select class="form-control custom-select customer_id select2 chosen-select" name="customer_id" id="customer_id" required>
+                                                <select class="form-control custom-select customer_id select2 chosen-select" name="customer_id" id="customer_id" required autofocus tabindex="1">
                                                     <option value="">--Select your Customer--</option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
@@ -71,7 +71,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Registration Number :- <span class="required">*</span></label>
-                                                <input type="text"  id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number" required maxlength="15" autocomplete="off">
+                                                <input type="text"  id="registrationNumber" name="registrationNumber" class="form-control" placeholder="Enter Vehicle Registration Number" required maxlength="15" autocomplete="off" tabindex="2">
                                                 <span class="text-danger" id="already_exist">Already Exists</span>
                                                 @if ($errors->has('registrationNumber'))
                                                     <span class="text-danger">{{ $errors->first('registrationNumber') }}</span>
@@ -92,7 +92,7 @@
                                 </div>
 
                                 <div class="form-actions">
-                                    <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Save</button>
+                                    <button type="submit" class="btn btn-success" tabindex="3"> <i class="fa fa-check"></i> Save</button>
                                     <button type="button" class="btn btn-inverse">Cancel</button>
                                 </div>
                             </form>
@@ -111,7 +111,7 @@
                 var registrationNumber=0;
                 customer_id = $('#customer_id').val();
                 registrationNumber = $('#registrationNumber').val();
-                if (supplier_id > 0)
+                if (customer_id > 0)
                 {
                     var data={customer_id:customer_id,registrationNumber:registrationNumber};
                     $.ajaxSetup({

@@ -71,7 +71,7 @@ class   SaleRepository implements ISaleRepositoryInterface
     {
         $saleNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $customers = Customer::with('customer_prices')->orderBy('id', 'desc')->get();
+        $customers = Customer::with('customer_prices')->where('company_id',session('company_id'))->orderBy('id', 'desc')->get();
         $products = Product::all();
         $salesRecords = Sale::with('sale_details.vehicle','customer')->where('company_id',session('company_id'))->orderBy('id', 'desc')->skip(0)->take(3)->get();
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','PadNumber'));
@@ -831,6 +831,91 @@ class   SaleRepository implements ISaleRepositoryInterface
                         // also hide previous entry end
                         // reverse entry done
 
+                        //start if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+                        $description_string1='FullCashSales|'.$Id;
+                        $description_string2='PartialCashSales|'.$Id;
+                        $previous_probable_cash_entry = AccountTransaction::where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string1)->orWhere('Description','like',$description_string2)->get()->last();
+
+                        if($previous_probable_cash_entry)
+                        {
+                            $previously_credited = $previous_probable_cash_entry->Credit;
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            if($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string1;
+                            }
+                            elseif($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string2;
+                            }
+                            else
+                            {
+                                $new_desc_string='';
+                            }
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->Data['SaleDate'],
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>$new_desc_string,
+                                    'referenceNumber'=>$previous_probable_cash_entry->referenceNumber,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_probable_cash_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+
+                            $description_string1='CashSales|'.$Id;
+                            $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string1)->get()->first();
+                            if($previous_probable_cash_entry)
+                            {
+                                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->Data['SaleDate'];
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSalesReversal|'.$Id;
+                                $cash_transaction->Credit=$previously_credited;
+                                $cash_transaction->Debit=0.00;
+                                $cash_transaction->Differentiate=$difference-$previously_credited;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+
+                            // if cash paid is same need to make new cash entry here
+                        }
+                        //end if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+
+                        if($request->Data['paidBalance']!=0)
+                        {
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id,])->get();
+                            if($cashTransaction)
+                            {
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->Data['SaleDate'];
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSales|'.$Id;
+                                $cash_transaction->Credit=0.00;
+                                $cash_transaction->Debit=$request->Data['paidBalance'];
+                                $cash_transaction->Differentiate=$difference+$request->Data['paidBalance'];
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+                        }
+
                         /* new entry start */
                         // make new entry then check account balance
                         $accountTransaction = AccountTransaction::where(['customer_id'=> $request->Data['customer_id'],])->get();
@@ -1419,6 +1504,12 @@ class   SaleRepository implements ISaleRepositoryInterface
                             }
                         }
                         /*new entry with right grand total*/
+                    }
+
+                    if($request->Data['paidBalance']!=$sold->paidBalance)
+                    {
+                        //hello
+                        //meaning only paid cash is amount is changing
                     }
                 }
                 elseif($sold->IsPaid==0 && $sold->IsPartialPaid==0)
@@ -2085,7 +2176,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     'createdDate' => $request->Data['SaleDate'],
                                     'user_id' => $user_id,
                                     'company_id' => $company_id,
-                                    'Description'=>'FullCashSales|'.$$Id,
+                                    'Description'=>'FullCashSales|'.$Id,
                                     'referenceNumber'=>'FullCashSales#'.$request->Data['orders'][0]['PadNumber'],
                                 ]);
                             }
@@ -2885,18 +2976,35 @@ class   SaleRepository implements ISaleRepositoryInterface
 //        {
 //            $newPad = ($lastPad + 1);
 //        }
+//        return $newPad;$PadNumber = new SaleDetail();
+//        $lastPad = $PadNumber->where('company_id',session('company_id'))->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        if(!is_numeric($lastPad))
+//        {
+//            $newPad=1;
+//        }
+//        else
+//        {
+//            $newPad = ($lastPad + 1);
+//        }
 //        return $newPad;
 
         // pad number according to max sales id
         $max_sales_id = SaleDetail::where('company_id',session('company_id'))->find(DB::table('sale_details')->max('id'));
-        $lastPad = $max_sales_id->PadNumber;
-        if(!is_numeric($lastPad))
+        if($max_sales_id)
         {
-            $newPad=1;
+            $lastPad = $max_sales_id->PadNumber;
+            if(!is_numeric($lastPad))
+            {
+                $newPad=1;
+            }
+            else
+            {
+                $newPad = ($lastPad + 1);
+            }
         }
         else
         {
-            $newPad = ($lastPad + 1);
+            $newPad=1;
         }
         return $newPad;
     }

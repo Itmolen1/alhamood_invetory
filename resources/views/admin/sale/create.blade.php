@@ -84,11 +84,11 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="date" name="createdDate" value="{{ date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="date" name="createdDate" value="{{ date('2021-03-01') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
                                                 <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
-                                                        <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;">
+                                                        <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;" autofocus>
                                                             <option readonly="" disabled selected>--Customer--</option>
                                                             @foreach($customers as $customer)
                                                                 <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
@@ -112,7 +112,7 @@
                                                     </div>
                                                 </td>
 
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="Quantity" class="quantity form-control">
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)"  placeholder="Quantity" class="quantity form-control" id="cur_qty" autocomplete="off">
                                                     <input type="hidden" placeholder="Total" class="total form-control">
                                                     <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                                 </td>
@@ -188,23 +188,23 @@
                                         </div>
 
                                         <div class="col-md-2">
-                                            <p>Total Vat: <input type="text" value="0.00" class="form-control TotalVat" disabled="">
+                                            <p>Total Vat: <input type="text" value="0.00" class="form-control TotalVat" disabled="" tabindex="-1">
                                                 <input type="hidden" value="0.00" class="form-control TotalVat">
                                             </p>
 
                                             <p>Account Closing : <input type="text" value="0.00" class="form-control closing" id="closing" readonly>
-                                                <input type="hidden" value="0.00" class="form-control closing">
+                                                <input type="hidden" value="0.00" class="form-control closing" tabindex="-1">
                                             </p>
 
                                             <p>Remaining Balance: <input type="text" value="0.00" id="balance" class="form-control balance" disabled>
-                                                <input type="hidden" value="0.00" id="balance" class="form-control balance">
+                                                <input type="hidden" value="0.00" id="balance" class="form-control balance" tabindex="-1">
                                             </p>
                                         </div>
 
                                         <div class="col-md-2">
 
-                                            <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled>
-                                                <input type="hidden" value="0.00" class="form-control GTotal" >
+                                            <p>Grand Total: <input type="text" value="0.00" class="form-control GTotal" disabled="">
+                                                <input type="hidden" value="0.00" class="form-control GTotal" tabindex="-1" >
                                             </p>
 
                                             <p>Cash Paid: <input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" class="form-control cashPaid"></p>
@@ -508,6 +508,16 @@
             CountTotalVat();
         }
         ////////////////////////// end of products select //////////
+        });
+    </script>
+    <script>
+        $( "#customer_id" ).change(function() {
+            var customer_name=$( "#customer_id option:selected" ).text();
+
+            if(customer_name==='CASH')
+            {
+                $('.quantity').focus();
+            }
         });
     </script>
     <script src="{{ asset('admin_assets/assets/dist/invoice/invoice.js') }}"></script>

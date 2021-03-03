@@ -247,6 +247,11 @@
         var remaining_balance=grand_total+closing-cash_paid;
         $('.balance').val((remaining_balance.toFixed(2)));
 
+        if(cash_paid>grand_total)
+        {
+            $('.cashPaid').val((grand_total.toFixed(2)));
+        }
+
         if(closing==0.00 || closing==0 || closing==0.0)
         {
             //$('.cashPaid').val(parseFloat(0).toFixed(2));

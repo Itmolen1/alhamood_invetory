@@ -50,7 +50,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
 
     public function create()
     {
-        $customers = Customer::all();
+        $customers = Customer::where('company_id',session('company_id'))->get();
         return view('admin.vehicle.create',compact('customers'));
     }
 
@@ -67,7 +67,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
             'Description' =>$vehicleRequest->Description,
         ];
         Vehicle::create($vehicle);
-        return redirect()->route('vehicles.index');
+        return redirect()->route('vehicles.create');
     }
 
     public function update(Request $request, $Id)
@@ -91,7 +91,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
 
     public function edit($Id)
     {
-        $customers = Customer::all();
+        $customers = Customer::where('company_id',session('company_id'))->get();
         $vehicle = Vehicle::with('customer')->find($Id);
         return view('admin.vehicle.edit',compact('customers','vehicle'));
     }

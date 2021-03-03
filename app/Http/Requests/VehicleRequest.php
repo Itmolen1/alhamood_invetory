@@ -14,7 +14,7 @@ class VehicleRequest extends FormRequest
     public function rules()
     {
         return [
-            'registrationNumber' => 'required|unique:vehicles'
+            'registrationNumber' => 'required'
         ];
     }
 
