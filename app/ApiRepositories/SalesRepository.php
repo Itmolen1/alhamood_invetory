@@ -231,7 +231,7 @@ class SalesRepository implements ISalesRepositoryInterface
         }
         ////////////////// end of account section ////////////////
 
-        $Response = SalesResource::collection(Sale::where('id',$sales->id)->with('user','customer','sale_details')->get());
+        $Response = SalesResource::collection(Sale::where('id',$sales->id)->with(['user','customer','sale_details'])->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
     }
@@ -441,15 +441,41 @@ class SalesRepository implements ISalesRepositoryInterface
 
     public function BaseList()
     {
-        return array('pad_number'=>$this->PadNumber(),'products'=>Product::select('id','Name')->with('api_units')->orderBy('id','desc')->get(),'customer'=>Customer::select('id','Name')->with('customer_prices','vehicles')->orderBy('id','desc')->get());
+        $userId = Auth::id();
+        return array('pad_number'=>$this->PadNumber(),'products'=>Product::select('id','Name')->with(['api_units'=>function($q){$q->select('id','Name','product_id');}])->orderBy('id','desc')->get(),'customer'=>Customer::select('id','Name')->with(['customer_prices'=>function($q){$q->select('id','customer_id','Rate','VAT','customerLimit');},'vehicles'=>function($q){$q->select('id','registrationNumber','customer_id');}])->where('company_id',Str::getCompany($userId))->orderBy('id','desc')->get());
     }
 
     public function PadNumber()
     {
-        $PadNumber = new SaleDetail();
-        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
-        $newPad = ($lastPad + 1);
-        return $newPad;
+//        $PadNumber = new SaleDetail();
+//        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
+//        $newPad = ($lastPad + 1);
+//        return $newPad;
+
+        $data=array();
+        $max_sales_id = SaleDetail::where('company_id',session('company_id'))->find(DB::table('sale_details')->max('id'));
+        //echo "<pre>";print_r($max_sales_id);die;
+        if($max_sales_id)
+        {
+            $lastPad = $max_sales_id->PadNumber;
+            $lastDate = $max_sales_id->createdDate;
+            if(!is_numeric($lastPad))
+            {
+                $data['pad_no']=1;
+                $data['last_date']=date('Y-m-d');
+            }
+            else
+            {
+                $data['pad_no']=$lastPad + 1;
+                $data['last_date']=$lastDate;
+            }
+        }
+        else
+        {
+            $data['pad_no']=1;
+            $data['last_date']=date('Y-m-d');
+        }
+        return $data;
     }
 
     public function delete(Request $request, $Id)

@@ -92,7 +92,41 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
             $payment->save();
             $payment = $payment->id;
             $amount = 0;
+            $total_i_have=$request->Data['paidAmount'];
             foreach($request->Data['orders'] as $detail)
+            {
+                $this_purchase=Purchase::where('id',$detail['purchase_id'])->get()->first();
+                if($this_purchase->IsPaid==0 AND $this_purchase->remainingBalance!=0)
+                {
+                    $total_you_need = $this_purchase->remainingBalance;
+                    $still_payable_to_you=0;
+                    $total_giving_to_you=0;
+                    $isPartialPaid = 0;
+                    if ($total_i_have >= $total_you_need)
+                    {
+                        $total_i_have = $total_i_have - $total_you_need;
+                        $total_giving_to_you=$total_you_need;
+                    }
+                    else
+                    {
+                        $total_giving_to_you=$total_i_have;
+                        $total_i_have = $total_i_have - $total_giving_to_you;
+                    }
+                    SupplierPaymentDetail::create([
+                        "amountPaid" => $total_giving_to_you,
+                        "purchase_id" => $detail['purchase_id'],
+                        "company_id" => $company_id,
+                        "user_id" => $user_id,
+                        "supplier_payment_id" => $payment,
+                        'createdDate' => $request->Data['TransferDate'],
+                    ]);
+                    if($total_i_have<=0)
+                    {
+                        break;
+                    }
+                }
+            }
+            /*foreach($request->Data['orders'] as $detail)
             {
                 $amount += $detail['amountPaid'];
 
@@ -103,12 +137,10 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     $totalAmount = $detail['amountPaid'];
                 }
                 elseif($amount >= $request->Data['paidAmount']){
-//                    if ($detail['amountPaid'] > $request->Data['paidAmount']) {
                         $isPaid = false;
                         $isPartialPaid = true;
                         $totalAmount1 = $amount - $request->Data['paidAmount'];
                         $totalAmount = $detail['amountPaid'] - $totalAmount1;
-//                    }
                 }
 
                 $data =  SupplierPaymentDetail::create([
@@ -119,7 +151,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     "supplier_payment_id"      => $payment,
                     'createdDate' => date('Y-m-d')
                 ]);
-            }
+            }*/
             return Response()->json($amount);
         }
     }

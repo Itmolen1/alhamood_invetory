@@ -8,11 +8,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SupplierAdvanceDetail extends Model
 {
-        use HasFactory;
-        use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
+    protected $guarded=[];
+    protected $primaryKey = 'id';
+    protected $table = 'supplier_advance_details';
 
-        protected $guarded=[];
-        protected $primaryKey = '';
-        protected $table = '';
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User','user_id','id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Company','company_id','id');
+    }
+
+    public function supplier_advance()
+    {
+        return $this->belongsTo('App\Models\SupplierAdvance','supplier_advances_id','id');
+    }
 }

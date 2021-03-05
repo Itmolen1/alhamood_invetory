@@ -14,9 +14,8 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                            <li class="breadcrumb-item active">New Payment</li>
+                            <li class="breadcrumb-item active">Supplier Advance</li>
                         </ol>
-                        <a href="" title=""><button type="button" class="btn btn-info d-lg-block m-l-15"><i class="fa fa-eye"></i> View List</button></a>
                     </div>
                 </div>
             </div>
@@ -27,15 +26,15 @@
                         <div class="card-body">
                             <form action="#">
                                 <div class="form-body">
-                                    <h3 class="card-title">Distribute CUSTOMER Advance Payment</h3>
+                                    <h3 class="card-title">Distribute SUPPLIER Advance Payment</h3>
                                     <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <div class="row">
-                                        <label class="mt-2">Customer Name :- <span class="required">*</span></label>
+                                        <label class="mt-2">Supplier Name :- <span class="required">*</span></label>
                                         <div class="col-md-9">
                                             <div class="form-group">
-                                                <input type="text" id="customer_name" name="customer_name" class="form-control" value="{{$customerAdvance->customer->Name}}" readonly>
-                                                <input type="hidden" id="customer_id" name="customer_id" value="{{$customerAdvance->customer->id}}">
-                                                <input type="hidden" id="customer_advance_id" name="customer_advance_id" value="{{$customerAdvance->id}}">
+                                                <input type="text" id="supplier_name" name="supplier_name" class="form-control" value="{{$supplierAdvance->supplier->Name}}" readonly>
+                                                <input type="hidden" id="supplier_id" name="supplier_id" value="{{$supplierAdvance->supplier->id}}">
+                                                <input type="hidden" id="supplier_advance_id" name="supplier_advance_id" value="{{$supplierAdvance->id}}">
                                             </div>
                                         </div>
                                         <div class="col-md-1 all">
@@ -48,7 +47,6 @@
                                             <thead>
                                             <tr>
                                                 <th>Invoice</th>
-                                                <th>Vehicle</th>
                                                 <th>Total</th>
                                                 <th>Paid</th>
                                                 <th>Balance</th>
@@ -56,7 +54,7 @@
                                                 <th width="70">Action</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="sales" style="font-size: 12px">
+                                            <tbody id="purchases" style="font-size: 12px">
                                             <tr>
                                                 <td colspan="7" align="center" style="font-size: 16px !important;"> Please select customer for sale records</td>
                                             </tr>
@@ -73,7 +71,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" class="form-control"  name="" id="" value="{{$customerAdvance->Amount}}"  disabled>
+                                                <input type="text" class="form-control"  name="" id="" value="{{$supplierAdvance->Amount}}"  disabled>
                                             </div>
                                         </div>
 
@@ -153,46 +151,35 @@
     <script>
         $(document).ready(function (){
             var Id = 0;
-            Id = $('#customer_id').val();
+            Id = $('#supplier_id').val();
             if (Id > 0)
             {
                 $.ajax({
-                    url: "{{ URL('customerSaleDetails') }}/" + Id,
+                    url: "{{ URL('supplierSaleDetails') }}/" + Id,
                     type: "get",
                     dataType: "json",
                     success: function (result) {
                         if (result !== "Failed") {
-                            $("#sales").html('');
-                            var salesDetails = '';
+                            $("#purchases").html('');
+                            var Details = '';
                             if (result.length > 0)
                             {
-                                for (var i = 0; i < result.length; i++)
-                                {
-                                    var registrationNumber='';
-                                    if(result[i].customer.vehicles.length===0)
-                                    {
-                                        registrationNumber='initial';
-                                    }
-                                    else
-                                    {
-                                        registrationNumber=result[i].customer.vehicles[0].registrationNumber;
-                                    }
-                                    salesDetails += '<tr>';
-                                    salesDetails += '<td>' + result[i].sale_details[0].PadNumber + '</td>';
-                                    salesDetails += '<td>' + registrationNumber + '</td>';
-                                    salesDetails += '<td>' + result[i].grandTotal + '</td>';
-                                    salesDetails += '<td>' + result[i].paidBalance + '</td>';
-                                    salesDetails += '<td>' + result[i].remainingBalance + '</td>';
-                                    salesDetails += '<td>' + result[i].sale_details[0].createdDate + '<input type="hidden" class="sale_id" name="sale_id" value="' + result[i].id + '"/></td>';
+                                for (var i = 0; i < result.length; i++) {
+                                    Details += '<tr>';
+                                    Details += '<td>' + result[i].purchase_details[0].PadNumber + '</td>';
+                                    Details += '<td>' + result[i].grandTotal + '</td>';
+                                    Details += '<td>' + result[i].paidBalance + '</td>';
+                                    Details += '<td>' + result[i].remainingBalance + '</td>';
+                                    Details += '<td>' + result[i].purchase_details[0].createdDate + '<input type="hidden" class="purchase_id" name="purchase_id" value="' + result[i].id + '"/></td>';
                                     var value = result[i].grandTotal - result[i].paidBalance;
-                                    salesDetails += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + value + '"/> </td>';
+                                    Details += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + parseFloat(value).toFixed(2) + '"/> </td>';
                                 }
                             }
                             else {
-                                salesDetails += '<td value="0" align="center" style="font-size: 16px" colspan="7">No Data</td>';
-                                salesDetails += '</tr>';
+                                Details += '<td value="0" align="center" style="font-size: 16px" colspan="7">No Data</td>';
+                                Details += '</tr>';
                             }
-                            $("#sales").append(salesDetails);
+                            $("#purchases").append(Details);
                         } else {
                             alert(result);
                         }
@@ -204,10 +191,8 @@
             }
         });
 
-
         $(document).ready(function () {
             $('#submit').click(function (event) {
-
                 $('#submit').text('please wait...');
                 $('#submit').attr('disabled',true);
 
@@ -215,16 +200,16 @@
                 $('.singlechkbox:checked').each(function(){
                     var currentRow = $(this).closest("tr");
                     chekedValue =
-                        {
-                            amountPaid: currentRow.find('.singlechkbox').val(),
-                            sale_id: currentRow.find('.sale_id').val(),
-                        };
+                    {
+                        amountPaid: currentRow.find('.singlechkbox').val(),
+                        purchase_id: currentRow.find('.purchase_id').val(),
+                    };
                     insert.push(chekedValue);
                 })
 
                 let details = {
-                    'customer_id': $('#customer_id').val(),
-                    'customer_advance_id': $('#customer_advance_id').val(),
+                    'supplier_id': $('#supplier_id').val(),
+                    'supplier_advance_id': $('#supplier_advance_id').val(),
                     'totalAmount': $('#price').val(),
                     'total_selected_amount': $('#total_selected_amount').val(),
                     orders: insert,
@@ -236,17 +221,15 @@
                         }
                     });
                     var Datas = {Data: details};
-                    console.log(Datas);
                     $.ajax({
-                        url: "{{ route('customer_advances_save_disburse') }}",
+                        url: "{{ route('supplier_advances_save_disburse') }}",
                         type: "post",
                         data: Datas,
                         success: function (result) {
                             if (result !== "Failed") {
                                 details = [];
                                 alert("Data Inserted Successfully");
-                                //window.location.href = "{{ route('payment_receives.index') }}";
-
+                                window.location.href = "{{ route('supplier_advances.index') }}";
                             } else {
                                 alert(result);
                             }

@@ -3,20 +3,10 @@
 
 @section('content')
 
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <!-- <h4 class="text-themecolor">diensten</h4> -->
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -28,12 +18,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
+
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -45,73 +30,26 @@
                                 <table id="supplier_advances_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
+                                        <th>SR#</th>
                                         <th>Supplier Name</th>
                                         <th>Amount</th>
+                                        <th>Disbursed</th>
+                                        <th>Remaining</th>
                                         <th>Payment Type</th>
                                         <th>Register Date</th>
                                         <th>Transfer Date</th>
                                         <th>Push Advance</th>
-{{--                                        <th>Action</th>--}}
+                                        <th>Disburse</th>
                                     </tr>
                                     </thead>
-
-{{--                                    <tbody>--}}
-{{--                                    @if(!empty($supplierAdvances))--}}
-{{--                                    @foreach($supplierAdvances as $advance)--}}
-{{--                                        <tr>--}}
-{{--                                            <td>{{ $advance->supplier->Name ?? '' }}</td>--}}
-{{--                                            <td>{{ $advance->Amount }}</td>--}}
-{{--                                            <td>{{ $advance->paymentType }}</td>--}}
-{{--                                            <td>{{ $advance->registerDate }}</td>--}}
-{{--                                            <td>{{ $advance->TransferDate }}</td>--}}
-
-{{--                                            <td>--}}
-{{--                                                @if($advance->isPushed == false)--}}
-{{--                                                    <form action="{{ url('supplier_advances_push',$advance->id) }}" method="POST">--}}
-{{--                                                        @csrf--}}
-{{--                                                        @method('PUT')--}}
-{{--                                                        <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to push?')"><i style="font-size: 20px" class="fa fa-arrow-circle-o-up"></i> Push</button>--}}
-{{--                                                    </form>--}}
-{{--                                                @else--}}
-{{--                                                    <button type="submit" class=" btn btn-default btn-sm" ><i style="font-size: 20px" class="fa fa-external-link"> Pushed</i> </button>--}}
-{{--                                                @endif--}}
-{{--                                            </td>--}}
-{{--                                            <td>--}}
-{{--                                                @if($advance->isPushed == false)--}}
-{{--                                                    <form action="{{ route('supplier_advances.destroy',$advance->id) }}" method="POST">--}}
-{{--                                                        @csrf--}}
-{{--                                                        @method('DELETE')--}}
-{{--                                                        <a href="{{ route('supplier_advances.edit', $advance->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>--}}
-{{--                                                        <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>--}}
-{{--                                                    </form>--}}
-{{--                                                @else--}}
-{{--                                                    <button type="submit" class=" btn btn-default btn-sm" ><i style="font-size: 20px" class="fa fa-ban"> No Action</i> </button>--}}
-{{--                                                @endif--}}
-{{--                                            </td>--}}
-{{--                                        </tr>--}}
-{{--                                    @endforeach--}}
-{{--                                    @endif--}}
-{{--                                    </tbody>--}}
                                 </table>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End PAge Content -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
 
     <div id="confirmModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -142,12 +80,25 @@
                 },
                 columns:[
                     {
+                        data: 'id',
+                        name: 'id',
+                        visible: false
+                    },
+                    {
                         data: 'supplier',
                         name: 'supplier'
                     },
                     {
                         data: 'Amount',
                         name: 'Amount'
+                    },
+                    {
+                        data: 'spentBalance',
+                        name: 'spentBalance'
+                    },
+                    {
+                        data: 'remainingBalance',
+                        name: 'remainingBalance'
                     },
                     {
                         data: 'paymentType',
@@ -166,12 +117,13 @@
                         name: 'push',
                         orderable: false
                     },
-                    // {
-                    //     data: 'action',
-                    //     name: 'action',
-                    //     orderable: false
-                    // },
-                ]
+                    {
+                        data: 'disburse',
+                        name: 'disburse',
+                        orderable: false
+                    },
+                ],
+                order: [[ 0, "desc" ]]
             });
         });
     </script>
@@ -184,7 +136,4 @@
             }
         }
     </script>
-
-
-
 @endsection

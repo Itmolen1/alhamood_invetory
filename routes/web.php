@@ -38,6 +38,8 @@ route::get('customer_advances_get_disburse/{Id}','CustomerAdvanceController@cust
 route::POST('customer_advances_save_disburse','CustomerAdvanceController@customer_advances_save_disburse')->name('customer_advances_save_disburse');
 route::resource('supplier_advances','SupplierAdvanceController');
 route::PUT('supplier_advances_push/{Id}','SupplierAdvanceController@supplier_advances_push');
+route::get('supplier_advances_get_disburse/{Id}','SupplierAdvanceController@supplier_advances_get_disburse')->name('supplier_advances_get_disburse');
+route::POST('supplier_advances_save_disburse','SupplierAdvanceController@supplier_advances_save_disburse')->name('supplier_advances_save_disburse');
 
 route::resource('vehicles','VehicleController');
 route::get('getVehicleList','VehicleController@getVehicleList')->name('getVehicleList');

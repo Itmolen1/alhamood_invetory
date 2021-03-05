@@ -1,6 +1,7 @@
 <?php
 ini_set('max_execution_time', 18000000);
 ini_set('memory_limit', -1);
+date_default_timezone_set('Asia/Dubai');
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 

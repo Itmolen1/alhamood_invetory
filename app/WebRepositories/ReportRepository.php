@@ -956,15 +956,15 @@ class ReportRepository implements IReportRepositoryInterface
         {
             if($request->filter=='with')
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00)->orderBy('expenseDate')->get());
             }
             elseif($request->filter=='without')
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '==', 0.00)->orderBy('expenseDate')->get());
             }
             else
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->get()->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate));
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->orderBy('expenseDate')->get());
             }
         }
         else
@@ -1027,7 +1027,7 @@ class ReportRepository implements IReportRepositoryInterface
                     <th align="center" width="140">Vendor</th>
                     <th align="center" width="70">TRN</th>
                     <th align="center" width="40">Taxable</th>
-                    <th align="center" width="25">VAT</th>
+                    <th align="center" width="35">VAT</th>
                     <th align="center" width="45">NetTotal</th>
                 </tr>';
                 for($i=0;$i<count($row);$i++)
@@ -1047,7 +1047,7 @@ class ReportRepository implements IReportRepositoryInterface
                         <td align="left" width="140">'.($row[$i]['api_supplier']['Name']).'</td>
                         <td align="left" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
                         <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.',',')).'</td>
-                        <td align="right" width="25">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
+                        <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
                         <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
                         </tr>';
                     }
@@ -1061,15 +1061,14 @@ class ReportRepository implements IReportRepositoryInterface
                         <td align="left" width="140">'.($row[$i]['api_supplier']['Name']).'</td>
                         <td align="left" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
                         <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.',',')).'</td>
-                        <td align="right" width="25">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
+                        <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
                         <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
                         </tr>';
                     }
-
                 }
                 $html.= '
                  <tr color="red">
-                     <td width="420" align="right" colspan="5">Total :</td>
+                     <td width="425" align="right" colspan="6">Total :</td>
                      <td width="40" align="right">'.number_format($total_sum,2,'.',',').'</td>
                      <td width="35" align="right">'.number_format($vat_sum,2,'.',',').'</td>
                      <td width="45" align="right">'.number_format($sub_total_sum,2,'.',',').'</td>

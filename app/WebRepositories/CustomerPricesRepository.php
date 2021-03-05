@@ -25,30 +25,39 @@ class CustomerPricesRepository implements ICustomerPricesRepositoryInterface
 
     public function store(Request $request)
     {
-
-        // TODO: Implement store() method.
-        $check = CustomerPrice::all();
-        //dd($check);
-        if ($check != null) {
-
-           CustomerPrice::truncate();
-        }
         $count = count($request->input('Rate'));
         $user_id = session('user_id');
         $company_id = session('company_id');
-        for ($i=0; $i<$count; $i++)
+
+        for($i=0;$i<count($request['customer_id']);$i++)
+        {
+            $customer_price = CustomerPrice::where('customer_id',$request['customer_id'][$i])->first();
+            if($customer_price)
             {
-               // dd($request->Rate[$i]);
-                $prices = CustomerPrice::create([
-                            'customer_id'=>$request->customer_id[$i],
-                            'Rate'=>$request->Rate [$i],
-                            'VAT'=>$request->VAT[$i],
-                            'customerLimit'=>$request->customerLimit [$i],
-                            'Description'=>$request->Description[$i],
-                            'user_id' => $user_id,
-                            'company_id' => $company_id,
+                $customer_price->update(
+                [
+                    'customer_id'=>$request['customer_id'][$i],
+                    'Rate'=>$request['Rate'][$i],
+                    'VAT'=>$request['VAT'][$i],
+                    'customerLimit'=>$request['customerLimit'][$i],
+                    'Description'=>$request['Description'][$i],
+                    'user_id' => $user_id,
+                    'company_id' => $company_id,
                 ]);
             }
+            else
+            {
+                CustomerPrice::create([
+                        'customer_id'=>$request['customer_id'][$i],
+                        'Rate'=>$request['Rate'][$i],
+                        'VAT'=>$request['VAT'][$i],
+                        'customerLimit'=>$request['customerLimit'][$i],
+                        'Description'=>$request['Description'][$i],
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                ]);
+            }
+        }
         return redirect()->route('customer_prices.index')->with('update','Updated successfully');
     }
 

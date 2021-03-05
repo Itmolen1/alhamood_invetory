@@ -85,7 +85,7 @@
                                             <li>Address <span class="text-muted" id="Address">No Address</span></li>
                                             <li>Mobile <span class="text-muted" id="Mobile">No Mobile</span></li>
                                             <li>Email <span class="text-muted" id="Email">No Email</span></li>
-                                            <li>TRN <span class="text-muted" id="TRN">No TRN</span></li>
+                                            <li>TRN<span class="text-muted" id="TRN"></span></li>
                                         </ul>
                                     </div>
 
@@ -140,7 +140,7 @@
                                             </td>
                                             <td><input type="text" placeholder="Description" name="description" class="description form-control" autocomplete="off"></td>
 
-                                            <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="0.00" placeholder="subTotal" class="total form-control">
+                                            <td><input type="text" id="sub_total" value="0.00" placeholder="subTotal" class="total form-control">
                                                 <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
                                             </td>
                                             <td>
@@ -317,25 +317,45 @@
             $("#referenceNumber").addClass("error");
         }
 
-        // if (DoTrim(document.getElementById('reservation_from_date').value).length == 0)
-        // {
-        //     if(fields != 1)
-        //     {
-        //         document.getElementById("reservation_from_date").focus();
-        //     }
-        //     fields = '1';
-        //     $("#reservation_from_date").addClass("error");
-        // }
+        if (DoTrim(document.getElementById('sub_total').value).length == 0)
+        {
+            if(fields != 1)
+            {
+                document.getElementById("sub_total").focus();
+            }
+            fields = '1';
+            $("#sub_total").addClass("error");
+        }
 
-        // if (DoTrim(document.getElementById('reservation_to_date').value).length == 0)
-        // {
-        //     if(fields != 1)
-        //     {
-        //         document.getElementById("reservation_to_date").focus();
-        //     }
-        //     fields = '1';
-        //     $("#reservation_to_date").addClass("error");
-        // }
+        if(DoTrim(document.getElementById('payment_type').value).length == 0)
+        {
+            if(fields != 1)
+            {
+                document.getElementById("payment_type").focus();
+            }
+            fields = '1';
+            $("#payment_type").addClass("error");
+        }
+
+        if(DoTrim(document.getElementById('supplier_id').value).length == 0)
+        {
+            if(fields != 1)
+            {
+                document.getElementById("supplier_id").focus();
+            }
+            fields = '1';
+            $("#supplier_id").addClass("error");
+        }
+
+        if(DoTrim(document.getElementById('employee_id').value).length == 0)
+        {
+            if(fields != 1)
+            {
+                document.getElementById("employee_id").focus();
+            }
+            fields = '1';
+            $("#employee_id").addClass("error");
+        }
 
         // if ($('input[name="vat_per_session"]:checked').length == 0)
         // {
@@ -357,94 +377,122 @@
         }
         /*validation*/
     }
-    $(document).ready(function () {
-        /////////////// Add Record //////////////////////
-        $('#submit').click(function () {
 
-            if(validateForm())
+    function validateVat()
+    {
+        var trn_text=$('#TRN').html();
+        var vat=parseInt($('.VAT').val());
+        if(trn_text!==null || trn_text!=='')
+        {
+            if(vat===0)
             {
-                $('#submit').text('please wait...');
-                $('#submit').attr('disabled',true);
-                var supplierNew = $('.supplier_id').val();
-                //alert(supplierNew);
-                if (supplierNew != null)
+                var result=confirm('Are you sure there is no VAT ?');
+                if(result===true)
                 {
-                    var insert = [], orderItem = [], nonArrayData = "";
-                    $('#newRow tr').each(function () {
-                        var currentRow = $(this).closest("tr");
-                        if (validateRow(currentRow)) {
-                            orderItem =
-                                {
-                                    Total: currentRow.find('.total').val(),
-                                    expenseDate: currentRow.find('.expenseDate').val(),
-                                    expense_category_id: currentRow.find('.expense_category_id').val(),
-                                    description: currentRow.find('.description').val(),
-                                    Vat: currentRow.find('.VAT').val(),
-                                    rowVatAmount: currentRow.find('.singleRowVat').val(),
-                                    rowSubTotal: currentRow.find('.rowTotal').val(),
-                                    padNumber: currentRow.find('.padNumber').val(),
-                                };
-                            insert.push(orderItem);
-                        }
-                        else
-                        {
-                            return false;
-                        }
-
-                    });
-                    let details = {
-                        expenseNumber: $('#expenseNumber').val(),
-                        referenceNumber: $('#referenceNumber').val(),
-                        expenseDate: $('#expenseDate').val(),
-                        Total: $('.total').val(),
-                        subTotal: $('.rowTotal').val(),
-                        totalVat: $('.TotalVat').val(),
-                        grandTotal: $('.GTotal').val(),
-                        payment_type: $('#payment_type').val(),
-                        bank_id: $('#bank_id').val(),
-                        accountNumber: $('#accountNumber').val(),
-                        transferDate: $('#transferDate').val(),
-                        ChequeNumber: $('#ChequeNumber').val(),
-                        supplier_id:$('#supplier_id').val(),
-                        supplierNote:$('#mainDescription').val(),
-                        employee_id:$('#employee_id').val(),
-                        orders: insert,
-                    }
-
-                    if (insert.length > 0) {
-                        $.ajaxSetup({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            }
-                        });
-                        var Datas = {Data: details};
-                        $.ajax({
-                            url: "{{ route('expenses.store') }}",
-                            type: "post",
-                            data: Datas,
-                            success: function (result) {
-                                var result=JSON.parse(result);
-                                if (result.result === false) {
-                                    alert(result.message);
-                                    window.location.href = "{{ route('expenses.create') }}";
-
-                                } else {
-                                    alert(result.message);
-                                    window.location.href = "{{ route('expenses.index') }}";
-                                }
-                            },
-                            error: function (errormessage) {
-                                alert(errormessage);
-                            }
-                        });
-                    } else
-                    {
-                        alert('Please Add item to list');
-                    }
+                    return true;
                 }
                 else
                 {
-                    alert('Select Customer first')
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
+
+    $(document).ready(function (){
+        /////////////// Add Record //////////////////////
+        $('#submit').click(function () {
+            if(validateForm())
+            {
+                //check vat if there is trn available
+                if(validateVat())
+                {
+                    $('#submit').text('please wait...');
+                    $('#submit').attr('disabled',true);
+                    var supplierNew = $('.supplier_id').val();
+                    if (supplierNew != null)
+                    {
+                        var insert = [], orderItem = [], nonArrayData = "";
+                        $('#newRow tr').each(function () {
+                            var currentRow = $(this).closest("tr");
+                            if (validateRow(currentRow)) {
+                                orderItem =
+                                    {
+                                        Total: currentRow.find('.total').val(),
+                                        expenseDate: currentRow.find('.expenseDate').val(),
+                                        expense_category_id: currentRow.find('.expense_category_id').val(),
+                                        description: currentRow.find('.description').val(),
+                                        Vat: currentRow.find('.VAT').val(),
+                                        rowVatAmount: currentRow.find('.singleRowVat').val(),
+                                        rowSubTotal: currentRow.find('.rowTotal').val(),
+                                        padNumber: currentRow.find('.padNumber').val(),
+                                    };
+                                insert.push(orderItem);
+                            }
+                            else
+                            {
+                                return false;
+                            }
+
+                        });
+                        let details = {
+                            expenseNumber: $('#expenseNumber').val(),
+                            referenceNumber: $('#referenceNumber').val(),
+                            expenseDate: $('#expenseDate').val(),
+                            Total: $('.total').val(),
+                            subTotal: $('.rowTotal').val(),
+                            totalVat: $('.TotalVat').val(),
+                            grandTotal: $('.GTotal').val(),
+                            payment_type: $('#payment_type').val(),
+                            bank_id: $('#bank_id').val(),
+                            accountNumber: $('#accountNumber').val(),
+                            transferDate: $('#transferDate').val(),
+                            ChequeNumber: $('#ChequeNumber').val(),
+                            supplier_id:$('#supplier_id').val(),
+                            supplierNote:$('#mainDescription').val(),
+                            employee_id:$('#employee_id').val(),
+                            orders: insert,
+                        }
+
+                        if (insert.length > 0) {
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }
+                            });
+                            var Datas = {Data: details};
+                            $.ajax({
+                                url: "{{ route('expenses.store') }}",
+                                type: "post",
+                                data: Datas,
+                                success: function (result) {
+                                    var result=JSON.parse(result);
+                                    if (result.result === false) {
+                                        alert(result.message);
+                                        window.location.href = "{{ route('expenses.create') }}";
+
+                                    } else {
+                                        alert(result.message);
+                                        window.location.href = "{{ route('expenses.index') }}";
+                                    }
+                                },
+                                error: function (errormessage) {
+                                    alert(errormessage);
+                                }
+                            });
+                        } else
+                        {
+                            alert('Please Add item to list');
+                        }
+                    }
+                    else
+                    {
+                        alert('Select Customer first')
+                    }
                 }
             }
             else
@@ -466,7 +514,6 @@
         if (parseInt(product) === 0 || product === ""){
             //alert(product);
             isvalid = false;
-
         }
         if (parseInt(quantity) == 0 || quantity == "")
         {
@@ -495,10 +542,10 @@
                     dataType: "json",
                     success: function (result) {
                         if (result !== "Failed") {
-                             $('#Address').text(result.supplier.Address);
-                             $('#Mobile').text(result.supplier.Mobile);
-                             $('#Email').text(result.supplier.Email);
-                             $('#TRN').text(result.supplier.TRNNumber);
+                             $('#Address').text(result.supplier[0].Address);
+                             $('#Mobile').text(result.supplier[0].Mobile);
+                             $('#Email').text(result.supplier[0].Email);
+                             $('#TRN').text(result.supplier[0].TRNNumber);
                              $('#closing').val(result.closing);
                         } else {
                             alert(result);
@@ -521,7 +568,6 @@
             var supplier_id = 0;
             supplier_id = $('#supplier_id').val();
             var referenceNumber = $('#referenceNumber').val();
-            console.log(referenceNumber);
             if (supplier_id > 0)
             {
                 var data={supplier_id:supplier_id,referenceNumber:referenceNumber};

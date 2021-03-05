@@ -92,7 +92,8 @@
                         name: 'action',
                         orderable: false
                     },
-                ]
+                ],
+                order: [[ 0, "desc" ]]
             });
         });
     </script>

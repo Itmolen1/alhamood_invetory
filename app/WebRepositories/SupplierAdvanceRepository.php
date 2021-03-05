@@ -13,6 +13,7 @@ use App\Models\CustomerAdvance;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\SupplierAdvance;
+use App\Models\SupplierAdvanceDetail;
 use App\Models\SupplierPaymentDetail;
 use App\WebRepositories\Interfaces\ISupplierAdvanceRepositoryInterface;
 use Illuminate\Http\Request;
@@ -41,9 +42,26 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                         return $button;
                     }
                 })
+                ->addColumn('disburse', function($data) {
+                    if($data->isPushed == true){
+                        if($data->IsSpent == 0){
+                            $button = '<a href="'.route('supplier_advances_get_disburse', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-battery-full"></i>Disburse</a>';
+                            return $button;
+                        }else{
+                            $button = '<button type="submit" class="btn btn-default btn-sm"><i style="font-size: 20px" class="fa fa-battery-empty"> Disbursed</i></button>';
+                            $button .= '<a href="'.route('supplier_advances.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                            return $button;
+                        }
+                    }
+                    else
+                    {
+                        return 'Not Available';
+                    }
+                })
                 ->rawColumns(
                     [
                         'push',
+                        'disburse',
                         'supplier',
                     ])
                 ->make(true);
@@ -67,6 +85,10 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             'receiptNumber' =>$supplierAdvanceRequest->receiptNumber,
             'paymentType' =>$supplierAdvanceRequest->paymentType,
             'Amount' =>$supplierAdvanceRequest->amount,
+            'spentBalance' =>0.00,
+            'remainingBalance' =>$supplierAdvanceRequest->amount,
+            'IsSpent' =>0,
+            'IsPartialSpent' =>0,
             'sumOf' =>$supplierAdvanceRequest->amountInWords,
             'receiverName' =>$supplierAdvanceRequest->receiverName,
             'accountNumber' =>$supplierAdvanceRequest->accountNumber,
@@ -92,6 +114,10 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
             'receiptNumber' =>$request->receiptNumber,
             'paymentType' =>$request->paymentType,
             'Amount' =>$request->amount,
+            'spentBalance' =>0.00,
+            'remainingBalance' =>$request->amount,
+            'IsSpent' =>0,
+            'IsPartialSpent' =>0,
             'sumOf' =>$request->amountInWords,
             'receiverName' =>$request->receiverName,
             'accountNumber' =>$request->accountNumber,
@@ -108,7 +134,8 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function getById($Id)
     {
-        // TODO: Implement getById() method.
+        $supplier_advance_details = SupplierAdvanceDetail::with('user','company','customer_advance.customer')->where('customer_advances_id',$Id)->get();
+        return view('admin.supplierAdvance.show',compact('supplier_advance_details'));
     }
 
     public function edit($Id)
@@ -117,6 +144,113 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
         $banks = Bank::all();
         $supplierAdvance = SupplierAdvance::with('supplier')->find($Id);
         return view('admin.supplierAdvance.edit',compact('suppliers','supplierAdvance','banks'));
+    }
+
+    public function supplier_advances_get_disburse($Id)
+    {
+        $supplierAdvance = SupplierAdvance::with('supplier')->find($Id);
+        return view('admin.supplierAdvance.create_disburse',compact('supplierAdvance'));
+    }
+
+    public function supplier_advances_save_disburse(Request $request)
+    {
+        $user_id = session('user_id');
+        $company_id = session('company_id');
+        $AllRequestCount = collect($request->Data)->count();
+        if($AllRequestCount > 0)
+        {
+            $advance = SupplierAdvance::with('supplier')->find($request->Data['supplier_advance_id']);
+            if($advance->IsSpent==0 AND $advance->remainingBalance>0)
+            {
+                $total_i_have=$advance->remainingBalance;
+
+                foreach($request->Data['orders'] as $detail)
+                {
+                    $this_purchase=Purchase::where('id',$detail['purchase_id'])->get()->first();
+                    if($this_purchase->IsPaid==0 AND $this_purchase->remainingBalance!=0)
+                    {
+                        $total_you_need = $this_purchase->remainingBalance;
+                        $still_payable_to_you=0;
+                        $total_giving_to_you=0;
+                        $isPartialPaid = 0;
+                        if ($total_i_have >= $total_you_need)
+                        {
+                            $isPaid = 1;
+                            $isPartialPaid = 0;
+                            $total_i_have = $total_i_have - $total_you_need;
+
+                            $this_purchase->update([
+                                "paidBalance"        => $this_purchase->grandTotal,
+                                "remainingBalance"   => $still_payable_to_you,
+                                "IsPaid" => $isPaid,
+                                "IsPartialPaid" => $isPartialPaid,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'FromAdvance|'.$advance->id,
+                            ]);
+
+                            $data =  SupplierAdvanceDetail::create([
+                                "amountPaid" => $this_purchase->grandTotal,
+                                "supplier_advances_id" => $advance->id,
+                                "user_id" => $user_id,
+                                "company_id" => $company_id,
+                                "purchase_id" => $this_purchase->id,
+                                'advanceReceiveDetailDate' => $advance->TransferDate,
+                                'createdDate' => date('Y-m-d')
+                            ]);
+                        }
+                        else
+                        {
+                            $isPaid = 0;
+                            $isPartialPaid = 1;
+                            $total_giving_to_you=$total_i_have;
+                            $total_i_have = $total_i_have - $total_giving_to_you;
+
+                            $this_purchase->update([
+                                "paidBalance"        => $this_purchase->paidBalance+$total_giving_to_you,
+                                "remainingBalance"   => $this_purchase->remainingBalance-$total_giving_to_you,
+                                "IsPaid" => $isPaid,
+                                "IsPartialPaid" => $isPartialPaid,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'FromAdvance|'.$advance->id,
+                            ]);
+
+                            $data =  SupplierAdvanceDetail::create([
+                                "amountPaid" => $total_giving_to_you,
+                                "supplier_advances_id" => $advance->id,
+                                "user_id" => $user_id,
+                                "company_id" => $company_id,
+                                "purchase_id" => $this_purchase->id,
+                                'advanceReceiveDetailDate' => $advance->TransferDate,
+                                'createdDate' => date('Y-m-d')
+                            ]);
+                        }
+                    }
+                    if($total_i_have<=0)
+                    {
+                        break;
+                    }
+                }
+                if($total_i_have!=0)
+                {
+                    $advance->update([
+                        'IsSpent' =>0,
+                        'IsPartialSpent'=>1,
+                        'spentBalance'=>$advance->spentBalance+($advance->remainingBalance-$total_i_have),
+                        'remainingBalance'=>$advance->remainingBalance-$total_i_have,
+                    ]);
+                }
+                else
+                {
+                    $advance->update([
+                        'IsSpent' =>1,
+                        'IsPartialSpent'=>0,
+                        'spentBalance'=>$advance->Amount,
+                        'remainingBalance'=>0,
+                    ]);
+                }
+            }
+            return redirect()->route('supplier_advances.index')->with('pushed','Your Account Debit Successfully');
+        }
     }
 
     public function delete(Request $request, $Id)
@@ -262,7 +396,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
             //now since account is affected we need to auto pay same amount to purchase entries only if last closing is positive value
 
-            if($closing_before_advance_debit>0)
+            /*if($closing_before_advance_debit>0)
             {
                  //we have entries without payment made so make it paid until advance amount becomes zero
                 // bring all unpaid purchase records
@@ -320,7 +454,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                         break;
                     }
                 }
-            }
+            }*/
         }
 
         /* auto pay purchase till advance amount is sufficient for all older purchases */

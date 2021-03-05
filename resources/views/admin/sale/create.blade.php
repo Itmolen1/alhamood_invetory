@@ -84,8 +84,8 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td><input type="date" name="createdDate" value="{{ date('2021-03-01') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $PadNumber ?? "" }}" class="PadNumber form-control"></td>
+                                                <td><input type="date" name="createdDate" value="{{ $init_data['last_date'] ?? date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
+                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $init_data['pad_no'] ?? "" }}" class="PadNumber form-control"></td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;" autofocus>
