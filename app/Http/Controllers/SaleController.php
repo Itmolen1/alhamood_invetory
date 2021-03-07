@@ -52,9 +52,9 @@ class SaleController extends Controller
         return $this->saleRepository->all_sales($request);
     }
 
-    public function destroy(Sale $sale)
+    public function destroy(Request $request, $Id)
     {
-        //
+        return $this->saleRepository->delete($request, $Id);
     }
 
     public function get_data(Request $request)

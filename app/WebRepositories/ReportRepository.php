@@ -1501,6 +1501,7 @@ class ReportRepository implements IReportRepositoryInterface
                     $master_row['paidBalance']=$row[$i]['paidBalance'];
                     $master_row['remainingBalance']=$row[$i]['remainingBalance'];
                     $master_row['SaleDate']=$row[$i]['SaleDate'];
+                    $master_row['IsPaid']=$row[$i]['IsPaid'];
                     $new_master_array[]=$master_row;
                 }
             }
@@ -1551,9 +1552,9 @@ class ReportRepository implements IReportRepositoryInterface
                 $rowTotal_sum+=$row[$i]['rowTotal'];
                 $VAT_sum+=$row[$i]['VAT'];
                 $rowSubTotal+=$row[$i]['rowSubTotal'];
-                if($i%2==0)
+                if($row[$i]['IsPaid']==1)
                 {
-                    $html .='<tr style="background-color: #e3e3e3">
+                    $html .='<tr style="background-color: #aba9a9">
                     <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
                     <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
                     <td align="left" width="130">'.($row[$i]['Name']).'</td>

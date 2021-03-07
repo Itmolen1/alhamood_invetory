@@ -61,7 +61,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function create()
     {
-        $suppliers = Supplier::all();
+        $suppliers = Supplier::where('company_id',session('company_id'))->where('company_type_id',2)->get();
         $banks = Bank::all();
         return view('admin.supplier_payment.create',compact('suppliers','banks'));
     }

@@ -61,7 +61,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 
     public function create()
     {
-        $customers = Customer::all();
+        $customers = Customer::where('company_id',session('company_id'))->get();
         $banks = Bank::all();
         return view('admin.customer_payment_receive.create',compact('customers','banks'));
     }

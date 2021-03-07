@@ -3201,16 +3201,22 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
         // pad number according to max sales id
         $max_purchase_id = PurchaseDetail::where('company_id',session('company_id'))->find(DB::table('purchase_details')->max('id'));
-        $lastPad = $max_purchase_id->PadNumber;
-        if(!is_numeric($lastPad))
+        if($max_purchase_id)
         {
-            $newPad=1;
+            $lastPad = $max_purchase_id->PadNumber;
+            if(!is_numeric($lastPad))
+            {
+                $newPad=1;
+            }
+            else
+            {
+                $newPad = ($lastPad + 1);
+            }
         }
         else
         {
-            $newPad = ($lastPad + 1);
+            $newPad=1;
         }
-
         return $newPad;
     }
 

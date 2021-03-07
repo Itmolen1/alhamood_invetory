@@ -24,6 +24,12 @@ class   SaleRepository implements ISaleRepositoryInterface
             return datatables()->of(Sale::with('sale_details.product','sale_details.vehicle','customer')->where('company_id',session('company_id'))->where('isActive',1)->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<a href="'.route('sales.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+//                    $button .= '<form action="'.route('sales.destroy', $data->id).'" method="POST">';
+//                    $button .= @csrf_field();
+//                    $button .= @method_field('DELETE');
+//                    $button .= '&nbsp;&nbsp;';
+//                    $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+//                    $button .= '</form>';
                     return $button;
                 })
                  ->addColumn('createdDate', function($data) {
@@ -3162,7 +3168,106 @@ class   SaleRepository implements ISaleRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
-        // TODO: Implement delete() method.
+        $data = Sale::findOrFail($Id);
+        $user_id = session('user_id');
+        $company_id = session('company_id');
+        //echo "<pre>";print_r($data);die;
+        //$data->delete();
+        if($data)
+        {
+            if($data->IsPaid==1 && $data->IsPartialPaid==0)
+            {
+                //full cash sales case
+                $prev_accountTransaction = AccountTransaction::where(['customer_id'=> $data->customer_id,'Description'=>'Sales|'.$data->id])->get()->first();
+                if($prev_accountTransaction)
+                {
+                    //echo "<pre>";print_r($prev_accountTransaction);die;
+                    $accountTransaction = AccountTransaction::where(['customer_id'=> $data->customer_id,])->get();
+                    $last_closing = $accountTransaction->last()->Differentiate;
+                    $AccountTransactions=AccountTransaction::Create([
+                        'customer_id' => $data->customer_id,
+                        'Credit' => $prev_accountTransaction->Debit,
+                        'Debit' => 0.00,
+                        'Differentiate' => $last_closing-$prev_accountTransaction->Debit,
+                        'createdDate' => $data->SaleDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'SalesReverse|'.$data->id,
+                        'referenceNumber'=>$prev_accountTransaction->referenceNumber,
+                        'updateDescription'=>'hide',
+                    ]);
+                    $prev_payment_accountTransaction = AccountTransaction::where(['customer_id'=> $data->customer_id,'Description'=>'FullCashSales|'.$data->id])->get()->first();
+                    if($prev_payment_accountTransaction)
+                    {
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $data->customer_id,])->get();
+                        $last_closing = $accountTransaction->last()->Differentiate;
+                        $AccountTransactions=AccountTransaction::Create([
+                            'customer_id' => $data->customer_id,
+                            'Credit' => 0.00,
+                            'Debit' => $prev_payment_accountTransaction->Credit,
+                            'Differentiate' => $last_closing+$prev_payment_accountTransaction->Credit,
+                            'createdDate' => $data->SaleDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'FullCashSalesReverse|'.$data->id,
+                            'referenceNumber'=>$prev_accountTransaction->referenceNumber,
+                            'updateDescription'=>'hide',
+                        ]);
+
+                        $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                        $difference = $cashTransaction->last()->Differentiate;
+                        $cash_transaction = new CashTransaction();
+                        $cash_transaction->Reference=$data->id;
+                        $cash_transaction->createdDate=$data->SaleDate;
+                        $cash_transaction->Type='sales';
+                        $cash_transaction->Details='CashSalesReversal|'.$data->id;
+                        $cash_transaction->Credit=$prev_payment_accountTransaction->Credit;
+                        $cash_transaction->Debit=0.00;
+                        $cash_transaction->Differentiate=$difference-$prev_payment_accountTransaction->Credit;
+                        $cash_transaction->user_id = $user_id;
+                        $cash_transaction->company_id = $company_id;
+                        $cash_transaction->PadNumber = $prev_accountTransaction->referenceNumber;
+                        $cash_transaction->save();
+
+                        // delete sales and sales detail entries
+                        SaleDetail::where('sale_id',$data->id)->delete();
+                        $data->delete();
+                    }
+                }
+            }
+            elseif($data->IsPaid==0 && $data->IsPartialPaid==0)
+            {
+                //full credit entry
+                $prev_accountTransaction = AccountTransaction::where(['customer_id'=> $data->customer_id,'Description'=>'Sales|'.$data->id])->get()->first();
+                if($prev_accountTransaction)
+                {
+                    //echo "<pre>";print_r($prev_accountTransaction);die;
+                    $accountTransaction = AccountTransaction::where(['customer_id'=> $data->customer_id,])->get();
+                    $last_closing = $accountTransaction->last()->Differentiate;
+                    $AccountTransactions=AccountTransaction::Create([
+                        'customer_id' => $data->customer_id,
+                        'Credit' => $prev_accountTransaction->Debit,
+                        'Debit' => 0.00,
+                        'Differentiate' => $last_closing-$prev_accountTransaction->Debit,
+                        'createdDate' => $data->SaleDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'SalesReverse|'.$data->id,
+                        'referenceNumber'=>$prev_accountTransaction->referenceNumber,
+                        'updateDescription'=>'hide',
+                    ]);
+
+                    // delete sales and sales detail entries
+                    SaleDetail::where('sale_id',$data->id)->delete();
+                    $data->delete();
+                }
+            }
+            return redirect()->route('sales.index');
+        }
+        else
+        {
+            return redirect()->route('sales.index');
+        }
     }
 
     public function restore($Id)

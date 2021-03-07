@@ -36,6 +36,7 @@
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Invoices</h4>
+                    <h3 class="required"> * Please Verify all data before submit.</h3>
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
