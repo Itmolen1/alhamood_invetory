@@ -17,48 +17,31 @@ class PaymentReceiveController extends Controller
         return $this->paymentReceiveRepository->index();
     }
 
-
     public function create()
     {
         return $this->paymentReceiveRepository->create();
     }
-
 
     public function store(Request $request)
     {
         return $this->paymentReceiveRepository->store($request);
     }
 
-
     public function show($Id)
     {
         return $this->paymentReceiveRepository->getById($Id);
     }
-
 
     public function edit($Id)
     {
         return $this->paymentReceiveRepository->edit($Id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PaymentReceive  $paymentReceive
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, PaymentReceive $paymentReceive)
+    public function payment_receivesUpdate(Request $request,$Id)
     {
-        //
+        return $this->paymentReceiveRepository->update($request, $Id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\PaymentReceive  $paymentReceive
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(PaymentReceive $paymentReceive)
     {
         //

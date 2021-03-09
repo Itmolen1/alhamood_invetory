@@ -1455,7 +1455,7 @@ class ReportRepository implements IReportRepositoryInterface
             }
             else
             {
-                $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('isActive','=','1')->sortBy('sale_details.'));
+                $sales=SalesResource::collection(Sale::with('sale_details')->where('company_id',session('company_id'))->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate)->where('isActive','=','1')->orderBy('SaleDate')->get());
             }
         }
         else
@@ -1643,12 +1643,14 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::writeHTML($html, true, false, false, false, '');
 
             $pdf::lastPage();
+
             $time=time();
+            $name='SALES_REPORT_'.date('d-m-Y', strtotime($request->fromDate)).'_To_'.date('d-m-Y', strtotime($request->toDate)).'_'.$time;
             $fileLocation = storage_path().'/app/public/report_files/';
-            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $fileNL = $fileLocation.'//'.$name.'.pdf';
             $pdf::Output($fileNL, 'F');
             //$url=url('/').'/storage/report_files/'.$time.'.pdf';
-            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$name.'.pdf';
             //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;

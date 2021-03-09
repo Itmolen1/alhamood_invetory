@@ -23,7 +23,6 @@ use PDF;
 
 class SalesRepository implements ISalesRepositoryInterface
 {
-
     public function all()
     {
         return SalesResource::collection(Sale::with('sale_details')->get()->sortDesc());
@@ -59,181 +58,202 @@ class SalesRepository implements ISalesRepositoryInterface
 //        $result=array_diff($row,$row1);
 //        echo "<pre>";print_r($result);die;
 
+        $user_id = Auth::id();
+        $company_id=Str::getCompany($user_id);
         return SalesResource::Collection(Sale::with('sale_details','update_notes','documents')->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function insert(Request $request)
     {
-        if ($request->paidBalance == 0.00 || $request->paidBalance == 0) {
-            $isPaid = false;
-            $partialPaid =false;
-        }
-        elseif($request->paidBalance >= $request->grandTotal)
-        {
-            $isPaid = true;
-            $partialPaid =false;
-        }
-        else
-        {
-            $isPaid = false;
-            $partialPaid =true;
-        }
-
-        $invoice = new Sale();
-        $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
-        $newInvoiceID = 'INV-00'.($lastInvoiceID + 1);
-
-        //$sale_details=$request->sale_details;
-
-        $userId = Auth::id();
-        $company_id=Str::getCompany($userId);
-        $sales = new Sale();
-        $sales->SaleNumber=$newInvoiceID;
-        $sales->customer_id=$request->customer_id;
-        $sales->SaleDate=$request->SaleDate;
-        //$sales->DueDate=$request->DueDate;
-        $sales->referenceNumber=$request->referenceNumber;
-        $sales->Total=$request->Total;
-        $sales->subTotal=$request->subTotal;
-        $sales->totalVat=$request->totalVat;
-        $sales->grandTotal=$request->grandTotal;
-        $sales->paidBalance=$request->paidBalance;
-        $sales->remainingBalance=$request->remainingBalance;
-        $sales->Description=$request->Description;
-        $sales->TermsAndCondition=$request->TermsAndCondition;
-        $sales->supplierNote=$request->supplierNote;
-        $sales->IsPaid=$isPaid;
-        $sales->IsPartialPaid=$partialPaid;
-        $sales->createdDate=date('Y-m-d h:i:s');
-        $sales->isActive=1;
-        $sales->user_id = $userId ?? 0;
-        $sales->company_id = $company_id ?? 0;
-        $sales->save();
-        $sales_id = $sales->id;
-
-        if($request->paidBalance != 0.00 || $request->paidBalance != 0)
-        {
-            $cash_transaction = new CashTransaction();
-            $cash_transaction->Reference=$newInvoiceID;
-            $cash_transaction->createdDate=date('Y-m-d h:i:s');
-            $cash_transaction->Type='Sales';
-            $cash_transaction->Credit=$request->paidBalance;
-            $cash_transaction->Debit=0.0;
-            $cash_transaction->save();
-        }
-
-        $sale_details=json_decode($_POST['sale_details']);
-
-        foreach ($sale_details as $sale_item)
-        {
-            $data=SaleDetail::create([
-                'sale_id'=>$sales_id,
-                'PadNumber'=>$sale_item->PadNumber,
-                'vehicle_id'=>$sale_item->vehicle_id,
-                'product_id'=>$sale_item->product_id,
-                'unit_id'=>$sale_item->unit_id,
-                'Price'=>$sale_item->Price,
-                'Quantity'=>$sale_item->Quantity,
-                'rowTotal'=>$sale_item->rowTotal,
-                'VAT'=>$sale_item->VAT,
-                'rowVatAmount'=>$sale_item->rowVatAmount,
-                'rowSubTotal'=>$sale_item->rowSubTotal,
-                'Description'=>$sale_item->Description,
-                'user_id'=>$userId,
-                'company_id'=>$company_id,
-            ]);
-        }
-
-
-
-        ////////////////// account section ////////////////
-        if ($sales)
-        {
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'customer_id'=> $request->customer_id,
-                    'createdDate' => date('Y-m-d'),
-                ])->first();
-            if (!is_null($accountTransaction))
+        ////////////start new code////////////////////////////
+        $sales_id=0;
+        DB::transaction(function () use($request,&$sales_id){
+            $user_id = Auth::id();
+            $company_id=Str::getCompany($user_id);
+            if ($request->paidBalance == 0.00 || $request->paidBalance == 0) {
+                $isPaid_current = 0;
+                $partialPaid_current = 0;
+            }
+            elseif($request->paidBalance==$request->grandTotal)
             {
-                if ($request->paidBalance == 0 || $request->paidBalance == 0.00) {
-                    if ($accountTransaction->createdDate != date('Y-m-d')) {
-                        $totalCredit = $request->grandTotal;
-                    } else {
-                        $totalCredit = $accountTransaction->Credit + $request->grandTotal;
-                    }
-                    $totalDebit = $accountTransaction->Debit;
-                    $difference = $accountTransaction->Differentiate + $request->grandTotal;
-                }
-                elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal )
-                {
-                    if ($accountTransaction->createdDate != date('Y-m-d')) {
-                        $totalDebit = $request->paidBalance;
-                        $totalCredit = $request->grandTotal;
-                    } else {
-                        $totalDebit = $accountTransaction->Debit + $request->paidBalance;
-                        $totalCredit = $accountTransaction->Credit + $request->grandTotal;
-                    }
-                    $differenceValue = $accountTransaction->Differentiate - $request->paidBalance;
-                    $difference = $differenceValue + $request->grandTotal;
-                }
-                else{
-
-                    if ($accountTransaction->createdDate != date('Y-m-d')) {
-                        $totalDebit = $request->paidBalance;
-                    } else {
-                        $totalDebit = $accountTransaction->Debit + $request->paidBalance;
-                    }
-                    $totalCredit = $accountTransaction->Credit;
-                    $difference = $accountTransaction->Differentiate - $request->paidBalance;
-                }
+                $isPaid_current = 1;
+                $partialPaid_current = 0;
             }
             else
             {
-                $accountTransaction = AccountTransaction::where(
-                    [
-                        'customer_id'=> $request->customer_id,
-                    ])->get();
+                $isPaid_current = 0;
+                $partialPaid_current = 1;
+            }
+
+            $invoice = new Sale();
+            $lastInvoiceID = $invoice->orderByDesc('id')->pluck('id')->first();
+            $newInvoiceID = 'INV-00'.($lastInvoiceID + 1);
+
+            $sales = new Sale();
+            $sales->SaleNumber=$newInvoiceID;
+            $sales->customer_id=$request->customer_id;
+            $sales->SaleDate=$request->SaleDate;
+            $sales->DueDate=$request->SaleDate;
+            $sales->referenceNumber=$request->referenceNumber;
+            $sales->Total=$request->Total;
+            $sales->subTotal=$request->subTotal;
+            $sales->totalVat=$request->totalVat;
+            $sales->grandTotal=$request->grandTotal;
+            $sales->paidBalance=$request->paidBalance;
+            $sales->remainingBalance=$request->remainingBalance;
+            $sales->TermsAndCondition=$request->TermsAndCondition;
+            $sales->supplierNote=$request->supplierNote;
+            $sales->IsPaid=$isPaid_current;
+            $sales->IsPartialPaid=$partialPaid_current;
+            $sales->createdDate=date('Y-m-d h:i:s');
+            $sales->isActive=1;
+            $sales->user_id = $user_id;
+            $sales->company_id = $company_id;
+            $sales->save();
+            $sales_id = $sales->id;
+
+            $sale_details=json_decode($_POST['sale_details']);
+
+            foreach ($sale_details as $sale_item)
+            {
+                $pad_number=$sale_item->PadNumber;
+                $data=SaleDetail::create([
+                    'sale_id'=>$sales_id,
+                    'PadNumber'=>$sale_item->PadNumber,
+                    'vehicle_id'=>$sale_item->vehicle_id,
+                    'product_id'=>$sale_item->product_id,
+                    'unit_id'=>$sale_item->unit_id,
+                    'Price'=>$sale_item->Price,
+                    'Quantity'=>$sale_item->Quantity,
+                    'rowTotal'=>$sale_item->rowTotal,
+                    'VAT'=>$sale_item->VAT,
+                    'rowVatAmount'=>$sale_item->rowVatAmount,
+                    'rowSubTotal'=>$sale_item->rowSubTotal,
+                    'Description'=>$sale_item->Description,
+                    'user_id'=>$user_id,
+                    'company_id'=>$company_id,
+                    'customer_id'=>$request->customer_id,
+                ]);
+            }
+
+            if($request->paidBalance != 0.00 || $request->paidBalance != 0)
+            {
+                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                $difference = $cashTransaction->last()->Differentiate;
+                $cash_transaction = new CashTransaction();
+                $cash_transaction->Reference=$sales_id;
+                $cash_transaction->createdDate=$request->SaleDate;
+                $cash_transaction->Type='sales';
+                $cash_transaction->Details='CashSales|'.$sales_id;
+                $cash_transaction->Credit=0.00;
+                $cash_transaction->Debit=$request->paidBalance;
+                $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                $cash_transaction->user_id = $user_id;
+                $cash_transaction->company_id = $company_id;
+                $cash_transaction->PadNumber = $pad_number;
+                $cash_transaction->save();
+            }
+
+            ////////////////// start account section gautam ////////////////
+            if($sales_id)
+            {
+                $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                // totally credit
                 if ($request->paidBalance == 0 || $request->paidBalance == 0.00) {
                     $totalCredit = $request->grandTotal;
-                    $totalDebit = $accountTransaction->last()->Debit;
                     $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                    $AccData =
+                        [
+                            'customer_id' => $request->customer_id,
+                            'Credit' => 0.00,
+                            'Debit' => $totalCredit,
+                            'Differentiate' => $difference,
+                            'createdDate' => $request->SaleDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Sales|'.$sales_id,
+                            'referenceNumber'=>'P#'.$pad_number,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
                 }
-                elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal )
+                // partial payment some cash some credit
+                elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal)
                 {
-
-                    $totalDebit = $request->paidBalance;
-                    $totalCredit = $request->grandTotal;
                     $differenceValue = $accountTransaction->last()->Differentiate - $request->paidBalance;
+                    $totalCredit = $accountTransaction->last()->Differentiate + $request->grandTotal;
                     $difference = $differenceValue + $request->grandTotal;
+
+                    //make debit entry for the sales
+                    $AccData =
+                        [
+                            'customer_id' => $request->customer_id,
+                            'Credit' => 0.00,
+                            'Debit' => $request->grandTotal,
+                            'Differentiate' => $totalCredit,
+                            'createdDate' => $request->SaleDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'Sales|'.$sales_id,
+                            'referenceNumber'=>'P#'.$pad_number,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+
+                    //make credit entry for the whatever cash is paid
+                    $difference=$totalCredit-$request->paidBalance;
+                    $AccData =
+                        [
+                            'customer_id' => $request->customer_id,
+                            'Credit' => $request->paidBalance,
+                            'Debit' => 0.00,
+                            'Differentiate' => $difference,
+                            'createdDate' => $request->SaleDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'PartialCashSales|'.$sales_id,
+                            'referenceNumber'=>'P#'.$pad_number,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
                 }
-                else{
-                    $totalDebit = $request->paidBalance;
-                    $totalCredit = $accountTransaction->last()->Credit;
-                    $difference = $accountTransaction->last()->Differentiate - $request->paidBalance;
+                // fully paid with cash
+                else
+                {
+                    $totalCredit = $request->grandTotal;
+                    $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+
+                    //make credit entry for the sales
+                    $AccountTransactions=AccountTransaction::Create([
+                        'customer_id' => $request->customer_id,
+                        'Credit' => 0.00,
+                        'Debit' => $totalCredit,
+                        'Differentiate' => $difference,
+                        'createdDate' => $request->SaleDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'Sales|'.$sales_id,
+                        'referenceNumber'=>'P#'.$pad_number,
+                    ]);
+
+                    //make credit entry for the whatever cash is paid
+                    $difference=$difference-$request->paidBalance;
+                    $AccountTransactions=AccountTransaction::Create([
+                        'customer_id' => $request->customer_id,
+                        'Credit' => $request->paidBalance,
+                        'Debit' => 0.00,
+                        'Differentiate' => $difference,
+                        'createdDate' => $request->SaleDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'FullCashSales|'.$sales_id,
+                        'referenceNumber'=>'P#'.$pad_number,
+                    ]);
                 }
             }
-            $AccData =
-                [
-                    'customer_id' => $request->customer_id,
-                    'Credit' => $totalCredit,
-                    'Debit' => $totalDebit,
-                    'Differentiate' => $difference,
-                    'createdDate' => date('Y-m-d'),
-                    'user_id' => $userId,
-                ];
-            AccountTransaction::updateOrCreate(
-                [
-                    'createdDate'   => date('Y-m-d'),
-                    'customer_id'   => $request->customer_id,
-                ],
-                $AccData);
-        }
-        ////////////////// end of account section ////////////////
-
-        $Response = SalesResource::collection(Sale::where('id',$sales->id)->with(['user','customer','sale_details'])->get());
+            ////////////////// end account section gautam ////////////////
+        });
+        $Response = SalesResource::collection(Sale::where('id',$sales_id)->with(['user','customer','sale_details'])->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
+        ////////////end new code /////////////////////////////
     }
 
     public function update(SaleRequest $saleRequest, $Id)
@@ -447,14 +467,11 @@ class SalesRepository implements ISalesRepositoryInterface
 
     public function PadNumber()
     {
-//        $PadNumber = new SaleDetail();
-//        $lastPad = $PadNumber->orderByDesc('PadNumber')->pluck('PadNumber')->first();
-//        $newPad = ($lastPad + 1);
-//        return $newPad;
-
+        $user_id = Auth::id();
+        $company_id=Str::getCompany($user_id);
         $data=array();
-        $max_sales_id = SaleDetail::where('company_id',session('company_id'))->find(DB::table('sale_details')->max('id'));
-        //echo "<pre>";print_r($max_sales_id);die;
+        $max_sales_id = SaleDetail::where('company_id',$company_id)->max('id');
+        $max_sales_id = SaleDetail::where('id',$max_sales_id)->first();
         if($max_sales_id)
         {
             $lastPad = $max_sales_id->PadNumber;
@@ -493,7 +510,7 @@ class SalesRepository implements ISalesRepositoryInterface
         else
         {
             DB::table('sale_details')->where([['sale_id', $Id]])->update(['deleted_at' =>date('Y-m-d h:i:s')]);
-            $sales->delete();
+            //$sales->delete();
             return new SalesResource(Sale::onlyTrashed()->find($Id));
         }
     }
@@ -707,7 +724,7 @@ class SalesRepository implements ISalesRepositoryInterface
         {
             $sales->isActive=1;
         }
-        $sales->update();
+        //$sales->update();
         return new SalesResource(Sale::find($Id));
     }
 

@@ -28,7 +28,7 @@
                         <div class="card-body">
                             <form action="#">
                                 <div class="form-body">
-
+                                    <input type="hidden" name="id" id="id" value="{{ $payment_receive->id }}">
                                     <?php /*<div class="row">
                                         <div class="col-md-11">
                                             <div class="form-group">
@@ -235,49 +235,49 @@
             }
         });
 
-        jQuery(function($)
-        {
-            $('body').on('click', '#selectall', function() {
-                $('.singlechkbox').prop('checked', this.checked);
-
-                var totalPrice   = 0,
-                    values       = [];
-                $('input[type=checkbox]').each( function() {
-                    if( $(this).is(':checked') ) {
-                        values.push($(this).val());
-                        totalPrice += parseInt($(this).val());
-                    }
-                });
-                $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
-            });
-
-            $('body').on('click', '.singlechkbox', function() {
-                if($('.singlechkbox').length == $('.singlechkbox:checked').length) {
-                    $('#selectall').prop('checked', true);
-                    var totalPrice   = 0,
-                        values       = [];
-                    $('input[type=checkbox]').each( function() {
-                        if( $(this).is(':checked') ) {
-                            values.push($(this).val());
-                            totalPrice += parseInt($(this).val());
-                        }
-                    });
-                    $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
-
-                } else {
-                    $("#selectall").prop('checked', false);
-                    var totalPrice   = 0,
-                        values       = [];
-                    $('input[type=checkbox]').each( function() {
-                        if( $(this).is(':checked') ) {
-                            values.push($(this).val());
-                            totalPrice += parseInt($(this).val());
-                        }
-                    });
-                    $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
-                }
-            });
-        });
+        // jQuery(function($)
+        // {
+        //     $('body').on('click', '#selectall', function() {
+        //         $('.singlechkbox').prop('checked', this.checked);
+        //
+        //         var totalPrice   = 0,
+        //             values       = [];
+        //         $('input[type=checkbox]').each( function() {
+        //             if( $(this).is(':checked') ) {
+        //                 values.push($(this).val());
+        //                 totalPrice += parseInt($(this).val());
+        //             }
+        //         });
+        //         $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
+        //     });
+        //
+        //     $('body').on('click', '.singlechkbox', function() {
+        //         if($('.singlechkbox').length == $('.singlechkbox:checked').length) {
+        //             $('#selectall').prop('checked', true);
+        //             var totalPrice   = 0,
+        //                 values       = [];
+        //             $('input[type=checkbox]').each( function() {
+        //                 if( $(this).is(':checked') ) {
+        //                     values.push($(this).val());
+        //                     totalPrice += parseInt($(this).val());
+        //                 }
+        //             });
+        //             $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
+        //
+        //         } else {
+        //             $("#selectall").prop('checked', false);
+        //             var totalPrice   = 0,
+        //                 values       = [];
+        //             $('input[type=checkbox]').each( function() {
+        //                 if( $(this).is(':checked') ) {
+        //                     values.push($(this).val());
+        //                     totalPrice += parseInt($(this).val());
+        //                 }
+        //             });
+        //             $(".totalSaleAmount").val(parseFloat(totalPrice).toFixed(2));
+        //         }
+        //     });
+        // });
     </script>
 
     <script>
@@ -339,10 +339,6 @@
                 $('.singlechkbox:checked').each(function(){
                     var currentRow = $(this).closest("tr");
 
-                    // currentRow.find('.singlechkbox').val(),
-                    // chekedValue .push($(this).val());
-                    // alert(chekedValue);
-
                     chekedValue =
                         {
                             amountPaid: currentRow.find('.singlechkbox').val(),
@@ -357,39 +353,38 @@
                 }
                 let details = {
                     'customer_id': $('#customer_id').val(),
-                    'totalAmount': $('#price').val(),
+                    'totalAmount': $('.totalSaleAmount').val(),
+                    'paidAmount': $('#paidAmount').val(),
+                    'amountInWords': $('.SumOf').val(),
                     'payment_type': $('#paymentType').val(),
                     'bank_id': bank_id,
                     'accountNumber': $('#accountNumber').val(),
                     'TransferDate': $('#TransferDate').val(),
-                    'amountInWords': $('#SumOf').val(),
                     'receiptNumber': $('#receiptNumber').val(),
                     'receiverName': $('#receiver').val(),
                     'referenceNumber': $('#referenceNumber').val(),
                     'paymentReceiveDate': $('#paymentReceiveDate').val(),
-                    'paidAmount': $('#paidAmount').val(),
                     'Description': $('#Description').val(),
                     orders: insert,
                 };
-                if (insert.length > 0) {
+                //if (insert.length > 0) {
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         }
                     });
                     var Datas = {Data: details};
-                    console.log(Datas);
+                    var Id = $('#id').val();
                     $.ajax({
-                        url: "{{ route('payment_receives.store') }}",
+
+                        url: "{{ URL('payment_receivesUpdate') }}/"+Id,
                         type: "post",
                         data: Datas,
                         success: function (result) {
                             if (result !== "Failed") {
                                 details = [];
-                                console.log(result);
                                 alert("Data Inserted Successfully");
                                 window.location.href = "{{ route('payment_receives.index') }}";
-
                             } else {
                                 alert(result);
                             }
@@ -398,12 +393,12 @@
                             alert(errormessage);
                         }
                     });
-                } else
-                {
-                    alert('Please Add item to list');
-                    $('#submit').text('Save');
-                    $('#submit').attr('disabled',false);
-                }
+                // } else
+                // {
+                //     alert('Please Add item to list');
+                //     $('#submit').text('Save');
+                //     $('#submit').attr('disabled',false);
+                // }
             });
         });
     </script>

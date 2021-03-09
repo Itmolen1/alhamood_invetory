@@ -22,6 +22,26 @@ class SaleController extends Controller
         return $this->saleRepository->index();
     }
 
+    public function get_today_sale()
+    {
+        return $this->saleRepository->get_today_sale();
+    }
+
+    public function get_sale_of_date()
+    {
+        return $this->saleRepository->get_sale_of_date();
+    }
+
+    public function view_sale_of_date(Request $request)
+    {
+        return $this->saleRepository->view_sale_of_date($request);
+    }
+
+    public function view_result_sale_of_date(Request $request)
+    {
+        return $this->saleRepository->view_result_sale_of_date($request);
+    }
+
     public function create()
     {
         return $this->saleRepository->create();

@@ -28,7 +28,7 @@ class ServiceResponse
             'StatusCode' => 401,
             'Message' => $message,
             'Data' => $entity,
-        ], 200);
+        ], 201);
     }
 
     public  function Bad($entity)

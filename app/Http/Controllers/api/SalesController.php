@@ -8,7 +8,10 @@ use App\Http\Requests\SaleRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Customer;
 use App\Models\Sale;
+use App\Models\SaleDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class SalesController extends Controller
 {
@@ -47,8 +50,39 @@ class SalesController extends Controller
 
     public function store(Request $request)
     {
+        $user_id = Auth::id();
+        $company_id=Str::getCompany($user_id);
+        $sale_details=json_decode($_POST['sale_details']);
+        if(isset($sale_details[0]->PadNumber))
+        {
+            $pad_number=$sale_details[0]->PadNumber;
+        }
+        else
+        {
+            $pad_number=0;
+        }
+        if($pad_number!=0)
+        {
+            $already_exist = SaleDetail::where('company_id',$company_id)->where('PadNumber',$pad_number)->first();
+            if($already_exist)
+            {
+                return $this->userResponse->Failed($sales = (object)[],'PAD NUMBER ALREADY EXIST.');
+            }
+        }
+        if($request->paidBalance > $request->grandTotal)
+        {
+            return $this->userResponse->Failed($sales = (object)[],'CAN NOT ENTER EXTRA CASH HERE GO TO ADVANCES.');
+        }
         $sales=$this->salesRepository->insert($request);
-        return $this->userResponse->Success($sales);
+        if($sales)
+        {
+            return $this->userResponse->Success($sales);
+        }
+        else
+        {
+            return $this->userResponse->Failed($sales = (object)[],'Something Went Wrong.');
+        }
+
     }
 
     public function show($id)

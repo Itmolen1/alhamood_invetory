@@ -36,7 +36,6 @@
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Invoices</h4>
-                    <h3 class="required"> * Please Verify all data before submit.</h3>
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
@@ -129,6 +128,7 @@
                                                 <td><input type="hidden" placeholder="Total" class="rowTotal form-control">
                                                     <input type="text" placeholder="Total" class="rowTotal form-control">
                                                 </td>
+                                                <h3 class="required"> * Please Verify all data before submit.</h3>
                                             </tr>
                                             </tbody>
                                         </table>

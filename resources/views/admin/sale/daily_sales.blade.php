@@ -50,79 +50,15 @@
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            $('#sales_table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    "url": "{{ url('all_sales') }}",
-                    "dataType": "json",
-                    "type": "POST",
-                    "data":{ _token: "{{csrf_token()}}"}
-                },
-                columns: [
-                    {
-                        data: 'id',
-                        name: 'id',
-                        visible: false
-                    },
-                    {
-                        data: 'SaleDate',
-                        name: 'SaleDate'
-                    },
-                    {
-                        data: 'PadNumber',
-                        name: 'PadNumber'
-                    },
-                    {
-                        data: 'customer',
-                        name: 'customer'
-                    },
-                    {
-                        data: 'registrationNumber',
-                        name: 'registrationNumber'
-                    },
-                    {
-                        data: 'Quantity',
-                        name: 'Quantity'
-                    },
-                    {
-                        data: 'Price',
-                        name: 'Price'
-                    },
-                    {
-                        data: 'totalVat',
-                        name: 'totalVat'
-                    },
-                    {
-                        data: 'grandTotal',
-                        name: 'grandTotal'
-                    },
-                    {
-                        data: 'paidBalance',
-                        name: 'paidBalance'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable : false,
-                    },
-                ],
-                order: [[ 0, "desc" ]],
-                pageLength : 50,
-            });
-        });
-    </script>
 
-    {{--<script>
+
+    <script>
         $(document).ready(function () {
             $('#sales_table').dataTable({
                 processing: true,
                 ServerSide: true,
                 ajax:{
-                    url: "{{ route('sales.index') }}",
+                    url: "{{ route('get_today_sale') }}",
                 },
                 columns:[
                     {
@@ -172,10 +108,14 @@
                         orderable: false
                     },
                 ],
-                order: [[ 0, "desc" ]]
+                order: [[ 0, "desc" ]],
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
             });
         });
-    </script>--}}
+    </script>
 
 <script>
     function ConfirmDelete()

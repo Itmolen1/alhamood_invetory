@@ -90,7 +90,7 @@
                                                         <td>
                                                             <div class="form-group">
                                                                 <select name="vehicle" id="vehicle" class="form-control vehicle_id slct">
-                                                                    <option class="opt" value="{{ $sale_details[0]->vehicle->id}}">{{ $details->vehicle->registrationNumber }}</option>
+                                                                    <option class="auto_select_vehicle opt" value="{{ $sale_details[0]->vehicle->id}}">{{ $details->vehicle->registrationNumber }}</option>
                                                                 </select>
                                                             </div>
                                                         </td>
@@ -239,7 +239,6 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-
                     {{--                    <button type="button" class="btn btn-info">Send message</button>--}}
                 </div>
             </div>
@@ -248,7 +247,6 @@
 
     <script>
         $(document).ready(function () {
-
             // ///////////////////// Add new Row //////////////////////
             // $(document).on("click",'.addRow', function () {
             //     alert()
@@ -283,8 +281,6 @@
             //     Current.remove();
             // });
             // /////////////end remove row //////////////
-
-
             //// refresh customer data /////////////////////
             $(document).ready(function () {
                 var Id = 0;
@@ -300,6 +296,8 @@
                             if (result !== "Failed") {
                                 //$('#Rate').val(result.customers[0].customer_prices[0].Rate);
                                 //$('#VAT').val(result.customers[0].customer_prices[0].VAT);
+                                var selecte_vehicle=$("#vehicle").val();
+
                                 $("#vehicle").html('');
                                 var vehicleDetails = '';
                                 if (result.customers[0].vehicles.length > 0)
@@ -312,9 +310,11 @@
                                     vehicleDetails += '<option value="0">No Data</option>';
                                 }
                                 $("#vehicle").append(vehicleDetails);
+                                //$('.auto_select_vehicle option[value='+selecte_vehicle+']').attr("selected","selected");
+                                $('select[name=vehicle] option[value='+selecte_vehicle+']').attr('selected','selected');
                                 var rate = result.customers[0].customer_prices[0].Rate;
                                 var vat = result.customers[0].customer_prices[0].VAT;
-                                totalWithCustomer(vat, rate);
+                                //totalWithCustomer(vat, rate);
                                 $('#closing').val(result.closing);
 
                             } else {
@@ -333,7 +333,6 @@
 
             /////////////////////////// customer select /////////////////
             $(document).ready(function () {
-
                 $('#showUpdateModel').click(function () {
                     $('#ShowUpdates').modal();
                 });
@@ -345,12 +344,10 @@
                 $('#submit').click(function () {
                     $('#submit').val('please wait...');
                     $('#submit').attr('disabled',true);
-                    //alert();
                     var updateNote = $('#updateDescription').val();
                     if (updateNote !== "") {
 
                         var customer_id = $('.customer_id').val();
-                        //alert(supplierNew);
                         if (customer_id != null) {
                             var insert = [], orderItem = [], nonArrayData = "";
                             $('#newRow tr').each(function () {
@@ -377,7 +374,6 @@
                                 } else {
                                     return false;
                                 }
-
                             });
                             var Id = $('#id').val();
                             var cashPaid = $('.cashPaid').val();
@@ -401,8 +397,6 @@
                                 UpdateDescription: $('#UpdateDescription').val(),
                                 orders: insert,
                             }
-                            // var Datas = {Data: details}
-                            // console.log(Datas);
                             if (insert.length > 0) {
                                 $.ajaxSetup({
                                     headers: {
@@ -410,7 +404,6 @@
                                     }
                                 });
                                 var Datas = {Data: details};
-                                console.log(Datas);
                                 $.ajax({
                                     url: "{{ URL('salesUpdate') }}/" + Id,
                                     type: "post",
@@ -418,7 +411,6 @@
                                     success: function (result) {
                                         if (result !== "Failed") {
                                             details = [];
-                                            console.log(result);
                                             alert("Data Inserted Successfully");
                                             window.location.href = "{{ route('sales.index') }}";
                                         } else {
@@ -446,7 +438,6 @@
 
                 //////// validate rows ////////
                 function validateRow(currentRow) {
-
                     var isvalid = true;
                     var rate = 0, product = 0, quantity = 0, vehicle = $('.vehicle_id').val();
                     if (parseInt(vehicle) === 0 || vehicle === ""){
@@ -460,7 +451,6 @@
                     if (parseInt(product) === 0 || product === ""){
                         //alert(product);
                         isvalid = false;
-
                     }
                     if (parseFloat(quantity) == 0 || quantity == "")
                     {
@@ -474,13 +464,10 @@
                 }
                 ////// end of validate row ///////////////////
 
-
                 $('.customer_id').change(function () {
-                    //$('.quantity').val('');
-                    //alert();
+
                     var Id = 0;
                     Id = $(this).val();
-
                     if (Id > 0)
                     {
                         $.ajax({
@@ -492,6 +479,7 @@
                                 if (result !== "Failed") {
                                     $('#Rate').val(result.customers[0].customer_prices[0].Rate);
                                     $('#VAT').val(result.customers[0].customer_prices[0].VAT);
+
                                     $("#vehicle").html('');
                                     var vehicleDetails = '';
                                     if (result.customers[0].vehicles.length > 0)
@@ -508,7 +496,6 @@
                                     var vat = result.customers[0].customer_prices[0].VAT;
                                     totalWithCustomer(vat, rate);
                                     $('#closing').val(result.closing);
-
                                 } else {
                                     alert(result);
                                 }
@@ -519,7 +506,6 @@
                         });
                     }
                 });
-
             });
             ////////////// end of customer select ////////////////
         });
@@ -541,7 +527,6 @@
                     dataType: "json",
                     success: function (result) {
                         if (result !== "Failed") {
-                            console.log(result);
                                     $("#unit").html('');
                                     var unitDetails = '';
                                     if (result.units.length > 0)
@@ -568,5 +553,6 @@
         }
         ////////////////////////// end of products select //////////
     </script>
+
     <script src="{{ asset('admin_assets/assets/dist/invoice/update_invoice.js') }}"></script>
 @endsection

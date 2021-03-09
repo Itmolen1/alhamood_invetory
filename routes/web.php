@@ -83,6 +83,10 @@ route::resource('sales','SaleController');
 route::post('salesUpdate/{Id}','SaleController@salesUpdate');
 Route::post('all_sales', 'SaleController@all_sales' )->name('all_sales');
 route::get('get_data','SaleController@get_data')->name('get_data');
+route::get('get_today_sale','SaleController@get_today_sale')->name('get_today_sale');
+route::get('get_sale_of_date','SaleController@get_sale_of_date')->name('get_sale_of_date');
+route::post('view_sale_of_date', 'SaleController@view_sale_of_date' )->name('view_sale_of_date');
+route::get('view_result_sale_of_date', 'SaleController@view_result_sale_of_date' )->name('view_result_sale_of_date');
 route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehicle');
 route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
 route::resource('customer_prices','CustomerPriceController');
@@ -98,6 +102,7 @@ route::get('customerRemaining/{Id}','LoanController@customerRemaining');
 route::get('employeeRemaining/{Id}','LoanController@employeeRemaining');
 
 route::resource('payment_receives','PaymentReceiveController');
+route::PUT('payment_receivesUpdate/{Id}','PaymentReceiveController@payment_receivesUpdate');
 route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
 route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 //route::view('customer_receives','admin.customer_payment_receive.index');

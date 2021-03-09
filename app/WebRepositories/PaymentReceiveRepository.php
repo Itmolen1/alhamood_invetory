@@ -179,16 +179,17 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
     {
         $payment_receive = PaymentReceive::find($Id);
         $user_id = session('user_id');
+        //echo "<pre>";print_r($request->all());die;
         $payment_receive->update([
-            'payment_type' => $request->paymentType,
-            'bank_id' => $request->bank_id,
-            'accountNumber' => $request->accountNumber,
-            'TransferDate' => $request->TransferDate,
-            'receiptNumber' => $request->receiptNumber,
-            'supplierPaymentDate' => $request->paymentReceiveDate,
-            'Description' => $request->Description,
-            'amountInWords' => $request->amountInWords,
-            'receiverName' => $request->receiverName,
+            'payment_type' => $request->Data['payment_type'],
+            'bank_id' => $request->Data['bank_id'],
+            'accountNumber' => $request->Data['accountNumber'],
+            'TransferDate' => $request->Data['TransferDate'],
+            'receiptNumber' => $request->Data['receiptNumber'],
+            'paymentReceiveDate' => $request->Data['paymentReceiveDate'],
+            'Description' => $request->Data['Description'],
+            'amountInWords' => $request->Data['amountInWords'],
+            'receiverName' => $request->Data['receiverName'],
             'user_id' => $user_id,
         ]);
         return redirect()->route('payment_receives.index')->with('update','Record Updated Successfully');
@@ -206,6 +207,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         $customers = Customer::all();
         $banks = Bank::all();
         $payment_receive = PaymentReceive::with('user','company','customer','payment_receive_details.sale.sale_details')->find($Id);
+        //echo $payment_receive->payment_type;die;
         //dd($payment_receive);
         return view('admin.customer_payment_receive.edit',compact('payment_receive','customers','banks'));
 

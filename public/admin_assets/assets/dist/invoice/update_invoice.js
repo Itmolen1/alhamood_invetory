@@ -24,6 +24,7 @@
     }
     //////////////// end of accept number function //////////////
 
+
     //////////////////////// Add price ///////////
     $(document).on("keyup",'.price', function () {
         var Currentrow = $(this).closest("tr");
@@ -107,26 +108,16 @@
         if (parseInt(vat) === 0 && typeof (vat) != "undefined" && vat !== ""){
             if (!isNaN(Total) && typeof (Total) != "undefined")
             {
-
                 CurrentRow.find('.rowTotal').val(parseFloat(Total).toFixed(2));
-
-                //CurrentRow.find('.rowTotal').val(Total);
-                //CurrentRow.find('.rowTotal').val(parseFloat(Total).toFixed(2))
                 return;
             }
         }
 
         if (!isNaN(Total) && Total !== "" && typeof (vat) != "undefined")
         {
-
             var InputVatValue = parseFloat((Total / 100) * vat);
             var ValueWTV = parseFloat(InputVatValue) + parseFloat(Total);
-            // if (!isNaN(ValueWTV))
-            // {
-            //     CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
-            // }
             CurrentRow.find('.rowTotal').val(parseFloat(ValueWTV).toFixed(2));
-
             CurrentRow.find('.singleRowVat').val(parseFloat(InputVatValue).toFixed(2));
         }
     }

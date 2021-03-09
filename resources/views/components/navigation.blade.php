@@ -70,8 +70,10 @@
 
             <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="fa fa-cart-plus"></i><span class="hide-menu">Sales</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li  class="border-bottom"><a href="{{ route('sales.create') }}">Add Sales</a></li>
-                    <li><a href="{{ route('sales.index') }}">Manage Sales</a></li>
+                    <li class="border-bottom"><a href="{{ route('sales.create') }}">Add Sales</a></li>
+                    <li class="border-bottom"><a href="{{ route('get_today_sale') }}">Today Sales</a></li>
+                    <li class="border-bottom"><a href="{{ route('get_sale_of_date') }}">Sales of Date</a></li>
+                    <li><a href="{{ route('sales.index') }}">Manage All Sales</a></li>
                 </ul>
             </li>
 
