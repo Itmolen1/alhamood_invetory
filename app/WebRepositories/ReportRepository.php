@@ -1157,15 +1157,15 @@ class ReportRepository implements IReportRepositoryInterface
         {
             if($request->filter=='with')
             {
-                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('isActive','=',1)->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00));
             }
             elseif($request->filter=='without')
             {
-                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('isActive','=',1)->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('totalVat', '==', 0.00));
             }
             else
             {
-                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
+                $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('isActive','=',1)->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
             }
         }
         else
@@ -1235,7 +1235,7 @@ class ReportRepository implements IReportRepositoryInterface
                         <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['PurchaseDate']))).'</td>
                         <td align="center" width="30">'.($row[$i]['purchase_details_without_trash'][0]['PadNumber']).'</td>
                         <td align="center" width="30">'.($row[$i]['referenceNumber']).'</td>
-                        <td align="center" width="110">'.($row[$i]['api_supplier']['Name']).'</td>
+                        <td align="left" width="110">'.($row[$i]['api_supplier']['Name']).'</td>
                         <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['Quantity']).'</td>
                         <td align="right" width="30">'.($row[$i]['purchase_details_without_trash'][0]['Price']).'</td>
                         <td align="right" width="55">'.($row[$i]['purchase_details_without_trash'][0]['rowTotal']).'</td>
@@ -1251,7 +1251,7 @@ class ReportRepository implements IReportRepositoryInterface
                         <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['PurchaseDate']))).'</td>
                         <td align="center" width="30">'.($row[$i]['purchase_details_without_trash'][0]['PadNumber']).'</td>
                         <td align="center" width="30">'.($row[$i]['referenceNumber']).'</td>
-                        <td align="center" width="110">'.($row[$i]['api_supplier']['Name']).'</td>
+                        <td align="left" width="110">'.($row[$i]['api_supplier']['Name']).'</td>
                         <td align="right" width="50">'.($row[$i]['purchase_details_without_trash'][0]['Quantity']).'</td>
                         <td align="right" width="30">'.($row[$i]['purchase_details_without_trash'][0]['Price']).'</td>
                         <td align="right" width="55">'.($row[$i]['purchase_details_without_trash'][0]['rowTotal']).'</td>

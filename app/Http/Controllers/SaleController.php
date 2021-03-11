@@ -13,9 +13,14 @@ class SaleController extends Controller
     private $saleRepository;
 
     public function __construct(ISaleRepositoryInterface $saleRepository)
-   {
+    {
        $this->saleRepository = $saleRepository;
-   }
+    }
+
+    public function CheckPadExist(Request $request)
+    {
+        return $this->saleRepository->CheckPadExist($request);
+    }
 
     public function index()
     {

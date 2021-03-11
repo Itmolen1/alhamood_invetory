@@ -256,197 +256,2399 @@ class SalesRepository implements ISalesRepositoryInterface
         ////////////end new code /////////////////////////////
     }
 
-    public function update(SaleRequest $saleRequest, $Id)
+    public function update(Request $request, $Id)
     {
         $userId = Auth::id();
-        $saleRequest['user_id']=$userId ?? 0;
+        $request['user_id']=$userId ?? 0;
 
-        //$sale_detail=$saleRequest->sale_details;
+        // start new code ////////
+        DB::transaction(function () use($request,$Id){
 
-        $sales = Sale::findOrFail($Id);
+            $sold = Sale::with('customer.account_transaction')->find($Id);
+            $user_id = Auth::id();
+            $company_id = Str::getCompany($user_id);
+            $sale_detail=json_decode($_POST['sale_details']);
+            $PadNumber=$sale_detail[0]->PadNumber;
 
-        ////////////////// account section ////////////////
-        $accountTransaction = AccountTransaction::where(
-            [
-                'customer_id'=> $saleRequest->customer_id,
-            ])->get();
-        if (!is_null($accountTransaction)) {
-            $lastAccountTransaction = $accountTransaction->Last();
-            if ($lastAccountTransaction->customer_id != $sales->customer_id)
+            ////////////////// account section gautam ////////////////
+            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+            if (!is_null($accountTransaction))
             {
-                if ($sales->paidBalance == 0 || $sales->paidBalance == 0.00) {
-                    $OldValue1 = $sales->customer->account_transaction->Last()->Credit - $sales->grandTotal;
-                    $OldTotalCredit = $OldValue1;
-                    $OldTotalDebit = $sales->customer->account_transaction->Last()->Debit;
-                    $OldValue = $sales->customer->account_transaction->Last()->Differentiate - $sales->grandTotal;
-                    $OldDifference = $OldValue;
-                }
-                elseif ($sales->paidBalance > 0 AND $sales->paidBalance < $sales->grandTotal)
+                // payment is done (in any way - advance or payment)
+                if($sold->IsPaid==1 && $sold->IsPartialPaid==0)
                 {
-                    $OldTotalDebit = $sales->customer->account_transaction->Last()->Debit - $sales->paidBalance;
-                    $OldTotalCredit = $sales->customer->account_transaction->Last()->Credit - $sales->grandTotal;
-                    $differenceValue = $sales->customer->account_transaction->Last()->Differentiate + $sales->paidBalance;
-                    $OldDifference = $differenceValue - $sales->grandTotal;
-                }
-                else{
-                    $OldValue1 = $sales->customer->account_transaction->Last()->Debit - $sales->paidBalance;
-                    $OldTotalDebit = $OldValue1;
-                    $OldTotalCredit = $sales->customer->account_transaction->Last()->Credit;
-                    $OldValue = $sales->customer->account_transaction->Last()->Differentiate + $sales->paidBalance;
-                    $OldDifference = $OldValue;
-                }
-                $OldAccData =
-                    [
-                        'customer_id' => $sales->customer_id,
-                        'Debit' => $OldTotalDebit,
-                        'Credit' => $OldTotalCredit,
-                        'Differentiate' => $OldDifference,
-                        'createdDate' => $sales->customer->account_transaction->Last()->createdDate,
-                        'user_id' =>$userId,
-                    ];
-                AccountTransaction::updateOrCreate([
-                    'id'   => $sales->customer->account_transaction->Last()->id,
-                ], $OldAccData);
+                    //check if only customer is changed and not quantity or price = grand total is same as previous
+                    if($request->customer_id!=$sold->customer_id  AND $sold->grandTotal==$request->grandTotal)
+                    {
+                        //supplier is changed need to reverse all previously made account entries for the previous supplier
+                        // start reverse entry for wrong supplier
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Sales|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'customer_id' => $sold->customer_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing-$previously_debited,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                        // reverse entry done for wrong supplier
 
-                if ($saleRequest->paidBalance == 0 || $saleRequest->paidBalance == 0.00) {
-                    $totalCredit = $lastAccountTransaction->Credit + $saleRequest->grandTotal;
-                    $totalDebit = $lastAccountTransaction->Debit;
-                    $difference = $lastAccountTransaction->Differentiate + $saleRequest->grandTotal;
+                        //start if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+                        $description_string1='FullCashSales|'.$Id;
+                        $description_string2='PartialCashSales|'.$Id;
+                        $previous_probable_cash_entry = AccountTransaction::where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string1)->orWhere('Description','like',$description_string2)->get()->last();
+
+                        if($previous_probable_cash_entry)
+                        {
+                            $previously_credited = $previous_probable_cash_entry->Credit;
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            if($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string1;
+                            }
+                            elseif($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string2;
+                            }
+                            else
+                            {
+                                $new_desc_string='';
+                            }
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>$new_desc_string,
+                                    'referenceNumber'=>$previous_probable_cash_entry->referenceNumber,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_probable_cash_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+
+                            $description_string1='CashSales|'.$Id;
+                            $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string1)->get()->first();
+                            if($previous_probable_cash_entry)
+                            {
+                                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSalesReversal|'.$Id;
+                                $cash_transaction->Credit=$previously_credited;
+                                $cash_transaction->Debit=0.00;
+                                $cash_transaction->Differentiate=$difference-$previously_credited;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+
+                            // if cash paid is same need to make new cash entry here
+                        }
+                        //end if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+
+                        if($request->paidBalance!=0)
+                        {
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id,])->get();
+                            if($cashTransaction)
+                            {
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSales|'.$Id;
+                                $cash_transaction->Credit=0.00;
+                                $cash_transaction->Debit=$request->paidBalance;
+                                $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+                        }
+
+                        /*new entry*/
+                        // start new entry for right supplier and credit or debit account based on closing balance
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        $totalDebit = $request->grandTotal;
+                        $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                        $AccData =
+                            [
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalDebit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        if($difference<0)
+                        {
+                            // still there is advance amount so make it fully paid
+                            $this_sales = Sale::find($sold->id);
+                            $this_sales->update([
+                                "paidBalance"        => $request->grandTotal,
+                                "remainingBalance"   => 0.00,
+                                "IsPaid" => 1,
+                                "IsPartialPaid" => 0,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'AutoPaid',
+                            ]);
+                        }
+                        elseif($difference>0)
+                        {
+                            if($difference==($request->grandTotal))
+                            {
+                                // now we are receivable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => 0,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                ]);
+                            }
+                            else
+                            {
+                                // now customer is payable so
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => 0,
+                                    "remainingBalance"   => $request->grandTotal,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => '',
+                                    'referenceNumber'=>$accountTransaction->last()->referenceNumber,
+                                ]);
+                            }
+                        }
+                        /*new entry*/
+                    }
+
+                    // check if only grand total is changed and not the customer
+                    elseif($request->customer_id==$sold->customer_id  AND $sold->grandTotal!=$request->grandTotal)
+                    {
+                        // 1 : reverse older entry
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Sales|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'customer_id' => $sold->customer_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing-$previously_debited,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                        // reverse entry done
+
+                        //start if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+                        $description_string1='FullCashSales|'.$Id;
+                        $description_string2='PartialCashSales|'.$Id;
+                        $previous_probable_cash_entry = AccountTransaction::where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string1)->orWhere('Description','like',$description_string2)->get()->last();
+
+                        $cash_flag=0;
+                        if($previous_probable_cash_entry)
+                        {
+                            $previously_credited = $previous_probable_cash_entry->Credit;
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            if($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string1;
+                            }
+                            elseif($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string2;
+                            }
+                            else
+                            {
+                                $new_desc_string='';
+                            }
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>$new_desc_string,
+                                    'referenceNumber'=>$previous_probable_cash_entry->referenceNumber,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_probable_cash_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            $cash_flag=1;
+
+                            $description_string1='CashSales|'.$Id;
+                            $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string1)->get()->first();
+                            if($previous_probable_cash_entry)
+                            {
+                                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSalesReversal|'.$Id;
+                                $cash_transaction->Credit=$previously_credited;
+                                $cash_transaction->Debit=0.00;
+                                $cash_transaction->Differentiate=$difference-$previously_credited;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+                            // if cash paid is same need to make new cash entry here
+                        }
+                        //end if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+
+                        /* new entry start */
+                        // make new entry then check account balance
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        $totalDebit = $request->grandTotal;
+                        $difference = $accountTransaction->last()->Differentiate - $request->grandTotal;
+                        $AccData =
+                            [
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalDebit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        $accountTransaction_ref=$AccountTransactions->id;
+                        /* new entry end */
+
+                        if($request->paidBalance!=0)
+                        {
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id,])->get();
+                            if($cashTransaction)
+                            {
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSales|'.$Id;
+                                $cash_transaction->Credit=0.00;
+                                $cash_transaction->Debit=$request->paidBalance;
+                                $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+
+                                $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                                $last_closing = $accountTransaction->last()->Differentiate;
+                                $AccData =
+                                    [
+                                        'customer_id' => $request->customer_id,
+                                        'Credit' => $request->paidBalance,
+                                        'Debit' => 0.00,
+                                        'Differentiate' => $last_closing+$request->paidBalance,
+                                        'createdDate' => $request->SaleDate,
+                                        'user_id' => $user_id,
+                                        'company_id' => $company_id,
+                                        'Description'=>'FullCashSales|'.$Id,
+                                    ];
+                                $AccountTransactions = AccountTransaction::Create($AccData);
+                            }
+                        }
+
+                        // if difference is positive meaning advance is over and we are receivable
+                        // so update sales entry with difference amount as received amount
+                        if($cash_flag)
+                        {
+                            if($difference<0)
+                            {
+                                // still there is advance amount so make it fully paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => $request->grandTotal,
+                                    "remainingBalance"   => 0.00,
+                                    "IsPaid" => 1,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid1',
+                                ]);
+                            }
+                            elseif($difference>0)
+                            {
+                                if($request->paidBalance==($request->grandTotal))
+                                {
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance"        => $request->grandTotal,
+                                        "remainingBalance"   => 0,
+                                        "IsPaid" => 1,
+                                        "IsPartialPaid" => 0,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'CP1',
+                                    ]);
+                                }
+                                else
+                                {
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance"        => $request->paidBalance,
+                                        "remainingBalance"   => $request->grandTotal-$request->paidBalance,
+                                        "IsPaid" => 0,
+                                        "IsPartialPaid" => 1,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'CP2',
+                                    ]);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if($difference==$request->grandTotal)
+                            {
+                                // now we are payable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => 0,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid2',
+                                ]);
+                            }
+                            else
+                            {
+                                // now we are payable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => $request->grandTotal-$difference,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 1,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid3',
+                                ]);
+                            }
+                        }
+
+                        // fully paid case will come here
+                    }
+
+                    // check both customer and grandTotal is changed meaning case 3
+                    elseif($request->customer_id!=$sold->customer_id  AND $sold->grandTotal!=$request->grandTotal)
+                    {
+                        // start reverse entry for wrong customer with wrong entries
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Sales|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'customer_id' => $sold->customer_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing-$previously_debited,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'referenceNumber'=>$previous_entry->referenceNumber,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                        // reverse entry done for wrong customer
+
+                        //start if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+                        $description_string1='FullCashSales|'.$Id;
+                        $description_string2='PartialCashSales|'.$Id;
+                        $previous_probable_cash_entry = AccountTransaction::where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string1)->orWhere('Description','like',$description_string2)->get()->last();
+
+                        if($previous_probable_cash_entry)
+                        {
+                            $previously_credited = $previous_probable_cash_entry->Credit;
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            if($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string1;
+                            }
+                            elseif($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string2;
+                            }
+                            else
+                            {
+                                $new_desc_string='';
+                            }
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>$new_desc_string,
+                                    'referenceNumber'=>$previous_probable_cash_entry->referenceNumber,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_probable_cash_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+
+                            $description_string1='CashSales|'.$Id;
+                            $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string1)->get()->first();
+                            if($previous_probable_cash_entry)
+                            {
+                                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSalesReversal|'.$Id;
+                                $cash_transaction->Credit=$previously_credited;
+                                $cash_transaction->Debit=0.00;
+                                $cash_transaction->Differentiate=$difference-$previously_credited;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+
+                            // if cash paid is same need to make new cash entry here
+                        }
+                        //end if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+
+                        if($request->paidBalance!=0)
+                        {
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id,])->get();
+                            if($cashTransaction)
+                            {
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSales|'.$Id;
+                                $cash_transaction->Credit=0.00;
+                                $cash_transaction->Debit=$request->paidBalance;
+                                $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+                        }
+
+                        /*new entry with right grand total */
+                        // start new entry for right customer and credit or debit account based on closing balance
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        $totalDebit = $request->grandTotal;
+                        $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                        $AccData =
+                            [
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalDebit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'referenceNumber'=>$accountTransaction->last()->referenceNumber,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // check if new incoming entry is credit or not
+                        if($request->paidBalance==0)
+                        {
+                            $this_sales = Sale::find($sold->id);
+                            $this_sales->update([
+                                "paidBalance"        => 0,
+                                "remainingBalance"   => $request->grandTotal,
+                                "IsPaid" => 0,
+                                "IsPartialPaid" => 0,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => '',
+                            ]);
+                        }
+                        else
+                        {
+                            if($difference<0)
+                            {
+                                // still there is advance amount so make it fully paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => $request->grandTotal,
+                                    "remainingBalance"   => 0.00,
+                                    "IsPaid" => 1,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                ]);
+                            }
+                            elseif($difference>0)
+                            {
+                                if($difference==($request->grandTotal))
+                                {
+                                    // now we are payable so differance amount will be paid amount and make it partial paid
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance"        => 0,
+                                        "remainingBalance"   => $difference,
+                                        "IsPaid" => 0,
+                                        "IsPartialPaid" => 0,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'AutoPaid',
+                                    ]);
+                                }
+                                else
+                                {
+                                    // now we are payable so differance amount will be paid amount and make it partial paid
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance"        => 0,
+                                        "remainingBalance"   => $request->grandTotal,
+                                        "IsPaid" => 0,
+                                        "IsPartialPaid" => 0,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'AutoPaid',
+                                    ]);
+                                }
+                            }
+                        }
+
+                        /*new entry with right grand total*/
+                    }
+
+                    // check only cash is reduction in payment nothing else
+                    elseif ($request->paidBalance!=$sold->paidBalance)
+                    {
+                        // 1 : reverse older entry
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Sales|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'customer_id' => $sold->customer_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing-$previously_debited,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                        // reverse entry done
+
+                        //start if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+                        $description_string1='FullCashSales|'.$Id;
+                        $description_string2='PartialCashSales|'.$Id;
+                        $previous_probable_cash_entry = AccountTransaction::where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string1)->orWhere('Description','like',$description_string2)->get()->last();
+
+                        $cash_flag=0;
+                        if($previous_probable_cash_entry)
+                        {
+                            $previously_credited = $previous_probable_cash_entry->Credit;
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            if($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string1;
+                            }
+                            elseif($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string2;
+                            }
+                            else
+                            {
+                                $new_desc_string='';
+                            }
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>$new_desc_string,
+                                    'referenceNumber'=>$previous_probable_cash_entry->referenceNumber,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_probable_cash_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            $cash_flag=1;
+
+                            $description_string1='CashSales|'.$Id;
+                            $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string1)->get()->first();
+                            if($previous_probable_cash_entry)
+                            {
+                                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSalesReversal|'.$Id;
+                                $cash_transaction->Credit=$previously_credited;
+                                $cash_transaction->Debit=0.00;
+                                $cash_transaction->Differentiate=$difference-$previously_credited;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+                            // if cash paid is same need to make new cash entry here
+                        }
+                        //end if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+
+                        /* new entry start */
+                        // make new entry then check account balance
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        $totalDebit = $request->grandTotal;
+                        $difference = $accountTransaction->last()->Differentiate - $request->grandTotal;
+                        $AccData =
+                            [
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalDebit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        $accountTransaction_ref=$AccountTransactions->id;
+                        /* new entry end */
+
+                        if($request->paidBalance!=0)
+                        {
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id,])->get();
+                            if($cashTransaction)
+                            {
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSales|'.$Id;
+                                $cash_transaction->Credit=0.00;
+                                $cash_transaction->Debit=$request->paidBalance;
+                                $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+
+                                $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                                $last_closing = $accountTransaction->last()->Differentiate;
+                                $AccData =
+                                    [
+                                        'customer_id' => $request->customer_id,
+                                        'Credit' => $request->paidBalance,
+                                        'Debit' => 0.00,
+                                        'Differentiate' => $last_closing+$request->paidBalance,
+                                        'createdDate' => $request->SaleDate,
+                                        'user_id' => $user_id,
+                                        'company_id' => $company_id,
+                                        'Description'=>'FullCashSales|'.$Id,
+                                    ];
+                                $AccountTransactions = AccountTransaction::Create($AccData);
+                            }
+                        }
+
+                        // if difference is positive meaning advance is over and we are receivable
+                        // so update sales entry with difference amount as received amount
+                        if($cash_flag)
+                        {
+                            if($difference<0)
+                            {
+                                // still there is advance amount so make it fully paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => $request->grandTotal,
+                                    "remainingBalance"   => 0.00,
+                                    "IsPaid" => 1,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid1',
+                                ]);
+                            }
+                            elseif($difference>0)
+                            {
+                                if($request->paidBalance==($request->grandTotal))
+                                {
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance"        => $request->grandTotal,
+                                        "remainingBalance"   => 0,
+                                        "IsPaid" => 1,
+                                        "IsPartialPaid" => 0,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'CP1',
+                                    ]);
+                                }
+                                else
+                                {
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance"        => $request->paidBalance,
+                                        "remainingBalance"   => $request->grandTotal-$request->paidBalance,
+                                        "IsPaid" => 0,
+                                        "IsPartialPaid" => 1,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'CP2',
+                                    ]);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if($difference==$request->grandTotal)
+                            {
+                                // now we are payable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => 0,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid2',
+                                ]);
+                            }
+                            else
+                            {
+                                // now we are payable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => $request->grandTotal-$difference,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 1,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid3',
+                                ]);
+                            }
+                        }
+                    }
                 }
-                elseif ($saleRequest->paidBalance > 0 AND $saleRequest->paidBalance < $saleRequest->grandTotal)
+                elseif($sold->IsPaid==0 && $sold->IsPartialPaid==1)
                 {
-                    $totalDebit = $lastAccountTransaction->Debit - $saleRequest->paidBalance;
-                    $totalCredit = $lastAccountTransaction->Credit - $saleRequest->grandTotal;
-                    $differenceValue = $accountTransaction->last()->Differentiate + $saleRequest->paidBalance;
-                    $difference = $differenceValue - $saleRequest->grandTotal;
+                    // if more cash incoming then need to add in customer account
+                    if($sold->paidBalance!=$request->paidBalance)
+                    {
+                        //check if previously cash transaction done with this sales id
+                        $description_string='CashSales|'.$Id;
+                        $previous_cash_entry = CashTransaction::get()->where('company_id','=',$company_id)->where('Details','like',$description_string)->last();
+                        if($previous_cash_entry)
+                        {
+                            // start reverse entry
+                            $previously_debited = $previous_cash_entry->Debit;
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$Id;
+                            $cash_transaction->createdDate=$request->SaleDate;
+                            $cash_transaction->Type='sales';
+                            $cash_transaction->Details='CashSales|'.$Id.'hide';
+                            $cash_transaction->Credit=$previously_debited;
+                            $cash_transaction->Debit=0.00;
+                            $cash_transaction->Differentiate=$difference-$previously_debited;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                            // also hide previous entry start
+                            CashTransaction::where('id', $previous_cash_entry->id)->update(array('Details' => 'CashSales|'.$Id.'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // start new entry
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$Id;
+                            $cash_transaction->createdDate=$request->SaleDate;
+                            $cash_transaction->Type='sales';
+                            $cash_transaction->Details='CashSales|'.$Id;
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$request->paidBalance;
+                            $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                            // end new entry
+
+                            // now here we check if only and only cash paid is updating and none of the below case will execute then we need..
+                            // to check if there any existing entry with PartialCashSales|$id and not hidden we need to reverse that entry
+                            if($request->customer_id==$sold->customer_id  AND $sold->grandTotal==$request->grandTotal)
+                            {
+                                $description_string='PartialCashSales|'.$Id;
+                                $previous_entry = AccountTransaction::get()->where('company_id','=',$company_id)->where('Description','like',$description_string)->last();
+                                if($previous_entry)
+                                {
+                                    // start revers entry
+                                    $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                                    $last_closing=$accountTransaction->last()->Differentiate;
+                                    $previously_credited = $previous_entry->Credit;
+                                    $AccData =
+                                        [
+                                            'customer_id' => $sold->customer_id,
+                                            'Debit' => $previously_credited,
+                                            'Credit' => 0.00,
+                                            'Differentiate' => $last_closing+$previously_credited,
+                                            'createdDate' => $request->SaleDate,
+                                            'user_id' => $user_id,
+                                            'company_id' => $company_id,
+                                            'Description'=>'PartialCashSales|'.$Id,
+                                            'updateDescription'=>'hide',
+                                        ];
+                                    $AccountTransactions = AccountTransaction::Create($AccData);
+                                    // also hide previous entry start
+                                    AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                                    // also hide previous entry end
+                                    // reverse entry done
+
+                                    // start new entry
+                                    $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                                    $last_closing=$accountTransaction->last()->Differentiate;
+                                    $AccData =
+                                        [
+                                            'customer_id' => $sold->customer_id,
+                                            'Debit' => 0.00,
+                                            'Credit' => $request->paidBalance,
+                                            'Differentiate' => $last_closing-$request->paidBalance,
+                                            'createdDate' => $request->SaleDate,
+                                            'user_id' => $user_id,
+                                            'company_id' => $company_id,
+                                            'Description'=>'PartialCashSales|'.$Id,
+                                        ];
+                                    $AccountTransactions = AccountTransaction::Create($AccData);
+                                    // new entry done
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // start new entry
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$Id;
+                            $cash_transaction->createdDate=$request->SaleDate;
+                            $cash_transaction->Type='sales';
+                            $cash_transaction->Details='CashSales|'.$Id;
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$request->paidBalance;
+                            $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->PadNumber = $PadNumber;
+                            $cash_transaction->save();
+                            // end new entry
+
+                            // now here we check if only and only cash paid is updating and none of the below case will execute then we need..
+                            // to create one more cash entry for this sales as partial cash sales entry in account transaction
+                            if($request->customer_id==$sold->customer_id  AND $sold->grandTotal==$request->grandTotal)
+                            {
+                                $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                                $last_closing=$accountTransaction->last()->Differentiate;
+                                $description_string='Sales|'.$Id;
+                                $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                                //echo "<pre>";print_r($previous_entry->Credit);die;
+                                $previously_debited = $previous_entry->Debit;
+                                $AccData =
+                                    [
+                                        'customer_id' => $sold->customer_id,
+                                        'Debit' => 0.00,
+                                        'Credit' => $request->paidBalance,
+                                        'Differentiate' => $last_closing-$request->paidBalance,
+                                        'createdDate' => $request->SaleDate,
+                                        'user_id' => $user_id,
+                                        'company_id' => $company_id,
+                                        'Description'=>'PartialCashSales|'.$Id,
+                                    ];
+                                $AccountTransactions = AccountTransaction::Create($AccData);
+                            }
+                        }
+
+                        if($request->grandTotal==$request->paidBalance)
+                        {
+                            $sold->IsPaid=1;
+                            $sold->IsPartialPaid=0;
+                            $sold->paidBalance=$request->paidBalance;
+                            $sold->remainingBalance=$request->grandTotal-$request->paidBalance;
+                        }
+                        elseif($request->paidBalance<$sold->grandTotal)
+                        {
+                            $sold->IsPaid=0;
+                            $sold->IsPartialPaid=1;
+                            $sold->paidBalance=$request->paidBalance;
+                            $sold->remainingBalance=$request->grandTotal-$request->paidBalance;
+                        }
+                    }
+
+                    //check if only customer is changed and not quantity or price = grand total is same as previous
+                    if($request->customer_id!=$sold->customer_id  AND $sold->grandTotal==$request->grandTotal)
+                    {
+                        //supplier is changed need to reverse all previously made account entries for the previous supplier
+
+                        // start reverse entry for wrong supplier
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Sales|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'customer_id' => $sold->customer_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing-$previously_debited,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                        // reverse entry done for wrong supplier
+
+                        /*new entry*/
+                        // start new entry for right supplier and credit or debit account based on closing balance
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        $totalDebit = $request->grandTotal;
+                        $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                        $AccData =
+                            [
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalDebit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        if($difference<0)
+                        {
+                            // still there is advance amount so make it fully paid
+                            $this_sales = Sale::find($sold->id);
+                            $this_sales->update([
+                                "paidBalance"        => $request->grandTotal,
+                                "remainingBalance"   => 0.00,
+                                "IsPaid" => 1,
+                                "IsPartialPaid" => 0,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'AutoPaid',
+                            ]);
+                        }
+                        elseif($difference>0)
+                        {
+                            if($difference==($request->grandTotal))
+                            {
+                                // now we are receivable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => 0,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                ]);
+                            }
+                            else
+                            {
+                                // now we are receivable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => $request->grandTotal-$difference,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 1,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                ]);
+                            }
+                        }
+                        /*new entry*/
+                    }
+
+                    // check if only grand total is changed and not the customer
+                    elseif($request->customer_id==$sold->customer_id  AND $sold->grandTotal!=$request->grandTotal)
+                    {
+                        // 1 : reverse older entry
+                        // start reverse entry
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Sales|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'customer_id' => $sold->customer_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing-$previously_debited,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                        // reverse entry done
+
+                        /* new entry start */
+                        // make new entry then check account balance
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+
+                        $totalDebit = $request->grandTotal;
+                        $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                        $AccData =
+                            [
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalDebit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        $accountTransaction_ref=$AccountTransactions->id;
+                        /* new entry end */
+
+                        // if difference is positive meaning advance is over and we are receivable
+                        // so update sales entry with difference amount as received amount
+                        if($difference<0)
+                        {
+                            // still there is advance amount so make it fully paid
+                            $this_sales = Sale::find($sold->id);
+                            $this_sales->update([
+                                "paidBalance"        => $request->grandTotal,
+                                "remainingBalance"   => 0.00,
+                                "IsPaid" => 1,
+                                "IsPartialPaid" => 0,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'AutoPaid',
+                            ]);
+                        }
+                        elseif($difference>0)
+                        {
+                            if($difference==($request->grandTotal))
+                            {
+                                // now we are payable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => 0,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                ]);
+                            }
+                            else
+                            {
+                                // now we are payable so differance amount will be paid amount and make it partial paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance"        => $request->grandTotal-$difference,
+                                    "remainingBalance"   => $difference,
+                                    "IsPaid" => 0,
+                                    "IsPartialPaid" => 1,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                ]);
+                            }
+                        }
+                        // fully paid case will come here
+                    }
+
+                    // check both customer and grandTotal is changed meaning case 3
+                    elseif($request->customer_id!=$sold->customer_id  AND $sold->grandTotal!=$request->grandTotal)
+                    {
+                        // start reverse entry for wrong customer with wrong entries
+                        $last_closing=$accountTransaction->last()->Differentiate;
+                        $description_string='Sales|'.$Id;
+                        $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                        $previously_debited = $previous_entry->Debit;
+                        $AccData =
+                            [
+                                'customer_id' => $sold->customer_id,
+                                'Debit' => 0.00,
+                                'Credit' => $previously_debited,
+                                'Differentiate' => $last_closing-$previously_debited,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'updateDescription'=>'hide',
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+                        // also hide previous entry start
+                        AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                        // also hide previous entry end
+                        // reverse entry done for wrong customer
+
+                        //start if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+                        $description_string1='FullCashSales|'.$Id;
+                        $description_string2='PartialCashSales|'.$Id;
+                        $previous_probable_cash_entry = AccountTransaction::where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string1)->orWhere('Description','like',$description_string2)->get()->last();
+
+                        if($previous_probable_cash_entry)
+                        {
+                            $previously_credited = $previous_probable_cash_entry->Credit;
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            if($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string1;
+                            }
+                            elseif($previous_probable_cash_entry->Description==$description_string1)
+                            {
+                                $new_desc_string=$description_string2;
+                            }
+                            else
+                            {
+                                $new_desc_string='';
+                            }
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>$new_desc_string,
+                                    'referenceNumber'=>$previous_probable_cash_entry->referenceNumber,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_probable_cash_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+
+                            $description_string1='CashSales|'.$Id;
+                            $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string1)->get()->first();
+                            if($previous_probable_cash_entry)
+                            {
+                                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                                $difference = $cashTransaction->last()->Differentiate;
+                                $cash_transaction = new CashTransaction();
+                                $cash_transaction->Reference=$Id;
+                                $cash_transaction->createdDate=$request->SaleDate;
+                                $cash_transaction->Type='sales';
+                                $cash_transaction->Details='CashSalesReversal|'.$Id;
+                                $cash_transaction->Credit=$previously_credited;
+                                $cash_transaction->Debit=0.00;
+                                $cash_transaction->Differentiate=$difference-$previously_credited;
+                                $cash_transaction->user_id = $user_id;
+                                $cash_transaction->company_id = $company_id;
+                                $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                $cash_transaction->save();
+                            }
+
+                            // if cash paid is same need to make new cash entry here
+                        }
+                        //end if entry is FullCashSales or PartialCashSales then need to also reverse the cash account entries
+
+                        /*new entry with right grand total */
+                        // start new entry for right customer and credit or debit account based on closing balance
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        $totalDebit = $request->grandTotal;
+                        $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                        $AccData =
+                            [
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalDebit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ];
+                        $AccountTransactions = AccountTransaction::Create($AccData);
+
+                        if($request->paidBalance==0)
+                        {
+                            $this_sales = Sale::find($sold->id);
+                            $this_sales->update([
+                                "paidBalance"        => 0,
+                                "remainingBalance"   => $request->grandTotal,
+                                "IsPaid" => 0,
+                                "IsPartialPaid" => 0,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => '',
+                            ]);
+                        }
+                        else
+                        {
+                            if ($difference < 0) {
+                                // still there is advance amount so make it fully paid
+                                $this_sales = Sale::find($sold->id);
+                                $this_sales->update([
+                                    "paidBalance" => $request->grandTotal,
+                                    "remainingBalance" => 0.00,
+                                    "IsPaid" => 1,
+                                    "IsPartialPaid" => 0,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'AutoPaid',
+                                ]);
+                            } elseif ($difference > 0) {
+                                if ($difference == ($request->grandTotal)) {
+                                    // now we are payable so differance amount will be paid amount and make it partial paid
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance" => 0,
+                                        "remainingBalance" => $difference,
+                                        "IsPaid" => 0,
+                                        "IsPartialPaid" => 0,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'AutoPaid',
+                                    ]);
+                                } else {
+                                    // now we are payable so differance amount will be paid amount and make it partial paid
+                                    $this_sales = Sale::find($sold->id);
+                                    $this_sales->update([
+                                        "paidBalance" => $request->grandTotal - $difference,
+                                        "remainingBalance" => $difference,
+                                        "IsPaid" => 0,
+                                        "IsPartialPaid" => 1,
+                                        "IsNeedStampOrSignature" => false,
+                                        "Description" => 'AutoPaid',
+                                    ]);
+                                }
+                            }
+                        }
+                        /*new entry with right grand total*/
+                    }
+
+                    if($request->paidBalance!=$sold->paidBalance)
+                    {
+                        //hello
+                        //meaning only paid cash is amount is changing
+                    }
                 }
-                else{
-                    $totalDebit = $lastAccountTransaction->Debit + $saleRequest->paidBalance;
-                    $totalCredit = $lastAccountTransaction->Credit;
-                    $difference = $lastAccountTransaction->Differentiate - $saleRequest->paidBalance;
+                elseif($sold->IsPaid==0 && $sold->IsPartialPaid==0)
+                {
+                    // if paid balance is not same as earlier need to update cash account as well
+                    if($sold->paidBalance!=$request->paidBalance)
+                    {
+                        //check if previously cash transaction done with this sales id
+                        $description_string='CashSales|'.$Id;
+                        $previous_cash_entry = CashTransaction::get()->where('company_id','=',$company_id)->where('Details','like',$description_string)->last();
+                        if($previous_cash_entry)
+                        {
+                            // start reverse entry
+                            $previously_debited = $previous_cash_entry->Debit;
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$Id;
+                            $cash_transaction->createdDate=$request->SaleDate;
+                            $cash_transaction->Type='sales';
+                            $cash_transaction->Details='CashSales|'.$Id.'hide';
+                            $cash_transaction->Credit=$previously_debited;
+                            $cash_transaction->Debit=0.00;
+                            $cash_transaction->Differentiate=$difference-$previously_debited;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                            // also hide previous entry start
+                            CashTransaction::where('id', $previous_cash_entry->id)->update(array('Details' => 'CashSales|'.$Id.'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // start new entry
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$Id;
+                            $cash_transaction->createdDate=$request->SaleDate;
+                            $cash_transaction->Type='sales';
+                            $cash_transaction->Details='CashSales|'.$Id;
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$request->paidBalance;
+                            $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->save();
+                            // end new entry
+
+                            // now here we check if only and only cash paid is updating and none of the below case will execute then we need..
+                            // to check if there any existing entry with PartialCashSales|$id and not hidden we need to reverse that entry
+                            if($request->customer_id==$sold->customer_id  AND $sold->grandTotal==$request->grandTotal)
+                            {
+                                $description_string='PartialCashSales|'.$Id;
+                                $previous_entry = AccountTransaction::get()->where('company_id','=',$company_id)->where('Description','like',$description_string)->last();
+                                if($previous_entry)
+                                {
+                                    // start revers entry
+                                    $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                                    $last_closing=$accountTransaction->last()->Differentiate;
+                                    $previously_credited = $previous_entry->Credit;
+                                    $AccData =
+                                        [
+                                            'customer_id' => $sold->customer_id,
+                                            'Debit' => $previously_credited,
+                                            'Credit' => 0.00,
+                                            'Differentiate' => $last_closing+$previously_credited,
+                                            'createdDate' => $request->SaleDate,
+                                            'user_id' => $user_id,
+                                            'company_id' => $company_id,
+                                            'Description'=>'PartialCashSales|'.$Id,
+                                            'updateDescription'=>'hide',
+                                        ];
+                                    $AccountTransactions = AccountTransaction::Create($AccData);
+                                    // also hide previous entry start
+                                    AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                                    // also hide previous entry end
+                                    // reverse entry done
+
+                                    // start new entry
+                                    $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                                    $last_closing=$accountTransaction->last()->Differentiate;
+                                    $AccData =
+                                        [
+                                            'customer_id' => $sold->customer_id,
+                                            'Debit' => 0.00,
+                                            'Credit' => $request->paidBalance,
+                                            'Differentiate' => $last_closing-$request->paidBalance,
+                                            'createdDate' => $request->SaleDate,
+                                            'user_id' => $user_id,
+                                            'company_id' => $company_id,
+                                            'Description'=>'PartialCashSales|'.$Id,
+                                        ];
+                                    $AccountTransactions = AccountTransaction::Create($AccData);
+                                    // new entry done
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // start new entry
+                            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                            $difference = $cashTransaction->last()->Differentiate;
+                            $cash_transaction = new CashTransaction();
+                            $cash_transaction->Reference=$Id;
+                            $cash_transaction->createdDate=$request->SaleDate;
+                            $cash_transaction->Type='sales';
+                            $cash_transaction->Details='CashSales|'.$Id;
+                            $cash_transaction->Credit=0.00;
+                            $cash_transaction->Debit=$request->paidBalance;
+                            $cash_transaction->Differentiate=$difference+$request->paidBalance;
+                            $cash_transaction->user_id = $user_id;
+                            $cash_transaction->company_id = $company_id;
+                            $cash_transaction->PadNumber = $PadNumber;
+                            $cash_transaction->save();
+                            // end new entry
+
+                            // now here we check if only and only cash paid is updating and none of the below case will execute then we need..
+                            // to create one more cash entry for this sales as partial cash sales entry in account transaction
+                            if($request->customer_id==$sold->customer_id  AND $sold->grandTotal==$request->grandTotal)
+                            {
+                                $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                                $last_closing=$accountTransaction->last()->Differentiate;
+                                $description_string='Sales|'.$Id;
+                                $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                                //echo "<pre>";print_r($previous_entry->Credit);die;
+                                $previously_debited = $previous_entry->Debit;
+                                $AccData =
+                                    [
+                                        'customer_id' => $sold->customer_id,
+                                        'Debit' => 0.00,
+                                        'Credit' => $request->paidBalance,
+                                        'Differentiate' => $last_closing-$request->paidBalance,
+                                        'createdDate' => $request->SaleDate,
+                                        'user_id' => $user_id,
+                                        'company_id' => $company_id,
+                                        'Description'=>'PartialCashSales|'.$Id,
+                                    ];
+                                $AccountTransactions = AccountTransaction::Create($AccData);
+                            }
+                        }
+
+                        if($request->grandTotal==$request->paidBalance)
+                        {
+                            $sold->IsPaid=1;
+                            $sold->IsPartialPaid=0;
+                            $sold->paidBalance=$sold->paidBalance+$request->paidBalance;
+                            $sold->remainingBalance=$sold->remainingBalance-$request->paidBalance;
+                        }
+                        elseif($request->paidBalance<$sold->grandTotal)
+                        {
+                            $sold->IsPaid=0;
+                            $sold->IsPartialPaid=1;
+                            $sold->paidBalance=$sold->paidBalance+$request->paidBalance;
+                            $sold->remainingBalance=$sold->remainingBalance-$request->paidBalance;
+                        }
+                    }
+
+                    // here will come 3 cases
+                    // 1. only customer is updating - quantity and price remains same
+                    // 2. only quantity or price updating - customer is the same
+                    // 3. both customer and quantity or price updating
+
+                    // 1 check if only customer is changed and not quantity or price = grand total is same as previous
+                    if($request->customer_id!=$sold->customer_id  AND $sold->grandTotal==$request->grandTotal)
+                    {
+                        //customer is changed need to reverse all previously made account entries for the previous customer
+
+                        //case : 1 full credit entry + payment is not done yet like isPaid=0 and IsPartialPaid=0
+                        if($sold->IsPaid==0 && $sold->IsPartialPaid==0)
+                        {
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                        }
+                        //case : 2 partial cash is paid and some amount is credit + payment is not fully done yet like isPaid=0 and IsPartialPaid=1
+                        elseif($sold->paidBalance > 0 AND $sold->paidBalance < $sold->grandTotal AND $sold->IsPartialPaid==1)
+                        {
+                            // entry 1 : debit entry for sales
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            //echo "<pre>";print_r($previous_entry->Credit);die;
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                            // entry 2 : credit whatever cash is debited
+                            // start reverse entry
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='PartialCashSales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            //echo "<pre>";print_r($previous_entry->Credit);die;
+                            $previously_credited = $previous_entry->Credit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'PartialCashSales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // reverse cash entry start
+                            // reverse cash entry end
+                            // no need to make cash entries because amount is same only supplier is changing
+                            // make new cash entry for correct supplier start
+                            // make new cash entry for correct supplier end
+                        }
+                        //case : 3 fully cash paid + isPaid=1 and IsPartialPaid=1
+                        else
+                        {
+                            // entry 1 : debit entry for sales
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            //echo "<pre>";print_r($previous_entry->Credit);die;
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                            // entry 2 : credit whatever cash is debited
+                            // start reverse entry
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='FullCashSales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_credited = $previous_entry->Credit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'FullCashSales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // reverse cash entry start
+                            // reverse cash entry end
+                            // no need to make cash entries because amount is same only supplier is changing
+                            // make new cash entry for correct supplier start
+                            // make new cash entry for correct supplier end
+                        }
+
+                        /*new entry*/
+                        // start new entry for updated customer with checking all three cases
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        // totally credit
+                        if ($request->paidBalance == 0 || $request->paidBalance == 0.00) {
+                            $totalCredit = $request->grandTotal;
+                            $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => 0.00,
+                                    'Debit' => $totalCredit,
+                                    'Differentiate' => $difference,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'referenceNumber'=>'P#'.$PadNumber,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                        }
+                        // partial payment some cash some credit
+                        elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal )
+                        {
+                            $differenceValue = $accountTransaction->last()->Differentiate - $request->paidBalance;
+                            $totalCredit = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                            $difference = $differenceValue + $request->grandTotal;
+
+                            //make credit entry for the sales
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => 0.00,
+                                    'Debit' => $request->grandTotal,
+                                    'Differentiate' => $totalCredit,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'referenceNumber'=>'P#'.$PadNumber,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+
+                            //make debit entry for the whatever cash is paid
+                            $difference=$totalCredit-$request->paidBalance;
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => $request->paidBalance,
+                                    'Debit' => 0.00,
+                                    'Differentiate' => $difference,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'PartialCashSales|'.$Id,
+                                    'referenceNumber'=>'PartialCashSales#'.$PadNumber,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                        }
+                        // fully paid with cash
+                        else
+                        {
+                            $totalCredit = $request->grandTotal;
+                            $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+
+                            //make credit entry for the sales
+                            $AccountTransactions=AccountTransaction::Create([
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalCredit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                                'referenceNumber'=>'P#'.$PadNumber,
+                            ]);
+
+                            //make debit entry for the whatever cash is paid
+                            $difference=$difference-$request->paidBalance;
+                            $AccountTransactions=AccountTransaction::Create([
+                                'customer_id' => $request->customer_id,
+                                'Credit' => $request->paidBalance,
+                                'Debit' => 0.00,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'FullCashSales|'.$Id,
+                                'referenceNumber'=>'FullCashSales#'.$PadNumber,
+                            ]);
+                        }
+                        /*new entry*/
+                    }
+                    // check if only grand total is changed and not the customer
+                    elseif($request->customer_id==$sold->customer_id  AND $sold->grandTotal!=$request->grandTotal)
+                    {
+                        //customer is not changed then need to find what is the differance in total and for payment changes
+                        // here in two way we can proceed
+                        // option 1 : reverse previous account entries and make new entry
+                        // option 2 : find out plus minus differance and make one another entry with differences
+                        // option 2 is not preferable because of while displaying we need to add or subtract similar sales id entry so that is little tricky in query
+                        // also need to manage isPaid and isPartialPaid flag according
+
+                        // implementation of option 2
+                        //case : 1 full credit entry + payment is not done yet like isPaid=0 and IsPartialPaid=0
+                        if($sold->IsPaid==0 && $sold->IsPartialPaid==0)
+                        {
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => date('Y-m-d'),
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                        }
+                        //case : 2 partial cash is paid and some amount is credit + payment is not fully done yet like isPaid=0 and IsPartialPaid=1
+                        elseif($sold->paidBalance > 0 AND $sold->paidBalance < $sold->grandTotal AND $sold->IsPartialPaid==1)
+                        {
+                            // entry 1 : debit entry for sales
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                            // entry 2 : credit whatever cash is debited
+                            // start reverse entry
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='PartialCashSales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            //echo "<pre>";print_r($previous_entry->Credit);die;
+                            $previously_credited = $previous_entry->Credit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'PartialCashSales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // reverse cash entry start
+                            // reverse cash entry end
+                            // no need to make cash entries because amount is same only supplier is changing
+                            // make new cash entry for correct supplier start
+                            // make new cash entry for correct supplier end
+                        }
+                        //case : 3 fully cash paid + isPaid=1 and IsPartialPaid=1
+                        else
+                        {
+                            // entry 1 : debit entry for sales
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                            // entry 2 : credit whatever cash is debited
+                            // start reverse entry
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='FullCashSales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            //echo "<pre>";print_r($previous_entry->Credit);die;
+                            $previously_credited = $previous_entry->Credit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'FullCashSales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // reverse cash entry start
+                            // reverse cash entry end
+                            // no need to make cash entries because amount is same only supplier is changing
+                            // make new cash entry for correct supplier start
+                            // make new cash entry for correct supplier end
+                        }
+
+                        /*new entry*/
+                        // start new entry for updated customer with checking all three cases
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        // totally credit
+                        if ($request->paidBalance == 0 || $request->paidBalance == 0.00) {
+                            $totalCredit = $request->grandTotal;
+                            $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => 0.00,
+                                    'Debit' => $totalCredit,
+                                    'Differentiate' => $difference,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                        }
+                        // partial payment some cash some credit
+                        elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal )
+                        {
+                            $differenceValue = $accountTransaction->last()->Differentiate - $request->paidBalance;
+                            $totalCredit = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                            $difference = $differenceValue + $request->grandTotal;
+
+                            //make credit entry for the sales
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => 0.00,
+                                    'Debit' => $request->grandTotal,
+                                    'Differentiate' => $totalCredit,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+
+                            //make debit entry for the whatever cash is paid
+                            $difference=$totalCredit-$request->paidBalance;
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => $request->paidBalance,
+                                    'Debit' => 0.00,
+                                    'Differentiate' => $difference,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'PartialCashSales|'.$Id,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                        }
+                        // fully paid with cash or there may be some advance amount remains
+                        else
+                        {
+                            $totalCredit = $request->grandTotal;
+                            $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+
+                            //make credit entry for the sales
+                            $AccountTransactions=AccountTransaction::Create([
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalCredit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ]);
+
+                            //make debit entry for the whatever cash is paid
+                            $difference=$difference-$request->paidBalance;
+                            $AccountTransactions=AccountTransaction::Create([
+                                'customer_id' => $request->customer_id,
+                                'Credit' => $request->paidBalance,
+                                'Debit' => 0.00,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'FullCashSales|'.$Id,
+                            ]);
+                        }
+                        /*new entry*/
+                    }
+                    // check both supplier and grandTotal is changed meaning case 3
+                    elseif($request->customer_id!=$sold->customer_id  AND $sold->grandTotal!=$request->grandTotal)
+                    {
+                        // if paid balance is not same as earlier need to update cash account as well
+                        //case : 1 full credit entry + payment is not done yet like isPaid=0 and IsPartialPaid=0
+                        if($sold->IsPaid==0 && $sold->IsPartialPaid==0)
+                        {
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                        }
+                        //case : 2 partial cash is paid and some amount is credit + payment is not fully done yet like isPaid=0 and IsPartialPaid=1
+                        elseif($sold->paidBalance > 0 AND $sold->paidBalance < $sold->grandTotal AND $sold->IsPartialPaid==1)
+                        {
+                            // entry 1 : debit entry for sales
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+                            // entry 2 : credit whatever cash is debited
+                            // start reverse entry
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='PartialCashSales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            //echo "<pre>";print_r($previous_entry->Credit);die;
+                            $previously_credited = $previous_entry->Credit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'PartialCashSales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // reverse cash entry start
+                            // reverse cash entry end
+                            // no need to make cash entries because amount is same only supplier is changing
+                            // make new cash entry for correct supplier start
+                            // make new cash entry for correct supplier end
+                        }
+                        //case : 3 fully cash paid + isPaid=1 and IsPartialPaid=1
+                        else
+                        {
+                            // entry 1 : debit entry for sales
+                            // start reverse entry
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='Sales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_debited = $previous_entry->Debit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => 0.00,
+                                    'Credit' => $previously_debited,
+                                    'Differentiate' => $last_closing-$previously_debited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // entry 2 : credit whatever cash is debited
+                            // start reverse entry
+                            $accountTransaction = AccountTransaction::where(['customer_id'=> $sold->customer_id,])->get();
+                            $last_closing=$accountTransaction->last()->Differentiate;
+                            $description_string='FullCashSales|'.$Id;
+                            $previous_entry = AccountTransaction::get()->where('customer_id','=',$sold->customer_id)->where('Description','like',$description_string)->last();
+                            $previously_credited = $previous_entry->Credit;
+                            $AccData =
+                                [
+                                    'customer_id' => $sold->customer_id,
+                                    'Debit' => $previously_credited,
+                                    'Credit' => 0.00,
+                                    'Differentiate' => $last_closing+$previously_credited,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'FullCashSales|'.$Id,
+                                    'updateDescription'=>'hide',
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                            // also hide previous entry start
+                            AccountTransaction::where('id', $previous_entry->id)->update(array('updateDescription' => 'hide'));
+                            // also hide previous entry end
+                            // reverse entry done
+
+                            // reverse cash entry start
+                            // reverse cash entry end
+                            // no need to make cash entries because amount is same only supplier is changing
+                            // make new cash entry for correct supplier start
+                            // make new cash entry for correct supplier end
+                        }
+
+                        /*new entry*/
+                        // start new entry for updated customer with checking all three cases
+                        $accountTransaction = AccountTransaction::where(['customer_id'=> $request->customer_id,])->get();
+                        // totally credit
+                        if ($request->paidBalance == 0 || $request->paidBalance == 0.00) {
+                            $totalCredit = $request->grandTotal;
+                            $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => 0.00,
+                                    'Debit' => $totalCredit,
+                                    'Differentiate' => $difference,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                        }
+                        // partial payment some cash some credit
+                        elseif($request->paidBalance > 0 AND $request->paidBalance < $request->grandTotal )
+                        {
+                            $differenceValue = $accountTransaction->last()->Differentiate - $request->paidBalance;
+                            $totalCredit = $accountTransaction->last()->Differentiate + $request->grandTotal;
+                            $difference = $differenceValue + $request->grandTotal;
+
+                            //make credit entry for the sales
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => 0.00,
+                                    'Debit' => $request->grandTotal,
+                                    'Differentiate' => $totalCredit,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'Sales|'.$Id,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+
+                            //make debit entry for the whatever cash is paid
+                            $difference=$totalCredit-$request->paidBalance;
+                            $AccData =
+                                [
+                                    'customer_id' => $request->customer_id,
+                                    'Credit' => $request->paidBalance,
+                                    'Debit' => 0.00,
+                                    'Differentiate' => $difference,
+                                    'createdDate' => $request->SaleDate,
+                                    'user_id' => $user_id,
+                                    'company_id' => $company_id,
+                                    'Description'=>'PartialCashSales|'.$Id,
+                                ];
+                            $AccountTransactions = AccountTransaction::Create($AccData);
+                        }
+                        // fully paid with cash
+                        else
+                        {
+                            $totalCredit = $request->grandTotal;
+                            $difference = $accountTransaction->last()->Differentiate + $request->grandTotal;
+
+                            //make credit entry for the sales
+                            $AccountTransactions=AccountTransaction::Create([
+                                'customer_id' => $request->customer_id,
+                                'Credit' => 0.00,
+                                'Debit' => $totalCredit,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'Sales|'.$Id,
+                            ]);
+
+                            //make debit entry for the whatever cash is paid
+                            $difference=$difference-$request->paidBalance;
+                            $AccountTransactions=AccountTransaction::Create([
+                                'customer_id' => $request->customer_id,
+                                'Credit' => $request->paidBalance,
+                                'Debit' => 0.00,
+                                'Differentiate' => $difference,
+                                'createdDate' => $request->SaleDate,
+                                'user_id' => $user_id,
+                                'company_id' => $company_id,
+                                'Description'=>'FullCashSales|'.$Id,
+                            ]);
+                        }
+                        /*new entry*/
+                    }
                 }
+                //return Response()->json($accountTransaction);
+            }
+            ////////////////// end of account section gautam ////////////////
+
+            if($sold->IsPaid==1 && $sold->IsPartialPaid==0)
+            {
+                $sold->customer_id=$request->customer_id;
+                $sold->SaleDate=$request->SaleDate;
+                $sold->Total=$request->Total;
+                $sold->subTotal=$request->subTotal;
+                $sold->totalVat=$request->totalVat;
+                $sold->grandTotal=$request->grandTotal;
+                $sold->supplierNote=$request->supplierNote;
+                $sold->user_id=$user_id;
+                $sold->company_id=$company_id;
+                $sold->update();
+
+                $update_note = new UpdateNote();
+                $update_note->RelationTable = 'sales';
+                $update_note->RelationId = $Id;
+                $update_note->Description = $request->update_note;
+                $update_note->user_id = $user_id;
+                $update_note->company_id = $company_id;
+                $update_note->save();
+
+                SaleDetail::where('sale_id',$Id)->delete();
+
+                if(!empty($sale_detail))
+                {
+                    foreach ($sale_detail as $sale_item)
+                    {
+                        SaleDetail::create([
+                            'sale_id'=>$Id,
+                            'PadNumber'=>$sale_item->PadNumber,
+                            'vehicle_id'=>$sale_item->vehicle_id,
+                            'product_id'=>$sale_item->product_id,
+                            'Price'=>$sale_item->Price,
+                            'Quantity'=>$sale_item->Quantity,
+                            'rowTotal'=>$sale_item->rowTotal,
+                            'VAT'=>$sale_item->VAT,
+                            'rowVatAmount'=>$sale_item->rowVatAmount,
+                            'rowSubTotal'=>$sale_item->rowSubTotal,
+                            'Description'=>$sale_item->Description,
+                            'user_id'=>$user_id,
+                            'company_id'=>$company_id,
+                        ]);
+                    }
+                }
+                // return statement
+            }
+            elseif($sold->IsPaid==0 && $sold->IsPartialPaid==1)
+            {
+                $sold->customer_id=$request->customer_id;
+                $sold->SaleDate=$request->SaleDate;
+                $sold->Total=$request->Total;
+                $sold->subTotal=$request->subTotal;
+                $sold->totalVat=$request->totalVat;
+                $sold->grandTotal=$request->grandTotal;
+                $sold->supplierNote=$request->supplierNote;
+                $sold->user_id=$user_id;
+                $sold->company_id=$company_id;
+                $sold->update();
+
+                $update_note = new UpdateNote();
+                $update_note->RelationTable = 'sales';
+                $update_note->RelationId = $Id;
+                $update_note->Description = $request->update_note;
+                $update_note->user_id = $user_id;
+                $update_note->company_id = $company_id;
+                $update_note->save();
+
+                SaleDetail::where('sale_id',$Id)->delete();
+
+                if(!empty($sale_detail))
+                {
+                    foreach ($sale_detail as $sale_item)
+                    {
+                        SaleDetail::create([
+                            'sale_id'=>$Id,
+                            'PadNumber'=>$sale_item->PadNumber,
+                            'vehicle_id'=>$sale_item->vehicle_id,
+                            'product_id'=>$sale_item->product_id,
+                            'Price'=>$sale_item->Price,
+                            'Quantity'=>$sale_item->Quantity,
+                            'rowTotal'=>$sale_item->rowTotal,
+                            'VAT'=>$sale_item->VAT,
+                            'rowVatAmount'=>$sale_item->rowVatAmount,
+                            'rowSubTotal'=>$sale_item->rowSubTotal,
+                            'Description'=>$sale_item->Description,
+                            'user_id'=>$user_id,
+                            'company_id'=>$company_id,
+                        ]);
+                    }
+                }
+                // return statement
             }
             else
             {
-                if ($saleRequest->paidBalance == 0 || $saleRequest->paidBalance == 0.00 || $saleRequest->paidBalance == "") {
-
-                    if ($lastAccountTransaction->createdDate != $sales->customer->account_transaction->last()->createdDate) {
-                        $totalCredit = $saleRequest->grandTotal;
-                    } else {
-                        $value1 = $lastAccountTransaction->Credit - $sales->grandTotal;
-                        $totalCredit = $value1 + $saleRequest->grandTotal;
-                    }
-                    $totalDebit = $lastAccountTransaction->Debit;
-                    $value = $lastAccountTransaction->Differentiate - $sales->grandTotal;
-                    $difference = $value + $saleRequest->grandTotal;
-//                                        return Response()->json($difference);
+                //here will come cash transaction record update if scenario will come by
+                /*if ($request->paidBalance == 0.00 || $request->paidBalance == 0) {
+                    $isPaid = 0;
+                    $partialPaid = 0;
                 }
-                elseif ($saleRequest->paidBalance > 0 AND $saleRequest->paidBalance < $saleRequest->grandTotal)
+                elseif($request->paidBalance >= $request->grandTotal)
                 {
-
-                    if ($lastAccountTransaction->createdDate != $sales->customer->account_transaction->last()->createdDate) {
-                        $totalDebit = $saleRequest->paidBalance;
-                        $totalCredit = $saleRequest->grandTotal;
-                    } else {
-                        $value1 = $lastAccountTransaction->Debit - $sales->paidBalance;
-                        $totalDebit = $value1 + $saleRequest->paidBalance;
-                        $valueC = $lastAccountTransaction->Debit - $sales->grandTotal;
-                        $totalCredit = $valueC + $saleRequest->grandTotal;
-                    }
-                    $differenceValue = $lastAccountTransaction->Differentiate - $saleRequest->paidBalance;
-                    $difference = $differenceValue + $saleRequest->grandTotal;
+                    $isPaid = 1;
+                    $partialPaid = 0;
                 }
-                else{
-                    if ($lastAccountTransaction->createdDate != $sales->customer->account_transaction->last()->createdDate) {
-                        $totalDebit = $saleRequest->paidBalance;
-                    } else {
-                        $value1 = $lastAccountTransaction->Debit - $sales->paidBalance;
-                        $totalDebit = $value1 + $saleRequest->paidBalance;
+                else
+                {
+                    $isPaid = 0;
+                    $partialPaid = 1;
+                }*/
+
+                $sold->customer_id=$request->customer_id;
+                $sold->SaleDate=$request->SaleDate;
+                $sold->Total=$request->Total;
+                $sold->subTotal=$request->subTotal;
+                $sold->totalVat=$request->totalVat;
+                $sold->grandTotal=$request->grandTotal;
+                $sold->supplierNote=$request->supplierNote;
+                $sold->user_id=$user_id;
+                $sold->company_id=$company_id;
+                $sold->update();
+
+                $update_note = new UpdateNote();
+                $update_note->RelationTable = 'sales';
+                $update_note->RelationId = $Id;
+                $update_note->Description = $request->update_note;
+                $update_note->user_id = $user_id;
+                $update_note->company_id = $company_id;
+                $update_note->save();
+
+                SaleDetail::where('sale_id',$Id)->delete();
+
+                if(!empty($sale_detail))
+                {
+                    foreach ($sale_detail as $sale_item)
+                    {
+                        SaleDetail::create([
+                            'sale_id'=>$Id,
+                            'PadNumber'=>$sale_item->PadNumber,
+                            'vehicle_id'=>$sale_item->vehicle_id,
+                            'product_id'=>$sale_item->product_id,
+                            'Price'=>$sale_item->Price,
+                            'Quantity'=>$sale_item->Quantity,
+                            'rowTotal'=>$sale_item->rowTotal,
+                            'VAT'=>$sale_item->VAT,
+                            'rowVatAmount'=>$sale_item->rowVatAmount,
+                            'rowSubTotal'=>$sale_item->rowSubTotal,
+                            'Description'=>$sale_item->Description,
+                            'user_id'=>$user_id,
+                            'company_id'=>$company_id,
+                        ]);
                     }
-                    $totalCredit = $lastAccountTransaction->Credit;
-                    $value = $lastAccountTransaction->Differentiate + $sales->paidBalance;
-                    $difference = $value - $saleRequest->paidBalance;
                 }
+                //return statement
             }
+        });
+        // end new code ///////////////////////////////////////////////////////////////////
 
-            $AccData =
-                [
-                    'customer_id' => $saleRequest->customer_id,
-                    'Credit' => $totalCredit,
-                    'Debit' => $totalDebit,
-                    'Differentiate' => $difference,
-                    'createdDate' => $lastAccountTransaction->createdDate,
-                    'user_id' =>$userId,
-                ];
-            AccountTransaction::updateOrCreate([
-                'createdDate'   => $lastAccountTransaction->createdDate,
-                'id'   => $lastAccountTransaction->id,
-            ], $AccData);
-        }
-        ////////////////// end of account section ////////////////
-
-        if ($saleRequest->paidBalance == 0.00 || $saleRequest->paidBalance == 0) {
-            $isPaid = false;
-            $partialPaid =false;
-        }
-        elseif($saleRequest->paidBalance >= $saleRequest->grandTotal)
-        {
-            $isPaid = true;
-            $partialPaid =false;
-        }
-        else
-        {
-            $isPaid = false;
-            $partialPaid =true;
-        }
-
-        $sales->customer_id=$saleRequest->customer_id;
-        $sales->SaleDate=$saleRequest->SaleDate;
-        //$sales->DueDate=$saleRequest->DueDate;
-        $sales->referenceNumber=$saleRequest->referenceNumber;
-        $sales->Total=$saleRequest->Total;
-        $sales->subTotal=$saleRequest->subTotal;
-        $sales->totalVat=$saleRequest->totalVat;
-        $sales->grandTotal=$saleRequest->grandTotal;
-        $sales->paidBalance=$saleRequest->paidBalance;
-        $sales->remainingBalance=$saleRequest->remainingBalance;
-        $sales->Description=$saleRequest->Description;
-        $sales->TermsAndCondition=$saleRequest->TermsAndCondition;
-        $sales->supplierNote=$saleRequest->supplierNote;
-        $sales->IsPaid=$isPaid;
-        $sales->IsPartialPaid=$partialPaid;
-        $sales->update();
-
-        $update_note = new UpdateNote();
-        $update_note->RelationTable = 'sales';
-        $update_note->RelationId = $Id;
-        $update_note->Description = $saleRequest->update_note;
-        $update_note->user_id = $userId;
-        $update_note->save();
-
-        //DB::table('sale_details')->where([['sale_id', $Id]])->delete();
-        SaleDetail::where('sale_id', array($Id))->delete();
-
-        $sale_detail=json_decode($_POST['sale_details']);
-        if(!empty($sale_detail))
-        {
-            foreach ($sale_detail as $sale_item)
-            {
-                $data=SaleDetail::create([
-                    'sale_id'=>$Id,
-                    'PadNumber'=>$sale_item->PadNumber,
-                    'vehicle_id'=>$sale_item->vehicle_id,
-                    'product_id'=>$sale_item->product_id,
-                    'Price'=>$sale_item->Price,
-                    'Quantity'=>$sale_item->Quantity,
-                    'rowTotal'=>$sale_item->rowTotal,
-                    'VAT'=>$sale_item->VAT,
-                    'rowVatAmount'=>$sale_item->rowVatAmount,
-                    'rowSubTotal'=>$sale_item->rowSubTotal,
-                    'Description'=>$sale_item->Description,
-                ]);
-            }
-        }
         $Response = SalesResource::collection(Sale::where('id',$Id)->with('user','customer','sale_details')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];

@@ -67,8 +67,8 @@
                         name: 'supplier'
                     },
                     {
-                        data: 'createdDate',
-                        name: 'createdDate'
+                        data: 'transferDate',
+                        name: 'transferDate'
                     },
                     {
                         data: 'paidAmount',

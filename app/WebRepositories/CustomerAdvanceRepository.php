@@ -15,6 +15,7 @@ use App\Models\CustomerAdvanceDetail;
 use App\Models\Sale;
 use App\WebRepositories\Interfaces\ICustomerAdvanceRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 {
@@ -77,57 +78,63 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function store(CustomerAdvanceRequest $customerAdvanceRequest)
     {
-        $user_id = session('user_id');
-        $company_id = session('company_id');
+        DB::transaction(function () use($customerAdvanceRequest)
+        {
+            $user_id = session('user_id');
+            $company_id = session('company_id');
 
-        $advance = [
-            'receiptNumber' =>$customerAdvanceRequest->receiptNumber,
-            'paymentType' =>$customerAdvanceRequest->paymentType,
-            'Amount' =>$customerAdvanceRequest->amount,
-            'spentBalance' =>0.00,
-            'remainingBalance' =>$customerAdvanceRequest->amount,
-            'IsSpent' =>0,
-            'IsPartialSpent' =>0,
-            'sumOf' =>$customerAdvanceRequest->amountInWords,
-            'receiverName' =>$customerAdvanceRequest->receiverName,
-            'accountNumber' =>$customerAdvanceRequest->accountNumber ?? 0,
-            'ChequeNumber' =>$customerAdvanceRequest->ChequeNumber,
-            'TransferDate' =>$customerAdvanceRequest->TransferDate ?? 0,
-            'registerDate' =>$customerAdvanceRequest->registerDate,
-            'bank_id' =>$customerAdvanceRequest->bank_id ?? 0,
-            'user_id' =>$user_id,
-            'company_id' =>$company_id,
-            'customer_id' =>$customerAdvanceRequest->customer_id ?? 0,
-            'Description' =>$customerAdvanceRequest->Description,
-        ];
-        CustomerAdvance::create($advance);
+            $advance = [
+                'receiptNumber' =>$customerAdvanceRequest->receiptNumber,
+                'paymentType' =>$customerAdvanceRequest->paymentType,
+                'Amount' =>$customerAdvanceRequest->amount,
+                'spentBalance' =>0.00,
+                'remainingBalance' =>$customerAdvanceRequest->amount,
+                'IsSpent' =>0,
+                'IsPartialSpent' =>0,
+                'sumOf' =>$customerAdvanceRequest->amountInWords,
+                'receiverName' =>$customerAdvanceRequest->receiverName,
+                'accountNumber' =>$customerAdvanceRequest->accountNumber ?? 0,
+                'ChequeNumber' =>$customerAdvanceRequest->ChequeNumber,
+                'TransferDate' =>$customerAdvanceRequest->TransferDate ?? 0,
+                'registerDate' =>$customerAdvanceRequest->registerDate,
+                'bank_id' =>$customerAdvanceRequest->bank_id ?? 0,
+                'user_id' =>$user_id,
+                'company_id' =>$company_id,
+                'customer_id' =>$customerAdvanceRequest->customer_id ?? 0,
+                'Description' =>$customerAdvanceRequest->Description,
+            ];
+            CustomerAdvance::create($advance);
+        });
         return redirect()->route('customer_advances.index');
     }
 
     public function update(Request $request, $Id)
     {
-        $advance = CustomerAdvance::find($Id);
+        DB::transaction(function () use($request,$Id)
+        {
+            $advance = CustomerAdvance::find($Id);
 
-        $user_id = session('user_id');
-        $advance->update([
-            'receiptNumber' =>$request->receiptNumber,
-            'paymentType' =>$request->paymentType,
-            'Amount' =>$request->amount,
-            'spentBalance' =>0.00,
-            'remainingBalance' =>$request->amount,
-            'IsSpent' =>0,
-            'IsPartialSpent' =>0,
-            'sumOf' =>$request->amountInWords,
-            'receiverName' =>$request->receiverName,
-            'accountNumber' =>$request->accountNumber ?? null,
-            'ChequeNumber' =>$request->ChequeNumber ?? 0,
-            'TransferDate' =>$request->TransferDate,
-            'registerDate' =>$request->registerDate,
-            'bank_id' =>$request->bank_id ?? 0,
-            'user_id' =>$user_id,
-            'customer_id' =>$request->customer_id ?? null,
-            'Description' =>$request->Description,
-        ]);
+            $user_id = session('user_id');
+            $advance->update([
+                'receiptNumber' =>$request->receiptNumber,
+                'paymentType' =>$request->paymentType,
+                'Amount' =>$request->amount,
+                'spentBalance' =>0.00,
+                'remainingBalance' =>$request->amount,
+                'IsSpent' =>0,
+                'IsPartialSpent' =>0,
+                'sumOf' =>$request->amountInWords,
+                'receiverName' =>$request->receiverName,
+                'accountNumber' =>$request->accountNumber ?? null,
+                'ChequeNumber' =>$request->ChequeNumber ?? 0,
+                'TransferDate' =>$request->TransferDate,
+                'registerDate' =>$request->registerDate,
+                'bank_id' =>$request->bank_id ?? 0,
+                'user_id' =>$user_id,
+                'customer_id' =>$request->customer_id ?? null,
+                'Description' =>$request->Description,
+            ]);
+        });
         return redirect()->route('customer_advances.index');
     }
 
@@ -153,103 +160,106 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function customer_advances_save_disburse(Request $request)
     {
-        $user_id = session('user_id');
-        $company_id = session('company_id');
-        $AllRequestCount = collect($request->Data)->count();
-        if($AllRequestCount > 0)
+        DB::transaction(function () use($request)
         {
-            $advance = CustomerAdvance::with('customer')->find($request->Data['customer_advance_id']);
-            if($advance->IsSpent==0 AND $advance->remainingBalance>0)
+            $user_id = session('user_id');
+            $company_id = session('company_id');
+            $AllRequestCount = collect($request->Data)->count();
+            if($AllRequestCount > 0)
             {
-                $total_i_have=$advance->remainingBalance;
-
-                foreach($request->Data['orders'] as $detail)
+                $advance = CustomerAdvance::with('customer')->find($request->Data['customer_advance_id']);
+                if($advance->IsSpent==0 AND $advance->remainingBalance>0)
                 {
-                    $this_sale=Sale::where('id',$detail['sale_id'])->get()->first();
-                    if($this_sale->IsPaid==0 AND $this_sale->remainingBalance!=0)
+                    $total_i_have=$advance->remainingBalance;
+
+                    foreach($request->Data['orders'] as $detail)
                     {
-                        $total_you_need = $this_sale->remainingBalance;
-                        $still_payable_to_you=0;
-                        $total_giving_to_you=0;
-                        $isPartialPaid = 0;
-                        if ($total_i_have >= $total_you_need)
+                        $this_sale=Sale::where('id',$detail['sale_id'])->get()->first();
+                        if($this_sale->IsPaid==0 AND $this_sale->remainingBalance!=0)
                         {
-                            $isPaid = 1;
+                            $total_you_need = $this_sale->remainingBalance;
+                            $still_payable_to_you=0;
+                            $total_giving_to_you=0;
                             $isPartialPaid = 0;
-                            $total_i_have = $total_i_have - $total_you_need;
+                            if ($total_i_have >= $total_you_need)
+                            {
+                                $isPaid = 1;
+                                $isPartialPaid = 0;
+                                $total_i_have = $total_i_have - $total_you_need;
 
-                            $this_sale->update([
-                                "paidBalance"        => $this_sale->grandTotal,
-                                "remainingBalance"   => $still_payable_to_you,
-                                "IsPaid" => $isPaid,
-                                "IsPartialPaid" => $isPartialPaid,
-                                "IsNeedStampOrSignature" => false,
-                                "Description" => 'FromAdvance|'.$advance->id,
-                            ]);
+                                $this_sale->update([
+                                    "paidBalance"        => $this_sale->grandTotal,
+                                    "remainingBalance"   => $still_payable_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'FromAdvance|'.$advance->id,
+                                ]);
 
-                            $data =  CustomerAdvanceDetail::create([
-                                "amountPaid" => $this_sale->grandTotal,
-                                "customer_advances_id" => $advance->id,
-                                "user_id" => $user_id,
-                                "company_id" => $company_id,
-                                "sale_id" => $this_sale->id,
-                                'advanceReceiveDetailDate' => $advance->TransferDate,
-                                'createdDate' => date('Y-m-d')
-                            ]);
+                                $data =  CustomerAdvanceDetail::create([
+                                    "amountPaid" => $this_sale->grandTotal,
+                                    "customer_advances_id" => $advance->id,
+                                    "user_id" => $user_id,
+                                    "company_id" => $company_id,
+                                    "sale_id" => $this_sale->id,
+                                    'advanceReceiveDetailDate' => $advance->TransferDate,
+                                    'createdDate' => date('Y-m-d')
+                                ]);
+                            }
+                            else
+                            {
+                                $isPaid = 0;
+                                $isPartialPaid = 1;
+                                $total_giving_to_you=$total_i_have;
+                                $total_i_have = $total_i_have - $total_giving_to_you;
+
+                                $this_sale->update([
+                                    "paidBalance"        => $this_sale->paidBalance+$total_giving_to_you,
+                                    "remainingBalance"   => $this_sale->remainingBalance-$total_giving_to_you,
+                                    "IsPaid" => $isPaid,
+                                    "IsPartialPaid" => $isPartialPaid,
+                                    "IsNeedStampOrSignature" => false,
+                                    "Description" => 'FromAdvance|'.$advance->id,
+                                ]);
+
+                                $data =  CustomerAdvanceDetail::create([
+                                    "amountPaid" => $total_giving_to_you,
+                                    "customer_advances_id" => $advance->id,
+                                    "user_id" => $user_id,
+                                    "company_id" => $company_id,
+                                    "sale_id" => $this_sale->id,
+                                    'advanceReceiveDetailDate' => $advance->TransferDate,
+                                    'createdDate' => date('Y-m-d')
+                                ]);
+                            }
                         }
-                        else
+                        if($total_i_have<=0)
                         {
-                            $isPaid = 0;
-                            $isPartialPaid = 1;
-                            $total_giving_to_you=$total_i_have;
-                            $total_i_have = $total_i_have - $total_giving_to_you;
-
-                            $this_sale->update([
-                                "paidBalance"        => $this_sale->paidBalance+$total_giving_to_you,
-                                "remainingBalance"   => $this_sale->remainingBalance-$total_giving_to_you,
-                                "IsPaid" => $isPaid,
-                                "IsPartialPaid" => $isPartialPaid,
-                                "IsNeedStampOrSignature" => false,
-                                "Description" => 'FromAdvance|'.$advance->id,
-                            ]);
-
-                            $data =  CustomerAdvanceDetail::create([
-                                "amountPaid" => $total_giving_to_you,
-                                "customer_advances_id" => $advance->id,
-                                "user_id" => $user_id,
-                                "company_id" => $company_id,
-                                "sale_id" => $this_sale->id,
-                                'advanceReceiveDetailDate' => $advance->TransferDate,
-                                'createdDate' => date('Y-m-d')
-                            ]);
+                            break;
                         }
                     }
-                    if($total_i_have<=0)
+                    if($total_i_have!=0)
                     {
-                        break;
+                        $advance->update([
+                            'IsSpent' =>0,
+                            'IsPartialSpent'=>1,
+                            'spentBalance'=>$advance->spentBalance+($advance->remainingBalance-$total_i_have),
+                            'remainingBalance'=>$advance->remainingBalance-$total_i_have,
+                        ]);
                     }
-                }
-                if($total_i_have!=0)
-                {
-                    $advance->update([
-                        'IsSpent' =>0,
-                        'IsPartialSpent'=>1,
-                        'spentBalance'=>$advance->spentBalance+($advance->remainingBalance-$total_i_have),
-                        'remainingBalance'=>$advance->remainingBalance-$total_i_have,
-                    ]);
-                }
-                else
-                {
-                    $advance->update([
-                        'IsSpent' =>1,
-                        'IsPartialSpent'=>0,
-                        'spentBalance'=>$advance->Amount,
-                        'remainingBalance'=>0,
-                    ]);
+                    else
+                    {
+                        $advance->update([
+                            'IsSpent' =>1,
+                            'IsPartialSpent'=>0,
+                            'spentBalance'=>$advance->Amount,
+                            'remainingBalance'=>0,
+                        ]);
+                    }
                 }
             }
-            return redirect()->route('customer_advances.index')->with('pushed','Your Account Debit Successfully');
-        }
+        });
+        return redirect()->route('customer_advances.index')->with('pushed','Your Account Debit Successfully');
     }
 
     public function delete(Request $request, $Id)
@@ -271,196 +281,198 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function customer_advances_push(Request $request, $Id)
     {
-        $advance = CustomerAdvance::with('customer')->find($Id);
-
-        $user_id = session('user_id');
-        $company_id = session('company_id');
-        $advance->update([
-            'isPushed' =>true,
-            'user_id' =>$user_id,
-        ]);
-
-        if($advance->Amount>0)
+        DB::transaction(function () use($request,$Id)
         {
-            $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
-            $closing_before_advance_credit=$accountTransaction->last()->Differentiate;
+            $advance = CustomerAdvance::with('customer')->find($Id);
 
-            $accountTransaction_ref=0;
-            // account section by gautam //
-            if($advance->paymentType == 'cash')
+            $user_id = session('user_id');
+            $company_id = session('company_id');
+            $advance->update([
+                'isPushed' =>true,
+                'user_id' =>$user_id,
+            ]);
+
+            if($advance->Amount>0)
             {
-                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
-                $difference = $cashTransaction->last()->Differentiate;
-                $cash_transaction = new CashTransaction();
-                $cash_transaction->Reference=$Id;
-                $cash_transaction->createdDate=$advance->TransferDate;
-                $cash_transaction->Type='customer_advances';
-                $cash_transaction->Details='CustomerCashAdvance|'.$Id;
-                $cash_transaction->Credit=0.00;
-                $cash_transaction->Debit=$advance->Amount;
-                $cash_transaction->Differentiate=$difference+$advance->Amount;
-                $cash_transaction->user_id = $user_id;
-                $cash_transaction->company_id = $company_id;
-                $cash_transaction->save();
-
-                // start new entry
                 $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
-                $last_closing=$accountTransaction->last()->Differentiate;
-                $AccData =
-                    [
-                        'customer_id' => $advance->customer_id,
-                        'Debit' => 0.00,
-                        'Credit' => $advance->Amount,
-                        'Differentiate' => $last_closing-$advance->Amount,
-                        'createdDate' => $advance->TransferDate,
-                        'user_id' => $user_id,
-                        'company_id' => $company_id,
-                        'Description'=>'CustomerCashAdvance|'.$Id,
-                    ];
-                $AccountTransactions = AccountTransaction::Create($AccData);
-                $accountTransaction_ref=$AccountTransactions->id;
-                // new entry done
-            }
-            elseif ($advance->paymentType == 'bank')
-            {
-                $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
-                $difference = $bankTransaction->last()->Differentiate;
-                $bank_transaction = new BankTransaction();
-                $bank_transaction->Reference=$Id;
-                $bank_transaction->createdDate=$advance->TransferDate;
-                $bank_transaction->Type='customer_advances';
-                $bank_transaction->Details='CustomerBankAdvance|'.$Id;
-                $bank_transaction->Credit=0.00;
-                $bank_transaction->Debit=$advance->Amount;
-                $bank_transaction->Differentiate=$difference+$advance->Amount;
-                $bank_transaction->user_id = $user_id;
-                $bank_transaction->company_id = $company_id;
-                $bank_transaction->bank_id = $advance->bank_id;
-                $bank_transaction->updateDescription = $advance->ChequeNumber;
-                $bank_transaction->save();
+                $closing_before_advance_credit=$accountTransaction->last()->Differentiate;
 
-                // start new entry
-                $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
-                $last_closing=$accountTransaction->last()->Differentiate;
-                $AccData =
-                    [
-                        'customer_id' => $advance->customer_id,
-                        'Debit' => 0.00,
-                        'Credit' => $advance->Amount,
-                        'Differentiate' => $last_closing-$advance->Amount,
-                        'createdDate' => $advance->TransferDate,
-                        'user_id' => $user_id,
-                        'company_id' => $company_id,
-                        'Description'=>'CustomerBankAdvance|'.$Id,
-                        'referenceNumber'=>$advance->ChequeNumber,
-                    ];
-                $AccountTransactions = AccountTransaction::Create($AccData);
-                $accountTransaction_ref=$AccountTransactions->id;
-                // new entry done
-            }
-            elseif ($advance->paymentType == 'cheque')
-            {
-                $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
-                $difference = $bankTransaction->last()->Differentiate;
-                $bank_transaction = new BankTransaction();
-                $bank_transaction->Reference=$Id;
-                $bank_transaction->createdDate=$advance->TransferDate;
-                $bank_transaction->Type='customer_advances';
-                $bank_transaction->Details='CustomerChequeAdvance|'.$Id;
-                $bank_transaction->Credit=0.00;
-                $bank_transaction->Debit=$advance->Amount;
-                $bank_transaction->Differentiate=$difference+$advance->Amount;
-                $bank_transaction->user_id = $user_id;
-                $bank_transaction->company_id = $company_id;
-                $bank_transaction->bank_id = $advance->bank_id;
-                $bank_transaction->updateDescription = $advance->ChequeNumber;
-                $bank_transaction->save();
-
-                // start new entry
-                $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
-                $last_closing=$accountTransaction->last()->Differentiate;
-                $AccData =
-                    [
-                        'customer_id' => $advance->customer_id,
-                        'Debit' => 0.00,
-                        'Credit' => $advance->Amount,
-                        'Differentiate' => $last_closing-$advance->Amount,
-                        'createdDate' => $advance->TransferDate,
-                        'user_id' => $user_id,
-                        'company_id' => $company_id,
-                        'Description'=>'SupplierChequeAdvance|'.$Id,
-                        'referenceNumber'=>$advance->ChequeNumber,
-                    ];
-                $AccountTransactions = AccountTransaction::Create($AccData);
-                $accountTransaction_ref=$AccountTransactions->id;
-                // new entry done
-            }
-            // account section by gautam //
-
-            //now since account is affected we need to auto pay same amount to purchase entries only if last closing is positive value
-
-            /*if($closing_before_advance_credit>0)
-            {
-                //we have entries without payment made so make it paid until advance amount becomes zero
-                // bring all unpaid purchase records
-                $all_sales = Sale::with('customer','sale_details')->where([
-                    'customer_id'=>$Id,
-                    'IsPaid'=> false,
-                ])->orderBy('SaleDate')->get();
-                //dd($all_purchase);
-                $total_i_have=$advance->Amount;
-
-                foreach($all_sales as $sale)
+                $accountTransaction_ref=0;
+                // account section by gautam //
+                if($advance->paymentType == 'cash')
                 {
-                    $total_you_need = $sale->remainingBalance;
-                    $still_payable_to_you=0;
-                    $total_giving_to_you=0;
-                    $isPartialPaid = 0;
-                    if ($total_i_have >= $total_you_need)
-                    {
-                        $isPaid = 1;
-                        $isPartialPaid = 0;
-                        $total_i_have = $total_i_have - $total_you_need;
+                    $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                    $difference = $cashTransaction->last()->Differentiate;
+                    $cash_transaction = new CashTransaction();
+                    $cash_transaction->Reference=$Id;
+                    $cash_transaction->createdDate=$advance->TransferDate;
+                    $cash_transaction->Type='customer_advances';
+                    $cash_transaction->Details='CustomerCashAdvance|'.$Id;
+                    $cash_transaction->Credit=0.00;
+                    $cash_transaction->Debit=$advance->Amount;
+                    $cash_transaction->Differentiate=$difference+$advance->Amount;
+                    $cash_transaction->user_id = $user_id;
+                    $cash_transaction->company_id = $company_id;
+                    $cash_transaction->save();
 
-                        $this_sale = Sale::find($sale->id);
-                        $this_sale->update([
-                            "paidBalance"        => $sale->grandTotal,
-                            "remainingBalance"   => $still_payable_to_you,
-                            "IsPaid" => $isPaid,
-                            "IsPartialPaid" => $isPartialPaid,
-                            "IsNeedStampOrSignature" => false,
-                            "Description" => 'AutoPaid|'.$advance->id,
-                            "account_transaction_payment_id" => $accountTransaction_ref,
-                        ]);
-                    }
-                    else
-                    {
-                        $isPaid = 0;
-                        $isPartialPaid = 1;
-                        $total_giving_to_you=$total_i_have;
-                        $total_i_have = $total_i_have - $total_giving_to_you;
-
-                        $this_sale = Sale::find($sale->id);
-                        $this_sale->update([
-                            "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
-                            "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
-                            "IsPaid" => $isPaid,
-                            "IsPartialPaid" => $isPartialPaid,
-                            "IsNeedStampOrSignature" => false,
-                            "Description" => 'AutoPaid|'.$advance->id,
-                            "account_transaction_payment_id" => $accountTransaction_ref,
-                        ]);
-                    }
-
-                    if($total_i_have<=0)
-                    {
-                        break;
-                    }
+                    // start new entry
+                    $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
+                    $last_closing=$accountTransaction->last()->Differentiate;
+                    $AccData =
+                        [
+                            'customer_id' => $advance->customer_id,
+                            'Debit' => 0.00,
+                            'Credit' => $advance->Amount,
+                            'Differentiate' => $last_closing-$advance->Amount,
+                            'createdDate' => $advance->TransferDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'CustomerCashAdvance|'.$Id,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                    $accountTransaction_ref=$AccountTransactions->id;
+                    // new entry done
                 }
-            }*/
-        }
+                elseif ($advance->paymentType == 'bank')
+                {
+                    $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
+                    $difference = $bankTransaction->last()->Differentiate;
+                    $bank_transaction = new BankTransaction();
+                    $bank_transaction->Reference=$Id;
+                    $bank_transaction->createdDate=$advance->TransferDate;
+                    $bank_transaction->Type='customer_advances';
+                    $bank_transaction->Details='CustomerBankAdvance|'.$Id;
+                    $bank_transaction->Credit=0.00;
+                    $bank_transaction->Debit=$advance->Amount;
+                    $bank_transaction->Differentiate=$difference+$advance->Amount;
+                    $bank_transaction->user_id = $user_id;
+                    $bank_transaction->company_id = $company_id;
+                    $bank_transaction->bank_id = $advance->bank_id;
+                    $bank_transaction->updateDescription = $advance->ChequeNumber;
+                    $bank_transaction->save();
 
-        /* account section by gautam */
+                    // start new entry
+                    $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
+                    $last_closing=$accountTransaction->last()->Differentiate;
+                    $AccData =
+                        [
+                            'customer_id' => $advance->customer_id,
+                            'Debit' => 0.00,
+                            'Credit' => $advance->Amount,
+                            'Differentiate' => $last_closing-$advance->Amount,
+                            'createdDate' => $advance->TransferDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'CustomerBankAdvance|'.$Id,
+                            'referenceNumber'=>$advance->ChequeNumber,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                    $accountTransaction_ref=$AccountTransactions->id;
+                    // new entry done
+                }
+                elseif ($advance->paymentType == 'cheque')
+                {
+                    $bankTransaction = BankTransaction::where(['bank_id'=> $advance->bank_id])->get();
+                    $difference = $bankTransaction->last()->Differentiate;
+                    $bank_transaction = new BankTransaction();
+                    $bank_transaction->Reference=$Id;
+                    $bank_transaction->createdDate=$advance->TransferDate;
+                    $bank_transaction->Type='customer_advances';
+                    $bank_transaction->Details='CustomerChequeAdvance|'.$Id;
+                    $bank_transaction->Credit=0.00;
+                    $bank_transaction->Debit=$advance->Amount;
+                    $bank_transaction->Differentiate=$difference+$advance->Amount;
+                    $bank_transaction->user_id = $user_id;
+                    $bank_transaction->company_id = $company_id;
+                    $bank_transaction->bank_id = $advance->bank_id;
+                    $bank_transaction->updateDescription = $advance->ChequeNumber;
+                    $bank_transaction->save();
+
+                    // start new entry
+                    $accountTransaction = AccountTransaction::where(['customer_id'=> $advance->customer_id,])->get();
+                    $last_closing=$accountTransaction->last()->Differentiate;
+                    $AccData =
+                        [
+                            'customer_id' => $advance->customer_id,
+                            'Debit' => 0.00,
+                            'Credit' => $advance->Amount,
+                            'Differentiate' => $last_closing-$advance->Amount,
+                            'createdDate' => $advance->TransferDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description'=>'SupplierChequeAdvance|'.$Id,
+                            'referenceNumber'=>$advance->ChequeNumber,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                    $accountTransaction_ref=$AccountTransactions->id;
+                    // new entry done
+                }
+                // account section by gautam //
+
+                //now since account is affected we need to auto pay same amount to purchase entries only if last closing is positive value
+
+                /*if($closing_before_advance_credit>0)
+                {
+                    //we have entries without payment made so make it paid until advance amount becomes zero
+                    // bring all unpaid purchase records
+                    $all_sales = Sale::with('customer','sale_details')->where([
+                        'customer_id'=>$Id,
+                        'IsPaid'=> false,
+                    ])->orderBy('SaleDate')->get();
+                    //dd($all_purchase);
+                    $total_i_have=$advance->Amount;
+
+                    foreach($all_sales as $sale)
+                    {
+                        $total_you_need = $sale->remainingBalance;
+                        $still_payable_to_you=0;
+                        $total_giving_to_you=0;
+                        $isPartialPaid = 0;
+                        if ($total_i_have >= $total_you_need)
+                        {
+                            $isPaid = 1;
+                            $isPartialPaid = 0;
+                            $total_i_have = $total_i_have - $total_you_need;
+
+                            $this_sale = Sale::find($sale->id);
+                            $this_sale->update([
+                                "paidBalance"        => $sale->grandTotal,
+                                "remainingBalance"   => $still_payable_to_you,
+                                "IsPaid" => $isPaid,
+                                "IsPartialPaid" => $isPartialPaid,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'AutoPaid|'.$advance->id,
+                                "account_transaction_payment_id" => $accountTransaction_ref,
+                            ]);
+                        }
+                        else
+                        {
+                            $isPaid = 0;
+                            $isPartialPaid = 1;
+                            $total_giving_to_you=$total_i_have;
+                            $total_i_have = $total_i_have - $total_giving_to_you;
+
+                            $this_sale = Sale::find($sale->id);
+                            $this_sale->update([
+                                "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
+                                "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
+                                "IsPaid" => $isPaid,
+                                "IsPartialPaid" => $isPartialPaid,
+                                "IsNeedStampOrSignature" => false,
+                                "Description" => 'AutoPaid|'.$advance->id,
+                                "account_transaction_payment_id" => $accountTransaction_ref,
+                            ]);
+                        }
+
+                        if($total_i_have<=0)
+                        {
+                            break;
+                        }
+                    }
+                }*/
+            }
+
+            /* account section by gautam */
 //        if($advance->paymentType == 'cash')
 //        {
 //            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
@@ -566,61 +578,61 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 //            $AccountTransactions = AccountTransaction::Create($AccData);
 //            // new entry done
 //        }
-        /* account section by gautam */
+            /* account section by gautam */
 
-        /*
-        ////////////////// account section ////////////////
-        if ($advance)
-        {
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'customer_id'=> $advance->customer_id,
-                    'createdDate' => date('Y-m-d'),
-                ])->first();
-            if (!is_null($accountTransaction)) {
-                if ($accountTransaction->createdDate != date('Y-m-d')) {
-                    $totalDebit = $advance->Amount;
-                }
-                else
-                {
-                    $totalDebit = $accountTransaction->Debit + $advance->Amount;
-                }
-                $difference = $accountTransaction->Differentiate - $advance->Amount;
-            }
-            else
+            /*
+            ////////////////// account section ////////////////
+            if ($advance)
             {
                 $accountTransaction = AccountTransaction::where(
                     [
                         'customer_id'=> $advance->customer_id,
-                    ])->get();
-                $totalDebit = $advance->Amount;
-                $difference = $accountTransaction->last()->Differentiate - $advance->Amount;
+                        'createdDate' => date('Y-m-d'),
+                    ])->first();
+                if (!is_null($accountTransaction)) {
+                    if ($accountTransaction->createdDate != date('Y-m-d')) {
+                        $totalDebit = $advance->Amount;
+                    }
+                    else
+                    {
+                        $totalDebit = $accountTransaction->Debit + $advance->Amount;
+                    }
+                    $difference = $accountTransaction->Differentiate - $advance->Amount;
+                }
+                else
+                {
+                    $accountTransaction = AccountTransaction::where(
+                        [
+                            'customer_id'=> $advance->customer_id,
+                        ])->get();
+                    $totalDebit = $advance->Amount;
+                    $difference = $accountTransaction->last()->Differentiate - $advance->Amount;
+                }
+                $AccData =
+                    [
+                        'customer_id' => $advance->customer_id,
+                        'Debit' => $totalDebit,
+                        'Differentiate' => $difference,
+                        'createdDate' => date('Y-m-d'),
+                        'user_id' => $user_id,
+                    ];
+                $AccountTransactions = AccountTransaction::updateOrCreate(
+                    [
+                        'createdDate'   => date('Y-m-d'),
+                        'customer_id'   => $advance->customer_id,
+                    ],
+                    $AccData);
+                //return Response()->json($AccountTransactions);
+                // return Response()->json("");
             }
-            $AccData =
-                [
-                    'customer_id' => $advance->customer_id,
-                    'Debit' => $totalDebit,
-                    'Differentiate' => $difference,
-                    'createdDate' => date('Y-m-d'),
-                    'user_id' => $user_id,
-                ];
-            $AccountTransactions = AccountTransaction::updateOrCreate(
-                [
-                    'createdDate'   => date('Y-m-d'),
-                    'customer_id'   => $advance->customer_id,
-                ],
-                $AccData);
-            //return Response()->json($AccountTransactions);
-            // return Response()->json("");
-        }
-        ////////////////// end of account section ////////////////
-        /// */
+            ////////////////// end of account section ////////////////
+            /// */
 
-        $advance->update([
-            'isPushed' =>true,
-            'user_id' =>$user_id,
-        ]);
-
+            $advance->update([
+                'isPushed' =>true,
+                'user_id' =>$user_id,
+            ]);
+        });
         return redirect()->route('customer_advances.index')->with('pushed','Your Account Debit Successfully');
     }
 }

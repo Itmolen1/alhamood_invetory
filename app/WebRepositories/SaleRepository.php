@@ -191,7 +191,7 @@ class   SaleRepository implements ISaleRepositoryInterface
 //                ->orderBy($order,$dir)
 //                ->get();
 
-            $sql = 'select s.id,s.company_id,s.customer_id,s.customer_id,s.SaleDate,s.totalVat,s.grandTotal,s.paidBalance, c.Name, sd.PadNumber from sales as s left join customers as c on c.id = s.customer_id join (SELECT * FROM sale_details WHERE deleted_at is null) as sd on s.id = sd.sale_id where s.company_id = '.session('company_id').' and s.isActive = 1  order by id desc limit '.$limit.' offset '.$start ;
+            $sql = 'select s.id,s.company_id,s.customer_id,s.customer_id,s.SaleDate,s.totalVat,s.grandTotal,s.paidBalance, c.Name, sd.PadNumber,sd.Quantity,sd.Price,sd.registrationNumber from sales as s left join customers as c on c.id = s.customer_id join (SELECT sale_details.*,v.registrationNumber FROM sale_details join vehicles as v on sale_details.vehicle_id=v.id WHERE sale_details.deleted_at is null) as sd on s.id = sd.sale_id where s.company_id = '.session('company_id').' and s.isActive = 1  order by id desc limit '.$limit.' offset '.$start ;
             $sales = DB::select( DB::raw($sql));
             //echo "<pre>";print_r($sales);die;
         }
@@ -229,7 +229,7 @@ class   SaleRepository implements ISaleRepositoryInterface
 //                ->orderBy($order,$dir)
 //                ->get();
 
-            $sql = 'select s.*, c.Name,sd.PadNumber from sales as s left join customers as c on c.id = s.customer_id join (SELECT * FROM sale_details WHERE deleted_at is null and PadNumber LIKE "%'.$search.'%") as sd on s.id = sd.sale_id where s.company_id = '.session('company_id').' and s.isActive = 1 or c.Name LIKE "%'.$search.'%" order by id desc limit '.$limit.' offset '.$start ;
+            $sql = 'select s.*, c.Name,sd.PadNumber,sd.Quantity,sd.Price,sd.registrationNumber from sales as s left join customers as c on c.id = s.customer_id join (SELECT sale_details.*,v.registrationNumber FROM sale_details join vehicles as v on sale_details.vehicle_id=v.id WHERE sale_details.deleted_at is null and sale_details.PadNumber LIKE "%'.$search.'%") as sd on s.id = sd.sale_id where s.company_id = '.session('company_id').' and s.isActive = 1 or c.Name LIKE "%'.$search.'%" order by id desc limit '.$limit.' offset '.$start ;
             $sales = DB::select( DB::raw($sql));
 
             //$query = DB::getQueryLog();
@@ -262,9 +262,9 @@ class   SaleRepository implements ISaleRepositoryInterface
                 $nestedData['SaleDate'] = $sale->SaleDate;
                 $nestedData['PadNumber'] = $sale->PadNumber ?? "No Pad";
                 $nestedData['customer'] = $sale->Name ?? "No Name";
-                $nestedData['registrationNumber'] = $sale->sale_details[0]->vehicle->registrationNumber ?? "No Number";
-                $nestedData['Quantity'] = $sale->sale_details[0]->Quantity ?? 0.00;
-                $nestedData['Price'] = $sale->sale_details[0]->Price ?? 0.00;
+                $nestedData['registrationNumber'] = $sale->registrationNumber ?? "No Number";
+                $nestedData['Quantity'] = $sale->Quantity ?? 0.00;
+                $nestedData['Price'] = $sale->Price ?? 0.00;
                 $nestedData['totalVat'] = $sale->totalVat ?? 0.00;
                 $nestedData['grandTotal'] = $sale->grandTotal ?? 0.00;
                 $nestedData['paidBalance'] = $sale->paidBalance ?? 0.00;
@@ -2246,7 +2246,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                         'createdDate' => $request->Data['SaleDate'],
                                         'user_id' => $user_id,
                                         'company_id' => $company_id,
-                                        'Description'=>'Sales|'.$request->Data['orders'][0]['PadNumber'],
+                                        'Description'=>'Sales|'.$Id,
                                     ];
                                 $AccountTransactions = AccountTransaction::Create($AccData);
                                 $accountTransaction_ref=$AccountTransactions->id;
@@ -3519,6 +3519,19 @@ class   SaleRepository implements ISaleRepositoryInterface
     public function getById($Id)
     {
         // TODO: Implement getById() method.
+    }
+
+    public function CheckPadExist($request)
+    {
+        $data = SaleDetail::where('PadNumber','=',$request->PadNumber)->where('company_id','=',session('company_id'))->get();
+        if($data->first())
+        {
+            return Response()->json(true);
+        }
+        else
+        {
+            return Response()->json(false);
+        }
     }
 
     public function edit($Id)

@@ -85,7 +85,10 @@
                                                     </div>
                                                 </td>
                                                 <td><input type="date" name="createdDate" value="{{ $init_data['last_date'] ?? date('Y-m-d') }}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $init_data['pad_no'] ?? "" }}" class="PadNumber form-control"></td>
+                                                <td>
+                                                    <input type="text" id="PadNumber" onClick="this.setSelectionRange(0, this.value.length)" placeholder="Pad Number" value="{{ $init_data['pad_no'] ?? "" }}" class="PadNumber form-control">
+                                                    <span class="text-danger" id="already_exist">Already Exists</span>
+                                                </td>
                                                 <td>
                                                     <div class="form-group">
                                                         <select name="customer" class=" customer_id chosen-select" id="customer_id" style="z-index: 9999 !important;overflow: hidden !important;display: block;" autofocus>
@@ -228,6 +231,43 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            $('#already_exist').hide();
+            $('#PadNumber').keyup(function () {
+                var PadNumber = 0;
+                PadNumber = $('#PadNumber').val();
+                if (PadNumber > 0)
+                {
+                    var data={PadNumber:PadNumber};
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        url: "{{ URL('CheckPadExist') }}",
+                        type: "post",
+                        data: data,
+                        dataType: "json",
+                        success: function (result) {
+                            if (result === true)
+                            {
+                                $('#already_exist').show();
+                            }
+                            else
+                            {
+                                $('#already_exist').hide();
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
     <script>
         window.onload = function () {
             document.getElementById('customer_id').focus();

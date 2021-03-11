@@ -82,7 +82,6 @@ class SalesController extends Controller
         {
             return $this->userResponse->Failed($sales = (object)[],'Something Went Wrong.');
         }
-
     }
 
     public function show($id)
@@ -101,19 +100,18 @@ class SalesController extends Controller
         {
             $this->userResponse->Exception($ex);
         }
-
     }
 
-    public function update(SaleRequest $saleRequest)
+    public function update(Request $request)
     {
         try
         {
-            $sales = Sale::find($saleRequest->id);
+            $sales = Sale::find($request->id);
             if(is_null($sales))
             {
                 return $this->userResponse->Failed($sales = (object)[],'Not Found.');
             }
-            $sales = $this->salesRepository->update($saleRequest,$saleRequest->id);
+            $sales = $this->salesRepository->update($request,$request->id);
             return $this->userResponse->Success($sales);
         }
         catch(Exception $ex)

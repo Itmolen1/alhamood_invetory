@@ -90,6 +90,7 @@ route::get('view_result_sale_of_date', 'SaleController@view_result_sale_of_date'
 route::get('getCustomerVehicleDetails/{$Id}','CustomerController@getCustomerVehicle');
 route::get('getSalesByDate/{id}','SaleController@salesByDateDetails');
 route::resource('customer_prices','CustomerPriceController');
+route::POST('/CheckPadExist','SaleController@CheckPadExist');
 
 //////////////// meterReading ///////////////
 route::resource('meter_readers','MeterReaderController');

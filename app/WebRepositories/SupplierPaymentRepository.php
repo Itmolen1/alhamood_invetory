@@ -185,7 +185,8 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function getById($Id)
     {
-        $supplier_payment_details = SupplierPaymentDetail::with('user','company','supplier_payment.supplier')->where('supplier_payment_id',$Id)->get();
+        $supplier_payment_details = SupplierPaymentDetail::with('user','company','supplier_payment.supplier','purchase')->where('supplier_payment_id',$Id)->get();
+        //echo "<pre>";print_r($supplier_payment_details);die;
 //        dd($payment_receives);
         return view('admin.supplier_payment.show',compact('supplier_payment_details'));
     }

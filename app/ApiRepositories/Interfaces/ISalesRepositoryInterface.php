@@ -15,7 +15,7 @@ interface ISalesRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(SaleRequest $saleRequest,$Id);
+    public  function update(Request $request,$Id);
 
     public  function getById($Id);
 
