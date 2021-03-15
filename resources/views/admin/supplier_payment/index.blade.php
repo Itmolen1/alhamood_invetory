@@ -67,8 +67,8 @@
                         name: 'supplier'
                     },
                     {
-                        data: 'transferDate',
-                        name: 'transferDate'
+                        data: 'supplierPaymentDate',
+                        name: 'supplierPaymentDate'
                     },
                     {
                         data: 'paidAmount',

@@ -71,7 +71,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
     {
         $purchaseNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $suppliers = Supplier::where('company_type_id',2)->get();
+        $suppliers = Supplier::where('company_type_id',2)->where('company_id',session('company_id'))->get();
         $products = Product::all();
         return view('admin.purchase.create',compact('suppliers','purchaseNo','products','PadNumber'));
     }
@@ -3001,7 +3001,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 //        $newPad = ($lastPad + 1);
 
         // pad number according to max sales id
-        $max_purchase_id = PurchaseDetail::where('company_id',session('company_id'))->find(DB::table('purchase_details')->max('id'));
+        $max_purchase_id = PurchaseDetail::where('company_id',session('company_id'))->max('id');
+        $max_purchase_id = PurchaseDetail::where('id',$max_purchase_id)->first();
         if($max_purchase_id)
         {
             $lastPad = $max_purchase_id->PadNumber;

@@ -28,7 +28,6 @@
                             <div class="table-responsive m-t-40">
                                 <table id="expense_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
-                                    <tr>
                                         <th>SR#</th>
                                         <th style="width: 100px">Date</th>
                                         <th>Suppler</th>
@@ -38,32 +37,7 @@
                                         <th>VAT</th>
                                         <th>Total Amount</th>
                                         <th>Action</th>
-                                    </tr>
                                     </thead>
-
-                                    {{--<tbody>
-                                    @foreach($expenses as $expense)
-                                    <tr>
-                                        <td>
-                                                {{ $expense->expense_details[0]->expenseDate }}
-                                        </td>
-                                        <td>{{ $expense->referenceNumber ?? ''}}</td>
-                                        <td>{{ $expense->expense_details[0]->expense_category->Name ?? '' }}</td>
-                                        <td>{{ $expense->expense_details[0]->Description ?? '' }}</td>
-                                        <td>{{ $expense->subTotal}}</td>
-                                        <td>{{ $expense->totalVat}}</td>
-                                        <td>{{ $expense->grandTotal }}</td>
-                                        <td>
-                                            <form action="{{ route('expenses.destroy',$expense->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <a href="{{ route('expenses.edit', $expense->id) }}"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>
-                                                <button type="submit" class=" btn btn-danger btn-sm" onclick="return confirm('Are you sure to Delete?')"><i style="font-size: 20px" class="fa fa-trash"></i></button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                    </tbody>--}}
                                 </table>
                             </div>
                         </div>
@@ -72,7 +46,68 @@
             </div>
         </div>
     </div>
+    {{-- for ajax pagination records   --}}
     <script>
+        $(document).ready(function () {
+            $('#expense_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax:{
+                    "url" : "{{ url('all_expenses') }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data":{ _token: "{{csrf_token()}}"},
+                },
+                columns:[
+                    {
+                        data: 'id',
+                        name: 'id',
+                        visible: false,
+                    },
+                    {
+                        data: 'expenseDate',
+                        name: 'expenseDate',
+                    },
+                    {
+                        data: 'supplier',
+                        name: 'supplier',
+                    },
+                    {
+                        data: 'referenceNumber',
+                        name: 'referenceNumber',
+                    },
+                    {
+                        data: 'expenseCategory',
+                        name: 'expenseCategory',
+                    },
+                    {
+                        data: 'subTotal',
+                        name: 'subTotal',
+                    },
+                    {
+                        data: 'totalVat',
+                        name: 'totalVat',
+                    },
+                    {
+                        data: 'grandTotal',
+                        name: 'grandTotal',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable : false,
+                    },
+                ],
+                order: [[ 0, "desc" ]],
+                pageLength : 10,
+            });
+        });
+    </script>
+    {{-- for ajax pagination records   --}}
+
+    {{-- for all records   --}}
+    {{--<script>
         $(document).ready(function () {
             $('#expense_table').dataTable({
                 processing: true,
@@ -123,5 +158,6 @@
                 order: [[ 0, "desc" ]]
             });
         });
-    </script>
+    </script>--}}
+    {{-- for all records   --}}
 @endsection

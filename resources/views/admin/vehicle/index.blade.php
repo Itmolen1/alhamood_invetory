@@ -104,7 +104,11 @@
                         orderable: false
                     },
                 ],
-                order: [[ 0, "desc" ]]
+                order: [[ 0, "desc" ]],
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
             });
         });
     </script>

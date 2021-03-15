@@ -816,29 +816,41 @@ class ReportRepository implements IReportRepositoryInterface
         $last_closing=0.0;
         for($i=0;$i<count($row);$i++)
         {
-            $debit_total += $row[$i]['Debit'];
-            $credit_total += $row[$i]['Credit'];
-            $balance = $balance + $row[$i]['Differentiate'];
+            if($row[$i]['Debit']!=0)
+            {
+                $debit_total += $row[$i]['Debit'];
+                $balance = $balance + $row[$i]['Debit'];
+            }
+            elseif($row[$i]['Credit']!=0)
+            {
+                $credit_total += $row[$i]['Credit'];
+                $balance = $balance - $row[$i]['Credit'];
+            }
+            else
+            {
+                $balance += $row[$i]['Differentiate'];
+            }
+
             if($i%2==0)
             {
                 $html .='<tr style="background-color: #e3e3e3">
                 <td align="center" width="60">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
-                <td align="center" width="60">'.($row[$i]['PadNumber']).'</td>
+                <td align="left" width="60">'.($row[$i]['PadNumber']).'</td>
                 <td align="left" width="180">'.($row[$i]['Details']).'</td>
                 <td align="right" width="80">'.($row[$i]['Debit']).'</td>
                 <td align="right" width="80">'.($row[$i]['Credit']).'</td>
-                <td align="right" width="90">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
+                <td align="right" width="90">'.number_format($balance,2,'.',',').'</td>
                 </tr>';
             }
             else
             {
                 $html .='<tr>
                 <td align="center" width="60">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
-                <td align="center" width="60">'.($row[$i]['PadNumber']).'</td>
+                <td align="left" width="60">'.($row[$i]['PadNumber']).'</td>
                 <td align="left" width="180">'.($row[$i]['Details']).'</td>
                 <td align="right" width="80">'.($row[$i]['Debit']).'</td>
                 <td align="right" width="80">'.($row[$i]['Credit']).'</td>
-                <td align="right" width="90">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
+                <td align="right" width="90">'.number_format($balance,2,'.',',').'</td>
                 </tr>';
             }
 //            if($row[$i]['Debit']!=0)
@@ -851,7 +863,7 @@ class ReportRepository implements IReportRepositoryInterface
 //                $credit_total += $row[$i]['Credit'];
 //                $balance = $balance + $row[$i]['Credit'];
 //            }
-            $last_closing=$row[$i]['Differentiate'];
+            $last_closing=$balance;
         }
         $html.='</table>';
         $pdf::writeHTML($html, true, false, false, false, '');
@@ -2130,7 +2142,7 @@ class ReportRepository implements IReportRepositoryInterface
 
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $account_transactions=AccountTransaction::get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id)->where('updateDescription','!=','hide');
+            $account_transactions = AccountTransaction::orderBy('createdDate','asc')->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id)->whereNull('updateDescription')->get();
         }
         else
         {
@@ -2196,28 +2208,28 @@ class ReportRepository implements IReportRepositoryInterface
                 <th align="right" width="90">Closing</th>
             </tr>';
             $pdf::SetFont('helvetica', '', 10);
-            $sum_of_credit=0.0;
-            $sum_of_debit=0.0;
-            $closing_amount=0.0;
+            $credit_total=0.0;
+            $debit_total=0.0;
+            $balance=0.0;
             for($i=0;$i<count($row);$i++)
             {
-                if($i==0)
+                if($row[$i]['Debit']!=0)
                 {
-                    $closing_amount=$closing_amount+$row[$i]['Differentiate'];
+                    $debit_total += $row[$i]['Debit'];
+                    $balance = $balance - $row[$i]['Debit'];
+                }
+                elseif($row[$i]['Credit']!=0)
+                {
+                    $credit_total += $row[$i]['Credit'];
+                    $balance = $balance + $row[$i]['Credit'];
                 }
                 else
                 {
-                    if($row[$i]['Debit']==0)
-                    {
-                        $closing_amount+=$row[$i]['Credit'];
-                    }
-                    else
-                    {
-                        $closing_amount-=$row[$i]['Debit'];
-                    }
+                    $balance += $row[$i]['Differentiate'];
                 }
-                $sum_of_debit+=$row[$i]['Debit'];
-                $sum_of_credit+=$row[$i]['Credit'];
+
+//                $sum_of_debit+=$row[$i]['Debit'];
+//                $sum_of_credit+=$row[$i]['Credit'];
 
                 if($i%2==0)
                 {
@@ -2227,7 +2239,7 @@ class ReportRepository implements IReportRepositoryInterface
                         <td align="left" width="170">'.$row[$i]['Description'].'</td>
                         <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
                         <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
-                        <td align="right" width="90">'.(number_format($closing_amount,2,'.',',')).'</td>
+                        <td align="right" width="90">'.(number_format($balance,2,'.',',')).'</td>
                         </tr>';
                 }
                 else
@@ -2238,7 +2250,7 @@ class ReportRepository implements IReportRepositoryInterface
                         <td align="left" width="170">'.$row[$i]['Description'].'</td>
                         <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
                         <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
-                        <td align="right" width="90">'.(number_format($closing_amount,2,'.',',')).'</td>
+                        <td align="right" width="90">'.(number_format($balance,2,'.',',')).'</td>
                         </tr>';
                 }
             }
@@ -2246,15 +2258,15 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::writeHTML($html, true, false, false, false, '');
 
             $pdf::SetFont('helvetica', 'B', 13);
-            if($closing_amount<0)
+            if($balance<0)
             {
                 $html='<table border="0.5" cellpadding="0">';
                 $html.= '
                  <tr>
                      <td width="300" align="right" colspan="3">Total : </td>
-                     <td width="80" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
-                     <td width="80" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
-                     <td width="90" align="right" color="red">'.number_format($closing_amount,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
+                     <td width="90" align="right" color="red">'.number_format($balance,2,'.',',').'</td>
                  </tr>';
                 $pdf::SetFillColor(255, 0, 0);
                 $html.='</table>';
@@ -2266,9 +2278,9 @@ class ReportRepository implements IReportRepositoryInterface
                 $html.= '
                  <tr>
                      <td width="300" align="right" colspan="3">Total : </td>
-                     <td width="80" align="right">'.number_format($sum_of_debit,2,'.',',').'</td>
-                     <td width="80" align="right">'.number_format($sum_of_credit,2,'.',',').'</td>
-                     <td width="90" align="right">'.number_format($closing_amount,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
+                     <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
+                     <td width="90" align="right">'.number_format($balance,2,'.',',').'</td>
                  </tr>';
                 $pdf::SetFillColor(255, 0, 0);
                 $html.='</table>';

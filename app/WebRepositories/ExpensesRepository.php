@@ -58,6 +58,71 @@ class ExpensesRepository implements IExpensesRepositoryInterface
         return view('admin.expense.index');
     }
 
+    public function all_expenses(Request $request)
+    {
+        $columns = array(
+            0 =>'id',
+            1 =>'expenseDate',
+            2=> 'supplier_id',
+            3=> 'id',
+        );
+
+        $totalData = Expense::where('company_id',session('company_id'))->where('isActive',1)->count();
+
+        $totalFiltered = $totalData;
+
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if(empty($request->input('search.value')))
+        {
+            $sql = 'select e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on s.id = ed.expense_id where e.company_id = '.session('company_id').' and e.isActive = 1  order by id desc limit '.$limit.' offset '.$start ;
+            $expenses = DB::select( DB::raw($sql));
+        }
+        else
+        {
+            $search = $request->input('search.value');
+            $sql = 'select e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on s.id = ed.expense_id where e.company_id = '.session('company_id').' and e.referenceNumber LIKE "%'.$search.'%" '.' and e.isActive = 1  order by id desc limit '.$limit.' offset '.$start;
+            $expenses = DB::select( DB::raw($sql));
+
+            $sql_count = 'select COUNT(*) TotalCount,e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on s.id = ed.expense_id where e.company_id = '.session('company_id').' and e.referenceNumber LIKE "%'.$search.'%" '.' and e.isActive = 1  order by id desc limit '.$limit.' offset '.$start;
+            $expense_count = DB::select(DB::raw($sql_count));
+            if(!empty($expense_count))
+            {
+                $totalFiltered = $expense_count[0]->TotalCount;
+            }
+        }
+
+        $data = array();
+        if(!empty($expenses))
+        {
+            foreach ($expenses as $expense)
+            {
+                $nestedData['id'] = $expense->id;
+                $nestedData['expenseDate'] = $expense->expenseDate;
+                $nestedData['supplier'] = $expense->Name ?? "No Name";
+                $nestedData['referenceNumber'] = $expense->referenceNumber ?? "No referenceNumber";
+                $nestedData['expenseCategory'] = $expense->cat_name ?? "No Number";
+                $nestedData['subTotal'] = $expense->subTotal ?? 0.00;
+                $nestedData['totalVat'] = $expense->totalVat ?? 0.00;
+                $nestedData['grandTotal'] = $expense->grandTotal ?? 0.00;
+                //$nestedData['payment_type'] = $expense->grandTotal ?? 0.00;
+                $nestedData['action'] = '<a href="'.route('expenses.edit', $expense->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+        echo json_encode($json_data);
+    }
+
     public function create()
     {
         $expenseNo = $this->invoiceNumber();
