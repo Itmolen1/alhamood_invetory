@@ -15,7 +15,7 @@ interface IExpenseRepositoryInterface
 
     public  function insert(Request $request);
 
-    public  function update(ExpenseRequest $expenseRequest,$Id);
+    public  function update(Request $request,$Id);
 
     public  function getById($Id);
 

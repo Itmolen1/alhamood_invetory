@@ -127,7 +127,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
     {
         $expenseNo = $this->invoiceNumber();
         $PadNumber = $this->PadNumber();
-        $suppliers = Supplier::all()->where('company_type_id','=',3);
+        $suppliers = Supplier::all()->where('company_type_id','=',3)->where('company_id',session('company_id'));
         $employees = Employee::all();
         $expense_categories = ExpenseCategory::all();
         $banks = Bank::all();

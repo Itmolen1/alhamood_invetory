@@ -40,6 +40,11 @@ class Expense extends Model
         return $this->belongsTo('App\Models\Supplier','supplier_id','id')->withTrashed();
     }
 
+    public function api_bank()
+    {
+        return $this->belongsTo('App\Models\Bank','bank_id','id')->withTrashed();
+    }
+
     public function api_employee()
     {
         return $this->belongsTo('App\Models\Employee','employee_id','id')->withTrashed();

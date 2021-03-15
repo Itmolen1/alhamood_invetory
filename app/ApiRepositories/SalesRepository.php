@@ -2661,6 +2661,16 @@ class SalesRepository implements ISalesRepositoryInterface
         return $data[0];
     }
 
+    public function SaleSearchByPad(Request $request)
+    {
+        $ids=SaleDetail::where('PadNumber','LIKE',"%{$request->PadNumber}%")->get();
+        $ids = json_decode(json_encode($ids), true);
+        $ids = array_column($ids,'sale_id');
+        $Response = SalesResource::collection(Sale::whereIn('id', $ids)->with('user','customer','sale_details','update_notes','documents')->get());
+        $data = json_decode(json_encode($Response), true);
+        return $data;
+    }
+
     public function BaseList()
     {
         $userId = Auth::id();

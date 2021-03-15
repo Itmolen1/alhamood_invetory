@@ -8,6 +8,8 @@ use App\Http\Requests\ExpenseRequest;
 use App\MISC\ServiceResponse;
 use App\Models\Expense;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use mysql_xdevapi\Exception;
 
 class ExpenseController extends Controller
@@ -47,8 +49,23 @@ class ExpenseController extends Controller
 
     public function store(Request $request)
     {
+        $user_id = Auth::id();
+        $company_id=Str::getCompany($user_id);
+        //check reference number already exist or not
+        $already_exist = Expense::where('company_id',$company_id)->where('referenceNumber',$request->referenceNumber)->get();
+        if(!$already_exist->isEmpty())
+        {
+            return $this->userResponse->Failed($sales = (object)[],'REFERENCE NUMBER ALREADY EXIST.');
+        }
         $expense=$this->expenseRepository->insert($request);
-        return $this->userResponse->Success($expense);
+        if($expense)
+        {
+            return $this->userResponse->Success($expense);
+        }
+        else
+        {
+            return $this->userResponse->Failed($sales = (object)[],'Something Went Wrong.');
+        }
     }
 
     public function show($id)
@@ -70,17 +87,44 @@ class ExpenseController extends Controller
 
     }
 
-    public function update(ExpenseRequest $expenseRequest)
+    public function update(Request $request)
     {
         try
         {
-            $expense = Expense::find($expenseRequest->id);
+            $expense = Expense::find($request->id);
             if(is_null($expense))
             {
                 return $this->userResponse->Failed($expense = (object)[],'Not Found.');
             }
-            $expense = $this->expenseRepository->update($expenseRequest,$expenseRequest->id);
-            return $this->userResponse->Success($expense);
+            $expense = $this->expenseRepository->update($request,$request->id);
+            if($expense)
+            {
+                return $this->userResponse->Success($expense);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'Something Went Wrong.');
+            }
+        }
+        catch(Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
+
+    public function ExpenseSearchByRef(Request $request)
+    {
+        try
+        {
+            $expense = $this->expenseRepository->ExpenseSearchByRef($request);
+            if($expense)
+            {
+                return $this->userResponse->Success($expense);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'Not Found.');
+            }
         }
         catch(Exception $ex)
         {

@@ -31,7 +31,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return PurchaseResource::Collection(Purchase::with('purchase_details','update_notes','documents')->get()->sortDesc()->forPage($page_no,$page_size));
+        return PurchaseResource::Collection(Purchase::with('purchase_details_without_trash','update_notes','documents')->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function ActivateDeactivate($Id)
@@ -255,6 +255,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             $purchased = Purchase::find($Id);
             $user_id = Auth::id();
             $company_id=Str::getCompany($user_id);
+            $purchase_detail=json_decode($_POST['pd']);
 
             ////////////////// account section gautam ////////////////
             $accountTransaction = AccountTransaction::where(['supplier_id' => $purchased->supplier_id,])->get();
@@ -2087,7 +2088,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         });
         /* end of new code */
 
-        $userId = Auth::id();
+        /*$userId = Auth::id();
         $purchaseRequest['user_id']=$userId ?? 0;
         $purchase = Purchase::findOrFail($Id);
 
@@ -2273,7 +2274,8 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
                     'Description'=>$purchase_item->Description,
                 ]);
             }
-        }
+        }*/
+
         $Response = PurchaseResource::collection(Purchase::where('id',$Id)->with('user','supplier','purchase_details')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
@@ -2284,6 +2286,16 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $Response = PurchaseResource::collection(Purchase::where('id',$Id)->with('user','supplier','purchase_details','update_notes','documents')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
+    }
+
+    public function PurchaseSearchByPad(Request $request)
+    {
+        $ids=PurchaseDetail::where('PadNumber','LIKE',"%{$request->PadNumber}%")->get();
+        $ids = json_decode(json_encode($ids), true);
+        $ids = array_column($ids,'purchase_id');
+        $Response = PurchaseResource::collection(Purchase::whereIn('id', $ids)->with(['user','supplier','purchase_details','update_notes','documents'])->get());
+        $data = json_decode(json_encode($Response), true);
+        return $data;
     }
 
     public function BaseList()

@@ -68,7 +68,26 @@ class PurchaseController extends Controller
         {
             $this->userResponse->Exception($ex);
         }
+    }
 
+    public function PurchaseSearchByPad(Request $request)
+    {
+        try
+        {
+            $purchase = $this->purchaseRepository->PurchaseSearchByPad($request);
+            if($purchase)
+            {
+                return $this->userResponse->Success($purchase);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'Not Found.');
+            }
+        }
+        catch(Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
     }
 
     public function update(Request $request)

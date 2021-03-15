@@ -126,6 +126,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::apiResource('/Purchase', 'api\PurchaseController');
     Route::post('/PurchaseUpdate', 'api\PurchaseController@update');
+    Route::post('/PurchaseSearchByPad', 'api\PurchaseController@PurchaseSearchByPad');
     Route::get('/Purchase/paginate/{page_no}/{page_size}','api\PurchaseController@paginate');
     Route::get('/getPurchaseBaseList', 'api\PurchaseController@BaseList');
     Route::post('PurchaseDocumentsUpload', 'api\PurchaseController@PurchaseDocumentsUpload');
@@ -134,6 +135,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::apiResource('/Sales', 'api\SalesController');
     Route::post('/SalesUpdate', 'api\SalesController@update');
+    Route::post('/SaleSearchByPad', 'api\SalesController@SaleSearchByPad');
     Route::get('/Sales/paginate/{page_no}/{page_size}','api\SalesController@paginate');
     Route::get('/getSalesBaseList', 'api\SalesController@BaseList');
     Route::post('SalesDocumentsUpload', 'api\SalesController@SalesDocumentsUpload');
@@ -142,6 +144,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::apiResource('/Expense', 'api\ExpenseController');
     Route::post('/ExpenseUpdate', 'api\ExpenseController@update');
+    Route::post('/ExpenseSearchByRef', 'api\ExpenseController@ExpenseSearchByRef');
     Route::get('/Expense/paginate/{page_no}/{page_size}','api\ExpenseController@paginate');
     Route::get('/getExpenseBaseList', 'api\ExpenseController@BaseList');
     Route::post('ExpenseDocumentsUpload', 'api\ExpenseController@ExpenseDocumentsUpload');

@@ -102,6 +102,26 @@ class SalesController extends Controller
         }
     }
 
+    public function SaleSearchByPad(Request $request)
+    {
+        try
+        {
+            $sales = $this->salesRepository->SaleSearchByPad($request);
+            if($sales)
+            {
+                return $this->userResponse->Success($sales);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'Not Found.');
+            }
+        }
+        catch(Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
+
     public function update(Request $request)
     {
         try
