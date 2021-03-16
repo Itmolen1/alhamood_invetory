@@ -59,6 +59,19 @@ class VehicleRepository implements IVehicleRepositoryInterface
         return new VehicleResource(Vehicle::find($Id));
     }
 
+    public function VehicleByCustomer($Id)
+    {
+        $vehicles=Vehicle::select('id','registrationNumber','customer_id')->where('customer_id',$Id)->orderBy('id','desc')->get();
+        if($vehicles->first())
+        {
+            return $vehicles;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public function delete(Request $request, $Id)
     {
         $userId = Auth::id();

@@ -22,7 +22,15 @@ class ReportController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->reportRepository->SalesReport($request));
+            $result=$this->reportRepository->SalesReport($request);
+            if($result)
+            {
+                return $this->userResponse->Success($result);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
+            }
         }
         catch (Exception $ex)
         {
@@ -34,7 +42,15 @@ class ReportController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->reportRepository->PurchaseReport($request));
+            $result=$this->reportRepository->PurchaseReport($request);
+            if($result)
+            {
+                return $this->userResponse->Success($result);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
+            }
         }
         catch (Exception $ex)
         {
@@ -46,7 +62,35 @@ class ReportController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->reportRepository->SalesReportByVehicle($request));
+            $result=$this->reportRepository->SalesReportByVehicle($request);
+            if($result)
+            {
+                return $this->userResponse->Success($result);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
+            }
+        }
+        catch (Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
+
+    public function SalesReportByCustomerVehicle(Request $request)
+    {
+        try
+        {
+            $result=$this->reportRepository->SalesReportByCustomerVehicle($request);
+            if($result)
+            {
+                return $this->userResponse->Success($result);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
+            }
         }
         catch (Exception $ex)
         {
@@ -58,7 +102,15 @@ class ReportController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->reportRepository->ExpenseReport($request));
+            $result=$this->reportRepository->ExpenseReport($request);
+            if($result)
+            {
+                return $this->userResponse->Success($result);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
+            }
         }
         catch (Exception $ex)
         {
@@ -70,7 +122,15 @@ class ReportController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->reportRepository->CashReport($request));
+            $result=$this->reportRepository->CashReport($request);
+            if($result)
+            {
+                return $this->userResponse->Success($result);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
+            }
         }
         catch (Exception $ex)
         {
@@ -82,7 +142,7 @@ class ReportController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->reportRepository->BankReport($request));
+            return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
         }
         catch (Exception $ex)
         {
@@ -94,7 +154,7 @@ class ReportController extends Controller
     {
         try
         {
-            return $this->userResponse->Success($this->reportRepository->GetBalanceSheet());
+            return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
         }
         catch (Exception $ex)
         {

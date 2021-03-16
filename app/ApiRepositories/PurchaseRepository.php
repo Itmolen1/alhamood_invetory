@@ -2283,7 +2283,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
 
     public function getById($Id)
     {
-        $Response = PurchaseResource::collection(Purchase::where('id',$Id)->with('user','supplier','purchase_details','update_notes','documents')->get());
+        $Response = PurchaseResource::collection(Purchase::where('id',$Id)->with('user','supplier','purchase_details_without_trash','update_notes','documents')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
     }
@@ -2293,7 +2293,7 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         $ids=PurchaseDetail::where('PadNumber','LIKE',"%{$request->PadNumber}%")->get();
         $ids = json_decode(json_encode($ids), true);
         $ids = array_column($ids,'purchase_id');
-        $Response = PurchaseResource::collection(Purchase::whereIn('id', $ids)->with(['user','supplier','purchase_details','update_notes','documents'])->get());
+        $Response = PurchaseResource::collection(Purchase::whereIn('id', $ids)->with('user','supplier','purchase_details_without_trash','update_notes','documents')->get()->sortDesc());
         $data = json_decode(json_encode($Response), true);
         return $data;
     }

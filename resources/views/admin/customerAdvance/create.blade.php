@@ -27,7 +27,7 @@
                             <h4 class="m-b-0 text-white">Customer Advance</h4>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('customer_advances.store') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ route('customer_advances.store') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
                                 @csrf
                                 <div class="form-body">
                                     <h3 class="card-title">ADD CUSTOMER ADVANCE</h3>
@@ -38,7 +38,7 @@
                                             <div class="form-group">
                                                 <label>Customer Selection :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select customer_id select2" name="customer_id" id="customer_id">
-                                                    <option disabled readonly="" selected>--Select your Customer--</option>
+                                                    <option value="">--Select your Customer--</option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
                                                     @endforeach
@@ -64,7 +64,7 @@
                                             <div class="form-group">
                                                 <label>Payment Type :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option disabled readonly="" selected>--Select your Payment Type--</option>
+                                                    <option value="">--Select your Payment Type--</option>
                                                     <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
                                                     <option value="cheque">Cheque</option>
@@ -163,6 +163,97 @@
     </div>
 
     <script>
+
+        function DoTrim(strComp) {
+            ltrim = /^\s+/
+            rtrim = /\s+$/
+            strComp = strComp.replace(ltrim, '');
+            strComp = strComp.replace(rtrim, '');
+            return strComp;
+        }
+
+        function validateForm()
+        {
+            /*validation*/
+            var fields;
+            fields = "";
+
+            if (DoTrim(document.getElementById('customer_id').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("customer_id").focus();
+                }
+                fields = '1';
+                $("#customer_id").addClass("error");
+            }
+
+            if (DoTrim(document.getElementById('receiptNumber').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("receiptNumber").focus();
+                }
+                fields = '1';
+                $("#receiptNumber").addClass("error");
+            }
+
+            if(DoTrim(document.getElementById('paymentType').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("paymentType").focus();
+                }
+                fields = '1';
+                $("#paymentType").addClass("error");
+            }
+
+            if(DoTrim(document.getElementById('amount').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("amount").focus();
+                }
+                fields = '1';
+                $("#amount").addClass("error");
+            }
+
+            var payment_type=$("#paymentType option:selected").val();
+            if(payment_type=='bank' || payment_type=='cheque')
+            {
+                if(DoTrim(document.getElementById('bank_id').value).length == 0)
+                {
+                    if(fields != 1)
+                    {
+                        document.getElementById("bank_id").focus();
+                    }
+                    fields = '1';
+                    $("#bank_id").addClass("error");
+                }
+            }
+
+            if(DoTrim(document.getElementById('receiver').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("receiver").focus();
+                }
+                fields = '1';
+                $("#receiver").addClass("error");
+            }
+
+            if (fields != "")
+            {
+                fields = "Please fill in the following details:" + fields;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            /*validation*/
+        }
+
         $(document).ready(function () {
             $('.bankTransfer').hide();
         });

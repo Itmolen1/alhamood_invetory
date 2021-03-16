@@ -37,7 +37,7 @@
                     <div class="form-group">
                         <label>Vehicle</label>
                         <select class="form-control custom-select region_id" name="vehicle_id" id="vehicle_id">
-                            <option value=""><-- Select Vehicle --></option>
+                            <option value="all"><-- All Vehicle --></option>
                             @foreach($vehicles as $vehicle)
                                 @if(!empty($vehicle->registrationNumber))
                                     <option value="{{ $vehicle->id }}">{{ $vehicle->registrationNumber }}</option>

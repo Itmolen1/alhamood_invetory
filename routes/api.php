@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/VehicleSearch','api\VehicleController@VehicleSearch');
     Route::get('/Vehicle/paginate/{page_no}/{page_size}','api\VehicleController@paginate');
     Route::get('/Vehicle/ActivateDeactivate/{id}','api\VehicleController@ActivateDeactivate');
+    Route::get('/VehicleByCustomer/{id}','api\VehicleController@VehicleByCustomer');
 
     Route::apiResource('/Customer', 'api\CustomerController');
     Route::post('/CustomerSearch','api\CustomerController@CustomerSearch');
@@ -166,6 +167,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::post('/SalesReport','api\ReportController@SalesReport');
     Route::post('/SalesReportByVehicle','api\ReportController@SalesReportByVehicle');
+    Route::post('/SalesReportByCustomerVehicle','api\ReportController@SalesReportByCustomerVehicle');
     Route::post('/PurchaseReport','api\ReportController@PurchaseReport');
     Route::post('/ExpenseReport','api\ReportController@ExpenseReport');
     Route::post('/CashReport','api\ReportController@CashReport');

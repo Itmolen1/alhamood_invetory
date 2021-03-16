@@ -67,6 +67,26 @@ class VehicleController extends Controller
         }
     }
 
+    public function VehicleByCustomer($id)
+    {
+        try
+        {
+            $result=$this->vehicleRepository->VehicleByCustomer($id);
+            if($result)
+            {
+                return $this->userResponse->Success($result);
+            }
+            else
+            {
+                return $this->userResponse->Failed($sales = (object)[],'No Records Found.');
+            }
+        }
+        catch(Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
+
     public function update(VehicleRequest $vehicleRequest, $id)
     {
         try

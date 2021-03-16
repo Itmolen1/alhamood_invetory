@@ -3,7 +3,6 @@
 
 @section('content')
 
-
     <div class="page-wrapper">
         <div class="container-fluid">
             <div class="row page-titles">
@@ -38,7 +37,7 @@
                                             <div class="form-group">
                                                 {{--   <label>Select Customer</label> --}}
                                                 <select class="form-control custom-select select2 customer_id" name="customer_id" id="customer_id">
-                                                    <option selected readonly disabled> ---- Select Customers ---- </option>
+                                                    <option value=""> ---- Select Customers ---- </option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
                                                     @endforeach
@@ -327,81 +326,169 @@
             });
         });
 
+        function DoTrim(strComp) {
+            ltrim = /^\s+/
+            rtrim = /\s+$/
+            strComp = strComp.replace(ltrim, '');
+            strComp = strComp.replace(rtrim, '');
+            return strComp;
+        }
+
+        function validateForm()
+        {
+            /*validation*/
+            var fields;
+            fields = "";
+
+            if (DoTrim(document.getElementById('customer_id').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("customer_id").focus();
+                }
+                fields = '1';
+                $("#customer_id").addClass("error");
+            }
+
+            if (DoTrim(document.getElementById('paymentType').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("paymentType").focus();
+                }
+                fields = '1';
+                $("#paymentType").addClass("error");
+            }
+
+            if(DoTrim(document.getElementById('referenceNumber').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("referenceNumber").focus();
+                }
+                fields = '1';
+                $("#referenceNumber").addClass("error");
+            }
+
+            if(DoTrim(document.getElementById('paidAmount').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("paidAmount").focus();
+                }
+                fields = '1';
+                $("#paidAmount").addClass("error");
+            }
+
+            var payment_type=$("#paymentType option:selected").val();
+            if(payment_type=='bank' || payment_type=='cheque')
+            {
+                if(DoTrim(document.getElementById('bank_id').value).length == 0)
+                {
+                    if(fields != 1)
+                    {
+                        document.getElementById("bank_id").focus();
+                    }
+                    fields = '1';
+                    $("#bank_id").addClass("error");
+                }
+            }
+
+            if(DoTrim(document.getElementById('receiver').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("receiver").focus();
+                }
+                fields = '1';
+                $("#receiver").addClass("error");
+            }
+
+            if (fields != "")
+            {
+                fields = "Please fill in the following details:" + fields;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            /*validation*/
+        }
 
         $(document).ready(function () {
             $('#submit').click(function (event) {
+                if(validateForm()) {
+                    $('#submit').text('please wait...');
+                    $('#submit').attr('disabled', true);
 
-                $('#submit').text('please wait...');
-                $('#submit').attr('disabled',true);
+                    var insert = [], chekedValue = [];
+                    $('.singlechkbox:checked').each(function () {
+                        var currentRow = $(this).closest("tr");
 
-                var insert = [], chekedValue = [];
-                $('.singlechkbox:checked').each(function(){
-                    var currentRow = $(this).closest("tr");
+                        // currentRow.find('.singlechkbox').val(),
+                        // chekedValue .push($(this).val());
+                        // alert(chekedValue);
 
-                    // currentRow.find('.singlechkbox').val(),
-                    // chekedValue .push($(this).val());
-                    // alert(chekedValue);
-
-                    chekedValue =
-                        {
-                            amountPaid: currentRow.find('.singlechkbox').val(),
-                            sale_id: currentRow.find('.sale_id').val(),
-                        };
-                    insert.push(chekedValue);
-                })
-                var bank_id = $('#bank_id').val();
-                if (bank_id === "")
-                {
-                    bank_id = 0
-                }
-                let details = {
-                    'customer_id': $('#customer_id').val(),
-                    'totalAmount': $('#price').val(),
-                    'payment_type': $('#paymentType').val(),
-                    'bank_id': bank_id,
-                    'accountNumber': $('#accountNumber').val(),
-                    'TransferDate': $('#paymentReceiveDate').val(),
-                    'amountInWords': $('#SumOf').val(),
-                    'receiptNumber': $('#receiptNumber').val(),
-                    'receiverName': $('#receiver').val(),
-                    'referenceNumber': $('#referenceNumber').val(),
-                    'paymentReceiveDate': $('#paymentReceiveDate').val(),
-                    'paidAmount': $('#paidAmount').val(),
-                    'Description': $('#Description').val(),
-                    orders: insert,
-                };
-                if (insert.length > 0) {
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-                    var Datas = {Data: details};
-                    console.log(Datas);
-                    $.ajax({
-                        url: "{{ route('payment_receives.store') }}",
-                        type: "post",
-                        data: Datas,
-                        success: function (result) {
-                            if (result !== "Failed") {
-                                details = [];
-                                console.log(result);
-                                alert("Data Inserted Successfully");
-                                window.location.href = "{{ route('payment_receives.index') }}";
-
-                            } else {
-                                alert(result);
+                        chekedValue =
+                            {
+                                amountPaid: currentRow.find('.singlechkbox').val(),
+                                sale_id: currentRow.find('.sale_id').val(),
+                            };
+                        insert.push(chekedValue);
+                    })
+                    var bank_id = $('#bank_id').val();
+                    if (bank_id === "") {
+                        bank_id = 0
+                    }
+                    let details = {
+                        'customer_id': $('#customer_id').val(),
+                        'totalAmount': $('#price').val(),
+                        'payment_type': $('#paymentType').val(),
+                        'bank_id': bank_id,
+                        'accountNumber': $('#accountNumber').val(),
+                        'TransferDate': $('#paymentReceiveDate').val(),
+                        'amountInWords': $('#SumOf').val(),
+                        'receiptNumber': $('#receiptNumber').val(),
+                        'receiverName': $('#receiver').val(),
+                        'referenceNumber': $('#referenceNumber').val(),
+                        'paymentReceiveDate': $('#paymentReceiveDate').val(),
+                        'paidAmount': $('#paidAmount').val(),
+                        'Description': $('#Description').val(),
+                        orders: insert,
+                    };
+                    if (insert.length > 0) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             }
-                        },
-                        error: function (errormessage) {
-                            alert(errormessage);
-                        }
-                    });
-                } else
-                {
-                    alert('Please Add item to list');
-                    $('#submit').text('Save');
-                    $('#submit').attr('disabled',false);
+                        });
+                        var Datas = {Data: details};
+                        console.log(Datas);
+                        $.ajax({
+                            url: "{{ route('payment_receives.store') }}",
+                            type: "post",
+                            data: Datas,
+                            success: function (result) {
+                                if (result !== "Failed") {
+                                    details = [];
+                                    console.log(result);
+                                    alert("Data Inserted Successfully");
+                                    window.location.href = "{{ route('payment_receives.index') }}";
+
+                                } else {
+                                    alert(result);
+                                }
+                            },
+                            error: function (errormessage) {
+                                alert(errormessage);
+                            }
+                        });
+                    } else {
+                        alert('Please Add item to list');
+                        $('#submit').text('Save');
+                        $('#submit').attr('disabled', false);
+                    }
                 }
             });
         });

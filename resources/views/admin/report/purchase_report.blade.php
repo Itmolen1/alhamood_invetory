@@ -19,13 +19,13 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label class="control-label">From date</label>
                         <input type="date" value="{{ date('Y-m-d') }}" id="fromDate" name="fromDate" class="form-control" placeholder="dd/mm/yyyy" required>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label class="control-label">To date</label>
                         <input type="date" value="{{ date('Y-m-d') }}" id="toDate" name="toDate" class="form-control" placeholder="dd/mm/yyyy" required>
@@ -41,6 +41,17 @@
                             <option value="all" selected>ALL</option>
                             <option value="with">With VAT</option>
                             <option value="without">Without VAT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Supplier Name :- <span class="required">*</span></label>
+                        <select class="form-control custom-select supplier_id" id="supplier_id" name="supplier_id" >
+                            <option value="all">ALL Supplier</option>
+                            @foreach($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -63,11 +74,12 @@
             var fromDate = $('#fromDate').val();
             var toDate = $('#toDate').val();
             var filter = $("#filter option:selected").val();
+            var supplier_id = $("#supplier_id option:selected").val();
             $.ajax({
                 url: "{{ URL('PrintPurchaseReport') }}",
                 type: "POST",
                 dataType : "json",
-                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate,filter:filter},
+                data : {"_token": "{{ csrf_token() }}",fromDate:fromDate,toDate:toDate,filter:filter,supplier_id:supplier_id},
                 success: function (result) {
                     window.open(result.url,'_blank');
                 },

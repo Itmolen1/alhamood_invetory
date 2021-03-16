@@ -3,21 +3,8 @@
 
 @section('content')
 
-
-    <!-- ============================================================== -->
-    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- Page wrapper  -->
-    <!-- ============================================================== -->
     <div class="page-wrapper">
-        <!-- ============================================================== -->
-        <!-- Container fluid  -->
-        <!-- ============================================================== -->
         <div class="container-fluid">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h4 class="text-themecolor">Supplier Advances Registration</h4>
@@ -32,13 +19,7 @@
                     </div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Start Page Content -->
-            <!-- ============================================================== -->
-            <!-- Row -->
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
@@ -46,7 +27,7 @@
                             <h4 class="m-b-0 text-white">Supplier Advance</h4>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('supplier_advances.store') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ route('supplier_advances.store') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
                                 @csrf
                                 <div class="form-body">
                                     <h3 class="card-title">ADD SUPPLIER ADVANCE</h3>
@@ -57,7 +38,7 @@
                                             <div class="form-group">
                                                 <label>Supplier Selection :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select supplier_id select2" name="supplier_id" id="supplier_id">
-                                                    <option disabled readonly="" selected>--Select Supplier--</option>
+                                                    <option value="">--Select Supplier--</option>
                                                     @foreach($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}">{{ $supplier->Name }}</option>
                                                     @endforeach
@@ -83,7 +64,7 @@
                                             <div class="form-group">
                                                 <label>Payment Type :- <span class="required">*</span></label>
                                                 <select class="form-control custom-select" id="paymentType" name="paymentType">
-                                                    <option disabled readonly="" selected>--Select your Payment Type--</option>
+                                                    <option value="">--Select your Payment Type--</option>
                                                     <option value="bank">Bank</option>
                                                     <option id="cash" value="cash">Cash</option>
                                                     <option value="cheque">Cheque</option>
@@ -169,7 +150,7 @@
                                     </div>
 
                                     <div class="form-actions">
-                                        <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Save</button>
+                                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i>Save</button>
                                         <button type="button" class="btn btn-inverse">Cancel</button>
                                     </div>
                                 </div>
@@ -178,41 +159,101 @@
                     </div>
                 </div>
             </div>
-            <!-- Row -->
-
-            <!-- ============================================================== -->
-            <!-- End PAge Content -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Container fluid  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Page wrapper  -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- footer -->
-    <!-- ============================================================== -->
 
     <script>
-        $(document).ready(function () {
-            // $('#paymentTermAll').hide();
-            //
-            // $("#customRadio1 input:radio").click(function() {
-            //
-            //     alert("clicked");
-            //
-            // });
+        function DoTrim(strComp) {
+            ltrim = /^\s+/
+            rtrim = /\s+$/
+            strComp = strComp.replace(ltrim, '');
+            strComp = strComp.replace(rtrim, '');
+            return strComp;
+        }
 
-            //
-            // $('.c1').click(function () {
-            //     $('#paymentTermAll').show();
-            // });
-            // $('.c2').click(function () {
-            //     $('#paymentTermAll').hide();
-            // });
+        function validateForm()
+        {
+            /*validation*/
+            var fields;
+            fields = "";
+
+            if (DoTrim(document.getElementById('supplier_id').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("supplier_id").focus();
+                }
+                fields = '1';
+                $("#supplier_id").addClass("error");
+            }
+
+            if (DoTrim(document.getElementById('receiptNumber').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("receiptNumber").focus();
+                }
+                fields = '1';
+                $("#receiptNumber").addClass("error");
+            }
+
+            if(DoTrim(document.getElementById('paymentType').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("paymentType").focus();
+                }
+                fields = '1';
+                $("#paymentType").addClass("error");
+            }
+
+            if(DoTrim(document.getElementById('amount').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("amount").focus();
+                }
+                fields = '1';
+                $("#amount").addClass("error");
+            }
+
+            var payment_type=$("#paymentType option:selected").val();
+            if(payment_type=='bank' || payment_type=='cheque')
+            {
+                if(DoTrim(document.getElementById('bank_id').value).length == 0)
+                {
+                    if(fields != 1)
+                    {
+                        document.getElementById("bank_id").focus();
+                    }
+                    fields = '1';
+                    $("#bank_id").addClass("error");
+                }
+            }
+
+            if(DoTrim(document.getElementById('receiver').value).length == 0)
+            {
+                if(fields != 1)
+                {
+                    document.getElementById("receiver").focus();
+                }
+                fields = '1';
+                $("#receiver").addClass("error");
+            }
+
+            if (fields != "")
+            {
+                fields = "Please fill in the following details:" + fields;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            /*validation*/
+        }
+
+        $(document).ready(function () {
             $('.bankTransfer').hide();
         });
 

@@ -18,6 +18,7 @@ use App\Models\Customer;
 use App\Models\CustomerAdvance;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use App\Models\ExpenseDetail;
 use App\Models\PaymentReceive;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
@@ -73,7 +74,8 @@ class ReportRepository implements IReportRepositoryInterface
 
     public function PurchaseReport()
     {
-        return view('admin.report.purchase_report');
+        $suppliers = Supplier::where('company_type_id',2)->where('company_id',session('company_id'))->get();
+        return view('admin.report.purchase_report',compact('suppliers'));
     }
 
     public function ExpenseReport()
@@ -110,7 +112,7 @@ class ReportRepository implements IReportRepositoryInterface
 
     public function SalesReportByVehicle()
     {
-        $vehicles = Vehicle::all();
+        $vehicles = Vehicle::where('company_id',session('company_id'))->whereNull('deleted_at')->get();
         return view('admin.report.sales_report_by_vehicle',compact('vehicles'));
     }
 
@@ -964,19 +966,41 @@ class ReportRepository implements IReportRepositoryInterface
 
     public function PrintExpenseReport(Request $request)
     {
-        if ($request->fromDate!='' && $request->toDate!='')
+        if ($request->fromDate!='' && $request->toDate!=''  && $request->filter=='all' && $request->category=='all')
+        {
+            $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->orderBy('expenseDate')->get());
+        }
+        elseif($request->fromDate!='' && $request->toDate!='' && $request->category=='all' && $request->filter!='all')
         {
             if($request->filter=='with')
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '!=', 0.00)->orderBy('expenseDate')->get());
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->where('totalVat', '!=', 0.00)->orderBy('expenseDate')->get());
             }
             elseif($request->filter=='without')
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->where('totalVat', '==', 0.00)->orderBy('expenseDate')->get());
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->where('totalVat', '==', 0.00)->orderBy('expenseDate')->get());
             }
             else
             {
-                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->where('expenseDate','>=',$request->fromDate)->where('expenseDate','<=',$request->toDate)->orderBy('expenseDate')->get());
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->orderBy('expenseDate')->get());
+            }
+        }
+        elseif($request->fromDate!='' && $request->toDate!='' && $request->filter!='all' && $request->category!='all')
+        {
+            $ids=ExpenseDetail::where('expense_category_id','=',$request->category)->where('company_id',session('company_id'))->whereNull('deleted_at')->get();
+            $ids = json_decode(json_encode($ids), true);
+            $ids = array_column($ids,'expense_id');
+            if($request->filter=='with')
+            {
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->whereIn('id', $ids)->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->where('totalVat', '!=', 0.00)->orderBy('expenseDate')->get());
+            }
+            elseif($request->filter=='without')
+            {
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->whereIn('id', $ids)->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->where('totalVat', '==', 0.00)->orderBy('expenseDate')->get());
+            }
+            else
+            {
+                $expense=ExpenseResource::collection(Expense::with('expense_details')->whereIn('id', $ids)->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->orderBy('expenseDate')->get());
             }
         }
         else
@@ -984,24 +1008,10 @@ class ReportRepository implements IReportRepositoryInterface
             return FALSE;
         }
 
-        if($expense)
+        if($expense->first())
         {
             $row=json_decode(json_encode($expense), true);
-            $cats_ids=array();
-            $cats_name=array();
-            foreach ($row as $item)
-            {
-                $cats_ids[]=$item['expense_details'][0]['api_expense_category']['id'];
-                $cats_name[]=$item['expense_details'][0]['api_expense_category']['Name'];
-            }
-            $cats_ids=array_unique($cats_ids);
-            $cats_name=array_unique($cats_name);
-            //echo "<pre>123";print_r($cats);die;
 
-            $company_title='WATAN PHARMA LLP.';
-            $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
-            $company_email='Email : info@alhamood.ae';
-            $company_mobile='Mobile : +971-25550870  +971-557383866  +971-569777861';
             $pdf = new PDF();
             $pdf::setPrintHeader(false);
             $pdf::setPrintFooter(false);
@@ -1010,8 +1020,6 @@ class ReportRepository implements IReportRepositoryInterface
 
             $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
-
-            //$row=$sales->sale_details;
 
             $pdf::SetFont('helvetica', '', 15);
             $html='Expenses';
@@ -1090,57 +1098,66 @@ class ReportRepository implements IReportRepositoryInterface
             }
             else
             {
-                for($i=0;$i<count($cats_ids);$i++)
+                $category_name=ExpenseCategory::select('Name')->where('id','=',$request->category)->first();
+                $pdf::SetFont('helvetica', '', 12);
+                $html=' Category : '.$category_name->Name;
+                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+                $pdf::SetFont('helvetica', '', 8);
+
+                $html = '<table border="0.5" cellpadding="1">
+                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="110">Expense#</th>
+                    <th align="center" width="60">Employee</th>
+                    <th align="center" width="140">Vendor</th>
+                    <th align="center" width="70">TRN</th>
+                    <th align="center" width="40">Taxable</th>
+                    <th align="center" width="35">VAT</th>
+                    <th align="center" width="45">NetTotal</th>
+                </tr>';
+                for($i=0;$i<count($row);$i++)
                 {
-                    $category_name=$cats_name[$i];
-                    $cat_title='<u><b>'.$category_name.'</b></u>';
-                    $pdf::SetFont('helvetica', '', 8);
-                    $pdf::writeHTMLCell(0, 0, '', '', $cat_title,0, 1, 0, true, 'L', true);
+                    $total_sum+=$row[$i]['expense_details'][0]['Total'];
 
-                    $html = '<table border="0.5" cellpadding="3">
-                        <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                            <th align="center" width="60">Date</th>
-                            <th align="center" width="60">Expense#</th>
-                            <th align="center" width="60">Employee</th>
-                            <th align="center" width="120">Vendor</th>
-                            <th align="center" width="70">TRN</th>
-                            <th align="center" width="40">Taxable</th>
-                            <th align="center" width="35">VAT</th>
-                            <th align="center" width="45">NetTotal</th>
-                        </tr>';
-                    for($j=0;$j<count($row);$j++)
+                    $sub_total_sum+=$row[$i]['expense_details'][0]['rowSubTotal'];
+                    $this_row_vat_amount=$row[$i]['expense_details'][0]['Total']*$row[$i]['expense_details'][0]['VAT']/100;
+                    $vat_sum+=$this_row_vat_amount;
+                    if($i%2==0)
                     {
-                        if($cats_ids[$i]==$row[$j]['expense_details'][0]['api_expense_category']['id'])
-                        {
-                            $total_sum+=$row[$j]['expense_details'][0]['Total'];
-
-                            $sub_total_sum+=$row[$j]['expense_details'][0]['rowSubTotal'];
-                            $this_row_vat_amount=$row[$j]['expense_details'][0]['Total']*$row[$j]['expense_details'][0]['VAT']/100;
-                            $vat_sum+=$this_row_vat_amount;
-                            $html .='<tr>
-                                <td align="center" width="60">'.($row[$j]['expenseDate']).'</td>
-                                <td align="center" width="60">'.($row[$j]['referenceNumber']).'</td>
-                                <td align="center" width="60">'.($row[$j]['api_employee']['Name']).'</td>
-                                <td align="center" width="120">'.($row[$j]['api_supplier']['Name']).'</td>
-                                <td align="center" width="70">'.($row[$j]['api_supplier']['TRNNumber']).'</td>
-                                <td align="right" width="40">'.(number_format($row[$j]['expense_details'][0]['Total'],2,'.',',')).'</td>
-                                <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
-                                <td align="right" width="45">'.(number_format($row[$j]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
-                                </tr>';
-                        }
+                        $html .='<tr style="background-color: #e3e3e3;">
+                        <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['expenseDate']))).'</td>
+                        <td align="left" width="110">'.($row[$i]['referenceNumber']).'</td>
+                        <td align="left" width="60">'.($row[$i]['api_employee']['Name']).'</td>
+                        <td align="left" width="140">'.($row[$i]['api_supplier']['Name']).'</td>
+                        <td align="left" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
+                        <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.',',')).'</td>
+                        <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
+                        <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
+                        </tr>';
                     }
-                    $html.= '<tr color="red">
-                             <td width="370" align="right" colspan="5">Total :</td>
-                             <td width="40" align="right">'.number_format($total_sum,2,'.',',').'</td>
-                             <td width="35" align="right">'.number_format($vat_sum,2,'.',',').'</td>
-                             <td width="45" align="right">'.number_format($sub_total_sum,2,'.',',').'</td>
-                         </tr>';
-                    $pdf::SetFillColor(255, 0, 0);
-                    $html.='</table>';
+                    else
+                    {
+                        $html .='<tr>
+                        <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['expenseDate']))).'</td>
+                        <td align="left" width="110">'.($row[$i]['referenceNumber']).'</td>
+                        <td align="left" width="60">'.($row[$i]['api_employee']['Name']).'</td>
+                        <td align="left" width="140">'.($row[$i]['api_supplier']['Name']).'</td>
+                        <td align="left" width="70">'.($row[$i]['api_supplier']['TRNNumber']).'</td>
+                        <td align="right" width="40">'.(number_format($row[$i]['expense_details'][0]['Total'],2,'.',',')).'</td>
+                        <td align="right" width="35">'.(number_format($this_row_vat_amount,2,'.',',')).'</td>
+                        <td align="right" width="45">'.(number_format($row[$i]['expense_details'][0]['rowSubTotal'],2,'.',',')).'</td>
+                        </tr>';
+                    }
                 }
-                //echo "<pre>";print_r($row);die;
-                //<td align="center" width="50">'.($row[$i]['expense_details'][0]['api_expense_category']['Name']).'</td>
-
+                $html.= '
+                 <tr color="red">
+                     <td width="425" align="right" colspan="6">Total :</td>
+                     <td width="40" align="right">'.number_format($total_sum,2,'.',',').'</td>
+                     <td width="35" align="right">'.number_format($vat_sum,2,'.',',').'</td>
+                     <td width="45" align="right">'.number_format($sub_total_sum,2,'.',',').'</td>
+                 </tr>';
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
             }
 
 
@@ -1157,15 +1174,18 @@ class ReportRepository implements IReportRepositoryInterface
             $url=array('url'=>$url);
             return $url;
         }
+        else{
+            return false;
+        }
     }
 
     public function PrintPurchaseReport(Request $request)
     {
-        if($request->customer_id!='' && $request->fromDate!='' && $request->toDate!='')
+        if($request->supplier_id=='all' && $request->fromDate!='' && $request->toDate!='' && $request->filter=='all')
         {
-            $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate)->where('supplier_id',' =',$request->supplier_id));
+            $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('isActive','=',1)->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
         }
-        elseif ($request->fromDate!='' && $request->toDate!='')
+        elseif($request->fromDate!='' && $request->toDate!='' && $request->supplier_id=='all' && $request->filter!='all')
         {
             if($request->filter=='with')
             {
@@ -1180,12 +1200,16 @@ class ReportRepository implements IReportRepositoryInterface
                 $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('isActive','=',1)->where('PurchaseDate','>=',$request->fromDate)->where('PurchaseDate','<=',$request->toDate));
             }
         }
+        elseif($request->fromDate!='' && $request->toDate!='' && $request->filter=='all' && $request->supplier_id!='all')
+        {
+            $purchase=PurchaseResource::collection(Purchase::with('purchase_details_without_trash')->get()->where('company_id',session('company_id'))->where('isActive','=',1)->where('supplier_id','=',$request->supplier_id)->whereBetween('PurchaseDate', [$request->fromDate, $request->toDate]));
+        }
         else
         {
             return FALSE;
         }
 
-        if($purchase)
+        if($purchase->first())
         {
             $company_title='WATAN PHARMA LLP.';
             $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
@@ -1307,144 +1331,303 @@ class ReportRepository implements IReportRepositoryInterface
             $url=array('url'=>$url);
             return $url;
         }
+        else
+        {
+            return false;
+        }
     }
 
     public function PrintSalesReportByVehicle(Request $request)
     {
-        if($request->vehicle_id!='' && $request->fromDate!='' && $request->toDate!='')
+        if($request->vehicle_id=='all' && $request->fromDate!='' && $request->toDate!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
+            $sales=SalesResource::collection(Sale::with('sale_details')->where('company_id',session('company_id'))->whereBetween('SaleDate', [$request->fromDate, $request->toDate])->where('isActive','=','1')->orderBy('SaleDate')->get());
+
         }
-        elseif ($request->fromDate!='' && $request->toDate!='')
+        elseif ($request->fromDate!='' && $request->toDate!='' && $request->vehicle_id!='')
         {
-            $sales=SalesResource::collection(Sale::with('sale_details')->get()->where('company_id',session('company_id'))->where('SaleDate','>=',$request->fromDate)->where('SaleDate','<=',$request->toDate));
+            $ids=SaleDetail::where('vehicle_id','=',$request->vehicle_id)->where('company_id',session('company_id'))->whereNull('deleted_at')->get();
+            $ids = json_decode(json_encode($ids), true);
+            $ids = array_column($ids,'sale_id');
+            $sales=SalesResource::collection(Sale::with('sale_details')->whereIn('id', $ids)->where('company_id',session('company_id'))->whereBetween('SaleDate', [$request->fromDate, $request->toDate])->where('isActive','=','1')->orderBy('SaleDate')->get());
         }
         else
         {
             return FALSE;
         }
-        //echo "<pre>";print_r($sales);die;
 
-        if($sales)
+        if($sales->first())
         {
-            $company_title='WATAN PHARMA LLP.';
-            $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
-            $company_email='Email : info@alhamood.ae';
-            $company_mobile='Mobile : +971-25550870  +971-557383866  +971-569777861';
             $pdf = new PDF();
             $pdf::setPrintHeader(false);
             $pdf::setPrintFooter(false);
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-            $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
+            $pdf::AddPage('', 'A4');
+            $pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
-            //$row=$sales->sale_details;
             $row=json_decode(json_encode($sales), true);
-            //echo "<pre>123";print_r($row);die;
-            $pdf::SetFont('helvetica', '', 12);
+            $row=array_values($row);
+            //echo "<pre>";print_r($row);die;
+
+            // copy all data to new array and sort it according to pad number and then print
+            $new_master_array=array();
+            for($i=0;$i<count($row);$i++)
+            {
+                if($row[$i]['sale_details'][0]['PadNumber']!='0')
+                {
+                    $master_row=array();
+                    $master_row['PadNumber']=$row[$i]['sale_details'][0]['PadNumber'] ?? 'NA';
+                    $master_row['Name']=$row[$i]['api_customer']['Name'];
+                    $master_row['registrationNumber']=$row[$i]['sale_details'][0]['api_vehicle']['registrationNumber'] ?? '';
+                    $master_row['Quantity']=$row[$i]['sale_details'][0]['Quantity'] ?? 0;
+                    $master_row['Price']=$row[$i]['sale_details'][0]['Price'] ?? 0;
+                    $master_row['rowTotal']=$row[$i]['sale_details'][0]['rowTotal'] ?? 0;
+                    $master_row['VAT']=($row[$i]['sale_details'][0]['rowTotal']*$row[$i]['sale_details'][0]['VAT']/100);
+                    $master_row['rowSubTotal']=$row[$i]['sale_details'][0]['rowSubTotal'];
+                    $master_row['paidBalance']=$row[$i]['paidBalance'];
+                    $master_row['remainingBalance']=$row[$i]['remainingBalance'];
+                    $master_row['SaleDate']=$row[$i]['SaleDate'];
+                    $master_row['IsPaid']=$row[$i]['IsPaid'];
+                    $new_master_array[]=$master_row;
+                }
+            }
+            $keys = array_column($new_master_array, 'PadNumber');
+            array_multisort($keys, SORT_ASC, $new_master_array);
+            $row=$new_master_array;
+
+            $pdf::SetFont('helvetica', '', 8);
             $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
-            $pdf::SetFont('helvetica', '', 15);
+            $pdf::SetFont('helvetica', '', 8);
             $html='SALES REPORT';
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
 
-            $sub_total_sum=0.0;
-            $paid_total_sum=0.0;
-            $balance_total_sum=0.0;
-
-            $pdf::SetFont('helvetica', 'B', 14);
-            $html = '<table border="0" cellpadding="5">
+            if($request->vehicle_id==='all')
+            {
+                $pdf::SetFont('helvetica', 'B', 8);
+                $html = '<table border="0.5" cellpadding="1">
                 <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="60">S.No.</th>
-                    <th align="center" width="70">Customer</th>
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="35">PAD#</th>
+                    <th align="center" width="130">Customer</th>
                     <th align="center" width="50">Vehicle</th>
                     <th align="center" width="40">Qty</th>
-                    <th align="center" width="40">Rate</th>
+                    <th align="center" width="20">Rate</th>
                     <th align="center" width="45">Total</th>
                     <th align="center" width="40">VAT</th>
                     <th align="center" width="50">SubTotal</th>
                     <th align="center" width="50">Paid</th>
                     <th align="center" width="50">Balance</th>
-                    <th align="center" width="60">Date</th>
-
                 </tr>';
-            $pdf::SetFont('helvetica', '', 10);
-            for($i=0;$i<count($row);$i++)
-            {
-                if($request->vehicle_id!='')
+                $pdf::SetFont('helvetica', '', 8);
+
+                $VAT_sum=0.0;
+                $rowTotal_sum=0.0;
+                $qty_sum=0.0;
+                $sub_total_sum=0.0;
+                $paid_total_sum=0.0;
+                $balance_total_sum=0.0;
+                $rowSubTotal=0.0;
+                for($i=0;$i<count($row);$i++)
                 {
-                    if(isset($row[$i]['sale_details'][0]['api_vehicle']['id']) && $row[$i]['sale_details'][0]['api_vehicle']['id']==$request->vehicle_id)
+                    $sub_total_sum+=$row[$i]['rowSubTotal'];
+                    $paid_total_sum+=$row[$i]['paidBalance'];
+                    $balance_total_sum+=$row[$i]['remainingBalance'];
+                    $qty_sum+=$row[$i]['Quantity'];
+                    $rowTotal_sum+=$row[$i]['rowTotal'];
+                    $VAT_sum+=$row[$i]['VAT'];
+                    $rowSubTotal+=$row[$i]['rowSubTotal'];
+                    if($row[$i]['IsPaid']==1)
                     {
-                        $sub_total_sum+=$row[$i]['sale_details'][0]['rowSubTotal'];
-                        $paid_total_sum+=$row[$i]['paidBalance'];
-                        $balance_total_sum+=$row[$i]['remainingBalance'];
+                        $html .='<tr style="background-color: #aba9a9">
+                    <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
+                    <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
+                    <td align="left" width="130">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="50">'.($row[$i]['registrationNumber']).'</td>
+                    <td align="right" width="40">'.($row[$i]['Quantity']).'</td>
+                    <td align="right" width="20">'.($row[$i]['Price']).'</td>
+                    <td align="right" width="45">'.($row[$i]['rowTotal']).'</td>
+                    <td align="right" width="40">'.(number_format($row[$i]['VAT'],2,'.',',')).'</td>
+                    <td align="right" width="50">'.($row[$i]['rowSubTotal']).'</td>
+                    <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
+                    <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
+                    </tr>';
+                    }
+                    else
+                    {
                         $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
-                    <td align="left" width="70">'.($row[$i]['api_customer']['Name']).'</td>
-                    <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
-                    <td align="center" width="40">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
-                    <td align="center" width="40">'.($row[$i]['sale_details'][0]['Price']).'</td>
-                    <td align="center" width="45">'.($row[$i]['sale_details'][0]['rowTotal']).'</td>
-                    <td align="center" width="40">'.($row[$i]['sale_details'][0]['VAT']).'</td>
-                    <td align="center" width="50">'.($row[$i]['sale_details'][0]['rowSubTotal']).'</td>
-                    <td align="center" width="50">'.($row[$i]['paidBalance']).'</td>
-                    <td align="center" width="50">'.($row[$i]['remainingBalance']).'</td>
-                    <td align="center" width="60">'.($row[$i]['SaleDate']).'</td>
+                    <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
+                    <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
+                    <td align="left" width="130">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="50">'.($row[$i]['registrationNumber']).'</td>
+                    <td align="right" width="40">'.($row[$i]['Quantity']).'</td>
+                    <td align="right" width="20">'.($row[$i]['Price']).'</td>
+                    <td align="right" width="45">'.($row[$i]['rowTotal']).'</td>
+                    <td align="right" width="40">'.(number_format($row[$i]['VAT'],2,'.',',')).'</td>
+                    <td align="right" width="50">'.($row[$i]['rowSubTotal']).'</td>
+                    <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
+                    <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
                     </tr>';
                     }
                 }
-                else
+
+                $html.= '<tr color="red">
+                     <td width="45" align="right"></td>
+                     <td width="35"></td>
+                     <td width="130"></td>
+                     <td width="50"></td>
+                     <td width="40" align="right">'.number_format($qty_sum,2,'.',',').'</td>
+                     <td width="20"></td>
+                     <td width="45" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
+                     <td width="40" align="right">'.number_format($VAT_sum,2,'.',',').'</td>
+                     <td width="50" align="right">'.number_format($rowSubTotal,2,'.',',').'</td>
+                     <td width="50" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
+                     <td width="50" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
+                 </tr>';
+
+                $html.='<tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="35">PAD#</th>
+                    <th align="center" width="130">Customer</th>
+                    <th align="center" width="50">Vehicle</th>
+                    <th align="center" width="40">Qty</th>
+                    <th align="center" width="20">Rate</th>
+                    <th align="center" width="45">Total</th>
+                    <th align="center" width="40">VAT</th>
+                    <th align="center" width="50">SubTotal</th>
+                    <th align="center" width="50">Paid</th>
+                    <th align="center" width="50">Balance</th>
+                </tr>';
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
+            else
+            {
+                $vehicle_registrationNumber=Vehicle::select('registrationNumber')->where('id','=',$request->vehicle_id)->first();
+                $pdf::SetFont('helvetica', '', 12);
+                $html=' Vehicle : '.$vehicle_registrationNumber->registrationNumber;
+                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+
+                $pdf::SetFont('helvetica', 'B', 8);
+                $html = '<table border="0.5" cellpadding="1">
+                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="35">PAD#</th>
+                    <th align="center" width="130">Customer</th>
+                    <th align="center" width="50">Vehicle</th>
+                    <th align="center" width="40">Qty</th>
+                    <th align="center" width="20">Rate</th>
+                    <th align="center" width="45">Total</th>
+                    <th align="center" width="40">VAT</th>
+                    <th align="center" width="50">SubTotal</th>
+                    <th align="center" width="50">Paid</th>
+                    <th align="center" width="50">Balance</th>
+                </tr>';
+                $pdf::SetFont('helvetica', '', 8);
+
+                $VAT_sum=0.0;
+                $rowTotal_sum=0.0;
+                $qty_sum=0.0;
+                $sub_total_sum=0.0;
+                $paid_total_sum=0.0;
+                $balance_total_sum=0.0;
+                $rowSubTotal=0.0;
+                for($i=0;$i<count($row);$i++)
                 {
-                    $sub_total_sum+=$row[$i]['sale_details'][0]['rowSubTotal'];
+                    $sub_total_sum+=$row[$i]['rowSubTotal'];
                     $paid_total_sum+=$row[$i]['paidBalance'];
                     $balance_total_sum+=$row[$i]['remainingBalance'];
-                    $html .='<tr>
-                    <td align="center" width="60">'.($row[$i]['sale_details'][0]['PadNumber']).'</td>
-                    <td align="left" width="70">'.($row[$i]['api_customer']['Name']).'</td>
-                    <td align="center" width="50">'.($row[$i]['sale_details'][0]['api_vehicle']['registrationNumber']).'</td>
-                    <td align="right" width="40">'.($row[$i]['sale_details'][0]['Quantity']).'</td>
-                    <td align="right" width="40">'.($row[$i]['sale_details'][0]['Price']).'</td>
-                    <td align="right" width="45">'.($row[$i]['sale_details'][0]['rowTotal']).'</td>
-                    <td align="right" width="40">'.($row[$i]['sale_details'][0]['VAT']).'</td>
-                    <td align="right" width="50">'.($row[$i]['sale_details'][0]['rowSubTotal']).'</td>
+                    $qty_sum+=$row[$i]['Quantity'];
+                    $rowTotal_sum+=$row[$i]['rowTotal'];
+                    $VAT_sum+=$row[$i]['VAT'];
+                    $rowSubTotal+=$row[$i]['rowSubTotal'];
+                    if($row[$i]['IsPaid']==1)
+                    {
+                        $html .='<tr style="background-color: #aba9a9">
+                    <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
+                    <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
+                    <td align="left" width="130">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="50">'.($row[$i]['registrationNumber']).'</td>
+                    <td align="right" width="40">'.($row[$i]['Quantity']).'</td>
+                    <td align="right" width="20">'.($row[$i]['Price']).'</td>
+                    <td align="right" width="45">'.($row[$i]['rowTotal']).'</td>
+                    <td align="right" width="40">'.(number_format($row[$i]['VAT'],2,'.',',')).'</td>
+                    <td align="right" width="50">'.($row[$i]['rowSubTotal']).'</td>
                     <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
                     <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
-                    <td align="center" width="60">'.($row[$i]['SaleDate']).'</td>
                     </tr>';
+                    }
+                    else
+                    {
+                        $html .='<tr>
+                    <td align="center" width="45">'.(date('d-m-Y', strtotime($row[$i]['SaleDate']))).'</td>
+                    <td align="left" width="35">'.($row[$i]['PadNumber']).'</td>
+                    <td align="left" width="130">'.($row[$i]['Name']).'</td>
+                    <td align="center" width="50">'.($row[$i]['registrationNumber']).'</td>
+                    <td align="right" width="40">'.($row[$i]['Quantity']).'</td>
+                    <td align="right" width="20">'.($row[$i]['Price']).'</td>
+                    <td align="right" width="45">'.($row[$i]['rowTotal']).'</td>
+                    <td align="right" width="40">'.(number_format($row[$i]['VAT'],2,'.',',')).'</td>
+                    <td align="right" width="50">'.($row[$i]['rowSubTotal']).'</td>
+                    <td align="right" width="50">'.($row[$i]['paidBalance']).'</td>
+                    <td align="right" width="50">'.($row[$i]['remainingBalance']).'</td>
+                    </tr>';
+                    }
                 }
-            }
-            $html.= '
-             <tr color="red">
-                 <td width="60"></td>
-                 <td width="70"></td>
-                 <td width="50"></td>
-                 <td width="40"></td>
-                 <td width="40"></td>
-                 <td width="45"></td>
-                 <td width="40" align="left">Total : </td>
-                 <td width="50" align="right">'.number_format($sub_total_sum,2,'.',',').'</td>
-                 <td width="50" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
-                 <td width="50" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
-                 <td width="60" align="right"></td>
-             </tr>';
-            $pdf::SetFillColor(255, 0, 0);
-            $html.='</table>';
 
-            $pdf::writeHTML($html, true, false, false, false, '');
+                $html.= '<tr color="red">
+                     <td width="45" align="right"></td>
+                     <td width="35"></td>
+                     <td width="130"></td>
+                     <td width="50"></td>
+                     <td width="40" align="right">'.number_format($qty_sum,2,'.',',').'</td>
+                     <td width="20"></td>
+                     <td width="45" align="right">'.number_format($rowTotal_sum,2,'.',',').'</td>
+                     <td width="40" align="right">'.number_format($VAT_sum,2,'.',',').'</td>
+                     <td width="50" align="right">'.number_format($rowSubTotal,2,'.',',').'</td>
+                     <td width="50" align="right">'.number_format($paid_total_sum,2,'.',',').'</td>
+                     <td width="50" align="right">'.number_format($balance_total_sum,2,'.',',').'</td>
+                 </tr>';
+
+                $html.='<tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="45">Date</th>
+                    <th align="center" width="35">PAD#</th>
+                    <th align="center" width="130">Customer</th>
+                    <th align="center" width="50">Vehicle</th>
+                    <th align="center" width="40">Qty</th>
+                    <th align="center" width="20">Rate</th>
+                    <th align="center" width="45">Total</th>
+                    <th align="center" width="40">VAT</th>
+                    <th align="center" width="50">SubTotal</th>
+                    <th align="center" width="50">Paid</th>
+                    <th align="center" width="50">Balance</th>
+                </tr>';
+                $pdf::SetFillColor(255, 0, 0);
+                $html.='</table>';
+                $pdf::writeHTML($html, true, false, false, false, '');
+            }
 
             $pdf::lastPage();
+
             $time=time();
+            $name='SALES_REPORT_'.date('d-m-Y', strtotime($request->fromDate)).'_To_'.date('d-m-Y', strtotime($request->toDate)).'_'.$time;
             $fileLocation = storage_path().'/app/public/report_files/';
-            $fileNL = $fileLocation.'//'.$time.'.pdf';
+            $fileNL = $fileLocation.'//'.$name.'.pdf';
             $pdf::Output($fileNL, 'F');
             //$url=url('/').'/storage/report_files/'.$time.'.pdf';
-            $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
+            $url=url('/').'/storage/app/public/report_files/'.$name.'.pdf';
             //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -1475,7 +1658,7 @@ class ReportRepository implements IReportRepositoryInterface
             return FALSE;
         }
 
-        if($sales)
+        if($sales->first())
         {
             $company_title='WATAN PHARMA LLP.';
             $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
@@ -1666,6 +1849,9 @@ class ReportRepository implements IReportRepositoryInterface
             //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;
+        }
+        else{
+            return false;
         }
     }
 
