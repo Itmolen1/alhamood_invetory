@@ -213,8 +213,8 @@ class InwardLoanRepository implements IInwardLoanRepositoryInterface
                     $bank_transaction = new BankTransaction();
                     $bank_transaction->Reference=$Id;
                     $bank_transaction->createdDate=$loan->transferDate;
-                    $bank_transaction->Type='customer_advances';
-                    $bank_transaction->Details='CustomerChequeAdvance|'.$Id;
+                    $bank_transaction->Type='inward_loan';
+                    $bank_transaction->Details='IncomingChequeLoan|'.$Id;
                     $bank_transaction->Credit=0.00;
                     $bank_transaction->Debit=$loan->totalAmount;
                     $bank_transaction->Differentiate=$difference+$loan->totalAmount;
@@ -236,7 +236,7 @@ class InwardLoanRepository implements IInwardLoanRepositoryInterface
                             'createdDate' => $loan->transferDate,
                             'user_id' => $user_id,
                             'company_id' => $company_id,
-                            'Description'=>'SupplierChequeAdvance|'.$Id,
+                            'Description'=>'IncomingChequeLoan|'.$Id,
                             'referenceNumber'=>$loan->referenceNumber,
                             'updateDescription'=>$loan->ChequeNumber,
                         ];

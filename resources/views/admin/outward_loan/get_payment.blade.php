@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Outward Loan create')
+@section('title', 'Outward Loan Payment')
 
 @section('content')
 
@@ -7,13 +7,13 @@
         <div class="container-fluid">
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h4 class="text-themecolor">OutwardLoan</h4>
+                    <h4 class="text-themecolor">OutwardLoan Payment</h4>
                 </div>
                 <div class="col-md-7 align-self-center text-right">
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                            <li class="breadcrumb-item active">OutwardLoan</li>
+                            <li class="breadcrumb-item active">OutwardLoan Payment</li>
                         </ol>
                     </div>
                 </div>
@@ -23,27 +23,20 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header bg-info">
-                            <h4 class="m-b-0 text-white">OutwardLoan</h4>
+                            <h4 class="m-b-0 text-white">OutwardLoan Payment</h4>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="{{ route('outward_loans.store') }}" enctype="multipart/form-data" id="customer_create" onsubmit="return validateForm();">
+                            <form method="post" action="{{ url('outward_loan_save_payment',$outward_loan->id) }}" enctype="multipart/form-data" id="customer_create" onsubmit="return validateForm();">
                                 @csrf
+                                @method('PUT')
                                 <div class="form-body">
                                     <h6 class="required">* Fields are required please don't leave blank</h6>
                                     <hr>
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Select Customer :- <span class="required">*</span></label>
-                                                <select class="form-control custom-select financer_id select2" name="customer_id" id="customer_id">
-                                                    <option value="">--Select Customer--</option>
-                                                    @foreach($customers as $customer)
-                                                        <option value="{{ $customer->id }}">{{ $customer->Name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @if ($errors->has('customer_id'))
-                                                    <span class="text-danger">{{ $errors->first('customer_id') }}</span>
-                                                @endif
+                                                <label>Financer :- </label>
+                                               <input type="text" readonly value="{{$outward_loan->customer->Name}}" class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -60,8 +53,8 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label">Loan Date :- <span class="required">*</span></label>
-                                                <input type="date" name="loanDate" class="form-control" value="{{ date('Y-m-d') }}" required>
+                                                <label class="control-label">Payment Date :- <span class="required">*</span></label>
+                                                <input type="date" name="paymentDate" class="form-control" value="{{ date('Y-m-d') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -73,16 +66,19 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
-                                                <label class="control-label">Amount <span class="required">*</span></label>
-                                                <input type="text" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" id="totalAmount" name="totalAmount" class="form-control amount" placeholder="Enter Amount" autocomplete="off">
-                                                @if ($errors->has('amount'))
-                                                    <span class="text-danger">{{ $errors->first('amount') }}</span>
-                                                @endif
+                                                <label class="control-label">Loan Amount <span class="required">*</span></label>
+                                                <input type="text" id="totalAmount" class="form-control" readonly value="{{$outward_loan->outward_RemainingBalance}}">
                                             </div>
                                         </div>
-                                        <div class="col-md-9">
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label class="control-label">Paying Amount <span class="required">*</span></label>
+                                                <input type="text" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" id="amountPaid" name="amountPaid" class="form-control amount" placeholder="Enter Amount" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
                                             <div class="form-group">
                                                 <label class="control-label">Amount In Words <span class="required">*</span></label>
                                                 <input type="text" id="SumOf" name="amountInWords" class="form-control SumOf" placeholder="Amount In words" readonly>
@@ -152,6 +148,27 @@
         </div>
     </div>
     <script>
+        function roundToTwo(num) {
+            return +(Math.round(num + "e+2")  + "e-2");
+        }
+
+        $(document).on("keyup",'#amountPaid', function () {
+            var grand_total = $('#totalAmount').val();
+            grand_total=parseFloat(grand_total).toFixed(2);
+            grand_total=roundToTwo(grand_total);
+
+            var cash_paid = $('#amountPaid').val();
+            cash_paid=parseFloat(cash_paid).toFixed(2);
+            cash_paid=roundToTwo(cash_paid);
+
+            if(cash_paid>grand_total)
+            {
+                $('#amountPaid').val((grand_total.toFixed(2)));
+                $('#amountPaid').focus();
+            }
+        });
+
+
 
         function DoTrim(strComp) {
             ltrim = /^\s+/
@@ -167,15 +184,6 @@
             var fields;
             fields = "";
 
-            if (DoTrim(document.getElementById('customer_id').value).length == 0)
-            {
-                if(fields != 1)
-                {
-                    document.getElementById("customer_id").focus();
-                }
-                fields = '1';
-                $("#customer_id").addClass("error");
-            }
 
             if (DoTrim(document.getElementById('referenceNumber').value).length == 0)
             {
@@ -197,14 +205,14 @@
                 $("#paymentType").addClass("error");
             }
 
-            if(DoTrim(document.getElementById('totalAmount').value).length == 0)
+            if(DoTrim(document.getElementById('amountPaid').value).length == 0)
             {
                 if(fields != 1)
                 {
-                    document.getElementById("totalAmount").focus();
+                    document.getElementById("amountPaid").focus();
                 }
                 fields = '1';
-                $("#totalAmount").addClass("error");
+                $("#amountPaid").addClass("error");
             }
 
             var payment_type=$("#paymentType option:selected").val();

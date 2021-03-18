@@ -109,6 +109,9 @@ route::PUT('inward_loan_push/{Id}','InwardLoanController@inward_loan_push');
 route::get('inward_loan_payment/{Id}','InwardLoanController@inward_loan_payment');
 route::PUT('inward_loan_save_payment/{Id}','InwardLoanController@inward_loan_save_payment');
 route::resource('outward_loans','OutwardLoanController');
+route::PUT('outward_loan_push/{Id}','OutwardLoanController@outward_loan_push');
+route::get('outward_loan_payment/{Id}','OutwardLoanController@outward_loan_payment');
+route::PUT('outward_loan_save_payment/{Id}','OutwardLoanController@outward_loan_save_payment');
 
 route::resource('payment_receives','PaymentReceiveController');
 route::PUT('payment_receivesUpdate/{Id}','PaymentReceiveController@payment_receivesUpdate');

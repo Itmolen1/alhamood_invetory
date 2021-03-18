@@ -3,83 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\WebRepositories\Interfaces\IOutwardLoandRepositoryInterface;
 use Illuminate\Http\Request;
 
 class OutwardLoanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    private $outwardLoanRepository;
+
+    public function __construct(IOutwardLoandRepositoryInterface $outwardLoanRepository)
+    {
+        $this->outwardLoanRepository = $outwardLoanRepository;
+    }
+
     public function index()
     {
-        //
+        return $this->outwardLoanRepository->index();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        return $this->outwardLoanRepository->create();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        return $this->outwardLoanRepository->store($request);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function outward_loan_push($Id)
+    {
+        return $this->outwardLoanRepository->outward_loan_push($Id);
+    }
+
+    public function outward_loan_payment($Id)
+    {
+        return $this->outwardLoanRepository->outward_loan_payment($Id);
+    }
+
     public function edit($id)
     {
-        //
+        return $this->outwardLoanRepository->edit($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
+        return $this->outwardLoanRepository->update($request, $id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function outward_loan_save_payment(Request $request, $id)
     {
-        //
+        return $this->outwardLoanRepository->outward_loan_save_payment($request, $id);
     }
 }

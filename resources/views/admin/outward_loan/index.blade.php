@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Financer')
+@section('title', 'Outward Loans')
 
 @section('content')
 
@@ -12,7 +12,7 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Financer</li>
+                            <li class="breadcrumb-item active">Outward Loans</li>
                         </ol>
                     </div>
                 </div>
@@ -23,17 +23,23 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-10 col-sm-2"><h4 class="card-title">Financer</h4></div>
-                                <div class="col-md-1 col-sm-2"><a href="{{ route('financer.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> New Financer</button></a></div>
+                                <div class="col-md-10 col-sm-2"><h4 class="card-title">Outward Loans</h4></div>
+                                <div class="col-md-1 col-sm-2"><a href="{{ route('outward_loans.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Create New</button></a></div>
                             </div>
-                            <h6 class="card-subtitle">All Financer</h6>
+                            <h6 class="card-subtitle">All Outward Loans</h6>
                             <div class="table-responsive m-t-40">
-                                <table id="financers_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="outward_loans_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>SR#</th>
-                                        <th>Name</th>
-                                        <th>Mobile</th>
+                                        <th>Loan Date</th>
+                                        <th>Amount</th>
+                                        <th>Received</th>
+                                        <th>Remaining</th>
+                                        <th>referenceNumber</th>
+                                        <th>Customer</th>
+                                        <th>Payment Type</th>
+                                        <th>Push Loan</th>
                                         <th width="100">Action</th>
                                     </tr>
                                     </thead>
@@ -66,11 +72,11 @@
 
     <script>
         $(document).ready(function () {
-            $('#financers_table').dataTable({
+            $('#outward_loans_table').dataTable({
                 processing: true,
                 ServerSide: true,
                 ajax:{
-                    url: "{{ route('financer.index') }}",
+                    url: "{{ route('outward_loans.index') }}",
                 },
                 columns:[
                     {
@@ -79,12 +85,37 @@
                         visible: false
                     },
                     {
-                        data: 'Name',
-                        name: 'Name'
+                        data: 'loanDate',
+                        name: 'loanDate'
                     },
                     {
-                        data: 'Mobile',
-                        name: 'Mobile'
+                        data: 'totalAmount',
+                        name: 'totalAmount'
+                    },
+                    {
+                        data: 'outward_PaidBalance',
+                        name: 'outward_PaidBalance'
+                    },
+                    {
+                        data: 'outward_RemainingBalance',
+                        name: 'outward_RemainingBalance'
+                    },
+                    {
+                        data: 'referenceNumber',
+                        name: 'referenceNumber'
+                    },
+                    {
+                        data: 'customer',
+                        name: 'customer'
+                    },
+                    {
+                        data: 'payment_type',
+                        name: 'payment_type'
+                    },
+                    {
+                        data: 'push',
+                        name: 'push',
+                        orderable: false
                     },
                     {
                         data: 'action',
