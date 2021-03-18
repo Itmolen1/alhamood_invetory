@@ -18,6 +18,7 @@ use App\WebRepositories\ExpenseDetailRepository;
 use App\WebRepositories\ExpenseDetailsRepository;
 use App\WebRepositories\ExpenseRepository;
 use App\WebRepositories\ExpensesRepository;
+use App\WebRepositories\FinancerRepository;
 use App\WebRepositories\Interfaces\IBankRepositoryInterface;
 use App\WebRepositories\Interfaces\ICityRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
@@ -34,10 +35,13 @@ use App\WebRepositories\Interfaces\IExpenseDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseDetailsRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpenseRepositoryInterface;
 use App\WebRepositories\Interfaces\IExpensesRepositoryInterface;
+use App\WebRepositories\Interfaces\IFinancerRepositoryInterface;
+use App\WebRepositories\Interfaces\IInwardLoanRepositoryInterface;
 use App\WebRepositories\Interfaces\ILoanRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReaderRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IMeterReadingRepositoryInterface;
+use App\WebRepositories\Interfaces\IOutwardLoandRepositoryInterface;
 use App\WebRepositories\Interfaces\IPaymentReceiveDetailRepositoryInterface;
 use App\WebRepositories\Interfaces\IPaymentReceiveRepositoryInterface;
 use App\WebRepositories\Interfaces\IPaymentTermRepositoryInterface;
@@ -58,10 +62,12 @@ use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\WebRepositories\Interfaces\IUnitRepositoryInterface;
 use App\WebRepositories\Interfaces\IUserRepositoryInterface;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
+use App\WebRepositories\InwardLoanRepository;
 use App\WebRepositories\LoanRepository;
 use App\WebRepositories\MeterReaderRepository;
 use App\WebRepositories\MeterReadingDetailRepository;
 use App\WebRepositories\MeterReadingRepository;
+use App\WebRepositories\OutwardLoanRepository;
 use App\WebRepositories\PaymentReceiveDetailRepository;
 use App\WebRepositories\PaymentReceiveRepository;
 use App\WebRepositories\PaymentTermRepository;
@@ -126,6 +132,9 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ISupplierPaymentRepositoryDetailInterface::class, SupplierPaymentDetailRepository::class);
         $this->app->bind(IReportRepositoryInterface::class,ReportRepository::class);
         $this->app->bind(IDepositRepositoryInterface::class,DepositRepository::class);
+        $this->app->bind(IFinancerRepositoryInterface::class,FinancerRepository::class);
+        $this->app->bind(IInwardLoanRepositoryInterface::class,InwardLoanRepository::class);
+        $this->app->bind(IOutwardLoandRepositoryInterface::class,OutwardLoanRepository::class);
     }
 
     public function boot()

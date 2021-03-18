@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 interface ICustomerRepositoryInterface
 {
-
     public function index();
 
     public function create();
@@ -29,5 +28,4 @@ interface ICustomerRepositoryInterface
     public function trashed();
 
     public function getCustomerVehicleDetails($Id);
-
 }

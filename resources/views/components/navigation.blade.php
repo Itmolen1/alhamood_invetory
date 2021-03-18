@@ -37,13 +37,22 @@
                         </ul>
                     </li>
                     @if(Session::get('role_name')=='superadmin' || Session::get('role_name')=='admin')
-                    <li><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Suppliers</span>
+                    <li class="border-bottom"><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Suppliers</span>
                         </a>
                         <ul aria-expanded="false" class="collapse">
                             <li class="border-bottom"><a href="{{ route('suppliers.create') }}">Add New Supplier</a></li>
                             <li class="border-bottom"><a href="{{ route('suppliers.index') }}">Manage Suppliers</a></li>
                         </ul>
                     </li>
+                    @endif
+
+                    @if(Session::get('role_name')=='superadmin' || Session::get('role_name')=='admin')
+                        <li><a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-files"></i><span class="hide-menu">Financer</span>
+                            </a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="{{ route('financer.index') }}">Manage Financer</a></li>
+                            </ul>
+                        </li>
                     @endif
                 </ul>
             </li>
@@ -123,9 +132,9 @@
                     <li class="border-bottom">
                         <a href="{{ route('deposits.index') }}">Deposits</a>
                     </li>
+                    <li class="border-bottom"><a href="{{ route('inward_loans.index') }}">Inward Loan</a></li>
                     @endif
-                    <li class="border-bottom"><a href="{{ route('loans.create') }}">Add Loan</a></li>
-                    <li><a href="{{ route('loans.index') }}">Manage Loan</a></li>
+                    <li><a href="{{ route('outward_loans.index') }}">OutWard Loan</a></li>
                 </ul>
             </li>
 

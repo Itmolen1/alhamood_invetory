@@ -26,6 +26,7 @@ route::get('/UserChangePassword','UserController@UserChangePassword')->name('Use
 route::PUT('UserUpdatePassword/{id}','UserController@UserUpdatePassword')->name('UserUpdatePassword');
 
 route::resource('customers','CustomerController');
+route::resource('financer','FinancerController');
 route::get('customerDetails/{id}','CustomerController@customerDetails');
 route::resource('company_types','CompanyTypeController');
 route::resource('payment_types','PaymentTypeController');
@@ -102,6 +103,12 @@ route::post('meterReadingUpdate/{Id}','MeterReadingController@meterReadingUpdate
 route::resource('loans','LoanController');
 route::get('customerRemaining/{Id}','LoanController@customerRemaining');
 route::get('employeeRemaining/{Id}','LoanController@employeeRemaining');
+
+route::resource('inward_loans','InwardLoanController');
+route::PUT('inward_loan_push/{Id}','InwardLoanController@inward_loan_push');
+route::get('inward_loan_payment/{Id}','InwardLoanController@inward_loan_payment');
+route::PUT('inward_loan_save_payment/{Id}','InwardLoanController@inward_loan_save_payment');
+route::resource('outward_loans','OutwardLoanController');
 
 route::resource('payment_receives','PaymentReceiveController');
 route::PUT('payment_receivesUpdate/{Id}','PaymentReceiveController@payment_receivesUpdate');

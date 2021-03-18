@@ -15,14 +15,12 @@ class LoanRepository implements ILoanRepositoryInterface
 
     public function index()
     {
-        // TODO: Implement index() method.
         $loans = Loan::with('customer','employee','user')->get();
         return view('admin.loan.index',compact('loans'));
     }
 
     public function create()
     {
-        // TODO: Implement create() method.
         $customers = Customer::all();
         $employees = Employee::all();
         return view('admin.loan.create',compact('customers','employees'));
@@ -30,8 +28,6 @@ class LoanRepository implements ILoanRepositoryInterface
 
     public function store(Request $request)
     {
-
-        // TODO: Implement store() method.
         $user_id = session('user_id');
         $company_id = session('company_id');
         if ($request->input('loanPayment') == 'isPay')
@@ -65,7 +61,7 @@ class LoanRepository implements ILoanRepositoryInterface
                 }
         }
 
-        
+
         $data = [
             'loanTo' => $request->loanTo,
             'employee_id' => $employee,
@@ -87,7 +83,6 @@ class LoanRepository implements ILoanRepositoryInterface
 
     public function update(Request $request, $Id)
     {
-        // TODO: Implement update() method.
         $totalRemaining = Loan::where('id', $Id)->first();
         $remaingValue = $totalRemaining->remainingLoan - $totalRemaining->payLoan;
 
@@ -103,7 +98,7 @@ class LoanRepository implements ILoanRepositoryInterface
             }
         }
         else if($totalRemaining->isPay == true)
-        {   
+        {
              if ($request->input('loanPayment') == 'isReturn')
             {
                 $remaingValue = $totalRemaining->remainingLoan;
@@ -146,7 +141,7 @@ class LoanRepository implements ILoanRepositoryInterface
                      $employee = $request->employee_id;
                      $remainingLoan = $remaingValue - $request->payLoan;
                 }
-        }   
+        }
         $data = Loan::find($Id);
         $data->update([
                 'loanTo' => $request->loanTo,
@@ -173,7 +168,6 @@ class LoanRepository implements ILoanRepositoryInterface
 
     public function edit($Id)
     {
-        // TODO: Implement edit() method.
         $customers = Customer::all();
         $employees = Employee::all();
         $loan = Loan::with('customer','employee','user')->find($Id);
@@ -182,7 +176,6 @@ class LoanRepository implements ILoanRepositoryInterface
 
     public function delete(Request $request, $Id)
     {
-        // TODO: Implement delete() method.
         $Update = Loan::find($Id);
         $user_id = session('user_id');
         $company_id = session('company_id');
@@ -204,7 +197,6 @@ class LoanRepository implements ILoanRepositoryInterface
 
     public function restore($Id)
     {
-        // TODO: Implement restore() method.
         $loan = Loan::onlyTrashed()->find($Id);
         if (!is_null($loan))
         {
@@ -216,7 +208,6 @@ class LoanRepository implements ILoanRepositoryInterface
 
     public function trashed()
     {
-        // TODO: Implement trashed() method.
         $trashes = Loan::with('user')->onlyTrashed()->get();
         return view('admin.loan.trash',compact('trashes'));
     }
@@ -229,7 +220,7 @@ class LoanRepository implements ILoanRepositoryInterface
         if ($customers != null)
         {
 
-            if ($customers->isEmpty()) 
+            if ($customers->isEmpty())
             {
                     //$data = $customers->sum('remainingLoan');
                     return Response()->json($customers);
@@ -256,7 +247,7 @@ class LoanRepository implements ILoanRepositoryInterface
         //return Response()->json($employees);
         if ($employees != null)
         {
-            if ($employees->isEmpty()) 
+            if ($employees->isEmpty())
             {
                     //$data = $employees->sum('remainingLoan');
                     return Response()->json($employees);
