@@ -463,7 +463,7 @@
                     {
                         $.ajax({
                             // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            url: "{{ URL('customerDetails') }}/" + Id,
+                            url: "{{ URL('salesCustomerDetails') }}/" + Id,
                             type: "get",
                             dataType: "json",
                             success: function (result) {

@@ -26,8 +26,10 @@ route::get('/UserChangePassword','UserController@UserChangePassword')->name('Use
 route::PUT('UserUpdatePassword/{id}','UserController@UserUpdatePassword')->name('UserUpdatePassword');
 
 route::resource('customers','CustomerController');
+route::get('ChangeCustomerStatus/{id}','CustomerController@ChangeCustomerStatus');
 route::resource('financer','FinancerController');
 route::get('customerDetails/{id}','CustomerController@customerDetails');
+route::get('salesCustomerDetails/{id}','CustomerController@salesCustomerDetails');
 route::resource('company_types','CompanyTypeController');
 route::resource('payment_types','PaymentTypeController');
 route::resource('payment_terms','PaymentTermController');
@@ -45,6 +47,7 @@ route::POST('supplier_advances_save_disburse','SupplierAdvanceController@supplie
 route::resource('vehicles','VehicleController');
 route::get('getVehicleList','VehicleController@getVehicleList')->name('getVehicleList');
 route::post('PrintVehicleList','VehicleController@PrintVehicleList')->name('PrintVehicleList');
+route::get('ChangeVehicleStatus/{id}','VehicleController@ChangeVehicleStatus');
 
 route::POST('/CheckVehicleExist','VehicleController@CheckVehicleExist');
 route::resource('drivers','DriverController');

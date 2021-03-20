@@ -41,6 +41,11 @@ class CustomerController extends Controller
         return $this->customerRepository->edit($Id);
     }
 
+    public function ChangeCustomerStatus($Id)
+    {
+        return $this->customerRepository->ChangeCustomerStatus($Id);
+    }
+
     public function update(Request $request, $Id)
     {
         return $this->customerRepository->update($request, $Id);
@@ -54,5 +59,10 @@ class CustomerController extends Controller
     public function customerDetails($id)
     {
         return $this->customerRepository->customerDetails($id);
+    }
+
+    public function salesCustomerDetails($id)
+    {
+        return $this->customerRepository->salesCustomerDetails($id);
     }
 }

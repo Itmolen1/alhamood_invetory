@@ -76,7 +76,7 @@
                                                 @if(is_null($details->deleted_at))
                                                     <tr>
                                                         <td> <input type="date" name="createdDate" value="{{ $details->createdDate}}" id="createdDate" class="form-control createdDate" placeholder=""></td>
-                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))"></td>
+                                                        <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))" readonly></td>
                                                         <td>
                                                             <div class="form-group">
                                                                 <select name="customer" class="form-control customer_id slct" id="customer_id">

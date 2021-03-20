@@ -39,17 +39,14 @@ class CustomerRepository implements ICustomerRepositoryInterface
                     return $button;
                 })
                 ->addColumn('isActive', function($data) {
-                        if($data->isActive == true){
-                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST" >';
-                            $button .= @csrf_field();
-                            $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                        if($data->isActive == true)
+                        {
+                            $button = '<label class="switch"><input onclick="change_status(this.value)" name="isActive" type="checkbox" value="customer_'.$data->id.'" checked><span class="slider"></span></label>';
                             return $button;
-                        }else{
-                            $button = '<form action="'.route('customers.update', $data->id).'" method="POST" >';
-                            $button .= @csrf_field();
-                            $button .= @method_field('PUT');
-                            $button .= '<label class="switch"><input name="isActive" type="checkbox" checked><span class="slider"></span></label>';
+                        }
+                        else
+                        {
+                            $button = '<label class="switch"><input onclick="change_status(this.value)" name="isActive" type="checkbox" value="customer_'.$data->id.'"><span class="slider"></span></label>';
                             return $button;
                         }
                     })
@@ -230,6 +227,21 @@ class CustomerRepository implements ICustomerRepositoryInterface
         // TODO: Implement getById() method.
     }
 
+    public function ChangeCustomerStatus($Id)
+    {
+        $customer = Customer::find($Id);
+        if($customer->isActive==1)
+        {
+            $customer->isActive=0;
+        }
+        else
+        {
+            $customer->isActive=1;
+        }
+        $customer->update();
+        return Response()->json(true);
+    }
+
     public function edit($Id)
     {
         $regions = Region::with('city')->get();
@@ -288,6 +300,35 @@ class CustomerRepository implements ICustomerRepositoryInterface
 
         //$customers = Customer::with('vehicles','customer_prices')->select('id','Name')->find($Id);
         $customers = Customer::with(['vehicles'=>function($q){$q->select('id','registrationNumber','customer_id');},'customer_prices'=>function($q){$q->select('id','Rate','VAT','customerLimit','customer_id');},])->select('id','Name')->where('id',$Id)->get();
+
+        return response()->json(array('customers'=>$customers,'closing'=>$row));
+    }
+
+    public function salesCustomerDetails($Id)
+    {
+        // getting latest closing for supplier from account transaction table
+        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id')
+            ->where('ac.customer_id','=',$Id)
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        $needed_ids=array_column($row,'max_id');
+
+        $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.customer_id','ac.Differentiate')
+            ->whereIn('ac.id',$needed_ids)
+            ->orderBy('ac.id','asc')
+            ->get();
+        $row=json_decode(json_encode($row), true);
+        if(empty($row))
+        {
+            $row=0.00;
+        }
+        else
+        {
+            $row=$row[0]['Differentiate'];
+        }
+
+        //$customers = Customer::with('vehicles','customer_prices')->select('id','Name')->find($Id);
+        $customers = Customer::with(['vehicles'=>function($q){$q->select('id','registrationNumber','customer_id')->where('isActive',1);},'customer_prices'=>function($q){$q->select('id','Rate','VAT','customerLimit','customer_id');},])->select('id','Name')->where('id',$Id)->get();
 
         return response()->json(array('customers'=>$customers,'closing'=>$row));
     }

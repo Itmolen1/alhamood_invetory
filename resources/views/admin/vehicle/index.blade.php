@@ -32,6 +32,7 @@
                                         <th>Customer Name</th>
                                         <th>Registration Number</th>
                                         <th>Description</th>
+                                        <th width="100">Status</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -60,6 +61,34 @@
                 </div>
         </div>
     </div>
+
+    <script>
+        function change_status(e)
+        {
+            var id=e;
+            id=id.split('_');
+            id=id[1];
+            if (id > 0)
+            {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ URL('ChangeVehicleStatus') }}/"+id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        }
+    </script>
 
     <script>
         $(document).on('click', '.delete', function(){
@@ -97,6 +126,11 @@
                     {
                         data: 'Description',
                         name: 'Description'
+                    },
+                    {
+                        data: 'isActive',
+                        name: 'isActive',
+                        orderable: false
                     },
                     {
                         data: 'action',

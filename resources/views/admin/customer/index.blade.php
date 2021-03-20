@@ -41,12 +41,10 @@
                                         <th width="100">Action</th>
                                     </tr>
                                     </thead>
-
                                 </table>
                             </div>
                         </div>
                     </div>
-
 
                 </div>
             </div>
@@ -72,6 +70,33 @@
         </div>
     </div>
 
+    <script>
+        function change_status(e)
+        {
+            var id=e;
+            id=id.split('_');
+            id=id[1];
+            if (id > 0)
+            {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ URL('ChangeCustomerStatus') }}/"+id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        }
+    </script>
     <script>
         $(document).ready(function () {
             $('#customers_table').dataTable({

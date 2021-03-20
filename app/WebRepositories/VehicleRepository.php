@@ -30,6 +30,18 @@ class VehicleRepository implements IVehicleRepositoryInterface
                     $button .= '</form>';
                     return $button;
                 })
+                ->addColumn('isActive', function($data) {
+                    if($data->isActive == true)
+                    {
+                        $button = '<label class="switch"><input onclick="change_status(this.value)" name="isActive" type="checkbox" value="vehicle_'.$data->id.'" checked><span class="slider"></span></label>';
+                        return $button;
+                    }
+                    else
+                    {
+                        $button = '<label class="switch"><input onclick="change_status(this.value)" name="isActive" type="checkbox" value="vehicle_'.$data->id.'"><span class="slider"></span></label>';
+                        return $button;
+                    }
+                })
                 ->addColumn('customerName', function($data) {
                     return $data->customer->Name ?? "";
                 })
@@ -106,7 +118,6 @@ class VehicleRepository implements IVehicleRepositoryInterface
     public function CheckVehicleExist($request)
     {
         $data = Vehicle::where('registrationNumber','=',$request->registrationNumber)->where('customer_id','=',$request->customer_id)->get();
-        //echo "<pre>";print_r($data);die;
         if($data->first())
         {
             $result=array('result'=>true);
@@ -117,6 +128,21 @@ class VehicleRepository implements IVehicleRepositoryInterface
             $result=array('result'=>false);
             return Response()->json(false);
         }
+    }
+
+    public function ChangeVehicleStatus($Id)
+    {
+        $vehicle = Vehicle::find($Id);
+        if($vehicle->isActive==1)
+        {
+            $vehicle->isActive=0;
+        }
+        else
+        {
+            $vehicle->isActive=1;
+        }
+        $vehicle->update();
+        return Response()->json(true);
     }
 
     public function restore($Id)

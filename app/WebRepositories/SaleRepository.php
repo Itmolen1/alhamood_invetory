@@ -287,7 +287,7 @@ class   SaleRepository implements ISaleRepositoryInterface
     {
         $saleNo = $this->invoiceNumber();
         $init_data = $this->PadNumber();
-        $customers = Customer::with('customer_prices')->where('company_id',session('company_id'))->orderBy('id', 'desc')->get();
+        $customers = Customer::with('customer_prices')->where('company_id',session('company_id'))->where('isActive',1)->orderBy('id', 'desc')->get();
         $products = Product::all();
         $salesRecords = Sale::with('sale_details.vehicle','customer')->where('company_id',session('company_id'))->orderBy('id', 'desc')->skip(0)->take(3)->get();
         return view('admin.sale.create',compact('customers','saleNo','products','salesRecords','init_data'));

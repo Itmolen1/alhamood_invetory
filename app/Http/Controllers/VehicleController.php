@@ -36,6 +36,11 @@ class VehicleController extends Controller
         //
     }
 
+    public function ChangeVehicleStatus($Id)
+    {
+        return $this->vehicleRepository->ChangeVehicleStatus($Id);
+    }
+
     public function edit($Id)
     {
         return $this->vehicleRepository->edit($Id);
