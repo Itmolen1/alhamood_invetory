@@ -603,7 +603,7 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $all_bank_transactions=BankTransaction::get()->where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('bank_id','=',$request->bank_id);
+            $all_bank_transactions=BankTransaction::where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('bank_id','=',$request->bank_id)->orderBy('createdDate')->get();
         }
         else
         {
@@ -629,7 +629,7 @@ class ReportRepository implements IReportRepositoryInterface
         $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
 
         $pdf::SetFont('helvetica', '', 12);
-        $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+        $html=date('d-M-Y', strtotime($request->fromDate)).' To '.date('d-M-Y', strtotime($request->toDate));
         $pdf::writeHTMLCell(0, 0, ''    , '', $html,0, 1, 0, true, 'R', true);
 
         $balance=0.0;
@@ -664,7 +664,7 @@ class ReportRepository implements IReportRepositoryInterface
             $credit_total += $row[$i]['Credit'];
             //$balance = $balance + $row[$i]['Differentiate'];
             $html .='<tr>
-                <td align="center" width="80">'.(date('d-m-Y', strtotime($row[$i]['createdDate']))).'</td>
+                <td align="center" width="80">'.(date('d-M-Y', strtotime($row[$i]['createdDate']))).'</td>
                 <td align="left" width="100">'.($row[$i]['Type']).'</td>
                 <td align="center" width="100">'.$row[$i]['updateDescription'].'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>

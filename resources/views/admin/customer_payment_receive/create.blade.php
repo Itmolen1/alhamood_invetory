@@ -3,6 +3,34 @@
 
 @section('content')
 
+    <style>
+        .slct:focus{
+            background: #aed9f6;
+        }
+    </style>
+    <style>
+        .chosen-container-single .chosen-single {
+            height: 38px;
+            border-radius: 3px;
+            border: 1px solid #CCCCCC;
+        }
+        .chosen-container-single .chosen-single span {
+            padding-top: 5px;
+        }
+        .chosen-container-single .chosen-single div b {
+            margin-top: 5px;
+        }
+        .chosen-container-active .chosen-single,
+        .chosen-container-active.chosen-with-drop .chosen-single {
+            border-color: #ccc;
+            border-color: rgba(82, 168, 236, .8);
+            outline: 0;
+            outline: thin dotted \9;
+            -moz-box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+            box-shadow: 0 0 8px rgba(82, 168, 236, .6)
+        }
+    </style>
+
     <div class="page-wrapper">
         <div class="container-fluid">
             <div class="row page-titles">
@@ -36,7 +64,7 @@
                                         <div class="col-md-9">
                                             <div class="form-group">
                                                 {{--   <label>Select Customer</label> --}}
-                                                <select class="form-control custom-select select2 customer_id" name="customer_id" id="customer_id">
+                                                <select class="form-control custom-select select2 customer_id chosen-select" name="customer_id" id="customer_id">
                                                     <option value=""> ---- Select Customers ---- </option>
                                                     @foreach($customers as $customer)
                                                         <option value="{{ $customer->id }}">{{ $customer->Name }}</option>

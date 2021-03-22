@@ -23,7 +23,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(CustomerAdvance::with('user','customer')->latest()->get())
+            return datatables()->of(CustomerAdvance::with('user','customer')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('customer', function($data) {
                     return $data->customer->Name ?? "No Data";
                 })
@@ -71,7 +71,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
 
     public function create()
     {
-        $customers = Customer::all();
+        $customers = Customer::where('company_id',session('company_id'))->get();
         $banks = Bank::all();
         return view('admin.customerAdvance.create',compact('customers','banks'));
     }
@@ -172,6 +172,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                 {
                     $total_i_have=$advance->remainingBalance;
 
+                    $total_spending=0.00;
                     foreach($request->Data['orders'] as $detail)
                     {
                         $this_sale=Sale::where('id',$detail['sale_id'])->get()->first();
@@ -205,6 +206,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                                     'advanceReceiveDetailDate' => $advance->TransferDate,
                                     'createdDate' => date('Y-m-d')
                                 ]);
+                                $total_spending+=$this_sale->grandTotal;
                             }
                             else
                             {
@@ -212,7 +214,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                                 $isPartialPaid = 1;
                                 $total_giving_to_you=$total_i_have;
                                 $total_i_have = $total_i_have - $total_giving_to_you;
-
+                                $total_spending+=$total_giving_to_you;
                                 $this_sale->update([
                                     "paidBalance"        => $this_sale->paidBalance+$total_giving_to_you,
                                     "remainingBalance"   => $this_sale->remainingBalance-$total_giving_to_you,
@@ -238,14 +240,29 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                             break;
                         }
                     }
-                    if($total_i_have!=0)
+                    if($total_spending!=0)
                     {
-                        $advance->update([
-                            'IsSpent' =>0,
-                            'IsPartialSpent'=>1,
-                            'spentBalance'=>$advance->spentBalance+($advance->remainingBalance-$total_i_have),
-                            'remainingBalance'=>$advance->remainingBalance-$total_i_have,
-                        ]);
+                        if($advance->remainingBalance-$total_spending<=0)
+                        {
+                            $advance->update([
+                                'IsSpent' =>1,
+                                'IsPartialSpent'=>0,
+                                'spentBalance'=>$advance->spentBalance+$total_spending,
+                                'remainingBalance'=>$advance->remainingBalance-$total_spending,
+                                'ChequeNumber'=>'one',
+                            ]);
+                        }
+                        else
+                        {
+                            $advance->update([
+                                'IsSpent' =>0,
+                                'IsPartialSpent'=>1,
+                                'spentBalance'=>$advance->spentBalance+$total_spending,
+                                'remainingBalance'=>$advance->remainingBalance-$total_spending,
+                                'ChequeNumber'=>'one',
+                            ]);
+                        }
+
                     }
                     else
                     {
@@ -254,6 +271,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                             'IsPartialSpent'=>0,
                             'spentBalance'=>$advance->Amount,
                             'remainingBalance'=>0,
+                            'ChequeNumber'=>'two',
                         ]);
                     }
                 }

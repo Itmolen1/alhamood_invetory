@@ -241,6 +241,45 @@
 </div>
 
 <script>
+    $(document).ready(function () {
+        $('#already_exist').hide();
+        $('#referenceNumber').keyup(function () {
+            var referenceNumber=0;
+            referenceNumber = $('#referenceNumber').val();
+            if (referenceNumber > 0)
+            {
+                var data={referenceNumber:referenceNumber};
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ URL('CheckExpenseReferenceExist') }}",
+                    type: "post",
+                    data: data,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result === true)
+                        {
+                            $('#already_exist').show();
+                        }
+                        else
+                        {
+                            $('#already_exist').hide();
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+
+<script>
 
     $(document).ready(function () {
         $('.bankTransfer').hide();

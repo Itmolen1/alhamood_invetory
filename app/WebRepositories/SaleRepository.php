@@ -304,6 +304,12 @@ class   SaleRepository implements ISaleRepositoryInterface
             $pad_number=0;
         }
 
+        if (!preg_match('/[^A-Za-z]/', $pad_number)) // '/[^a-z\d]/i' should also work.
+        {
+            $data=array('result'=>false,'message'=>'INVALID PAD NUMBER');
+            echo json_encode($data);exit();
+        }
+
         //check pad number already exist or not
         if($pad_number!=0)
         {

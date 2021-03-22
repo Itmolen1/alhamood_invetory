@@ -136,16 +136,13 @@ class ExpensesRepository implements IExpensesRepositoryInterface
 
     public function CheckExpenseReferenceExist($request)
     {
-        $data = Expense::where('referenceNumber','=',$request->referenceNumber)->where('supplier_id','=',$request->supplier_id)->get();
-        //echo "<pre>";print_r($data);die;
+        $data = Expense::where('referenceNumber','=',$request->referenceNumber)->get();
         if($data->first())
         {
-            $result=array('result'=>true);
             return Response()->json(true);
         }
         else
         {
-            $result=array('result'=>false);
             return Response()->json(false);
         }
     }

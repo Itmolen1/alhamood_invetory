@@ -68,12 +68,12 @@
                                     <div class="row">
                                         <div class="col-md-2 mt-2 pl-5">
                                             <div class="form-group">
-                                                <label class="control-label">Total Amount :- </label>
+                                                <label class="control-label">Remaining Amount :- </label>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="text" class="form-control"  name="" id="" value="{{$customerAdvance->Amount}}"  disabled>
+                                                <input type="text" class="form-control"  name="" id="" value="{{$customerAdvance->remainingBalance}}"  disabled>
                                             </div>
                                         </div>
 
@@ -245,7 +245,7 @@
                             if (result !== "Failed") {
                                 details = [];
                                 alert("Data Inserted Successfully");
-                                //window.location.href = "{{ route('payment_receives.index') }}";
+                                window.location.href = "{{ route('customer_advances.index') }}";
 
                             } else {
                                 alert(result);
