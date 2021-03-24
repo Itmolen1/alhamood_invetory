@@ -22,6 +22,7 @@ use App\Models\ExpenseDetail;
 use App\Models\PaymentReceive;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
+use App\Models\Receivable_summary_log;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Supplier;
@@ -29,6 +30,7 @@ use App\Models\SupplierAdvance;
 use App\Models\SupplierPayment;
 use App\Models\Vehicle;
 use App\WebRepositories\Interfaces\IReportRepositoryInterface;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PDF;
@@ -49,6 +51,16 @@ class ReportRepository implements IReportRepositoryInterface
     public function GetSupplierStatement()
     {
         return view('admin.report.supplier_statement');
+    }
+
+    public function GetReceivableSummaryAnalysis()
+    {
+        return view('admin.report.get_receivable_summary_analysis');
+    }
+
+    public function GetExpenseAnalysis()
+    {
+        return view('admin.report.get_expense_analysis');
     }
 
     public function GetPaidAdvancesSummary()
@@ -650,18 +662,21 @@ class ReportRepository implements IReportRepositoryInterface
         $last_closing=0.0;
         for($i=0;$i<count($row);$i++)
         {
-//            if($row[$i]['Debit']!=0)
-//            {
-//                $debit_total += $row[$i]['Debit'];
-//                $balance = $balance + $row[$i]['Debit'];
-//            }
-//            else
-//            {
-//                $credit_total += $row[$i]['Credit'];
-//                $balance = $balance - $row[$i]['Credit'];
-//            }
-            $debit_total += $row[$i]['Debit'];
-            $credit_total += $row[$i]['Credit'];
+            if($row[$i]['Debit']!=0)
+            {
+                $debit_total += $row[$i]['Debit'];
+                $balance = $balance + $row[$i]['Debit'];
+            }
+            elseif($row[$i]['Credit']!=0)
+            {
+                $credit_total += $row[$i]['Credit'];
+                $balance = $balance - $row[$i]['Credit'];
+            }
+            else
+            {
+                $balance += $row[$i]['Differentiate'];
+            }
+
             //$balance = $balance + $row[$i]['Differentiate'];
             $html .='<tr>
                 <td align="center" width="80">'.(date('d-M-Y', strtotime($row[$i]['createdDate']))).'</td>
@@ -669,7 +684,7 @@ class ReportRepository implements IReportRepositoryInterface
                 <td align="center" width="100">'.$row[$i]['updateDescription'].'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
-                <td align="right" width="90">'.number_format($row[$i]['Differentiate'],2,'.',',').'</td>
+                <td align="right" width="90">'.number_format($balance,2,'.',',').'</td>
                 </tr>';
             $last_closing=$row[$i]['Differentiate'];
         }
@@ -685,7 +700,7 @@ class ReportRepository implements IReportRepositoryInterface
                  <td width="280" align="right" colspan="3">Total : </td>
                  <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
                  <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
-                 <td width="90" align="right">'.number_format($last_closing,2,'.',',').'</td>
+                 <td width="90" align="right">'.number_format($balance,2,'.',',').'</td>
                  </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -699,7 +714,7 @@ class ReportRepository implements IReportRepositoryInterface
                  <td width="280" align="right" colspan="3">Total : </td>
                  <td width="80" align="right">'.number_format($debit_total,2,'.',',').'</td>
                  <td width="80" align="right">'.number_format($credit_total,2,'.',',').'</td>
-                 <td width="90" align="right">'.number_format($last_closing,2,'.',',').'</td>
+                 <td width="90" align="right">'.number_format($balance,2,'.',',').'</td>
                  </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
@@ -3102,5 +3117,38 @@ class ReportRepository implements IReportRepositoryInterface
         {
             return FALSE;
         }
+    }
+
+    public function ViewReceivableSummaryAnalysis(Request $request)
+    {
+        $begin = new DateTime($request->fromDate);
+        $end   = new DateTime($request->toDate);
+        $all_dates=array();
+        for($i = $begin; $i <= $end; $i->modify('+1 day'))
+        {
+            $all_dates[]=$i->format("Y-m-d");
+        }
+        $data=Receivable_summary_log::with(['customer'=>function($q){$q->select('id','Name');}])->where('company_id',session('company_id'))->whereBetween('RecordDate', [$request->fromDate, $request->toDate])->orderBy('RecordDate')->get();
+        $data=json_decode(json_encode($data), true);
+        $customers=Customer::select('id','Name')->where('company_id',session('company_id'))->get();
+        return view('admin.report.view_receivable_summary_analysis',compact('data','all_dates','customers'));
+    }
+
+    public function ViewExpenseAnalysis(Request $request)
+    {
+        $begin = new DateTime($request->fromDate);
+        $end   = new DateTime($request->toDate);
+        $all_dates=array();
+        $all_expenses=array();
+        for($i = $begin; $i <= $end; $i->modify('+1 day'))
+        {
+            $date=$i->format("Y-m-d");
+            $all_dates[]=$date=$i->format("Y-m-d");
+            $expense=Expense::where('company_id',session('company_id'))->where('expenseDate',$date)->sum('grandTotal');
+            $all_expenses[]=$expense;
+        }
+        $sum_of_expenses=array_sum($all_expenses);
+        $average_of_expenses=$sum_of_expenses/count($all_expenses);
+        return view('admin.report.view_expense_analysis',compact('all_expenses','all_dates','sum_of_expenses','average_of_expenses'));
     }
 }

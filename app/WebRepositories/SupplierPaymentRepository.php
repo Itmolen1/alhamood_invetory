@@ -25,10 +25,11 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         {
             return datatables()->of(SupplierPayment::with('user','company','supplier')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
-                    $button = '<a href="'.route('supplier_payments.show', $data->id).'"  class=" btn btn-info btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
-                    $button .= '&nbsp;&nbsp;';
-                    $button .= '<a href="'.route('supplier_payments.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
-                    $button .='&nbsp;';
+                    //$button = '<a href="'.route('supplier_payments.show', $data->id).'"  class=" btn btn-info btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                    $button = '<button class="btn btn-primary" onclick="show_detail(this.id)" type="button" id="show_'.$data->id.'">Show Details</button>';
+//                    $button .= '&nbsp;&nbsp;';
+//                    $button .= '<a href="'.route('supplier_payments.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+//                    $button .='&nbsp;';
                     return $button;
                 })
                 ->addColumn('supplier', function($data) {
@@ -41,6 +42,8 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                         $button .= @method_field('PUT');
 //                        $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
 //                        $button .='&nbsp;';
+                        $button .= '<a href="'.route('supplier_payments.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                        $button .= '&nbsp;';
                         $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm()"><i style="font-size: 20px" class="fa fa-arrow-up"> Push</i></button>';
                         return $button;
                     }else{
@@ -189,6 +192,12 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         //echo "<pre>";print_r($supplier_payment_details);die;
 //        dd($payment_receives);
         return view('admin.supplier_payment.show',compact('supplier_payment_details'));
+    }
+
+    public function getSupplierPaymentDetail($Id)
+    {
+        $html='Quisque ac lacus sed lectus blandit viverra.';
+        return Response()->json($html);
     }
 
     public function delete(Request $request, $Id)

@@ -189,8 +189,8 @@ class UserRepository implements IUserRepositoryInterface
             $user = Auth::user();
             if ($user) {
                 $accessToken = $user->createToken('MyApp')->accessToken;
-                $users = new UserResource(User::all()->where('email', $user->email)->first());
-
+                $users = User::with('roles')->where('email', $user->email)->get()->first();
+                //echo "<pre>";print_r($users);die;
 //                if ($users->role == null)
 //                {
 //                    Return $this->userResponse->NotFoundRole();

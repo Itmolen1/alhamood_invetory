@@ -25,9 +25,9 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
             return datatables()->of(PaymentReceive::with('user','company','customer')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<a href="'.route('payment_receives.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
-                    $button .= '&nbsp;&nbsp;';
-                    $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
-                    $button .='&nbsp;';
+//                    $button .= '&nbsp;&nbsp;';
+//                    $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+//                    $button .='&nbsp;';
                     return $button;
                 })
                 ->addColumn('customer', function($data) {
@@ -40,6 +40,8 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                         $button .= @method_field('PUT');
 //                        $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-warning btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
 //                        $button .='&nbsp;';
+                        $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                        $button .= '&nbsp;';
                         $button .= '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm()"><i style="font-size: 20px" class="fa fa-arrow-up"> Push</i></button>';
                         return $button;
                     }else{
@@ -50,9 +52,10 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                 ->rawColumns(
                     [
                         'action',
-                         'push',
+                        'push',
                         'customer',
-                        'referenceNumber'
+                        'referenceNumber',
+                        'paymentReceiveDate',
                     ])
                 ->make(true);
         }

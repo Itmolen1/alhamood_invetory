@@ -69,16 +69,24 @@ class PaymentReceiveController extends Controller
 
     }
 
-    public function update(PaymentReceiveRequest $paymentReceiveRequest, $id)
+    public function PaymentReceiveUpdate(Request $request)
     {
         try
         {
+            $id=$request->id;
             $payment_receive = PaymentReceive::find($id);
             if(is_null($payment_receive))
             {
                 return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
             }
-            $payment_receive = $this->paymentReceiveRepository->update($paymentReceiveRequest,$id);
+            if($payment_receive->isPushed==1)
+            {
+                return $this->userResponse->Failed($payment_receive = (object)[],'Update is not allowed.');
+            }
+            else
+            {
+                $payment_receive = $this->paymentReceiveRepository->update($request,$id);
+            }
             return $this->userResponse->Success($payment_receive);
         }
         catch(Exception $ex)

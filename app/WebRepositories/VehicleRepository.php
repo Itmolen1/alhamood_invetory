@@ -169,7 +169,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
         }
         else
         {
-            $vehicles=Vehicle::with(['customer'=>function($q){$q->select('Name','id');}])->select('id','registrationNumber','customer_id')->get();
+            $vehicles=Vehicle::with(['customer'=>function($q){$q->select('Name','id');}])->select('id','registrationNumber','customer_id')->where('company_id',session('company_id'))->get();
         }
         //echo "<pre>";print_r($vehicles);die;
 
@@ -208,7 +208,7 @@ class VehicleRepository implements IVehicleRepositoryInterface
                 $customer_name=array_unique($customer_name);
                 $customer_ids=array_values($customer_ids);
                 $customer_name=array_values($customer_name);
-
+                //echo "<pre>";print_r($customer_name);die;
                 for($i=0;$i<count($customer_ids);$i++)
                 {
                     $customer_title='<u><b>'.'Customer :- '.$customer_name[$i].'</b></u>';
@@ -238,16 +238,12 @@ class VehicleRepository implements IVehicleRepositoryInterface
                 }
             }
 
-
-
             $pdf::lastPage();
             $time=time();
             $fileLocation = storage_path().'/app/public/report_files/';
             $fileNL = $fileLocation.'//'.$time.'.pdf';
             $pdf::Output($fileNL, 'F');
-            //$url=url('/').'/storage/report_files/'.$time.'.pdf';
             $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
-            //$url=storage_path().'/purchase_order_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;
         }

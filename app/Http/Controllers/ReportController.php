@@ -155,6 +155,26 @@ class ReportController extends Controller
         return $this->reportRepository->BankReport();
     }
 
+    public function GetReceivableSummaryAnalysis()
+    {
+        return $this->reportRepository->GetReceivableSummaryAnalysis();
+    }
+
+    public function ViewReceivableSummaryAnalysis(Request $request)
+    {
+        return $this->reportRepository->ViewReceivableSummaryAnalysis($request);
+    }
+
+    public function GetExpenseAnalysis()
+    {
+        return $this->reportRepository->GetExpenseAnalysis();
+    }
+
+    public function ViewExpenseAnalysis(Request $request)
+    {
+        return $this->reportRepository->ViewExpenseAnalysis($request);
+    }
+
     public function PrintBankReport(Request $request)
     {
         return $this->reportRepository->PrintBankReport($request);

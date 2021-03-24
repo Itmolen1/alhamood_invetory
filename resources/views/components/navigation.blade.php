@@ -150,7 +150,8 @@
                             <li class="border-bottom"><a href="{{ route('GetReceivedAdvancesSummary') }}">Customer Advances Summary</a></li>
                             @if(Session::get('role_name')=='superadmin' || Session::get('role_name')=='admin')
                             <li class="border-bottom"><a href="{{ route('GetSupplierStatement') }}">Payable Summary</a></li>
-                            <li><a href="{{ route('GetPaidAdvancesSummary') }}">Supplier Advance Summary</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetPaidAdvancesSummary') }}">Supplier Advance Summary</a></li>
+                            <li><a href="{{ route('GetReceivableSummaryAnalysis') }}">Receivable Summary Analysis</a></li>
                             @endif
                         </ul>
                     </li>
@@ -185,6 +186,7 @@
                         </a>
                         <ul aria-expanded="false" class="collapse">
                             <li  class="border-bottom"><a href="{{ route('ExpenseReport') }}">Expense Date-To-Date</a></li>
+                            <li  class="border-bottom"><a href="{{ route('GetExpenseAnalysis') }}">Expense Analysis</a></li>
                         </ul>
                     </li>
                     @endif
@@ -199,7 +201,7 @@
                             <li class="border-bottom">
                                 <a href="{{ route('BankReport') }}">Bank Book</a>
                             </li>
-                            <li class="border-bottom">
+                           {{-- <li class="border-bottom">
                                 <a href="{{ route('GeneralLedger') }}">General Ledger</a>
                             </li>
                             <li class="border-bottom">
@@ -207,7 +209,7 @@
                             </li>
                             <li class="border-bottom">
                                 <a href="#">Trial balance</a>
-                            </li>
+                            </li>--}}
                             @if(Session::get('role_name')=='superadmin')
                             <li class="border-bottom">
                                 <a href="{{ route('Profit_loss') }}">Profit Loss Statement</a>

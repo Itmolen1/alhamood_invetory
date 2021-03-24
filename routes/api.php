@@ -159,6 +159,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/PaymentReceive/paginate/{page_no}/{page_size}','api\PaymentReceiveController@paginate');
     Route::get('/getPaymentReceiveBaseList', 'api\PaymentReceiveController@BaseList');
     Route::get('customer_payments_push/{Id}','api\PaymentReceiveController@customer_payments_push');
+    Route::post('PaymentReceiveUpdate','api\PaymentReceiveController@PaymentReceiveUpdate');
 
     Route::apiResource('/SupplierPayment', 'api\SupplierPaymentController');
     Route::get('/SupplierPayment/paginate/{page_no}/{page_size}','api\SupplierPaymentController@paginate');

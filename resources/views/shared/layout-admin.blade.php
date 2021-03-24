@@ -198,6 +198,7 @@ input:checked + .slider:before {
                     <li class="nav-item d-md-none"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="ti-menu"></i></a></li>
                 </ul>
                 <ul class="navbar-nav my-lg-0">
+                    <li style="font-size: larger;margin-top: 20px;color: antiquewhite;">{{ Auth::user()->name }}</li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{{ asset('admin_assets/assets/images/users/1.jpg') }}" alt="user" class="img-circle" width="30"></a>
                         <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">

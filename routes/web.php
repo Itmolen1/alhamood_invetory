@@ -117,7 +117,7 @@ route::get('outward_loan_payment/{Id}','OutwardLoanController@outward_loan_payme
 route::PUT('outward_loan_save_payment/{Id}','OutwardLoanController@outward_loan_save_payment');
 
 route::resource('payment_receives','PaymentReceiveController');
-route::PUT('payment_receivesUpdate/{Id}','PaymentReceiveController@payment_receivesUpdate');
+route::post('payment_receivesUpdate','PaymentReceiveController@payment_receivesUpdate');
 route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
 route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 //route::view('customer_receives','admin.customer_payment_receive.index');
@@ -125,10 +125,16 @@ route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 route::resource('supplier_payments','SupplierPaymentController');
 route::PUT('supplier_payment_push/{Id}','SupplierPaymentController@supplier_payments_push');
 route::get('supplierSaleDetails/{Id}','PurchaseController@supplierSaleDetails');
-
+route::get('getSupplierPaymentDetail/{Id}','SupplierPaymentController@getSupplierPaymentDetail');
 ////////reports////////////
 route::get('GetCustomerStatement','ReportController@GetCustomerStatement')->name('GetCustomerStatement');
 route::get('PrintCustomerStatement','ReportController@PrintCustomerStatement')->name('PrintCustomerStatement');
+
+route::get('GetReceivableSummaryAnalysis','ReportController@GetReceivableSummaryAnalysis')->name('GetReceivableSummaryAnalysis');
+route::post('ViewReceivableSummaryAnalysis','ReportController@ViewReceivableSummaryAnalysis')->name('ViewReceivableSummaryAnalysis');
+
+route::get('GetExpenseAnalysis','ReportController@GetExpenseAnalysis')->name('GetExpenseAnalysis');
+route::post('ViewExpenseAnalysis','ReportController@ViewExpenseAnalysis')->name('ViewExpenseAnalysis');
 
 route::get('GetSupplierStatement','ReportController@GetSupplierStatement')->name('GetSupplierStatement');
 route::get('PrintSupplierStatement','ReportController@PrintSupplierStatement')->name('PrintSupplierStatement');

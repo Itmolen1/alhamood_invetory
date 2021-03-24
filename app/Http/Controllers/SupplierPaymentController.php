@@ -34,6 +34,11 @@ class SupplierPaymentController extends Controller
         return $this->supplierPaymentRepository->getById($Id);
     }
 
+    public function getSupplierPaymentDetail($Id)
+    {
+        return $this->supplierPaymentRepository->getSupplierPaymentDetail($Id);
+    }
+
     public function edit($Id)
     {
         return $this->supplierPaymentRepository->edit($Id);

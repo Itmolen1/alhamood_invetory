@@ -373,11 +373,11 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         }
                     });
-                    var Datas = {Data: details};
                     var Id = $('#id').val();
-                    $.ajax({
+                    var Datas = {Data: details,Id:Id};
 
-                        url: "{{ URL('payment_receivesUpdate') }}/"+Id,
+                    $.ajax({
+                        url: "{{ URL('payment_receivesUpdate') }}",
                         type: "post",
                         data: Datas,
                         success: function (result) {
@@ -399,6 +399,34 @@
                 //     $('#submit').text('Save');
                 //     $('#submit').attr('disabled',false);
                 // }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#bank_id').change(function () {
+                var Id = 0;
+                Id = $(this).val();
+                if (Id > 0)
+                {
+                    $.ajax({
+                        // headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        url: "{{ URL('getBankAccountDetail') }}/" + Id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result !== "Failed") {
+                                $("#accountNumber").val('');
+                                $("#accountNumber").val(result);
+                            } else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
             });
         });
     </script>

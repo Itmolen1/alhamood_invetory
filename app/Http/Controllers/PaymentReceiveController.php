@@ -37,8 +37,9 @@ class PaymentReceiveController extends Controller
         return $this->paymentReceiveRepository->edit($Id);
     }
 
-    public function payment_receivesUpdate(Request $request,$Id)
+    public function payment_receivesUpdate(Request $request)
     {
+        $Id=$request->Id;
         return $this->paymentReceiveRepository->update($request, $Id);
     }
 

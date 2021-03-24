@@ -886,6 +886,7 @@ class ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e
         'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',
         'App\\Models\\Purchase' => __DIR__ . '/../..' . '/app/Models/Purchase.php',
         'App\\Models\\PurchaseDetail' => __DIR__ . '/../..' . '/app/Models/PurchaseDetail.php',
+        'App\\Models\\Receivable_summary_log' => __DIR__ . '/../..' . '/app/Models/Receivable_summary_log.php',
         'App\\Models\\Region' => __DIR__ . '/../..' . '/app/Models/Region.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Sale' => __DIR__ . '/../..' . '/app/Models/Sale.php',

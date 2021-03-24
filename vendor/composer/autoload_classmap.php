@@ -302,6 +302,7 @@ return array(
     'App\\Models\\Product' => $baseDir . '/app/Models/Product.php',
     'App\\Models\\Purchase' => $baseDir . '/app/Models/Purchase.php',
     'App\\Models\\PurchaseDetail' => $baseDir . '/app/Models/PurchaseDetail.php',
+    'App\\Models\\Receivable_summary_log' => $baseDir . '/app/Models/Receivable_summary_log.php',
     'App\\Models\\Region' => $baseDir . '/app/Models/Region.php',
     'App\\Models\\Role' => $baseDir . '/app/Models/Role.php',
     'App\\Models\\Sale' => $baseDir . '/app/Models/Sale.php',

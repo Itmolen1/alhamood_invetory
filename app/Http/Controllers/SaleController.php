@@ -89,7 +89,7 @@ class SaleController extends Controller
 
     public function customerSaleDetails($Id)
     {
-        $sales = Sale::with('customer.vehicles','sale_details')
+        $sales = Sale::with('customer','sale_details.vehicle')
                        ->where([
                                'customer_id'=>$Id,
                                'IsPaid'=> false,

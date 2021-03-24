@@ -16,7 +16,7 @@ class MeterReadingRepository implements IMeterReadingRepositoryInterface
 {
     public function index()
     {
-        $meter_readings = MeterReading::with('meter_reading_details')->get();
+        $meter_readings = MeterReading::with('meter_reading_details')->where('company_id',session('company_id'))->get();
         return view('admin.meterReading.index',compact('meter_readings'));
     }
 
