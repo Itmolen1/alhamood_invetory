@@ -21,11 +21,11 @@ class UserController extends Controller
         $this->IUserRepository = $IUserRepository;
     }
 
-    public function login()
+    public function login(Request $request)
     {
         try
         {
-            return  $this->IUserRepository->login();
+            return  $this->IUserRepository->login($request);
         }
         catch (Exception $ex)
         {

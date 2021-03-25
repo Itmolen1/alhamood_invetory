@@ -22,7 +22,6 @@ use Illuminate\Support\Str;
 
 class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 {
-
     public function all()
     {
         return PaymentReceiveResource::collection(PaymentReceive::with('user')->get()->sortDesc());
@@ -136,6 +135,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
     public function customer_payments_push($Id)
     {
         /* start of new code */
+
         $payments = PaymentReceive::with('customer','payment_receive_details')->find($Id);
 
         foreach($payments->payment_receive_details as $single)

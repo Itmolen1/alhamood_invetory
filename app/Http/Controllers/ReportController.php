@@ -214,4 +214,34 @@ class ReportController extends Controller
     {
         return $this->reportRepository->PrintGarage_value($request);
     }
+
+    public function GetExpenseAnalysisByCategory()
+    {
+        return $this->reportRepository->GetExpenseAnalysisByCategory();
+    }
+
+    public function ViewExpenseAnalysisByCategory(Request $request)
+    {
+        return $this->reportRepository->ViewExpenseAnalysisByCategory($request);
+    }
+
+    public function GetExpenseAnalysisByEmployee()
+    {
+        return $this->reportRepository->GetExpenseAnalysisByEmployee();
+    }
+
+    public function ViewExpenseAnalysisByEmployee(Request $request)
+    {
+        return $this->reportRepository->ViewExpenseAnalysisByEmployee($request);
+    }
+
+    public function GetExpenseAnalysisBySupplier()
+    {
+        return $this->reportRepository->GetExpenseAnalysisBySupplier();
+    }
+
+    public function ViewExpenseAnalysisBySupplier(Request $request)
+    {
+        return $this->reportRepository->ViewExpenseAnalysisBySupplier($request);
+    }
 }

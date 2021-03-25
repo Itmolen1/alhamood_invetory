@@ -68,6 +68,32 @@ class SupplierPaymentController extends Controller
 
     }
 
+    public function SupplierPaymentUpdate(Request $request)
+    {
+        try
+        {
+            $id=$request->id;
+            $payment_receive = SupplierPayment::find($id);
+            if(is_null($payment_receive))
+            {
+                return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
+            }
+            if($payment_receive->isPushed==1)
+            {
+                return $this->userResponse->Failed($payment_receive = (object)[],'Update is not allowed.');
+            }
+            else
+            {
+                $payment_receive = $this->supplierPaymentRepository->update($request,$id);
+            }
+            return $this->userResponse->Success($payment_receive);
+        }
+        catch(Exception $ex)
+        {
+            $this->userResponse->Exception($ex);
+        }
+    }
+
     public function supplier_payments_push($Id)
     {
         try
@@ -76,6 +102,10 @@ class SupplierPaymentController extends Controller
             if(is_null($payment_receive))
             {
                 return $this->userResponse->Failed($payment_receive = (object)[],'Not Found.');
+            }
+            if($payment_receive->isPushed==1)
+            {
+                return $this->userResponse->Failed($payment_receive = (object)[],'Already Pushed.');
             }
             $payment_receive = $this->supplierPaymentRepository->supplier_payments_push($Id);
             return $this->userResponse->Success($payment_receive);

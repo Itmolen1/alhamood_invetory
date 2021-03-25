@@ -16,6 +16,7 @@ use App\Models\BankTransaction;
 use App\Models\CashTransaction;
 use App\Models\Customer;
 use App\Models\CustomerAdvance;
+use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\ExpenseDetail;
@@ -51,16 +52,6 @@ class ReportRepository implements IReportRepositoryInterface
     public function GetSupplierStatement()
     {
         return view('admin.report.supplier_statement');
-    }
-
-    public function GetReceivableSummaryAnalysis()
-    {
-        return view('admin.report.get_receivable_summary_analysis');
-    }
-
-    public function GetExpenseAnalysis()
-    {
-        return view('admin.report.get_expense_analysis');
     }
 
     public function GetPaidAdvancesSummary()
@@ -1000,7 +991,7 @@ class ReportRepository implements IReportRepositoryInterface
                 $expense=ExpenseResource::collection(Expense::with('expense_details')->where('company_id',session('company_id'))->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->orderBy('expenseDate')->get());
             }
         }
-        elseif($request->fromDate!='' && $request->toDate!='' && $request->filter!='all' && $request->category!='all')
+        elseif($request->fromDate!='' && $request->toDate!='' && $request->filter=='all' && $request->category!='all')
         {
             $ids=ExpenseDetail::where('expense_category_id','=',$request->category)->where('company_id',session('company_id'))->whereNull('deleted_at')->get();
             $ids = json_decode(json_encode($ids), true);
@@ -3119,6 +3110,12 @@ class ReportRepository implements IReportRepositoryInterface
         }
     }
 
+    /* start analysis reports*/
+    public function GetReceivableSummaryAnalysis()
+    {
+        return view('admin.report.get_receivable_summary_analysis');
+    }
+
     public function ViewReceivableSummaryAnalysis(Request $request)
     {
         $begin = new DateTime($request->fromDate);
@@ -3132,6 +3129,11 @@ class ReportRepository implements IReportRepositoryInterface
         $data=json_decode(json_encode($data), true);
         $customers=Customer::select('id','Name')->where('company_id',session('company_id'))->get();
         return view('admin.report.view_receivable_summary_analysis',compact('data','all_dates','customers'));
+    }
+
+    public function GetExpenseAnalysis()
+    {
+        return view('admin.report.get_expense_analysis');
     }
 
     public function ViewExpenseAnalysis(Request $request)
@@ -3151,4 +3153,90 @@ class ReportRepository implements IReportRepositoryInterface
         $average_of_expenses=$sum_of_expenses/count($all_expenses);
         return view('admin.report.view_expense_analysis',compact('all_expenses','all_dates','sum_of_expenses','average_of_expenses'));
     }
+
+    public function GetExpenseAnalysisByCategory()
+    {
+        return view('admin.report.get_expense_analysis_by_category');
+    }
+
+    public function ViewExpenseAnalysisByCategory(Request $request)
+    {
+        $title='Category wise Expense Analysis From '.date('d-M-Y', strtotime($request->fromDate)).' To '.date('d-M-Y',strtotime($request->toDate));
+        $expense_category=ExpenseCategory::all();
+        $final_array=array();
+        foreach($expense_category as $item)
+        {
+            $ids=ExpenseDetail::select('expense_id')->where('company_id',session('company_id'))->where('expense_category_id',$item->id)->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->get();
+            $ids = json_decode(json_encode($ids), true);
+            $ids = array_column($ids,'expense_id');
+            $temp=Expense::where('company_id',session('company_id'))->whereIn('id',$ids)->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->sum('grandTotal');
+            if($temp!=0)
+            {
+                $tmp_array=[
+                    'category_name'=>$item->Name,
+                    'total_expense'=>$temp,
+                ];
+                $final_array[]=$tmp_array;
+            }
+        }
+        $total_exp=array_column($final_array,'total_expense');
+        $sum_of_expenses=array_sum($total_exp);
+        return view('admin.report.view_expense_analysis_by_category',compact('final_array','sum_of_expenses','title'));
+    }
+
+    public function GetExpenseAnalysisByEmployee()
+    {
+        return view('admin.report.get_expense_analysis_by_employee');
+    }
+
+    public function ViewExpenseAnalysisByEmployee(Request $request)
+    {
+        $title='Employee wise Expense Analysis From '.date('d-M-Y', strtotime($request->fromDate)).' To '.date('d-M-Y',strtotime($request->toDate));
+        $employees=Employee::where('company_id',session('company_id'))->get();
+        $final_array=array();
+        foreach($employees as $item)
+        {
+            $temp=Expense::where('company_id',session('company_id'))->where('employee_id',$item->id)->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->sum('grandTotal');
+            if($temp!=0)
+            {
+                $tmp_array=[
+                    'employee_name'=>$item->Name,
+                    'total_expense'=>$temp,
+                ];
+                $final_array[]=$tmp_array;
+            }
+        }
+        $total_exp=array_column($final_array,'total_expense');
+        $sum_of_expenses=array_sum($total_exp);
+        return view('admin.report.view_expense_analysis_by_employee',compact('title','final_array','sum_of_expenses'));
+    }
+
+    public function GetExpenseAnalysisBySupplier()
+    {
+        return view('admin.report.get_expense_analysis_by_supplier');
+    }
+
+    public function ViewExpenseAnalysisBySupplier(Request $request)
+    {
+        $title='Supplier wise Expense Analysis From '.date('d-M-Y', strtotime($request->fromDate)).' To '.date('d-M-Y',strtotime($request->toDate));
+        $suppliers = Supplier::where('company_type_id','=',3)->where('company_id',session('company_id'))->get();
+        $final_array=array();
+        foreach($suppliers as $item)
+        {
+            $temp=Expense::where('company_id',session('company_id'))->where('supplier_id',$item->id)->whereBetween('expenseDate', [$request->fromDate, $request->toDate])->sum('grandTotal');
+            if($temp!=0)
+            {
+                $tmp_array=[
+                    'supplier_name'=>$item->Name,
+                    'total_expense'=>$temp,
+                ];
+                $final_array[]=$tmp_array;
+            }
+        }
+        $total_exp=array_column($final_array,'total_expense');
+        $sum_of_expenses=array_sum($total_exp);
+        return view('admin.report.view_expense_analysis_by_supplier',compact('title','final_array','sum_of_expenses'));
+    }
+
+    /* end analysis reports */
 }

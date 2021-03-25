@@ -876,6 +876,7 @@ class ComposerStaticInit8ff6114fb3246a730fc7e394c9684c8e
         'App\\Models\\Loan' => __DIR__ . '/../..' . '/app/Models/Loan.php',
         'App\\Models\\LoanMaster' => __DIR__ . '/../..' . '/app/Models/LoanMaster.php',
         'App\\Models\\LoanPaymentMaster' => __DIR__ . '/../..' . '/app/Models/LoanPaymentMaster.php',
+        'App\\Models\\LoginLog' => __DIR__ . '/../..' . '/app/Models/LoginLog.php',
         'App\\Models\\MeterReader' => __DIR__ . '/../..' . '/app/Models/MeterReader.php',
         'App\\Models\\MeterReading' => __DIR__ . '/../..' . '/app/Models/MeterReading.php',
         'App\\Models\\MeterReadingDetail' => __DIR__ . '/../..' . '/app/Models/MeterReadingDetail.php',

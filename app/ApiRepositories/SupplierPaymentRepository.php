@@ -17,6 +17,7 @@ use App\Models\SupplierPayment;
 use App\Models\SupplierPaymentDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
@@ -29,170 +30,245 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return SupplierPaymentResource::Collection(SupplierPayment::with('supplier_payment_details')->get()->sortDesc()->forPage($page_no,$page_size));
+        $user_id = Auth::id();
+        $company_id=Str::getCompany($user_id);
+        return SupplierPaymentResource::Collection(SupplierPayment::with('supplier_payment_details')->where('company_id',$company_id)->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function insert(Request $request)
     {
-        $userId = Auth::id();
-        $supplier_payment = new SupplierPayment();
-        $supplier_payment->totalAmount=$request->totalAmount;
-        $supplier_payment->paidAmount=$request->paidAmount;
-        $supplier_payment->amountInWords=Str::getUAECurrency($request->paidAmount);
-        $supplier_payment->supplier_id=$request->supplier_id;
-        $supplier_payment->bank_id=$request->bank_id;
-        $supplier_payment->accountNumber=$request->accountNumber;
-        $supplier_payment->transferDate=$request->transferDate;
-        $supplier_payment->payment_type=$request->payment_type;
-        $supplier_payment->referenceNumber=$request->referenceNumber;
-        $supplier_payment->receiverName=$request->receiverName;
-        $supplier_payment->receiptNumber=$request->receiptNumber;
-        $supplier_payment->Description=$request->Description;
-        $supplier_payment->supplierPaymentDate=$request->supplierPaymentDate;
-        $supplier_payment->createdDate=date('Y-m-d h:i:s');
-        $supplier_payment->isActive=1;
-        $supplier_payment->user_id = $userId ?? 0;
-        $supplier_payment->company_id=Str::getCompany($userId);
-        $supplier_payment->save();
-        $supplier_payment_id = $supplier_payment->id;
+        $user_id = Auth::id();
+        $company_id=Str::getCompany($user_id);
+        /* start of new code */
+        $payment = new SupplierPayment();
+        $payment->supplier_id = $request->supplier_id;
+        $payment->totalAmount = $request->totalAmount;
+        $payment->payment_type = $request->payment_type;
+        $payment->referenceNumber = $request->referenceNumber;
+        $payment->supplierPaymentDate = $request->supplierPaymentDate;
+        $payment->paidAmount = $request->paidAmount;
+        $payment->amountInWords = Str::getUAECurrency($request->paidAmount);
+        $payment->receiptNumber = $request->receiptNumber;
+        $payment->receiverName = $request->receiverName;
+        $payment->transferDate = $request->transferDate;
+        $payment->accountNumber = $request->accountNumber;
+        $payment->Description = $request->Description;
+        $payment->bank_id = $request->bank_id ?? 0;
+        $payment->user_id = $user_id;
+        $payment->createdDate = date('Y-m-d');
+        $payment->company_id = $company_id;
+        $payment->save();
+        $payment = $payment->id;
 
+        $total_i_have=$request->paidAmount;
         $supplier_payment_details=json_decode($_POST['supplier_payment_details']);
-        //echo "<pre>";print_r($request->all());die;
-        $amount = 0;
-        foreach ($supplier_payment_details as $detail)
+        foreach($supplier_payment_details as $detail)
         {
-            $amount += $detail->amountPaid;
-
-            if ($amount <= $request->paidAmount)
+            $this_purchase=Purchase::where('id',$detail->purchase_id)->get()->first();
+            if($this_purchase->IsPaid==0 AND $this_purchase->remainingBalance!=0)
             {
-                $isPaid = true;
-                $isPartialPaid = false;
-                $totalAmount = $detail->amountPaid;
+                $total_you_need = $this_purchase->remainingBalance;
+                $still_payable_to_you=0;
+                $total_giving_to_you=0;
+                $isPartialPaid = 0;
+                if ($total_i_have >= $total_you_need)
+                {
+                    $total_i_have = $total_i_have - $total_you_need;
+                    $total_giving_to_you=$total_you_need;
+                }
+                else
+                {
+                    $total_giving_to_you=$total_i_have;
+                    $total_i_have = $total_i_have - $total_giving_to_you;
+                }
+                SupplierPaymentDetail::create([
+                    "amountPaid" => $total_giving_to_you,
+                    "purchase_id" => $detail->purchase_id,
+                    "company_id" => $company_id,
+                    "user_id" => $user_id,
+                    "supplier_payment_id" => $payment,
+                    'createdDate' => $request->TransferDate,
+                ]);
+                if($total_i_have<=0)
+                {
+                    break;
+                }
             }
-            elseif($amount >= $request->paidAmount){
-//                    if ($detail['amountPaid'] > $request->Data['paidAmount']) {
-                $isPaid = false;
-                $isPartialPaid = true;
-                $totalAmount1 = $amount - $request->paidAmount;
-                $totalAmount = $detail->amountPaid - $totalAmount1;
-//                    }
-            }
-
-            $data =  SupplierPaymentDetail::create([
-                "amountPaid"        => $totalAmount,
-                "purchase_id"        => $detail->purchase_id,
-                "company_id" => Str::getCompany($userId),
-                "user_id"      => $userId,
-                "supplier_payment_id"      => $supplier_payment_id,
-                'createdDate' => date('Y-m-d')
-            ]);
-
-
-            $sale = Purchase::find($detail->purchase_id);
-            $sale->update([
-                "paidBalance"        => $totalAmount + $sale->paidBalance,
-                "remainingBalance"   => $sale->remainingBalance - $totalAmount,
-                "IsPaid" => $isPaid,
-                "IsPartialPaid" => $isPartialPaid,
-                "IsNeedStampOrSignature" => false,
-            ]);
         }
-
-        $Response = SupplierPaymentResource::collection(SupplierPayment::where('id',$supplier_payment->id)->with('supplier_payment_details')->get());
+        /* end of new code */
+        $Response = SupplierPaymentResource::collection(SupplierPayment::where('id',$payment)->with('supplier_payment_details')->get());
         $data = json_decode(json_encode($Response), true);
         return $data[0];
     }
 
     public function supplier_payments_push($Id)
     {
-        $payments = SupplierPayment::with('supplier')->find($Id);
-        $user_id = Auth::id();
-        $payments->update([
-            'isPushed' =>true,
-            'user_id' =>$user_id,
-        ]);
+//        DB::transaction(function () use($Id) {
+            $user_id = Auth::id();
+            $company_id=Str::getCompany($user_id);
 
-        if($payments->payment_type == 'cash')
-        {
-            $cash_transaction = new CashTransaction();
-            $cash_transaction->Reference=$payments->id;
-            $cash_transaction->createdDate=date('Y-m-d h:i:s');
-            $cash_transaction->Type='Supplier Payment';
-            $cash_transaction->Credit=0.0;
-            $cash_transaction->Debit=$payments->paidAmount;
-            $cash_transaction->save();
-        }
-        elseif ($payments->payment_type == 'bank')
-        {
-            $bank_transaction = new BankTransaction();
-            $bank_transaction->Reference=$payments->id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='Supplier Payment';
-            $bank_transaction->Credit=$payments->paidAmount;
-            $bank_transaction->Debit=0.0;
-            $bank_transaction->Flag=1;
-            $bank_transaction->save();
-        }
-        elseif ($payments->payment_type == 'cheque')
-        {
-            $bank_transaction = new BankTransaction();
-            $bank_transaction->Reference=$payments->id;
-            $bank_transaction->createdDate=date('Y-m-d h:i:s');
-            $bank_transaction->Type='Supplier Payment';
-            $bank_transaction->Credit=$payments->paidAmount;
-            $bank_transaction->Debit=0.0;
-            $bank_transaction->Flag=0;
-            $bank_transaction->save();
-        }
+            $payments = SupplierPayment::with('supplier', 'supplier_payment_details')->find($Id);
 
-        ////////////////// account section ////////////////
-        if ($payments)
-        {
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'supplier_id'=> $payments->supplier_id,
-                    'createdDate' => date('Y-m-d'),
-                ])->first();
-            if (!is_null($accountTransaction)) {
-                if ($accountTransaction->createdDate != date('Y-m-d')) {
-                    $totalCredit = $payments->paidAmount;
+            foreach ($payments->supplier_payment_details as $single) {
+                $purchase = Purchase::where('id', $single->purchase_id)->get()->first();
+                $is_paid = 0;
+                if ($purchase->remainingBalance - $single->amountPaid == 0) {
+                    $is_paid = 1;
+                    $is_partial_paid = 0;
+                } else {
+                    $is_partial_paid = 1;
                 }
-                else
-                {
-                    $totalCredit = $accountTransaction->Credit + $payments->paidAmount;
-                }
-                $difference = $accountTransaction->Differentiate + $payments->paidAmount;
+                $purchase->update([
+                    'paidBalance' => $purchase->paidBalance + $single->amountPaid,
+                    'remainingBalance' => $purchase->remainingBalance - $single->amountPaid,
+                    'Description' => $payments->referenceNumber,
+                    'IsPaid' => $is_paid,
+                    'IsPartialPaid' => $is_partial_paid,
+                ]);
             }
-            else
-            {
-                $accountTransaction = AccountTransaction::where(
+            $payments->update([
+                'isPushed' => true,
+                'user_id' => $user_id,
+            ]);
+
+            $accountTransaction_ref = 0;
+
+            if ($payments->payment_type == 'cash') {
+                $cashTransaction = CashTransaction::where(['company_id' => $company_id])->get();
+                $difference = $cashTransaction->last()->Differentiate;
+                $cash_transaction = new CashTransaction();
+                $cash_transaction->Reference = $Id;
+                $cash_transaction->createdDate = $payments->transferDate ?? date('Y-m-d h:i:s');
+                $cash_transaction->Type = 'supplier_payments';
+                $cash_transaction->Details = 'SupplierCashPayment|' . $Id;
+                $cash_transaction->Credit = $payments->paidAmount;
+                $cash_transaction->Debit = 0.00;
+                $cash_transaction->Differentiate = $difference - $payments->paidAmount;
+                $cash_transaction->user_id = $user_id;
+                $cash_transaction->company_id = $company_id;
+                $cash_transaction->PadNumber = $payments->referenceNumber;
+                $cash_transaction->save();
+
+                // start new entry
+                $accountTransaction = AccountTransaction::where(['supplier_id' => $payments->supplier_id,])->get();
+                $last_closing = $accountTransaction->last()->Differentiate;
+                $AccData =
                     [
-                        'supplier_id'=> $payments->supplier_id,
-                    ])->get();
-                $totalCredit = $payments->paidAmount;
-                $difference = $accountTransaction->last()->Differentiate + $payments->paidAmount;
+                        'supplier_id' => $payments->supplier_id,
+                        'Debit' => $payments->paidAmount,
+                        'Credit' => 0.00,
+                        'Differentiate' => $last_closing - $payments->paidAmount,
+                        'createdDate' => $payments->supplierPaymentDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description' => 'SupplierCashPayment|' . $Id,
+                        'referenceNumber' => $payments->referenceNumber,
+                    ];
+                $AccountTransactions = AccountTransaction::Create($AccData);
+                $accountTransaction_ref = $AccountTransactions->id;
+                // new entry done
+            } elseif ($payments->payment_type == 'bank') {
+                $bankTransaction = BankTransaction::where(['bank_id' => $payments->bank_id])->get();
+                $difference = $bankTransaction->last()->Differentiate;
+                $bank_transaction = new BankTransaction();
+                $bank_transaction->Reference = $Id;
+                $bank_transaction->createdDate = $payments->transferDate ?? date('Y-m-d h:i:s');
+                $bank_transaction->Type = 'supplier_payments';
+                $bank_transaction->Details = 'SupplierBankPayment|' . $Id;
+                $bank_transaction->Credit = $payments->paidAmount;
+                $bank_transaction->Debit = 0.00;
+                $bank_transaction->Differentiate = $difference - $payments->paidAmount;
+                $bank_transaction->user_id = $user_id;
+                $bank_transaction->company_id = $company_id;
+                $bank_transaction->bank_id = $payments->bank_id;
+                $bank_transaction->updateDescription = $payments->referenceNumber;
+                $bank_transaction->save();
+
+                // start new entry
+                $accountTransaction = AccountTransaction::where(['supplier_id' => $payments->supplier_id,])->get();
+                $last_closing = $accountTransaction->last()->Differentiate;
+                $AccData =
+                    [
+                        'supplier_id' => $payments->supplier_id,
+                        'Debit' => $payments->paidAmount,
+                        'Credit' => 0.00,
+                        'Differentiate' => $last_closing - $payments->paidAmount,
+                        'createdDate' => $payments->supplierPaymentDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description' => 'SupplierBankPayment|' . $Id,
+                        'referenceNumber' => $payments->referenceNumber,
+                    ];
+                $AccountTransactions = AccountTransaction::Create($AccData);
+                $accountTransaction_ref = $AccountTransactions->id;
+                // new entry done
+            } elseif ($payments->payment_type == 'cheque') {
+                $bankTransaction = BankTransaction::where(['bank_id' => $payments->bank_id])->get();
+                $difference = $bankTransaction->last()->Differentiate;
+                $bank_transaction = new BankTransaction();
+                $bank_transaction->Reference = $Id;
+                $bank_transaction->createdDate = $payments->transferDate ?? date('Y-m-d h:i:s');
+                $bank_transaction->Type = 'supplier_payments';
+                $bank_transaction->Details = 'SupplierChequePayment|' . $Id;
+                $bank_transaction->Credit = $payments->paidAmount;
+                $bank_transaction->Debit = 0.00;
+                $bank_transaction->Differentiate = $difference - $payments->paidAmount;
+                $bank_transaction->user_id = $user_id;
+                $bank_transaction->company_id = $company_id;
+                $bank_transaction->bank_id = $payments->bank_id;
+                $bank_transaction->updateDescription = $payments->referenceNumber;
+                $bank_transaction->save();
+
+                // start new entry
+                $accountTransaction = AccountTransaction::where(['supplier_id' => $payments->supplier_id,])->get();
+                $last_closing = $accountTransaction->last()->Differentiate;
+                $AccData =
+                    [
+                        'supplier_id' => $payments->supplier_id,
+                        'Debit' => $payments->paidAmount,
+                        'Credit' => 0.00,
+                        'Differentiate' => $last_closing - $payments->paidAmount,
+                        'createdDate' => $payments->supplierPaymentDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description' => 'SupplierChequePayment|' . $Id,
+                        'referenceNumber' => $payments->referenceNumber,
+                    ];
+                $AccountTransactions = AccountTransaction::Create($AccData);
+                $accountTransaction_ref = $AccountTransactions->id;
+                // new entry done
             }
-            $AccData =
-                [
-                    'supplier_id' => $payments->supplier_id,
-                    'Credit' => $totalCredit,
-                    'Differentiate' => $difference,
-                    'createdDate' => date('Y-m-d'),
-                    'user_id' => $user_id,
-                ];
-            AccountTransaction::updateOrCreate(
-                [
-                    'createdDate'   => date('Y-m-d'),
-                    'supplier_id'   => $payments->supplier_id,
-                ],
-                $AccData);
-        }
+       //});
         ////////////////// end of account section ////////////////
         return TRUE;
     }
 
+    public function update(Request $request, $Id)
+    {
+        $user_id = Auth::id();
+        $supplier_payment = SupplierPayment::find($Id);
+        $supplier_payment->update([
+            'paidAmount' => $request->paidAmount,
+            'payment_type' => $request->payment_type,
+            'bank_id' => $request->bank_id,
+            'accountNumber' => $request->accountNumber,
+            'TransferDate' => $request->TransferDate,
+            'receiptNumber' => $request->receiptNumber,
+            'supplierPaymentDate' => $request->paymentReceiveDate,
+            'Description' => $request->Description,
+            'amountInWords' => Str::getUAECurrency($request->paidAmount),
+            'receiverName' => $request->receiverName,
+            'user_id' => $user_id,
+        ]);
+        $Response = SupplierPaymentResource::collection(SupplierPayment::where('id',$Id)->with('supplier_payment_details')->get());
+        $data = json_decode(json_encode($Response), true);
+        return $data[0];
+    }
+
     public function BaseList()
     {
-        return array('supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name')->orderBy('id','desc')->get());
+        $user_id = Auth::id();
+        $company_id=Str::getCompany($user_id);
+        return array('supplier'=>Supplier::select('id','Name')->where('company_type_id',2)->where('company_id',$company_id)->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name','Description')->orderBy('id','desc')->get());
     }
 }

@@ -165,6 +165,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/SupplierPayment/paginate/{page_no}/{page_size}','api\SupplierPaymentController@paginate');
     Route::get('/getSupplierPaymentBaseList', 'api\SupplierPaymentController@BaseList');
     Route::get('supplier_payments_push/{Id}','api\SupplierPaymentController@supplier_payments_push');
+    Route::post('SupplierPaymentUpdate','api\SupplierPaymentController@SupplierPaymentUpdate');
 
     Route::post('/SalesReport','api\ReportController@SalesReport');
     Route::post('/SalesReportByVehicle','api\ReportController@SalesReportByVehicle');

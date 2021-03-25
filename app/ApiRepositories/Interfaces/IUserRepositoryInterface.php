@@ -21,7 +21,7 @@ interface IUserRepositoryInterface
 
     public function forgotPassword(Request $request);
 
-    public function login();
+    public function login(Request $request);
 
     public function register(UserRequest $userRequest);
 

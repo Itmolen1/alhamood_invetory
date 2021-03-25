@@ -292,6 +292,7 @@ return array(
     'App\\Models\\Loan' => $baseDir . '/app/Models/Loan.php',
     'App\\Models\\LoanMaster' => $baseDir . '/app/Models/LoanMaster.php',
     'App\\Models\\LoanPaymentMaster' => $baseDir . '/app/Models/LoanPaymentMaster.php',
+    'App\\Models\\LoginLog' => $baseDir . '/app/Models/LoginLog.php',
     'App\\Models\\MeterReader' => $baseDir . '/app/Models/MeterReader.php',
     'App\\Models\\MeterReading' => $baseDir . '/app/Models/MeterReading.php',
     'App\\Models\\MeterReadingDetail' => $baseDir . '/app/Models/MeterReadingDetail.php',

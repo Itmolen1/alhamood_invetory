@@ -187,6 +187,9 @@
                         <ul aria-expanded="false" class="collapse">
                             <li  class="border-bottom"><a href="{{ route('ExpenseReport') }}">Expense Date-To-Date</a></li>
                             <li  class="border-bottom"><a href="{{ route('GetExpenseAnalysis') }}">Expense Analysis</a></li>
+                            <li  class="border-bottom"><a href="{{ route('GetExpenseAnalysisByCategory') }}">Expense Analysis By Category</a></li>
+                            <li  class="border-bottom"><a href="{{ route('GetExpenseAnalysisByEmployee') }}">Expense Analysis By Employee</a></li>
+                            <li  class="border-bottom"><a href="{{ route('GetExpenseAnalysisBySupplier') }}">Expense Analysis By Supplier</a></li>
                         </ul>
                     </li>
                     @endif

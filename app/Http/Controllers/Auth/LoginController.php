@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\LoginLog;
 use App\Models\Receivable_summary_log;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -57,6 +58,7 @@ class LoginController extends Controller
         session(['role_name' => $user->roles->Name]);
         $request->session()->regenerate();
 
+        /* start of receivable summary logging*/
         $receivable_recorded=Receivable_summary_log::where('RecordDate',date('Y-m-d'))->where('company_id',session('company_id'))->get();
         if(!$receivable_recorded->first())
         {
@@ -86,6 +88,23 @@ class LoginController extends Controller
                 ]);
             }
         }
+        /* end of receivable summary logging*/
+
+        /* start of login logging */
+        //$browserDetails = get_browser($request->header('User-Agent'), true);
+        $sessionArray = array('userId'=>Auth::user()->id,
+            'role'=>$user->role_id,
+            'roleText'=>$user->roles->Name,
+            'name'=>$user->name,
+        );
+        LoginLog::create([
+            "company_id" => session('company_id'),
+            "user_id" => Auth::user()->id,
+            "sessionData" => json_encode($sessionArray),
+            "machineIp" => $request->ip(),
+            "userAgent" => $request->header('User-Agent'),
+        ]);
+        /* end of login logging */
 
         $this->clearLoginAttempts($request);
 

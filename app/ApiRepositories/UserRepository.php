@@ -8,6 +8,7 @@ use App\ApiRepositories\Interfaces\IUserRepositoryInterface;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\User\UserResource;
 use App\MISC\ServiceResponse;
+use App\Models\LoginLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use mysql_xdevapi\Exception;
 
 class UserRepository implements IUserRepositoryInterface
@@ -183,7 +185,7 @@ class UserRepository implements IUserRepositoryInterface
         // TODO: Implement ResetPassword() method.
     }
 
-    public function login()
+    public function login(Request $request)
     {
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
@@ -216,6 +218,22 @@ class UserRepository implements IUserRepositoryInterface
                         }
                     }
                     /*device token*/
+
+                    /* start of login logging */
+                    //$browserDetails = get_browser($request->header('User-Agent'), true);
+                    $sessionArray = array('userId'=>Auth::user()->id,
+                        'role'=>$user->role_id,
+                        'roleText'=>$user->roles->Name,
+                        'name'=>$user->name,
+                    );
+                    LoginLog::create([
+                        "company_id" => Str::getCompany($user_id),
+                        "user_id" => Auth::user()->id,
+                        "sessionData" => json_encode($sessionArray),
+                        "machineIp" => $request->ip(),
+                        "userAgent" => $request->header('User-Agent'),
+                    ]);
+                    /* end of login logging */
 
                     //$UserToAuthorities = RoleResource::Collection(Role::all()->where('Id', $users->role_Id));
                     return $this->userResponse->LoginSuccess( $accessToken,$users,null ,'Login Successful');

@@ -136,6 +136,15 @@ route::post('ViewReceivableSummaryAnalysis','ReportController@ViewReceivableSumm
 route::get('GetExpenseAnalysis','ReportController@GetExpenseAnalysis')->name('GetExpenseAnalysis');
 route::post('ViewExpenseAnalysis','ReportController@ViewExpenseAnalysis')->name('ViewExpenseAnalysis');
 
+route::get('GetExpenseAnalysisByCategory','ReportController@GetExpenseAnalysisByCategory')->name('GetExpenseAnalysisByCategory');
+route::post('ViewExpenseAnalysisByCategory','ReportController@ViewExpenseAnalysisByCategory')->name('ViewExpenseAnalysisByCategory');
+
+route::get('GetExpenseAnalysisByEmployee','ReportController@GetExpenseAnalysisByEmployee')->name('GetExpenseAnalysisByEmployee');
+route::post('ViewExpenseAnalysisByEmployee','ReportController@ViewExpenseAnalysisByEmployee')->name('ViewExpenseAnalysisByEmployee');
+
+route::get('GetExpenseAnalysisBySupplier','ReportController@GetExpenseAnalysisBySupplier')->name('GetExpenseAnalysisBySupplier');
+route::post('ViewExpenseAnalysisBySupplier','ReportController@ViewExpenseAnalysisBySupplier')->name('ViewExpenseAnalysisBySupplier');
+
 route::get('GetSupplierStatement','ReportController@GetSupplierStatement')->name('GetSupplierStatement');
 route::get('PrintSupplierStatement','ReportController@PrintSupplierStatement')->name('PrintSupplierStatement');
 
