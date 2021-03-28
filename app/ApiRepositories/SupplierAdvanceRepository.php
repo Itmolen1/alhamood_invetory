@@ -9,11 +9,14 @@ use App\Http\Requests\SupplierAdvanceRequest;
 use App\Http\Resources\SupplierAdvance\SupplierAdvanceResource;
 use App\Models\AccountTransaction;
 use App\Models\Bank;
+use App\Models\BankTransaction;
+use App\Models\CashTransaction;
 use App\Models\PaymentType;
 use App\Models\Supplier;
 use App\Models\SupplierAdvance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
@@ -25,46 +28,69 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function paginate($page_no, $page_size)
     {
-        return SupplierAdvanceResource::Collection(SupplierAdvance::with('api_supplier')->get()->sortDesc()->forPage($page_no,$page_size));
+        $user_id = Auth::id();
+        $company_id = Str::getCompany($user_id);
+        return SupplierAdvanceResource::Collection(SupplierAdvance::with('api_supplier')->where('company_id', $company_id)->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function BaseList()
     {
-        return array('supplier'=>Supplier::select('id','Name')->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name')->orderBy('id','desc')->get());
+        $user_id = Auth::id();
+        $company_id = Str::getCompany($user_id);
+        return array('supplier'=>Supplier::select('id','Name')->where('company_id', $company_id)->where('company_type_id',2)->orderBy('id','desc')->get(),'payment_type'=>PaymentType::select('id','Name')->orderBy('id','desc')->get(),'bank'=>Bank::select('id','Name', 'Description')->orderBy('id','desc')->get());
     }
 
     public function insert(Request $request)
     {
-        $userId = Auth::id();
-        $supplier_advance = new SupplierAdvance();
-        $supplier_advance->supplier_id=$request->supplier_id;
-        $supplier_advance->receiptNumber=$request->receiptNumber;
-        $supplier_advance->paymentType=$request->paymentType;
-        $supplier_advance->Amount=$request->Amount;
-        $supplier_advance->sumOf=Str::getUAECurrency($request->Amount);
-        $supplier_advance->receiverName=$request->receiverName;
-        $supplier_advance->Description=$request->Description;
-        $supplier_advance->user_id=$request->user_id;
-        $supplier_advance->bank_id=$request->bank_id;
-        $supplier_advance->accountNumber=$request->accountNumber;
-        $supplier_advance->TransferDate=$request->TransferDate;
-        $supplier_advance->registerDate=$request->registerDate;
-        $supplier_advance->createdDate=date('Y-m-d h:i:s');
-        $supplier_advance->isActive=1;
-        $supplier_advance->isActive=1;
-        $supplier_advance->user_id = $userId ?? 0;
-        $supplier_advance->company_id=Str::getCompany($userId);
-        $supplier_advance->save();
+        $user_id = Auth::id();
+        $company_id = Str::getCompany($user_id);
+        $advance = [
+            'receiptNumber' =>$request->receiptNumber,
+            'paymentType' =>$request->paymentType,
+            'Amount' =>$request->Amount,
+            'spentBalance' =>0.00,
+            'remainingBalance' =>$request->Amount,
+            'IsSpent' =>0,
+            'IsPartialSpent' =>0,
+            'sumOf' =>Str::getUAECurrency($request->Amount),
+            'receiverName' =>$request->receiverName,
+            'accountNumber' =>$request->accountNumber,
+            'ChequeNumber' =>$request->ChequeNumber,
+            'TransferDate' =>$request->TransferDate,
+            'registerDate' =>$request->registerDate,
+            'bank_id' =>$request->bank_id ?? 0,
+            'user_id' =>$user_id,
+            'company_id' =>$company_id,
+            'supplier_id' =>$request->supplier_id ?? 0,
+            'Description' =>$request->Description,
+        ];
+        $supplier_advance=SupplierAdvance::create($advance);
         return new SupplierAdvanceResource(SupplierAdvance::find($supplier_advance->id));
     }
 
     public function update(Request $request, $Id)
     {
-        $userId = Auth::id();
-        $supplier_advance = SupplierAdvance::find($Id);
-        $request['user_id']=$userId ?? 0;
-        $request['sumOf']=Str::getUAECurrency($request->Amount);
-        $supplier_advance->update($request->all());
+        $user_id = Auth::id();
+        $advance = SupplierAdvance::find($Id);
+        $advance->update([
+            'receiptNumber' =>$request->receiptNumber,
+            'paymentType' =>$request->paymentType,
+            'Amount' =>$request->Amount,
+            'spentBalance' =>0.00,
+            'remainingBalance' =>$request->Amount,
+            'IsSpent' =>0,
+            'IsPartialSpent' =>0,
+            'sumOf' =>Str::getUAECurrency($request->Amount),
+            'receiverName' =>$request->receiverName,
+            'accountNumber' =>$request->accountNumber,
+            'ChequeNumber' =>$request->ChequeNumber ?? 0,
+            'TransferDate' =>$request->TransferDate,
+            'registerDate' =>$request->registerDate,
+            'bank_id' =>$request->bank_id ?? 0,
+            'user_id' =>$user_id,
+            'supplier_id' =>$request->supplier_id ?? 0,
+            'Description' =>$request->Description,
+        ]);
         return new SupplierAdvanceResource(SupplierAdvance::find($Id));
     }
 
@@ -126,55 +152,128 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
 
     public function supplier_advances_push($Id)
     {
-        $advance = SupplierAdvance::with('supplier')->find($Id);
-        $user_id = Auth::id();
-        $advance->update([
-            'isPushed' =>true,
-            'user_id' =>$user_id,
-        ]);
-        ////////////////// account section ////////////////
-        if ($advance)
-        {
-            $accountTransaction = AccountTransaction::where(
-                [
-                    'supplier_id'=> $advance->supplier_id,
-                    'createdDate' => date('Y-m-d'),
-                ])->first();
-            if (!is_null($accountTransaction)) {
-                if ($accountTransaction->createdDate != date('Y-m-d')) {
-                    $totalCredit = $advance->Amount;
+        DB::transaction(function () use($Id) {
+            $user_id = Auth::id();
+            $company_id = Str::getCompany($user_id);
+
+            $advance = SupplierAdvance::with('supplier')->find($Id);
+
+            if ($advance->Amount > 0) {
+                $accountTransaction = AccountTransaction::where(['supplier_id' => $advance->supplier_id,])->get();
+                $closing_before_advance_debit = $accountTransaction->last()->Differentiate;
+
+                $accountTransaction_ref = 0;
+                // account section by gautam //
+                if ($advance->paymentType == 'cash') {
+                    $cashTransaction = CashTransaction::where(['company_id' => $company_id])->get();
+                    $difference = $cashTransaction->last()->Differentiate;
+                    $cash_transaction = new CashTransaction();
+                    $cash_transaction->Reference = $Id;
+                    $cash_transaction->createdDate = $advance->TransferDate;
+                    $cash_transaction->Type = 'supplier_advances';
+                    $cash_transaction->Details = 'SupplierCashAdvance|' . $Id;
+                    $cash_transaction->Credit = $advance->Amount;
+                    $cash_transaction->Debit = 0.00;
+                    $cash_transaction->Differentiate = $difference - $advance->Amount;
+                    $cash_transaction->user_id = $user_id;
+                    $cash_transaction->company_id = $company_id;
+                    $cash_transaction->save();
+
+                    // start new entry
+                    $accountTransaction = AccountTransaction::where(['supplier_id' => $advance->supplier_id,])->get();
+                    $last_closing = $accountTransaction->last()->Differentiate;
+                    $AccData =
+                        [
+                            'supplier_id' => $advance->supplier_id,
+                            'Debit' => $advance->Amount,
+                            'Credit' => 0.00,
+                            'Differentiate' => $last_closing - $advance->Amount,
+                            'createdDate' => $advance->TransferDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description' => 'SupplierCashAdvance|' . $Id,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                    $accountTransaction_ref = $AccountTransactions->id;
+                    // new entry done
+                } elseif ($advance->paymentType == 'bank') {
+                    $bankTransaction = BankTransaction::where(['bank_id' => $advance->bank_id])->get();
+                    $difference = $bankTransaction->last()->Differentiate;
+                    $bank_transaction = new BankTransaction();
+                    $bank_transaction->Reference = $Id;
+                    $bank_transaction->createdDate = $advance->TransferDate;
+                    $bank_transaction->Type = 'supplier_advances';
+                    $bank_transaction->Details = 'SupplierBankAdvance|' . $Id;
+                    $bank_transaction->Credit = $advance->Amount;
+                    $bank_transaction->Debit = 0.00;
+                    $bank_transaction->Differentiate = $difference - $advance->Amount;
+                    $bank_transaction->user_id = $user_id;
+                    $bank_transaction->company_id = $company_id;
+                    $bank_transaction->bank_id = $advance->bank_id;
+                    $bank_transaction->updateDescription = $advance->ChequeNumber;
+                    $bank_transaction->save();
+
+                    // start new entry
+                    $accountTransaction = AccountTransaction::where(['supplier_id' => $advance->supplier_id,])->get();
+                    $last_closing = $accountTransaction->last()->Differentiate;
+                    $AccData =
+                        [
+                            'supplier_id' => $advance->supplier_id,
+                            'Debit' => $advance->Amount,
+                            'Credit' => 0.00,
+                            'Differentiate' => $last_closing - $advance->Amount,
+                            'createdDate' => $advance->TransferDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description' => 'SupplierBankAdvance|' . $Id,
+                            'referenceNumber' => $advance->ChequeNumber,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                    $accountTransaction_ref = $AccountTransactions->id;
+                    // new entry done
+                } elseif ($advance->paymentType == 'cheque') {
+                    $bankTransaction = BankTransaction::where(['bank_id' => $advance->bank_id])->get();
+                    $difference = $bankTransaction->last()->Differentiate;
+                    $bank_transaction = new BankTransaction();
+                    $bank_transaction->Reference = $Id;
+                    $bank_transaction->createdDate = $advance->TransferDate;
+                    $bank_transaction->Type = 'supplier_advances';
+                    $bank_transaction->Details = 'SupplierChequeAdvance|' . $Id;
+                    $bank_transaction->Credit = $advance->Amount;
+                    $bank_transaction->Debit = 0.00;
+                    $bank_transaction->Differentiate = $difference - $advance->Amount;
+                    $bank_transaction->user_id = $user_id;
+                    $bank_transaction->company_id = $company_id;
+                    $bank_transaction->bank_id = $advance->bank_id;
+                    $bank_transaction->updateDescription = $advance->ChequeNumber;
+                    $bank_transaction->save();
+
+                    // start new entry
+                    $accountTransaction = AccountTransaction::where(['supplier_id' => $advance->supplier_id,])->get();
+                    $last_closing = $accountTransaction->last()->Differentiate;
+                    $AccData =
+                        [
+                            'supplier_id' => $advance->supplier_id,
+                            'Debit' => $advance->Amount,
+                            'Credit' => 0.00,
+                            'Differentiate' => $last_closing - $advance->Amount,
+                            'createdDate' => $advance->TransferDate,
+                            'user_id' => $user_id,
+                            'company_id' => $company_id,
+                            'Description' => 'SupplierChequeAdvance|' . $Id,
+                            'referenceNumber' => $advance->ChequeNumber,
+                        ];
+                    $AccountTransactions = AccountTransaction::Create($AccData);
+                    $accountTransaction_ref = $AccountTransactions->id;
+                    // new entry done
                 }
-                else
-                {
-                    $totalCredit = $accountTransaction->Credit + $advance->Amount;
-                }
-                $difference = $accountTransaction->Differentiate + $advance->Amount;
+                // account section by gautam //
             }
-            else
-            {
-                $accountTransaction = AccountTransaction::where(
-                    [
-                        'supplier_id'=> $advance->supplier_id,
-                    ])->get();
-                $totalCredit = $advance->Amount;
-                $difference = $accountTransaction->last()->Differentiate + $advance->Amount;
-            }
-            $AccData =
-                [
-                    'supplier_id' => $advance->supplier_id,
-                    'Credit' => $totalCredit,
-                    'Differentiate' => $difference,
-                    'createdDate' => date('Y-m-d'),
-                    'user_id' => $user_id,
-                ];
-            AccountTransaction::updateOrCreate(
-                [
-                    'createdDate'   => date('Y-m-d'),
-                    'supplier_id'   => $advance->supplier_id,
-                ],
-                $AccData);
-        }
-        ////////////////// end of account section ////////////////
+            $advance->update([
+                'isPushed' => true,
+                'user_id' => $user_id,
+            ]);
+        });
         return TRUE;
     }
 }

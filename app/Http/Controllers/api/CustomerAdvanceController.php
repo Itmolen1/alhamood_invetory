@@ -73,14 +73,19 @@ class CustomerAdvanceController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function CustomerAdvanceUpdate(Request $request)
     {
         try
         {
+            $id=$request->id;
             $customer_advance = CustomerAdvance::find($id);
             if(is_null($customer_advance))
             {
                 return $this->userResponse->Failed($customer_advance = (object)[],'Not Found.');
+            }
+            if($customer_advance->isPushed==1)
+            {
+                return $this->userResponse->Failed($payment_receive = (object)[],'Update is not allowed.');
             }
             $result=$this->customerAdvanceRepository->update($request,$id);
             return $this->userResponse->Success($result);;
@@ -96,12 +101,12 @@ class CustomerAdvanceController extends Controller
         try
         {
             $customer_advance = CustomerAdvance::find($Id);
-            if(is_null($customer_advance))
-            {
-                return $this->userResponse->Failed($city = (object)[],'Not Found.');
-            }
-            $result = $this->customerAdvanceRepository->delete($request,$Id);
-            return $this->userResponse->Success($result);
+//            if(is_null($customer_advance))
+//            {
+//                return $this->userResponse->Failed($city = (object)[],'Not Found.');
+//            }
+//            $result = $this->customerAdvanceRepository->delete($request,$Id);
+            return $this->userResponse->Success($customer_advance);
         }
         catch (Exception $exception)
         {
@@ -154,6 +159,10 @@ class CustomerAdvanceController extends Controller
             if(is_null($customer_advance))
             {
                 return $this->userResponse->Failed($customer_advance = (object)[],'Not Found.');
+            }
+            if($customer_advance->isPushed==1)
+            {
+                return $this->userResponse->Failed($payment_receive = (object)[],'Already Pushed.');
             }
             $customer_advance = $this->customerAdvanceRepository->customer_advances_push($Id);
             return $this->userResponse->Success($customer_advance);

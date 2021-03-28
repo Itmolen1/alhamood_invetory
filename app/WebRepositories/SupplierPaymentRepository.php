@@ -198,7 +198,29 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function getSupplierPaymentDetail($Id)
     {
-        $html='Quisque ac lacus sed lectus blandit viverra.';
+        $payment=SupplierPayment::with(['supplier','supplier_payment_details.purchase','supplier_payment_details.purchase.purchase_details_without_trash'])->where('id',$Id)->first();
+        $payment_detail=SupplierPaymentDetail::with(['purchase','purchase.purchase_details_without_trash'])->where('supplier_payment_id',$Id)->get();
+        $html='<div class="row"><div class="col-md-12"><label>Supplier Name : '.$payment->supplier->Name.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Payment Date : '.$payment->supplierPaymentDate.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Payment Type : '.$payment->payment_type.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Reference No. : '.$payment->referenceNumber.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Amount : '.$payment->paidAmount.'</label></div></div>';
+        $html.='<table class="table"><thead><th>SR</th><th>Purchase Date</th><th>PAD</th><th>LPO</th><th>Total</th><th>Paid</th><th>Balance</th></thead><tbody>';
+        $i=0;
+        foreach ($payment_detail as $item)
+        {
+            $html.='<tr>';
+            $html.='<td>'.++$i.'</td>';
+            $html.='<td>'.$item->purchase->PurchaseDate??"NA".'</td>';
+            $html.='<td>'.$item->purchase->purchase_details_without_trash[0]->PadNumber??"NA".'</td>';
+            $html.='<td>'.$item->purchase->referenceNumber??"NA".'</td>';
+            $html.='<td>'.$item->purchase->grandTotal??"NA".'</td>';
+            $html.='<td>'.$item->purchase->paidBalance??"NA".'</td>';
+            $html.='<td>'.$item->purchase->remainingBalance??"NA".'</td>';
+            $html.='</tr>';
+            //echo $item->purchase->purchase_details_without_trash[0]->PadNumber;die;
+        }
+        $html.='</tbody>';
         return Response()->json($html);
     }
 

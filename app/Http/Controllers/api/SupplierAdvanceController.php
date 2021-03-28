@@ -73,14 +73,19 @@ class SupplierAdvanceController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function SupplierAdvanceUpdate(Request $request)
     {
         try
         {
+            $id=$request->id;
             $supplier_advance = SupplierAdvance::find($id);
             if(is_null($supplier_advance))
             {
                 return $this->userResponse->Failed($customer_advance = (object)[],'Not Found.');
+            }
+            if($supplier_advance->isPushed==1)
+            {
+                return $this->userResponse->Failed($customer_advance = (object)[],'Update is not allowed.');
             }
             $result=$this->supplierAdvanceRepository->update($request,$id);
             return $this->userResponse->Success($result);;
@@ -154,6 +159,10 @@ class SupplierAdvanceController extends Controller
             if(is_null($supplier_advance))
             {
                 return $this->userResponse->Failed($supplier_advance = (object)[],'Not Found.');
+            }
+            if($supplier_advance->isPushed==1)
+            {
+                return $this->userResponse->Failed($customer_advance = (object)[],'Already Pushed.');
             }
             $supplier_advance = $this->supplierAdvanceRepository->supplier_advances_push($Id);
             return $this->userResponse->Success($supplier_advance);

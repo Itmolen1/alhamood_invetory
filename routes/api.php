@@ -116,11 +116,13 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/getCustomerAdvanceBaseList', 'api\CustomerAdvanceController@BaseList');
     Route::get('/CustomerAdvance/paginate/{page_no}/{page_size}','api\CustomerAdvanceController@paginate');
     Route::get('customer_advances_push/{Id}','api\CustomerAdvanceController@customer_advances_push');
+    Route::post('CustomerAdvanceUpdate','api\CustomerAdvanceController@CustomerAdvanceUpdate');
 
     Route::apiResource('/SupplierAdvance', 'api\SupplierAdvanceController');
     Route::get('/getSupplierAdvanceBaseList', 'api\SupplierAdvanceController@BaseList');
     Route::get('/SupplierAdvance/paginate/{page_no}/{page_size}','api\SupplierAdvanceController@paginate');
     Route::get('supplier_advances_push/{Id}','api\SupplierAdvanceController@supplier_advances_push');
+    Route::post('SupplierAdvanceUpdate','api\SupplierAdvanceController@SupplierAdvanceUpdate');
 
     Route::apiResource('/Loan', 'api\LoanController');
     Route::get('/Loan/paginate/{page_no}/{page_size}','api\LoanController@paginate');
