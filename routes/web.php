@@ -82,6 +82,7 @@ route::resource('expense_categories','ExpenseCategoryController');
 route::post('expenseUpdate/{id}','ExpenseController@expenseUpdate');
 route::POST('/CheckExpenseReferenceExist','ExpenseController@CheckExpenseReferenceExist');
 route::resource('employees','EmployeeController');
+route::get('getExpenseDetail/{Id}','ExpenseController@getExpenseDetail');
 
 ////////////// sales /////////////////////
 route::resource('sales','SaleController');
@@ -120,7 +121,7 @@ route::resource('payment_receives','PaymentReceiveController');
 route::post('payment_receivesUpdate','PaymentReceiveController@payment_receivesUpdate');
 route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
 route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
-//route::view('customer_receives','admin.customer_payment_receive.index');
+route::get('getCustomerPaymentDetail/{Id}','PaymentReceiveController@getCustomerPaymentDetail');
 
 route::resource('supplier_payments','SupplierPaymentController');
 route::PUT('supplier_payment_push/{Id}','SupplierPaymentController@supplier_payments_push');

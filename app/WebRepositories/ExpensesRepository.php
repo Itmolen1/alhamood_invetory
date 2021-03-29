@@ -109,7 +109,7 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 $nestedData['totalVat'] = $expense->totalVat ?? 0.00;
                 $nestedData['grandTotal'] = $expense->grandTotal ?? 0.00;
                 //$nestedData['payment_type'] = $expense->grandTotal ?? 0.00;
-                $nestedData['action'] = '<a href="'.route('expenses.edit', $expense->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                $nestedData['action'] = '<a href="'.route('expenses.edit', $expense->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>&nbsp;<button class="btn btn-dark" onclick="show_detail(this.id)" type="button" id="show_'.$expense->id.'">Show Details</button>';
                 $data[] = $nestedData;
             }
         }
@@ -121,6 +121,37 @@ class ExpensesRepository implements IExpensesRepositoryInterface
             "data"            => $data
         );
         echo json_encode($json_data);
+    }
+
+    public function getExpenseDetail($Id)
+    {
+        $expense=Expense::with(['supplier','api_employee'])->where('id',$Id)->first();
+        $expense_detail=ExpenseDetail::with(['expense_category'])->where('expense_id',$Id)->get();
+/*        $html='<div class="row"><div class="col-md-12"><label>Supplier Name : '.$expense->supplier->Name.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Expense Date : '.date('d-M-Y',strtotime($expense->expenseDate)).'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Payment Type : '.$expense->payment_type.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Reference No. : '.$expense->referenceNumber.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Category : '.$expense_detail[0]->expense_category->Name??"NA".'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Description : '.$expense_detail[0]->Description.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Amount : '.$expense->subTotal.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>VAT : '.$expense->totalVat.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Grand Total : '.$expense->grandTotal.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Employee  : '.$expense->api_employee->Name.'</label></div></div>';*/
+
+        $html='<table class="table table-sm"><tbody>';
+        $html.='<tr class="bg-success"><td>Reference No </td><td>'.$expense->referenceNumber.'</td></tr>';
+        $html.='<tr><td>Supplier Name </td><td>'.$expense->supplier->Name.'</td></tr>';
+        $html.='<tr><td>Expense Date </td><td>'.date('d-M-Y',strtotime($expense->expenseDate)).'</td></tr>';
+        $html.='<tr><td>Payment Type </td><td>'.$expense->payment_type.'</td></tr>';
+        $html.='<tr><td>Category </td><td>'.$expense_detail[0]->expense_category->Name??"NA".'</td></tr>';
+        $html.='<tr><td>Description </td><td>'.$expense_detail[0]->Description.'</td></tr>';
+        $html.='<tr><td>Amount </td><td>'.$expense->subTotal.'</td></tr>';
+        $html.='<tr><td>VAT </td><td>'.$expense->totalVat.'</td></tr>';
+        $html.='<tr><td>Grand Total </td><td>'.$expense->grandTotal.'</td></tr>';
+        $html.='<tr><td>Employee </td><td>'.$expense->api_employee->Name.'</td></tr>';
+        $html.='</tbody></table>';
+
+        return Response()->json($html);
     }
 
     public function create()

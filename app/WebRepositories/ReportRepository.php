@@ -607,6 +607,17 @@ class ReportRepository implements IReportRepositoryInterface
         if ($request->fromDate!='' && $request->toDate!='')
         {
             $all_bank_transactions=BankTransaction::where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('bank_id','=',$request->bank_id)->orderBy('createdDate')->get();
+            $prev_date = date('Y-m-d', strtotime($request->fromDate .' -1 day'));
+            $get_max_id=BankTransaction::where('company_id',session('company_id'))->where('bank_id','=',$request->bank_id)->where('createdDate','=',$prev_date)->max('id');
+            //echo "<pre>";print_r($get_max_id);die;
+            $closing_amount=BankTransaction::where('company_id',session('company_id'))->where('bank_id','=',$request->bank_id)->where('id',$get_max_id)->first();
+            if(!$closing_amount)
+            {
+                $closing_amount=0;
+            }
+            else{
+                $closing_amount=$closing_amount->Differentiate;
+            }
         }
         else
         {
@@ -629,13 +640,17 @@ class ReportRepository implements IReportRepositoryInterface
 
         $pdf::SetFont('helvetica', '', 15);
         $html='Bank Name :-'.$request->bank_name;
-        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
         $pdf::SetFont('helvetica', '', 12);
         $html=date('d-M-Y', strtotime($request->fromDate)).' To '.date('d-M-Y', strtotime($request->toDate));
+        $pdf::writeHTMLCell(0, 0, ''    , '', $html,0, 1, 0, true, 'L', true);
+
+        $pdf::SetFont('helvetica', '', 12);
+        $html=' Opening Balance : '.$closing_amount;
         $pdf::writeHTMLCell(0, 0, ''    , '', $html,0, 1, 0, true, 'R', true);
 
-        $balance=0.0;
+        $balance=$closing_amount;
         $debit_total=0.0;
         $credit_total=0.0;
 
@@ -672,7 +687,7 @@ class ReportRepository implements IReportRepositoryInterface
             $html .='<tr>
                 <td align="center" width="80">'.(date('d-M-Y', strtotime($row[$i]['createdDate']))).'</td>
                 <td align="left" width="100">'.($row[$i]['Type']).'</td>
-                <td align="center" width="100">'.$row[$i]['updateDescription'].'</td>
+                <td align="left" width="100">'.$row[$i]['updateDescription'].'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Debit'],2,'.',',')).'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Credit'],2,'.',',')).'</td>
                 <td align="right" width="90">'.number_format($balance,2,'.',',').'</td>

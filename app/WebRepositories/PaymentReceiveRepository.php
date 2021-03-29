@@ -24,7 +24,8 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         {
             return datatables()->of(PaymentReceive::with('user','company','customer')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
-                    $button = '<a href="'.route('payment_receives.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                    //$button = '<a href="'.route('payment_receives.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
+                    $button = '<button class="btn btn-primary" onclick="show_detail(this.id)" type="button" id="show_'.$data->id.'">Show Details</button>';
 //                    $button .= '&nbsp;&nbsp;';
 //                    $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
 //                    $button .='&nbsp;';
@@ -205,6 +206,32 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         return view('admin.customer_payment_receive.show',compact('payment_receives_details'));
     }
 
+    public function getCustomerPaymentDetail($Id)
+    {
+        $payment=PaymentReceive::with(['customer'])->where('id',$Id)->first();
+        $payment_detail=PaymentReceiveDetail::with(['sale','sale.sale_details'])->where('payment_receive_id',$Id)->get();
+        $html='<div class="row"><div class="col-md-12"><label>Supplier Name : '.$payment->customer->Name.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Payment Date : '.date('d-M-Y',strtotime($payment->paymentReceiveDate)).'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Payment Type : '.$payment->payment_type.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Reference No. : '.$payment->referenceNumber.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Amount : '.$payment->paidAmount.'</label></div></div>';
+        $html.='<table class="table"><thead><th>SR</th><th>Sale Date</th><th>PAD</th><th>Total</th><th>Paid</th><th>Balance</th></thead><tbody>';
+        $i=0;
+        foreach ($payment_detail as $item)
+        {
+            $html.='<tr>';
+            $html.='<td>'.++$i.'</td>';
+            $html.='<td>'.date('d-M-Y',strtotime($item->sale->SaleDate))??"NA".'</td>';
+            $html.='<td>'.$item->sale->sale_details[0]->PadNumber??"NA".'</td>';
+            $html.='<td>'.$item->sale->grandTotal??"NA".'</td>';
+            $html.='<td>'.$item->sale->paidBalance??"NA".'</td>';
+            $html.='<td>'.$item->sale->remainingBalance??"NA".'</td>';
+            $html.='</tr>';
+        }
+        $html.='</tbody>';
+        return Response()->json($html);
+    }
+
     public function edit($Id)
     {
         $customers = Customer::all();
@@ -213,7 +240,6 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         //echo $payment_receive->payment_type;die;
         //dd($payment_receive);
         return view('admin.customer_payment_receive.edit',compact('payment_receive','customers','banks'));
-
     }
 
     public function delete(Request $request, $Id)

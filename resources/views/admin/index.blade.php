@@ -82,6 +82,98 @@
                                 <h6 class="text-muted font-light m-b-0">Today's Purchase Invoices count</h6></div>
                         </div>
                     </div>
+
+                    @if(!empty($admin))
+                    <div class="card">
+                        <div class="p-20 p-t-25">
+                            <h4 class="card-title">Overall Summary</h4>
+                        </div>
+                        <div class="d-flex no-block align-items-center">
+                            <div class="m-l-10 ">
+                                <h3 class="m-b-0">Cash On Hand : {{$admin['cash_on_hand']->Differentiate}}</h3>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex no-block align-items-center">
+                            <div class="m-l-10 ">
+                                <h3 class="m-b-0">Total Payable : {{$admin['total_payable']}}</h3>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex no-block align-items-center">
+                            <div class="m-l-10 ">
+                                <h3 class="m-b-0">Total Receivable : {{$admin['total_receivable']}}</h3>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex no-block align-items-center">
+                            <div class="m-l-10 ">
+                                <h3 class="m-b-0">Loan Payable : {{$admin['loan_payable']}}</h3>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex no-block align-items-center">
+                            <div class="m-l-10 ">
+                                <h3 class="m-b-0">Loan Receivable : {{$admin['loan_receivable']}}</h3>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex no-block align-items-center">
+                            <div class="m-l-10 ">
+                                <h3 class="m-b-0">Stock On Hand : {{$admin['stock_qty']}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(!empty($admin))
+                        <div class="card">
+                            <div class="p-20 p-t-25">
+                                <h4 class="card-title">Today Summary</h4>
+                            </div>
+                            <div class="d-flex no-block align-items-center">
+                                <div class="m-l-10 ">
+                                    <h3 class="m-b-0">Today's Cash Sale : {{$admin['today_cash_sale']}}</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex no-block align-items-center">
+                                <div class="m-l-10 ">
+                                    <h3 class="m-b-0">Today's Credit Sale : {{$admin['today_credit_sale']}}</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex no-block align-items-center">
+                                <div class="m-l-10 ">
+                                    <h3 class="m-b-0">Today's Total Sale : {{$admin['today_total_sale']}}</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex no-block align-items-center">
+                                <div class="m-l-10 ">
+                                    <h3 class="m-b-0">Today's Sales Qty : {{$admin['today_sale_qty']}}</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex no-block align-items-center">
+                                <div class="m-l-10 ">
+                                    <h3 class="m-b-0">Today's Purchase Qty : {{$admin['today_purchase_qty']}}</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex no-block align-items-center">
+                                <div class="m-l-10 ">
+                                    <h3 class="m-b-0">Today's Purchase Amount : {{$admin['today_purchase_amount']}}</h3>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex no-block align-items-center">
+                                <div class="m-l-10 ">
+                                    <h3 class="m-b-0">Today's Expense : {{$admin['today_expense_amount']}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- .right-sidebar -->

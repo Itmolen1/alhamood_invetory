@@ -115,6 +115,7 @@ class CustomerRepository implements ICustomerRepositoryInterface
                 'createdDate' => $customerRequest->openingBalanceAsOfDate,
                 'company_id' =>$company_id,
                 'Description' =>'initial',
+                'referenceNumber' =>'initial',
                 'Credit' =>0.00,
                 'Debit' =>0.00,
                 'Differentiate' =>$customerRequest->openingBalance,

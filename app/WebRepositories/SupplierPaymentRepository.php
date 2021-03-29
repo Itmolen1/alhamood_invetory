@@ -201,7 +201,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         $payment=SupplierPayment::with(['supplier','supplier_payment_details.purchase','supplier_payment_details.purchase.purchase_details_without_trash'])->where('id',$Id)->first();
         $payment_detail=SupplierPaymentDetail::with(['purchase','purchase.purchase_details_without_trash'])->where('supplier_payment_id',$Id)->get();
         $html='<div class="row"><div class="col-md-12"><label>Supplier Name : '.$payment->supplier->Name.'</label></div></div>';
-        $html.='<div class="row"><div class="col-md-12"><label>Payment Date : '.$payment->supplierPaymentDate.'</label></div></div>';
+        $html.='<div class="row"><div class="col-md-12"><label>Payment Date : '.date('d-M-Y',strtotime($payment->supplierPaymentDate)).'</label></div></div>';
         $html.='<div class="row"><div class="col-md-12"><label>Payment Type : '.$payment->payment_type.'</label></div></div>';
         $html.='<div class="row"><div class="col-md-12"><label>Reference No. : '.$payment->referenceNumber.'</label></div></div>';
         $html.='<div class="row"><div class="col-md-12"><label>Amount : '.$payment->paidAmount.'</label></div></div>';
@@ -211,14 +211,13 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         {
             $html.='<tr>';
             $html.='<td>'.++$i.'</td>';
-            $html.='<td>'.$item->purchase->PurchaseDate??"NA".'</td>';
+            $html.='<td>'.date('d-M-Y',strtotime($item->purchase->PurchaseDate))??"NA".'</td>';
             $html.='<td>'.$item->purchase->purchase_details_without_trash[0]->PadNumber??"NA".'</td>';
             $html.='<td>'.$item->purchase->referenceNumber??"NA".'</td>';
             $html.='<td>'.$item->purchase->grandTotal??"NA".'</td>';
             $html.='<td>'.$item->purchase->paidBalance??"NA".'</td>';
             $html.='<td>'.$item->purchase->remainingBalance??"NA".'</td>';
             $html.='</tr>';
-            //echo $item->purchase->purchase_details_without_trash[0]->PadNumber;die;
         }
         $html.='</tbody>';
         return Response()->json($html);
@@ -276,7 +275,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                 $difference = $cashTransaction->last()->Differentiate;
                 $cash_transaction = new CashTransaction();
                 $cash_transaction->Reference = $Id;
-                $cash_transaction->createdDate = $payments->transferDate ?? date('Y-m-d h:i:s');
+                $cash_transaction->createdDate = $payments->supplierPaymentDate ?? date('Y-m-d h:i:s');
                 $cash_transaction->Type = 'supplier_payments';
                 $cash_transaction->Details = 'SupplierCashPayment|' . $Id;
                 $cash_transaction->Credit = $payments->paidAmount;
@@ -296,7 +295,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                         'Debit' => $payments->paidAmount,
                         'Credit' => 0.00,
                         'Differentiate' => $last_closing - $payments->paidAmount,
-                        'createdDate' => $payments->transferDate,
+                        'createdDate' => $payments->supplierPaymentDate,
                         'user_id' => $user_id,
                         'company_id' => $company_id,
                         'Description' => 'SupplierCashPayment|' . $Id,

@@ -31,6 +31,11 @@ class ExpenseController extends Controller
         return $this->expensesRepository->all_expenses($request);
     }
 
+    public function getExpenseDetail($Id)
+    {
+        return $this->expensesRepository->getExpenseDetail($Id);
+    }
+
     public function store(ExpenseRequest $expenseRequest)
     {
         return $this->expensesRepository->store($expenseRequest);

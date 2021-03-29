@@ -32,6 +32,11 @@ class PaymentReceiveController extends Controller
         return $this->paymentReceiveRepository->getById($Id);
     }
 
+    public function getCustomerPaymentDetail($Id)
+    {
+        return $this->paymentReceiveRepository->getCustomerPaymentDetail($Id);
+    }
+
     public function edit($Id)
     {
         return $this->paymentReceiveRepository->edit($Id);
