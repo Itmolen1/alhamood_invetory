@@ -57,4 +57,9 @@ class PaymentReceiveController extends Controller
     {
        return $this->paymentReceiveRepository->customer_payments_push($request, $Id);
     }
+
+    public function CheckCustomerPaymentReferenceExist(Request $request)
+    {
+        return $this->paymentReceiveRepository->CheckCustomerPaymentReferenceExist($request);
+    }
 }

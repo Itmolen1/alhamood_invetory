@@ -55,6 +55,7 @@ route::resource('users','UserController');
 route::resource('roles','RoleController');
 route::resource('banks','BankController');
 route::resource('deposits','DepositController');
+route::resource('bank_to_banks','BankToBankController');
 route::get('getBankAccountDetail/{id}','BankController@getBankAccountDetail');
 route::resource('countries','CountryController');
 route::resource('states','StateController');
@@ -122,6 +123,7 @@ route::post('payment_receivesUpdate','PaymentReceiveController@payment_receivesU
 route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
 route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 route::get('getCustomerPaymentDetail/{Id}','PaymentReceiveController@getCustomerPaymentDetail');
+route::POST('/CheckCustomerPaymentReferenceExist','PaymentReceiveController@CheckCustomerPaymentReferenceExist');
 
 route::resource('supplier_payments','SupplierPaymentController');
 route::PUT('supplier_payment_push/{Id}','SupplierPaymentController@supplier_payments_push');

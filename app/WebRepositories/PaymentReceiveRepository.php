@@ -215,7 +215,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         $html.='<div class="row"><div class="col-md-12"><label>Payment Type : '.$payment->payment_type.'</label></div></div>';
         $html.='<div class="row"><div class="col-md-12"><label>Reference No. : '.$payment->referenceNumber.'</label></div></div>';
         $html.='<div class="row"><div class="col-md-12"><label>Amount : '.$payment->paidAmount.'</label></div></div>';
-        $html.='<table class="table"><thead><th>SR</th><th>Sale Date</th><th>PAD</th><th>Total</th><th>Paid</th><th>Balance</th></thead><tbody>';
+        $html.='<table class="table table-sm"><thead><th>SR</th><th>Sale Date</th><th>PAD</th><th>Total</th><th>Paid</th><th>Balance</th></thead><tbody>';
         $i=0;
         foreach ($payment_detail as $item)
         {
@@ -255,6 +255,21 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
     public function trashed()
     {
         // TODO: Implement trashed() method.
+    }
+
+    public function CheckCustomerPaymentReferenceExist($request)
+    {
+        $data = PaymentReceive::where('company_id',session('company_id'))->where('referenceNumber','like','%'.$request->referenceNumber.'%')->get();
+        if($data->first())
+        {
+            $result=array('result'=>true);
+            return Response()->json(true);
+        }
+        else
+        {
+            $result=array('result'=>false);
+            return Response()->json(false);
+        }
     }
 
     public function customer_payments_push(Request $request, $Id)

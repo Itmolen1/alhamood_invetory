@@ -31,7 +31,7 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
     {
         $user_id = Auth::id();
         $company_id=Str::getCompany($user_id);
-        return PaymentReceiveResource::Collection(PaymentReceive::with('payment_receive_details')->where('company_id',$company_id)->get()->sortDesc()->forPage($page_no,$page_size));
+        return PaymentReceiveResource::Collection(PaymentReceive::with(['payment_receive_details',])->where('company_id',$company_id)->get()->sortDesc()->forPage($page_no,$page_size));
     }
 
     public function insert(Request $request)

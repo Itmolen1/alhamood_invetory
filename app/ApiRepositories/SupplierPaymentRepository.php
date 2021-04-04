@@ -55,7 +55,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         $payment->Description = $request->Description;
         $payment->bank_id = $request->bank_id ?? 0;
         $payment->user_id = $user_id;
-        $payment->createdDate = date('Y-m-d');
+        $payment->createdDate = $request->supplierPaymentDate;
         $payment->company_id = $company_id;
         $payment->save();
         $payment = $payment->id;
@@ -87,7 +87,7 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                     "company_id" => $company_id,
                     "user_id" => $user_id,
                     "supplier_payment_id" => $payment,
-                    'createdDate' => $request->TransferDate,
+                    'createdDate' => $request->supplierPaymentDate,
                 ]);
                 if($total_i_have<=0)
                 {

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\WebRepositories\BankRepository;
+use App\WebRepositories\BankToBankRepository;
 use App\WebRepositories\CityRepository;
 use App\WebRepositories\CompanyRepository;
 use App\WebRepositories\CompanyTypeRepository;
@@ -20,6 +21,7 @@ use App\WebRepositories\ExpenseRepository;
 use App\WebRepositories\ExpensesRepository;
 use App\WebRepositories\FinancerRepository;
 use App\WebRepositories\Interfaces\IBankRepositoryInterface;
+use App\WebRepositories\Interfaces\IBankToBankRepositoryInterface;
 use App\WebRepositories\Interfaces\ICityRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyRepositoryInterface;
 use App\WebRepositories\Interfaces\ICompanyTypeRepositoryInterface;
@@ -135,6 +137,7 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IFinancerRepositoryInterface::class,FinancerRepository::class);
         $this->app->bind(IInwardLoanRepositoryInterface::class,InwardLoanRepository::class);
         $this->app->bind(IOutwardLoandRepositoryInterface::class,OutwardLoanRepository::class);
+        $this->app->bind(IBankToBankRepositoryInterface::class,BankToBankRepository::class);
     }
 
     public function boot()

@@ -150,6 +150,7 @@
                                         <div class="col-md-4">
                                             <label class="control-label">Cheque or Ref. Number ?</label>
                                             <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Cheque or Ref. Number">
+                                            <span class="text-danger" id="already_exist">Similar to this may exist please verify and proceed</span>
                                         </div>
 
                                         <div class="col-md-4">
@@ -230,7 +231,42 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#already_exist').hide();
+            $('#referenceNumber').keyup(function () {
+                var referenceNumber=0;
+                referenceNumber = $('#referenceNumber').val();
 
+                var data={referenceNumber:referenceNumber};
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ URL('CheckCustomerPaymentReferenceExist') }}",
+                    type: "post",
+                    data: data,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result === true)
+                        {
+                            $('#already_exist').show();
+                        }
+                        else
+                        {
+                            $('#already_exist').hide();
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            });
+
+        });
+    </script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('.bankTransfer').hide();

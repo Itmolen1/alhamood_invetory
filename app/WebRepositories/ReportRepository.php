@@ -606,18 +606,21 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $all_bank_transactions=BankTransaction::where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('bank_id','=',$request->bank_id)->orderBy('createdDate')->get();
+            $all_bank_transactions=BankTransaction::where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('deleted_at','=',NULL)->where('bank_id','=',$request->bank_id)->orderBy('createdDate')->get();
             $prev_date = date('Y-m-d', strtotime($request->fromDate .' -1 day'));
             $get_max_id=BankTransaction::where('company_id',session('company_id'))->where('bank_id','=',$request->bank_id)->where('createdDate','=',$prev_date)->max('id');
             //echo "<pre>";print_r($get_max_id);die;
-            $closing_amount=BankTransaction::where('company_id',session('company_id'))->where('bank_id','=',$request->bank_id)->where('id',$get_max_id)->first();
-            if(!$closing_amount)
-            {
-                $closing_amount=0;
-            }
-            else{
-                $closing_amount=$closing_amount->Differentiate;
-            }
+            $sum_of_debit_before_from_date=BankTransaction::where('company_id',session('company_id'))->where('bank_id','=',$request->bank_id)->where('createdDate','<',$request->fromDate)->sum('Debit');
+            $sum_of_credit_before_from_date=BankTransaction::where('company_id',session('company_id'))->where('bank_id','=',$request->bank_id)->where('createdDate','<',$request->fromDate)->sum('Credit');
+            //$closing_amount=BankTransaction::where('company_id',session('company_id'))->where('bank_id','=',$request->bank_id)->where('id',$get_max_id)->first();
+            $closing_amount=$sum_of_debit_before_from_date-$sum_of_credit_before_from_date;
+//            if(!$closing_amount)
+//            {
+//                $closing_amount=0;
+//            }
+//            else{
+//                $closing_amount=$closing_amount->Differentiate;
+//            }
         }
         else
         {
@@ -1901,7 +1904,7 @@ class ReportRepository implements IReportRepositoryInterface
 
         $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.customer_id','ac.Differentiate','s.Name','s.Mobile')
             ->whereIn('ac.id',$needed_ids)
-            ->orderBy('ac.id','asc')
+            ->orderBy('ac.Differentiate','desc')
             ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')
             ->get();
         $row=json_decode(json_encode($row), true);
@@ -1931,8 +1934,8 @@ class ReportRepository implements IReportRepositoryInterface
             $html = '<table border="0.5" cellpadding="2">
             <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
                 <th align="center" width="50">S.No</th>
-                <th align="center" width="300">Customer Name</th>
-                <th align="center" width="100">Cell</th>
+                <th align="center" width="200">Customer Name</th>
+                <th align="center" width="200">Cell</th>
                 <th align="right" width="80">Balance</th>
             </tr>';
             $pdf::SetFont('helvetica', '', 10);
@@ -1942,8 +1945,8 @@ class ReportRepository implements IReportRepositoryInterface
                 $total_balance+=$row[$i]['Differentiate'];
                 $html .='<tr>
                 <td align="center" width="50">'.($i+1).'</td>
-                <td align="left" width="300">'.($row[$i]['Name']).'</td>
-                <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
+                <td align="left" width="200">'.($row[$i]['Name']).'</td>
+                <td align="left" width="200">'.($row[$i]['Mobile']).'</td>
                 <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
                 </tr>';
             }
@@ -2587,7 +2590,9 @@ class ReportRepository implements IReportRepositoryInterface
 
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $account_transactions=AccountTransaction::oldest('createdDate')->get()->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('customer_id','=',$request->customer_id)->where('updateDescription','!=','hide');
+            $account_transactions=AccountTransaction::where('customer_id','=',$request->customer_id)->whereBetween('createdDate', [$request->fromDate, $request->toDate])->where('updateDescription','=',NULL)->orderBy('id')->get();
+            //echo "<pre>123";print_r($account_transactions);die;
+            //$data=Receivable_summary_log::with(['customer'=>function($q){$q->select('id','Name');}])->where('company_id',session('company_id'))->whereBetween('RecordDate', [$request->fromDate, $request->toDate])->orderBy('RecordDate')->get();
         }
         else
         {
