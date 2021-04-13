@@ -169,13 +169,13 @@
                                 for (var i = 0; i < result.length; i++)
                                 {
                                     var registrationNumber='';
-                                    if(result[i].customer.vehicles.length===0)
+                                    if(result[i].sale_details[0].vehicle.length===0)
                                     {
                                         registrationNumber='initial';
                                     }
                                     else
                                     {
-                                        registrationNumber=result[i].customer.vehicles[0].registrationNumber;
+                                        registrationNumber=result[i].sale_details[0].vehicle.registrationNumber;
                                     }
                                     salesDetails += '<tr>';
                                     salesDetails += '<td>' + result[i].sale_details[0].PadNumber + '</td>';

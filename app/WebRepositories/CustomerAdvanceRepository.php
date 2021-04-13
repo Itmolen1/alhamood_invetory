@@ -23,7 +23,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
     {
         if(request()->ajax())
         {
-            return datatables()->of(CustomerAdvance::with('user','customer')->where('company_id',session('company_id'))->latest()->get())
+            return datatables()->of(CustomerAdvance::with('user','customer')->where('company_id',session('company_id'))->where('isActive',1)->latest()->get())
                 ->addColumn('customer', function($data) {
                     return $data->customer->Name ?? "No Data";
                 })

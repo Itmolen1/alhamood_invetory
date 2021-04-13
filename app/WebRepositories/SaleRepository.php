@@ -330,199 +330,53 @@ class   SaleRepository implements ISaleRepositoryInterface
 
         $AllRequestCount = collect($request->Data)->count();
 
-        DB::transaction(function () use($AllRequestCount,$request){
+        DB::transaction(function () use($AllRequestCount,$request)
+        {
             if($AllRequestCount > 0)
             {
                 if($request->Data['remainingBalance']<0)
                 {
-                    if($request->Data['paidBalance'] >= $request->Data['grandTotal'])
+                    $user_id = session('user_id');
+                    $company_id = session('company_id');
+
+                    $sale = new Sale();
+                    $sale->SaleNumber = $request->Data['SaleNumber'];
+                    $sale->SaleDate = $request->Data['SaleDate'];
+                    $sale->Total = $request->Data['Total'];
+                    $sale->subTotal = $request->Data['subTotal'];
+                    $sale->totalVat = $request->Data['totalVat'];
+                    $sale->grandTotal = $request->Data['grandTotal'];
+                    $sale->paidBalance = 0;
+                    $sale->remainingBalance = $request->Data['grandTotal'];
+                    $sale->customer_id = $request->Data['customer_id'];
+                    $sale->IsPaid = false;
+                    $sale->IsPartialPaid = false;
+                    $sale->IsReturn = false;
+                    $sale->IsPartialReturn = false;
+                    $sale->IsNeedStampOrSignature = false;
+                    $sale->user_id = $user_id;
+                    $sale->company_id = $company_id;
+                    $sale->save();
+                    $sale = $sale->id;
+                    foreach($request->Data['orders'] as $detail)
                     {
-                        if ($request->Data['paidBalance'] == 0.00 || $request->Data['paidBalance'] == 0) {
-                            $isPaid_current = false;
-                            $partialPaid_current =false;
-                        }
-                        elseif($request->Data['paidBalance'] >= $request->Data['grandTotal'])
-                        {
-                            $isPaid_current = 1;
-                            $partialPaid_current=0;
-                            // if the paidBalance = cashPaid is more than grand total we need to divide extra
-                            // amount to unpaid sales if its there any entry
-                            $all_sales = Sale::with('customer','sale_details')->where([
-                                'customer_id'=>$request->Data['customer_id'],
-                                'IsPaid'=> false,
-                            ])->orderBy('SaleDate')->get();
-                            //dd($all_purchase);
-                            $total_i_have=$request->Data['paidBalance']-$request->Data['grandTotal'];
-
-                            foreach($all_sales as $sale)
-                            {
-                                $total_you_need = $sale->remainingBalance;
-                                $still_payable_to_you=0;
-                                $total_giving_to_you=0;
-                                $isPartialPaid = false;
-                                if ($total_i_have >= $total_you_need)
-                                {
-                                    $isPaid = true;
-                                    $isPartialPaid = false;
-                                    $total_i_have -= $total_you_need;
-                                    $total_giving_to_you=$total_you_need;
-                                }
-                                elseif($total_i_have <= $total_you_need){
-                                    $isPaid = false;
-                                    $isPartialPaid = true;
-                                    $total_giving_to_you=$total_i_have;
-                                    $still_payable_to_you=$total_you_need-$total_i_have;
-                                    $total_i_have -= $total_giving_to_you;
-                                }
-
-                                if($isPartialPaid==true)
-                                {
-                                    $this_sale = Sale::find($sale->id);
-                                    $this_sale->update([
-                                        "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
-                                        "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
-                                        "IsPaid" => $isPaid,
-                                        "IsPartialPaid" => $isPartialPaid,
-                                        "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid',
-                                        "account_transaction_payment_id" => 'CashOverflow',
-                                    ]);
-                                }
-                                else
-                                {
-                                    $this_sale = Sale::find($sale->id);
-                                    $this_sale->update([
-                                        "paidBalance"        => $sale->grandTotal,
-                                        "remainingBalance"   => $still_payable_to_you,
-                                        "IsPaid" => $isPaid,
-                                        "IsPartialPaid" => $isPartialPaid,
-                                        "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid',
-                                        "account_transaction_payment_id" => 'CashOverflow',
-                                    ]);
-                                }
-
-                                if($total_i_have<=0)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            $isPaid_current = false;
-                            $partialPaid_current =true;
-                        }
-
-                        $user_id = session('user_id');
-                        $company_id = session('company_id');
-
-                        $sale = new Sale();
-                        $sale->SaleNumber = $request->Data['SaleNumber'];
-                        $sale->SaleDate = $request->Data['SaleDate'];
-                        $sale->Total = $request->Data['Total'];
-                        $sale->subTotal = $request->Data['subTotal'];
-                        $sale->totalVat = $request->Data['totalVat'];
-                        $sale->grandTotal = $request->Data['grandTotal'];
-                        if($request->Data['lastClosing']<0 && $request->Data['paidBalance']==0 || $request->Data['paidBalance']==0.00)
-                        {
-                            $sale->paidBalance = ($request->Data['grandTotal']-$request->Data['paidBalance']-$request->Data['remainingBalance']);
-                            $sale->remainingBalance = $request->Data['remainingBalance'];
-                            $isPaid_current = false;
-                            $partialPaid_current =true;
-                        }
-                        elseif($request->Data['lastClosing']<0)
-                        {
-                            $sale->paidBalance = ($request->Data['grandTotal']-$request->Data['paidBalance']-$request->Data['lastClosing']);
-                            $sale->remainingBalance = $request->Data['remainingBalance'];
-                        }
-                        else
-                        {
-                            $sale->paidBalance = $request->Data['grandTotal'];
-                            $sale->remainingBalance = 0;
-                        }
-                        //$sale->paidBalance = $request->Data['grandTotal'];
-                        //$sale->remainingBalance = 0;
-                        $sale->customer_id = $request->Data['customer_id'];
-                        $sale->Description = 'AutoPaid';
-                        $sale->IsPaid = $isPaid_current;
-                        $sale->IsPartialPaid = $partialPaid_current;
-                        $sale->IsReturn = false;
-                        $sale->IsPartialReturn = false;
-                        $sale->IsNeedStampOrSignature = false;
-                        $sale->user_id = $user_id;
-                        $sale->company_id = $company_id;
-                        $sale->save();
-                        $sale = $sale->id;
-                        foreach($request->Data['orders'] as $detail)
-                        {
-                            $data =  SaleDetail::create([
-                                "product_id"        => $detail['product_id'],
-                                "vehicle_id"        => $detail['vehicle_id'],
-                                "unit_id"        => $detail['unit_id'],
-                                "Quantity"        => $detail['Quantity'],
-                                "Price"        => $detail['Price'],
-                                "rowTotal"        => $detail['rowTotal'],
-                                "VAT"        => $detail['Vat'],
-                                "rowVatAmount"        => $detail['rowVatAmount'],
-                                "rowSubTotal"        => $detail['rowSubTotal'],
-                                "PadNumber"        => $detail['PadNumber'],
-                                "company_id" => $company_id,
-                                "user_id"      => $user_id,
-                                "sale_id"      => $sale,
-                                "createdDate" => $detail['createdDate'],
-                                "customer_id" => $request->Data['customer_id'],
-                            ]);
-                        }
-                    }
-                    else
-                    {
-                        $isPaid = true;
-                        $partialPaid =false;
-
-                        $user_id = session('user_id');
-                        $company_id = session('company_id');
-
-                        $sale = new Sale();
-                        $sale->SaleNumber = $request->Data['SaleNumber'];
-                        $sale->SaleDate = $request->Data['SaleDate'];
-                        $sale->Total = $request->Data['Total'];
-                        $sale->subTotal = $request->Data['subTotal'];
-                        $sale->totalVat = $request->Data['totalVat'];
-                        $sale->grandTotal = $request->Data['grandTotal'];
-                        $sale->paidBalance = $request->Data['grandTotal'];
-                        $sale->remainingBalance = 0;
-                        $sale->customer_id = $request->Data['customer_id'];
-                        $sale->Description = 'AutoPaid';
-                        $sale->IsPaid = $isPaid;
-                        $sale->IsPartialPaid = $partialPaid;
-                        $sale->IsReturn = false;
-                        $sale->IsPartialReturn = false;
-                        $sale->IsNeedStampOrSignature = false;
-                        $sale->user_id = $user_id;
-                        $sale->company_id = $company_id;
-                        $sale->save();
-                        $sale = $sale->id;
-                        foreach($request->Data['orders'] as $detail)
-                        {
-                            $data =  SaleDetail::create([
-                                "product_id"        => $detail['product_id'],
-                                "vehicle_id"        => $detail['vehicle_id'],
-                                "unit_id"        => $detail['unit_id'],
-                                "Quantity"        => $detail['Quantity'],
-                                "Price"        => $detail['Price'],
-                                "rowTotal"        => $detail['rowTotal'],
-                                "VAT"        => $detail['Vat'],
-                                "rowVatAmount"        => $detail['rowVatAmount'],
-                                "rowSubTotal"        => $detail['rowSubTotal'],
-                                "PadNumber"        => $detail['PadNumber'],
-                                "company_id" => $company_id,
-                                "user_id"      => $user_id,
-                                "sale_id"      => $sale,
-                                "createdDate" => $detail['createdDate'],
-                                "customer_id" => $request->Data['customer_id'],
-                            ]);
-                        }
+                        $data =  SaleDetail::create([
+                            "product_id"        => $detail['product_id'],
+                            "vehicle_id"        => $detail['vehicle_id'],
+                            "unit_id"        => $detail['unit_id'],
+                            "Quantity"        => $detail['Quantity'],
+                            "Price"        => $detail['Price'],
+                            "rowTotal"        => $detail['rowTotal'],
+                            "VAT"        => $detail['Vat'],
+                            "rowVatAmount"        => $detail['rowVatAmount'],
+                            "rowSubTotal"        => $detail['rowSubTotal'],
+                            "PadNumber"        => $detail['PadNumber'],
+                            "company_id" => $company_id,
+                            "user_id"      => $user_id,
+                            "sale_id"      => $sale,
+                            "createdDate" => $detail['createdDate'],
+                            "customer_id" => $request->Data['customer_id'],
+                        ]);
                     }
                 }
                 else
@@ -569,29 +423,29 @@ class   SaleRepository implements ISaleRepositoryInterface
 
                                 if($isPartialPaid==true)
                                 {
-                                    $this_sale = Sale::find($sale->id);
-                                    $this_sale->update([
-                                        "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
-                                        "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
-                                        "IsPaid" => $isPaid,
-                                        "IsPartialPaid" => $isPartialPaid,
-                                        "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid',
-                                        "account_transaction_payment_id" => 'CashOverflow',
-                                    ]);
+//                                    $this_sale = Sale::find($sale->id);
+//                                    $this_sale->update([
+//                                        "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
+//                                        "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
+//                                        "IsPaid" => $isPaid,
+//                                        "IsPartialPaid" => $isPartialPaid,
+//                                        "IsNeedStampOrSignature" => false,
+//                                        "Description" => 'AutoPaid',
+//                                        "account_transaction_payment_id" => 'CashOverflow',
+//                                    ]);
                                 }
                                 else
                                 {
-                                    $this_sale = Sale::find($sale->id);
-                                    $this_sale->update([
-                                        "paidBalance"        => $sale->grandTotal,
-                                        "remainingBalance"   => $still_payable_to_you,
-                                        "IsPaid" => $isPaid,
-                                        "IsPartialPaid" => $isPartialPaid,
-                                        "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid',
-                                        "account_transaction_payment_id" => 'CashOverflow',
-                                    ]);
+//                                    $this_sale = Sale::find($sale->id);
+//                                    $this_sale->update([
+//                                        "paidBalance"        => $sale->grandTotal,
+//                                        "remainingBalance"   => $still_payable_to_you,
+//                                        "IsPaid" => $isPaid,
+//                                        "IsPartialPaid" => $isPartialPaid,
+//                                        "IsNeedStampOrSignature" => false,
+//                                        "Description" => 'AutoPaid',
+//                                        "account_transaction_payment_id" => 'CashOverflow',
+//                                    ]);
                                 }
 
                                 if($total_i_have<=0)
@@ -706,29 +560,29 @@ class   SaleRepository implements ISaleRepositoryInterface
 
                                 if($isPartialPaid==true)
                                 {
-                                    $this_sale = Sale::find($sale->id);
-                                    $this_sale->update([
-                                        "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
-                                        "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
-                                        "IsPaid" => $isPaid,
-                                        "IsPartialPaid" => $isPartialPaid,
-                                        "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid',
-                                        "account_transaction_payment_id" => 'CashOverflow',
-                                    ]);
+//                                    $this_sale = Sale::find($sale->id);
+//                                    $this_sale->update([
+//                                        "paidBalance"        => $sale->paidBalance+$total_giving_to_you,
+//                                        "remainingBalance"   => $sale->remainingBalance-$total_giving_to_you,
+//                                        "IsPaid" => $isPaid,
+//                                        "IsPartialPaid" => $isPartialPaid,
+//                                        "IsNeedStampOrSignature" => false,
+//                                        "Description" => 'AutoPaid',
+//                                        "account_transaction_payment_id" => 'CashOverflow',
+//                                    ]);
                                 }
                                 else
                                 {
-                                    $this_sale = Sale::find($sale->id);
-                                    $this_sale->update([
-                                        "paidBalance"        => $sale->grandTotal,
-                                        "remainingBalance"   => $still_payable_to_you,
-                                        "IsPaid" => $isPaid,
-                                        "IsPartialPaid" => $isPartialPaid,
-                                        "IsNeedStampOrSignature" => false,
-                                        "Description" => 'AutoPaid',
-                                        "account_transaction_payment_id" => 'CashOverflow',
-                                    ]);
+//                                    $this_sale = Sale::find($sale->id);
+//                                    $this_sale->update([
+//                                        "paidBalance"        => $sale->grandTotal,
+//                                        "remainingBalance"   => $still_payable_to_you,
+//                                        "IsPaid" => $isPaid,
+//                                        "IsPartialPaid" => $isPartialPaid,
+//                                        "IsNeedStampOrSignature" => false,
+//                                        "Description" => 'AutoPaid',
+//                                        "account_transaction_payment_id" => 'CashOverflow',
+//                                    ]);
                                 }
 
                                 if($total_i_have<=0)
@@ -1240,6 +1094,7 @@ class   SaleRepository implements ISaleRepositoryInterface
                                     $cash_transaction->user_id = $user_id;
                                     $cash_transaction->company_id = $company_id;
                                     $cash_transaction->PadNumber = $previous_probable_cash_entry->PadNumber;
+                                    //giving error when sales paid and adding vat if not added
                                     $cash_transaction->save();
 
                                     $accountTransaction = AccountTransaction::where(['customer_id'=> $request->Data['customer_id'],])->get();

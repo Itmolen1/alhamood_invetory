@@ -20,6 +20,8 @@ use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\ExpenseDetail;
+use App\Models\Loan;
+use App\Models\LoanMaster;
 use App\Models\PaymentReceive;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
@@ -796,7 +798,16 @@ class ReportRepository implements IReportRepositoryInterface
     {
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $all_cash_transactions=CashTransaction::where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->orderBy('createdDate')->get();
+            $all_cash_transactions=CashTransaction::where('company_id',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('Details','not like','%hide%')->orderBy('createdDate')->orderBy('id')->get();
+
+            //$prev_date = date('Y-m-d', strtotime($request->fromDate .' -1 day'));
+            //$get_max_id=CashTransaction::where('company_id',session('company_id'))->where('createdDate','=',$prev_date)->max('id');
+            //$closing_amount=CashTransaction::where('company_id',session('company_id'))->where('id',$get_max_id)->first();
+
+            $sum_of_debit_before_from_date=CashTransaction::where('company_id',session('company_id'))->where('createdDate','<',$request->fromDate)->sum('Debit');
+            $sum_of_credit_before_from_date=CashTransaction::where('company_id',session('company_id'))->where('createdDate','<',$request->fromDate)->sum('Credit');
+            $closing_amount=$sum_of_debit_before_from_date-$sum_of_credit_before_from_date;
+            //$closing_amount=$closing_amount->Differentiate;
         }
         else
         {
@@ -818,13 +829,20 @@ class ReportRepository implements IReportRepositoryInterface
 
         $pdf::SetFont('helvetica', '', 15);
         $html='Cash Transactions';
-        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
         $pdf::SetFont('helvetica', '', 12);
         $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
-        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
+        $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+        $pdf::SetFont('helvetica', '', 12);
+        $html=' Opening Balance : '.$closing_amount;
+        $pdf::writeHTMLCell(0, 0, ''    , '', $html,0, 1, 0, true, 'R', true);
+
 
         $balance=0.0;
+        $balance=$closing_amount;
+
         $debit_total=0.0;
         $credit_total=0.0;
 
@@ -1892,22 +1910,37 @@ class ReportRepository implements IReportRepositoryInterface
         //echo "<pre>";print_r($row);die;
 
         // getting latest closing for all customer from account transaction table
-        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id','ac.company_id','ac.Differentiate','s.Name','s.Mobile')
-            ->where('ac.customer_id','!=',0)
-            ->where('ac.company_id',session('company_id'))
-            ->groupBy('ac.customer_id')
-            ->orderBy('ac.id','asc')
-            ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')
-            ->get();
-        $row=json_decode(json_encode($row), true);
-        $needed_ids=array_column($row,'max_id');
+//        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.customer_id','ac.company_id','ac.Differentiate','s.Name','s.Mobile')
+//            ->where('ac.customer_id','!=',0)
+//            ->where('ac.company_id',session('company_id'))
+//            ->groupBy('ac.customer_id')
+//            ->orderBy('ac.id','asc')
+//            ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')
+//            ->get();
+//        $row=json_decode(json_encode($row), true);
+//        $needed_ids=array_column($row,'max_id');
+//
+//        $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.customer_id','ac.Differentiate','s.Name','s.Mobile')
+//            ->whereIn('ac.id',$needed_ids)
+//            ->orderBy('ac.Differentiate','desc')
+//            ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')
+//            ->get();
+//        $row=json_decode(json_encode($row), true);
 
-        $row = DB::table('account_transactions as ac')->select( 'ac.id','ac.customer_id','ac.Differentiate','s.Name','s.Mobile')
-            ->whereIn('ac.id',$needed_ids)
-            ->orderBy('ac.Differentiate','desc')
-            ->leftjoin('customers as s', 's.id', '=', 'ac.customer_id')
-            ->get();
-        $row=json_decode(json_encode($row), true);
+        $result_array=array();
+        $customers=Customer::where('company_id',session('company_id'))->get();
+        foreach ($customers as $customer)
+        {
+            //get diff of total debit and credit column
+            $credit_sum=AccountTransaction::where('customer_id',$customer->id)->whereNull('updateDescription')->sum('Credit');
+            $debit_sum=AccountTransaction::where('customer_id',$customer->id)->whereNull('updateDescription')->sum('Debit');
+            $diff=$debit_sum-$credit_sum;
+            $temp=array('Name'=>$customer->Name,'Mobile'=>$customer->Mobile,'Differentiate'=>$diff);
+            $result_array[]=$temp;
+            unset($temp);
+        }
+        $row=$this->array_sort($result_array, 'Differentiate', SORT_DESC);
+        $row=array_values($row);
         //echo "<pre>";print_r($row);die;
 
         //$data=SalesResource::collection(Sale::get()->where('remainingBalance','!=',0));
@@ -1940,6 +1973,16 @@ class ReportRepository implements IReportRepositoryInterface
             </tr>';
             $pdf::SetFont('helvetica', '', 10);
             $total_balance=0.0;
+/*            for($i=0;$i<count($row);$i++)
+            {
+                $total_balance+=$row[$i]['Differentiate'];
+                $html .='<tr>
+                <td align="center" width="50">'.($i+1).'</td>
+                <td align="left" width="200">'.($row[$i]['Name']).'</td>
+                <td align="left" width="200">'.($row[$i]['Mobile']).'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
+                </tr>';
+            }*/
             for($i=0;$i<count($row);$i++)
             {
                 $total_balance+=$row[$i]['Differentiate'];
@@ -1964,51 +2007,52 @@ class ReportRepository implements IReportRepositoryInterface
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
-            $data=CustomerAdvanceResource::collection(CustomerAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
-            if($data)
-            {
-                $pdf::SetFont('helvetica', '', 15);
-                $html='CUSTOMER ADVANCES';
-                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
-
-                $row=json_decode(json_encode($data), true);
-                //echo "<pre>";print_r($row);die;
-                $pdf::SetFont('helvetica', '', 10);
-                $html = '<table border="0.5" cellpadding="2">
-                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
-                    <th align="center" width="50">S.No</th>
-                    <th align="center" width="300">Account</th>
-                    <th align="center" width="100">Cell</th>
-                    <th align="right" width="80">Balance</th>
-                </tr>';
-
-                $total_advances=0.0;
-                for($j=0;$j<count($row);$j++)
-                {
-                    if($row[$i]['Differentiate']>0)
-                    {
-                        $total_advances += $row[$j]['Differentiate'];
-                        $html .= '<tr>
-                        <td align="center" width="50">' . ($j + 1) . '</td>
-                        <td align="left" width="300">' . ($row[$j]['api_customer']['Name']) . '</td>
-                        <td align="center" width="100">' . ($row[$j]['api_customer']['Mobile']) . '</td>
-                        <td align="right" width="80">' . (number_format($row[$j]['Differentiate'], 2, '.', ',')) . '</td>
-                        </tr>';
-                    }
-                }
-                $html.='</table>';
-                $pdf::writeHTML($html, true, false, false, false, '');
-
-                $pdf::SetFont('helvetica', 'B', 13);
-                $html='<table border="0" cellpadding="0">';
-                $html.= '
-                 <tr color="red">
-                     <td width="450" align="right" colspan="3">TOTAL ADVANCES : </td>
-                     <td width="80" align="right">'.number_format($total_advances,2,'.',',').'</td>
-                 </tr>';
-                $html.='</table>';
-                $pdf::writeHTML($html, true, false, false, false, '');
-            }
+            $total_advances=0.0;
+//            $data=CustomerAdvanceResource::collection(CustomerAdvance::get()->where('Amount','!=',0)->where('isPushed','=',1));
+//            if($data)
+//            {
+//                $pdf::SetFont('helvetica', '', 15);
+//                $html='CUSTOMER ADVANCES';
+//                $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+//
+//                $row=json_decode(json_encode($data), true);
+//                //echo "<pre>";print_r($row);die;
+//                $pdf::SetFont('helvetica', '', 10);
+//                $html = '<table border="0.5" cellpadding="2">
+//                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+//                    <th align="center" width="50">S.No</th>
+//                    <th align="center" width="300">Account</th>
+//                    <th align="center" width="100">Cell</th>
+//                    <th align="right" width="80">Balance</th>
+//                </tr>';
+//
+//                $total_advances=0.0;
+//                for($j=0;$j<count($row);$j++)
+//                {
+//                    if($row[$j]['Differentiate']>0)
+//                    {
+//                        $total_advances += $row[$j]['Differentiate'];
+//                        $html .= '<tr>
+//                        <td align="center" width="50">' . ($j + 1) . '</td>
+//                        <td align="left" width="300">' . ($row[$j]['api_customer']['Name']) . '</td>
+//                        <td align="center" width="100">' . ($row[$j]['api_customer']['Mobile']) . '</td>
+//                        <td align="right" width="80">' . (number_format($row[$j]['Differentiate'], 2, '.', ',')) . '</td>
+//                        </tr>';
+//                    }
+//                }
+//                $html.='</table>';
+//                $pdf::writeHTML($html, true, false, false, false, '');
+//
+//                $pdf::SetFont('helvetica', 'B', 13);
+//                $html='<table border="0" cellpadding="0">';
+//                $html.= '
+//                 <tr color="red">
+//                     <td width="450" align="right" colspan="3">TOTAL ADVANCES : </td>
+//                     <td width="80" align="right">'.number_format($total_advances,2,'.',',').'</td>
+//                 </tr>';
+//                $html.='</table>';
+//                $pdf::writeHTML($html, true, false, false, false, '');
+//            }
             $pdf::SetFont('helvetica', '', 12);
             $html='Receivable Total : '.number_format($total_balance,2,'.',',');
             $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'R', true);
@@ -2035,6 +2079,40 @@ class ReportRepository implements IReportRepositoryInterface
         {
             return FALSE;
         }
+    }
+
+    function array_sort($array, $on, $order=SORT_ASC)
+    {
+        $new_array = array();
+        $sortable_array = array();
+
+        if (count($array) > 0) {
+            foreach ($array as $k => $v) {
+                if (is_array($v)) {
+                    foreach ($v as $k2 => $v2) {
+                        if ($k2 == $on) {
+                            $sortable_array[$k] = $v2;
+                        }
+                    }
+                } else {
+                    $sortable_array[$k] = $v;
+                }
+            }
+
+            switch ($order) {
+                case SORT_ASC:
+                    asort($sortable_array);
+                    break;
+                case SORT_DESC:
+                    arsort($sortable_array);
+                    break;
+            }
+
+            foreach ($sortable_array as $k => $v) {
+                $new_array[$k] = $array[$k];
+            }
+        }
+        return $new_array;
     }
 
     public function PrintSupplierStatement()
@@ -2352,7 +2430,7 @@ class ReportRepository implements IReportRepositoryInterface
 
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $account_transactions = AccountTransaction::orderBy('createdDate','asc')->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id)->whereNull('updateDescription')->get();
+            $account_transactions = AccountTransaction::orderBy('createdDate','asc')->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id)->whereNull('updateDescription')->orderBy('createdDate','desc')->get();
         }
         else
         {
@@ -2590,7 +2668,7 @@ class ReportRepository implements IReportRepositoryInterface
 
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $account_transactions=AccountTransaction::where('customer_id','=',$request->customer_id)->whereBetween('createdDate', [$request->fromDate, $request->toDate])->where('updateDescription','=',NULL)->orderBy('id')->get();
+            $account_transactions=AccountTransaction::where('customer_id','=',$request->customer_id)->whereBetween('createdDate', [$request->fromDate, $request->toDate])->whereNull('updateDescription')->orderBy('createdDate')->orderBy('id')->get();
             //echo "<pre>123";print_r($account_transactions);die;
             //$data=Receivable_summary_log::with(['customer'=>function($q){$q->select('id','Name');}])->where('company_id',session('company_id'))->whereBetween('RecordDate', [$request->fromDate, $request->toDate])->orderBy('RecordDate')->get();
         }
@@ -3019,14 +3097,13 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::writeHTML($html, true, false, false, false, '');
 
             $pdf::lastPage();
-            $time=time();
+            $time='p_and_l_'.time();
             $fileLocation = storage_path().'/app/public/report_files/';
             $fileNL = $fileLocation.'//'.$time.'.pdf';
             $pdf::Output($fileNL, 'F');
             $url=url('/').'/storage/app/public/report_files/'.$time.'.pdf';
             $url=array('url'=>$url);
             return $url;
-
         }
         else
         {
@@ -3044,7 +3121,25 @@ class ReportRepository implements IReportRepositoryInterface
             $company_id = session('company_id');
 
             //total receivable from customers
-            $total_receivable=Sale::where('SaleDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('SaleDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('remainingBalance');
+//            $total_receivable=Sale::where('SaleDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('SaleDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('remainingBalance');
+
+            $result_array=array();
+            $customers=Customer::where('company_id',session('company_id'))->get();
+            foreach ($customers as $customer)
+            {
+                //get diff of total debit and credit column
+                $credit_sum=AccountTransaction::where('customer_id',$customer->id)->whereNull('updateDescription')->sum('Credit');
+                $debit_sum=AccountTransaction::where('customer_id',$customer->id)->whereNull('updateDescription')->sum('Debit');
+                $diff=$debit_sum-$credit_sum;
+                $temp=array('Name'=>$customer->Name,'Mobile'=>$customer->Mobile,'Differentiate'=>$diff);
+                $result_array[]=$temp;
+                unset($temp);
+            }
+            $row=$this->array_sort($result_array, 'Differentiate', SORT_DESC);
+            $row=array_values($row);
+            $row=array_column($row,'Differentiate');
+            $total_receivable=array_sum($row);
+
             //cash in hand
             $cash_in_hand=CashTransaction::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->max('id');
             $lastTransaction = CashTransaction::where(['id'=> $cash_in_hand,])->get()->first();
@@ -3070,6 +3165,14 @@ class ReportRepository implements IReportRepositoryInterface
 
 
             $total_expense=Expense::where('expenseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('expenseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('grandTotal');
+
+            //loans
+
+            //loan payable
+            $loan_payable=LoanMaster::where('company_id','=',$company_id)->where('isPushed','=',1)->where('deleted_at','=',NULL)->where('loanType',1)->sum('inward_RemainingBalance');
+
+            //loan receivable
+            $loan_receivable=LoanMaster::where('company_id','=',$company_id)->where('isPushed','=',1)->where('deleted_at','=',NULL)->where('loanType',0)->sum('outward_RemainingBalance');
 
             $pdf = new PDF();
             $pdf::SetXY(5,5);
@@ -3106,16 +3209,24 @@ class ReportRepository implements IReportRepositoryInterface
                      <td width="300" align="right" colspan="3">Total Supplier Outstanding</td>
                      <td width="200" align="right">'.number_format($total_supplier_outstanding,2,'.',',').'</td>
                     </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Loan Payable</td>
+                     <td width="200" align="right">'.number_format($loan_payable,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Loan Receivable</td>
+                     <td width="200" align="right">'.number_format($loan_receivable,2,'.',',').'</td>
+                    </tr>';
             $html.= '<tr style="color:#0e4714">
                      <td width="300" align="right" colspan="3">Garage Value </td>
-                     <td width="200" align="right">'.number_format((($total_receivable+$cash_in_hand+$total_balance_in_bank+$stock_value)-$total_supplier_outstanding),2,'.',',').'</td>
+                     <td width="200" align="right">'.number_format((($total_receivable+$cash_in_hand+$total_balance_in_bank+$stock_value+$loan_receivable)-($total_supplier_outstanding+$loan_payable)),2,'.',',').'</td>
                     </tr>';
             $pdf::SetFillColor(255, 0, 0);
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
 
             $pdf::lastPage();
-            $time=time();
+            $time='Garage_Value_'.time();
             $fileLocation = storage_path().'/app/public/report_files/';
             $fileNL = $fileLocation.'//'.$time.'.pdf';
             $pdf::Output($fileNL, 'F');
