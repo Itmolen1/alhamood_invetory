@@ -78,16 +78,16 @@ class ExpensesRepository implements IExpensesRepositoryInterface
 
         if(empty($request->input('search.value')))
         {
-            $sql = 'select e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on e.id = ed.expense_id where e.company_id = '.session('company_id').' and e.isActive = 1  order by id desc limit '.$limit.' offset '.$start ;
+            $sql = 'select e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,e.payment_type,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on e.id = ed.expense_id where e.company_id = '.session('company_id').' and e.isActive = 1 and e.deleted_at is null  order by id desc limit '.$limit.' offset '.$start ;
             $expenses = DB::select( DB::raw($sql));
         }
         else
         {
             $search = $request->input('search.value');
-            $sql = 'select e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on e.id = ed.expense_id where e.company_id = '.session('company_id').' and e.referenceNumber LIKE "%'.$search.'%" '.' and e.isActive = 1  order by id desc limit '.$limit.' offset '.$start;
+            $sql = 'select e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,e.payment_type,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on e.id = ed.expense_id where e.company_id = '.session('company_id').' and e.referenceNumber LIKE "%'.$search.'%" '.' and e.isActive = 1 and e.deleted_at is null order by id desc limit '.$limit.' offset '.$start;
             $expenses = DB::select( DB::raw($sql));
 
-            $sql_count = 'select COUNT(*) TotalCount,e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on e.id = ed.expense_id where e.company_id = '.session('company_id').' and e.referenceNumber LIKE "%'.$search.'%" '.' and e.isActive = 1  order by id desc limit '.$limit.' offset '.$start;
+            $sql_count = 'select COUNT(*) TotalCount,e.id,e.company_id,e.supplier_id,e.expenseDate,e.subTotal,e.totalVat,e.grandTotal,s.Name,e.referenceNumber,ed.cat_name from expenses as e left join suppliers as s on s.id = e.supplier_id join (SELECT expense_details.*,ec.Name as cat_name FROM expense_details join expense_categories as ec on expense_details.expense_category_id=ec.id WHERE expense_details.deleted_at is null) as ed on e.id = ed.expense_id where e.company_id = '.session('company_id').' and e.referenceNumber LIKE "%'.$search.'%" '.' and e.isActive = 1 and e.deleted_at is null  order by id desc limit '.$limit.' offset '.$start;
             $expense_count = DB::select(DB::raw($sql_count));
             if(!empty($expense_count))
             {
@@ -108,8 +108,9 @@ class ExpensesRepository implements IExpensesRepositoryInterface
                 $nestedData['subTotal'] = $expense->subTotal ?? 0.00;
                 $nestedData['totalVat'] = $expense->totalVat ?? 0.00;
                 $nestedData['grandTotal'] = $expense->grandTotal ?? 0.00;
+                $nestedData['payment_type'] = $expense->payment_type ?? "N.A.";
                 //$nestedData['payment_type'] = $expense->grandTotal ?? 0.00;
-                $nestedData['action'] = '<a href="'.route('expenses.edit', $expense->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>&nbsp;<button class="btn btn-dark" onclick="show_detail(this.id)" type="button" id="show_'.$expense->id.'">Show Details</button>';
+                $nestedData['action'] = '<a href="'.route('expenses.edit', $expense->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>&nbsp;<button class="btn btn-dark" onclick="show_detail(this.id)" type="button" id="show_'.$expense->id.'">Detail</button>&nbsp;<a href="'.url('Expense_delete', $expense->id).'" onclick="return ConfirmDelete()"  class="btn btn-danger btn-sm"><i style="font-size: 20px" class="fa fa-trash"></i></i></a>';
                 $data[] = $nestedData;
             }
         }
@@ -837,9 +838,86 @@ class ExpensesRepository implements IExpensesRepositoryInterface
         return view('admin.expense.edit',compact('expense_details','suppliers','update_notes','employees','expense_categories','banks'));
     }
 
-    public function delete(Request $request, $Id)
+    public function delete($Id)
     {
-        // TODO: Implement delete() method.
+        DB::transaction(function () use($Id)
+        {
+            $expense = Expense::findOrFail($Id);
+            $user_id = session('user_id');
+            $company_id = session('company_id');
+            if ($expense) {
+                //cash expense
+                if ($expense->bank_id == 0)
+                {
+                    $cashTransaction = CashTransaction::where(['company_id' => $company_id])->get();
+                    $difference = $cashTransaction->last()->Differentiate;
+                    $cash_transaction = new CashTransaction();
+                    $cash_transaction->Reference = $expense->id;
+                    $cash_transaction->createdDate = $expense->expenseDate;
+                    $cash_transaction->Type = 'expenses';
+                    $cash_transaction->Details = 'CashExpenseReversal|' . $expense->id;
+                    $cash_transaction->Credit = 0.00;
+                    $cash_transaction->Debit = $expense->grandTotal;
+                    $cash_transaction->Differentiate = $difference + $expense->grandTotal;
+                    $cash_transaction->user_id = $user_id;
+                    $cash_transaction->company_id = $company_id;
+                    $cash_transaction->PadNumber = $expense->referenceNumber;
+                    $cash_transaction->save();
+
+                    AccountTransaction::where('Description','like','%'.'Expense|'.$expense->id.'%')->update(['updateDescription'=>'hide']);
+                    $expense->update(['user_id'=>$user_id]);
+                    $expense->delete();
+                }
+                else
+                {
+                    if($expense->payment_type=='bank')
+                    {
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $expense->bank_id])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$expense->id;
+                        $bank_transaction->createdDate=$expense->expenseDate ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='BankTransferExpenseReversal|'.$expense->id;
+                        $bank_transaction->Credit=0.00;
+                        $bank_transaction->Debit=$expense->grandTotal;
+                        $bank_transaction->Differentiate=$difference+$expense->grandTotal;
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $expense->bank_id;
+                        $bank_transaction->updateDescription = $expense->ChequeNumber;
+                        $bank_transaction->save();
+
+                        AccountTransaction::where('Description','like','%'.'Expense|'.$expense->id.'%')->update(['updateDescription'=>'hide']);
+                        $expense->update(['user_id'=>$user_id]);
+                        $expense->delete();
+                    }
+                    elseif($expense->payment_type=='cheque')
+                    {
+                        $bankTransaction = BankTransaction::where(['bank_id'=> $expense->bank_id])->get();
+                        $difference = $bankTransaction->last()->Differentiate;
+                        $bank_transaction = new BankTransaction();
+                        $bank_transaction->Reference=$expense->id;
+                        $bank_transaction->createdDate=$expense->expenseDate ?? date('Y-m-d h:i:s');
+                        $bank_transaction->Type='expenses';
+                        $bank_transaction->Details='ChequeExpenseReversal|'.$expense;
+                        $bank_transaction->Credit=0.00;
+                        $bank_transaction->Debit=$expense->grandTotal;;
+                        $bank_transaction->Differentiate=$difference+$expense->grandTotal;
+                        $bank_transaction->user_id = $user_id;
+                        $bank_transaction->company_id = $company_id;
+                        $bank_transaction->bank_id = $expense->bank_id;
+                        $bank_transaction->updateDescription = $expense->ChequeNumber;
+                        $bank_transaction->save();
+
+                        AccountTransaction::where('Description','like','%'.'Expense|'.$expense->id.'%')->update(['updateDescription'=>'hide']);
+                        $expense->update(['user_id'=>$user_id]);
+                        $expense->delete();
+                    }
+                }
+            }
+        });
+        return redirect()->route('expenses.index');
     }
 
     public function restore($Id)

@@ -68,7 +68,7 @@ class ReportRepository implements IReportRepositoryInterface
 
     public function GetDetailSupplierStatement()
     {
-        $suppliers = Supplier::where('company_id',session('company_id'))->get();
+        $suppliers = Supplier::where('company_id',session('company_id'))->where('company_type_id',2)->get();
         return view('admin.report.supplier_detailed_statement',compact('suppliers'));
     }
 
@@ -2125,7 +2125,7 @@ class ReportRepository implements IReportRepositoryInterface
 //        $row=json_decode(json_encode($row), true);
 
         // getting latest closing for all suppliers from account transaction table
-        $row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id','ac.company_id','ac.Differentiate','s.Name','s.Mobile')
+        /*$row = DB::table('account_transactions as ac')->select( DB::raw('MAX(ac.id) as max_id'),'ac.supplier_id','ac.company_id','ac.Differentiate','s.Name','s.Mobile')
             ->where('ac.supplier_id','!=',0)
             ->where('ac.company_id',session('company_id'))
             ->groupBy('ac.supplier_id')
@@ -2140,9 +2140,23 @@ class ReportRepository implements IReportRepositoryInterface
             ->orderBy('ac.id','asc')
             ->leftjoin('suppliers as s', 's.id', '=', 'ac.supplier_id')
             ->get();
-        $row=json_decode(json_encode($row), true);
+        $row=json_decode(json_encode($row), true);*/
         //echo "<pre>";print_r($row);die;
 
+        $result_array=array();
+        $suppliers=Supplier::where('company_id',session('company_id'))->where('company_type_id',2)->get();
+        foreach ($suppliers as $supplier)
+        {
+            //get diff of total debit and credit column
+            $credit_sum=AccountTransaction::where('supplier_id',$supplier->id)->whereNull('updateDescription')->sum('Credit');
+            $debit_sum=AccountTransaction::where('supplier_id',$supplier->id)->whereNull('updateDescription')->sum('Debit');
+            $diff=$credit_sum-$debit_sum;
+            $temp=array('Name'=>$supplier->Name,'Mobile'=>$supplier->Mobile,'Differentiate'=>$diff);
+            $result_array[]=$temp;
+            unset($temp);
+        }
+        $row=$this->array_sort($result_array, 'Differentiate', SORT_DESC);
+        $row=array_values($row);
 
         //$data=PurchaseResource::collection(Purchase::get()->where('remainingBalance','!=',0));
         if(!empty($row))
@@ -2180,16 +2194,13 @@ class ReportRepository implements IReportRepositoryInterface
             $total_balance=0.0;
             for($i=0;$i<count($row);$i++)
             {
-                if($row[$i]['Differentiate']>0)
-                {
-                    $total_balance+=$row[$i]['Differentiate'];
-                    $html .='<tr>
-                    <td align="center" width="50">'.($i+1).'</td>
-                    <td align="left" width="300">'.($row[$i]['Name']).'</td>
-                    <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
-                    <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
-                    </tr>';
-                }
+                $total_balance+=$row[$i]['Differentiate'];
+                $html .='<tr>
+                <td align="center" width="50">'.($i+1).'</td>
+                <td align="left" width="300">'.($row[$i]['Name']).'</td>
+                <td align="center" width="100">'.($row[$i]['Mobile']).'</td>
+                <td align="right" width="80">'.(number_format($row[$i]['Differentiate'],2,'.',',')).'</td>
+                </tr>';
             }
             $html.='</table>';
             $pdf::writeHTML($html, true, false, false, false, '');
@@ -3155,16 +3166,35 @@ class ReportRepository implements IReportRepositoryInterface
             }
             //stock value
                 //total purchase quantity
-                $total_purchase_qty=PurchaseDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
+                //$total_purchase_qty=PurchaseDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
+                $total_purchase_qty=PurchaseDetail::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->where('')->sum('Quantity');
                 //total sales quantity
                 $total_sales_qty=SaleDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
                 $stock_qty=$total_sales_qty-$total_purchase_qty;
                 $stock_value=$stock_qty*$request->currentRate;
-            //supplier outstanding
-            $total_supplier_outstanding=Purchase::where('PurchaseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('PurchaseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('remainingBalance');
+
+                //supplier outstanding
+//            $total_supplier_outstanding=Purchase::where('PurchaseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('PurchaseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('remainingBalance');
+
+            $result_array=array();
+            $suppliers=Supplier::where('company_id',session('company_id'))->where('company_type_id',2)->get();
+            foreach ($suppliers as $supplier)
+            {
+                //get diff of total debit and credit column
+                $credit_sum=AccountTransaction::where('supplier_id',$supplier->id)->whereNull('updateDescription')->sum('Credit');
+                $debit_sum=AccountTransaction::where('supplier_id',$supplier->id)->whereNull('updateDescription')->sum('Debit');
+                $diff=$credit_sum-$debit_sum;
+                $temp=array('Name'=>$supplier->Name,'Mobile'=>$supplier->Mobile,'Differentiate'=>$diff);
+                $result_array[]=$temp;
+                unset($temp);
+            }
+            $row=$this->array_sort($result_array, 'Differentiate', SORT_DESC);
+            $row=array_values($row);
+            $row=array_column($row,'Differentiate');
+            $total_supplier_outstanding=array_sum($row);
 
 
-            $total_expense=Expense::where('expenseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('expenseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('grandTotal');
+//            $total_expense=Expense::where('expenseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('expenseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('grandTotal');
 
             //loans
 
@@ -3194,29 +3224,34 @@ class ReportRepository implements IReportRepositoryInterface
                      <td width="200" align="right">'.number_format($total_receivable,2,'.',',').'</td>
                     </tr>';
             $html.= '<tr>
-                     <td width="300" align="right" colspan="3">Total Cash </td>
+                     <td width="300" align="right" colspan="3">Total Cash +</td>
                      <td width="200" align="right">'.number_format($cash_in_hand,2,'.',',').'</td>
                     </tr>';
             $html.= '<tr style="color:#5e3431">
-                     <td width="300" align="right" colspan="3">Total Bank </td>
+                     <td width="300" align="right" colspan="3">Total Bank +</td>
                      <td width="200" align="right">'.number_format($total_balance_in_bank,2,'.',',').'</td>
                     </tr>';
             $html.= '<tr style="color:#5e3431">
-                     <td width="300" align="right" colspan="3">Current Stock Value </td>
+                     <td width="300" align="right" colspan="3">Current Stock Value + <br>'.$stock_qty.'@'.$request->currentRate.'</td>
                      <td width="200" align="right">'.number_format($stock_value,2,'.',',').'</td>
                     </tr>';
             $html.= '<tr style="color:#5e3431">
-                     <td width="300" align="right" colspan="3">Total Supplier Outstanding</td>
+                     <td width="300" align="right" colspan="3">Loan Receivable +</td>
+                     <td width="200" align="right">'.number_format($loan_receivable,2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Subtotal = </td>
+                     <td width="200" align="right">'.number_format(($total_receivable+$cash_in_hand+$total_balance_in_bank+$stock_value+$loan_receivable),2,'.',',').'</td>
+                    </tr>';
+            $html.= '<tr style="color:#5e3431">
+                     <td width="300" align="right" colspan="3">Total Supplier Outstanding -</td>
                      <td width="200" align="right">'.number_format($total_supplier_outstanding,2,'.',',').'</td>
                     </tr>';
             $html.= '<tr style="color:#5e3431">
-                     <td width="300" align="right" colspan="3">Loan Payable</td>
+                     <td width="300" align="right" colspan="3">Loan Payable -</td>
                      <td width="200" align="right">'.number_format($loan_payable,2,'.',',').'</td>
                     </tr>';
-            $html.= '<tr style="color:#5e3431">
-                     <td width="300" align="right" colspan="3">Loan Receivable</td>
-                     <td width="200" align="right">'.number_format($loan_receivable,2,'.',',').'</td>
-                    </tr>';
+
             $html.= '<tr style="color:#0e4714">
                      <td width="300" align="right" colspan="3">Garage Value </td>
                      <td width="200" align="right">'.number_format((($total_receivable+$cash_in_hand+$total_balance_in_bank+$stock_value+$loan_receivable)-($total_supplier_outstanding+$loan_payable)),2,'.',',').'</td>

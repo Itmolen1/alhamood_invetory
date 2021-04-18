@@ -4,16 +4,16 @@
 namespace App\WebRepositories\Interfaces;
 
 
-use App\Http\Requests\DepositRequest;
+use App\Http\Requests\WithdrawalRequest;
 use Illuminate\Http\Request;
 
-interface IDepositRepositoryInterface
+interface IWithdrawalRepositoryInterface
 {
     public function index();
 
     public function create();
 
-    public function store(DepositRequest $depositRequest);
+    public function store(WithdrawalRequest $withdrawalRequest);
 
     public function update(Request $request, $Id);
 

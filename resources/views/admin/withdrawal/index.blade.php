@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Manual Deposits List')
+@section('title', 'Withdrawal List')
 
 @section('content')
 
@@ -12,9 +12,9 @@
                     <div class="d-flex justify-content-end align-items-center">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Deposit</li>
+                            <li class="breadcrumb-item active">Withdrawal</li>
                         </ol>
-                        <a href="{{ route('deposits.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Create New</button></a>
+                        <a href="{{ route('withdrawals.create') }}"><button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i> Create New</button></a>
                     </div>
                 </div>
             </div>
@@ -23,14 +23,14 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Deposits</h4>
+                            <h4 class="card-title">Withdrawal</h4>
                             <div class="table-responsive m-t-40">
-                                <table id="deposit_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                <table id="withdrawal_table" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                     <tr>
                                         <th>SR#</th>
                                         <th>Amount</th>
-                                        <th>To Bank</th>
+                                        <th>From Bank</th>
                                         <th>Reference</th>
                                         <th>Date</th>
                                         <th width="100">Action</th>
@@ -47,11 +47,11 @@
     </div>
     <script>
         $(document).ready(function () {
-            $('#deposit_table').dataTable({
+            $('#withdrawal_table').dataTable({
                 processing: true,
                 ServerSide: true,
                 ajax:{
-                    url: "{{ route('deposits.index') }}",
+                    url: "{{ route('withdrawals.index') }}",
                 },
                 columns:[
                     {
@@ -72,8 +72,8 @@
                         name: 'Reference'
                     },
                     {
-                        data: 'depositDate',
-                        name: 'depositDate',
+                        data: 'withdrawalDate',
+                        name: 'withdrawalDate',
                     },
                     {
                         data: 'action',

@@ -36,6 +36,7 @@
                                         <th>Sub Total</th>
                                         <th>VAT</th>
                                         <th>Total Amount</th>
+                                        <th>PaymentMode</th>
                                         <th>Action</th>
                                     </thead>
                                 </table>
@@ -139,6 +140,10 @@
                     {
                         data: 'grandTotal',
                         name: 'grandTotal',
+                    },
+                    {
+                        data: 'payment_type',
+                        name: 'payment_type',
                     },
                     {
                         data: 'action',

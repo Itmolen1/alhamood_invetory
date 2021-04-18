@@ -331,6 +331,20 @@ input:checked + .slider:before {
         $(".alert-danger").slideUp(500);
     });
 </script>
+<script>
+    function ConfirmDelete()
+    {
+        var result = confirm("Are you sure you want to delete?");
+        if(result)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+</script>
 <script src="{{ asset('admin_assets/assets/dist/js/chosen.jquery.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('admin_assets/assets/node_modules/select2/dist/js/select2.full.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('admin_assets/assets/node_modules/bootstrap-select/bootstrap-select.min.js') }}" type="text/javascript"></script>

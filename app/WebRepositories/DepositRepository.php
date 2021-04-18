@@ -21,13 +21,14 @@ class DepositRepository implements IDepositRepositoryInterface
         {
             return datatables()->of(Deposit::with('bank')->where('company_id',session('company_id'))->latest()->get())
                 ->addColumn('action', function ($data) {
-                    $button = '<form action="'.route('deposits.destroy', $data->id).'" method="POST">';
-                    $button .= @csrf_field();
-                    $button .= @method_field('DELETE');
-                    $button .= '<a href="'.route('deposits.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+//                    $button = '<form action="'.route('deposits.destroy', $data->id).'" method="POST">';
+//                    $button .= @csrf_field();
+//                    $button .= @method_field('DELETE');
+                    $button = '<a href="'.route('deposits.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
                     $button .= '&nbsp;&nbsp;';
-                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
-                    $button .= '</form>';
+                    $button .='<a href="'.url('Deposit_delete', $data->id).'" onclick="return ConfirmDelete()"  class="btn btn-danger btn-sm"><i style="font-size: 20px" class="fa fa-trash"></i></i></a>';
+//                    $button .= '<button type="button" class=" btn btn-danger btn-sm" onclick="ConfirmDelete()"><i style="font-size: 20px" class="fa fa-trash"></i></button>';
+//                    $button .= '</form>';
                     return $button;
                 })
                 ->addColumn('bankName', function($data) {
@@ -205,5 +206,56 @@ class DepositRepository implements IDepositRepositoryInterface
         $banks = Bank::all();
         $deposit = Deposit::with('bank')->find($Id);
         return view('admin.deposit.edit',compact('deposit','banks'));
+    }
+
+    public function delete($Id)
+    {
+        DB::transaction(function () use($Id) {
+            $deposited = Deposit::find($Id);
+
+            $user_id = session('user_id');
+            $company_id = session('company_id');
+
+            // start reverse accounting //
+            if($deposited)
+            {
+                // credit bank account and debit cash account
+                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                $difference = $cashTransaction->last()->Differentiate;
+                $cash_transaction = new CashTransaction();
+                $cash_transaction->Reference=$deposited->id;
+                $cash_transaction->createdDate=$deposited->depositDate;
+                $cash_transaction->Type='deposits';
+                $cash_transaction->Details='DepositReverse|'.$deposited->id;
+                $cash_transaction->Credit=0.00;
+                $cash_transaction->Debit=$deposited->Amount;
+                $cash_transaction->Differentiate=$difference+$deposited->Amount;
+                $cash_transaction->user_id = $user_id;
+                $cash_transaction->company_id = $company_id;
+                $cash_transaction->PadNumber = $deposited->Reference;
+                $cash_transaction->save();
+
+                $bankTransaction = BankTransaction::where(['bank_id'=> $deposited->bank_id])->get();
+                $difference = $bankTransaction->last()->Differentiate;
+                $bank_transaction = new BankTransaction();
+                $bank_transaction->Reference=$deposited->id;
+                $bank_transaction->createdDate=$deposited->depositDate ?? date('Y-m-d h:i:s');
+                $bank_transaction->Type='deposits';
+                $bank_transaction->Details='DepositReverse|'.$deposited->id;
+                $bank_transaction->Credit=$deposited->Amount;
+                $bank_transaction->Debit=0.00;
+                $bank_transaction->Differentiate=$difference-$deposited->Amount;
+                $bank_transaction->user_id = $user_id;
+                $bank_transaction->company_id = $company_id;
+                $bank_transaction->bank_id = $deposited->bank_id;
+                $bank_transaction->updateDescription = strip_tags($deposited->Reference);
+                $bank_transaction->save();
+            }
+            // end reverse accounting //
+
+            $deposited->update(['user_id' =>$user_id,]);
+            $deposited->delete();
+        });
+        return redirect()->route('deposits.index');
     }
 }

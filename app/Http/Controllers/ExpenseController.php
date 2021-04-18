@@ -61,8 +61,8 @@ class ExpenseController extends Controller
         return $this->expensesRepository->CheckExpenseReferenceExist($request);
     }
 
-    public function destroy(Expense $expense)
+    public function Expense_delete($Id)
     {
-        //
+        return $this->expensesRepository->delete($Id);
     }
 }

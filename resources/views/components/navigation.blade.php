@@ -133,6 +133,9 @@
                         <a href="{{ route('deposits.index') }}">Deposits</a>
                     </li>
                     <li class="border-bottom">
+                        <a href="{{ route('withdrawals.index') }}">Withdrawal</a>
+                    </li>
+                    <li class="border-bottom">
                         <a href="{{ route('bank_to_banks.index') }}">Bank To Bank</a>
                     </li>
                     <li class="border-bottom"><a href="{{ route('inward_loans.index') }}">Inward Loan</a></li>

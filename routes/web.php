@@ -55,6 +55,9 @@ route::resource('users','UserController');
 route::resource('roles','RoleController');
 route::resource('banks','BankController');
 route::resource('deposits','DepositController');
+route::get('Deposit_delete/{Id}','DepositController@Deposit_delete');
+route::resource('withdrawals','WithdrawalController');
+route::get('Withdrawal_delete/{Id}','WithdrawalController@Withdrawal_delete');
 route::resource('bank_to_banks','BankToBankController');
 route::get('getBankAccountDetail/{id}','BankController@getBankAccountDetail');
 route::resource('countries','CountryController');
@@ -84,6 +87,7 @@ route::post('expenseUpdate/{id}','ExpenseController@expenseUpdate');
 route::POST('/CheckExpenseReferenceExist','ExpenseController@CheckExpenseReferenceExist');
 route::resource('employees','EmployeeController');
 route::get('getExpenseDetail/{Id}','ExpenseController@getExpenseDetail');
+route::get('Expense_delete/{Id}','ExpenseController@Expense_delete');
 
 ////////////// sales /////////////////////
 route::resource('sales','SaleController');

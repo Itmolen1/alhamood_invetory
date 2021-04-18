@@ -64,6 +64,7 @@ use App\WebRepositories\Interfaces\ISupplierRepositoryInterface;
 use App\WebRepositories\Interfaces\IUnitRepositoryInterface;
 use App\WebRepositories\Interfaces\IUserRepositoryInterface;
 use App\WebRepositories\Interfaces\IVehicleRepositoryInterface;
+use App\WebRepositories\Interfaces\IWithdrawalRepositoryInterface;
 use App\WebRepositories\InwardLoanRepository;
 use App\WebRepositories\LoanRepository;
 use App\WebRepositories\MeterReaderRepository;
@@ -90,6 +91,7 @@ use App\WebRepositories\SupplierRepository;
 use App\WebRepositories\UnitRepository;
 use App\WebRepositories\UserRepository;
 use App\WebRepositories\VehicleRepository;
+use App\WebRepositories\WithdrawalRepository;
 use Illuminate\Support\ServiceProvider;
 
 class WebRepositoryServiceProvider extends ServiceProvider
@@ -138,6 +140,7 @@ class WebRepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IInwardLoanRepositoryInterface::class,InwardLoanRepository::class);
         $this->app->bind(IOutwardLoandRepositoryInterface::class,OutwardLoanRepository::class);
         $this->app->bind(IBankToBankRepositoryInterface::class,BankToBankRepository::class);
+        $this->app->bind(IWithdrawalRepositoryInterface::class,WithdrawalRepository::class);
     }
 
     public function boot()
