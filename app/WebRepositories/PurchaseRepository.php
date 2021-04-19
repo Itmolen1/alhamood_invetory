@@ -30,6 +30,15 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
             return datatables()->of(Purchase::with('purchase_details_without_trash.product','supplier')->where('company_id',session('company_id'))->where('isActive',1)->latest()->get())
                 ->addColumn('action', function ($data) {
                     $button = '<a href="'.route('purchases.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    if($data->paidBalance==0.00)
+                    {
+                        $button .='<a href="'.url('purchase_delete', $data->id).'" onclick="return ConfirmDelete()"  class="btn btn-danger btn-sm"><i style="font-size: 20px" class="fa fa-trash"></i></i></a>';
+                    }
+                    else
+                    {
+                        $button .='<a href="javascript:void(0);" class="btn btn-danger btn-sm"><i style="font-size: 20px" class="fa fa-ban"></i></i></a>';
+                    }
 //                    $button .='<a href="javascript:void(0)"  onclick="return'. get_pdf($data->id).'"  class=" btn btn-secondary btn-sm"><i style="font-size: 20px" class="fa fa-file-pdf-o"></i></a>';
                     return $button;
                 })
@@ -2964,9 +2973,31 @@ class PurchaseRepository implements IPurchaseRepositoryInterface
         return view('admin.purchase.edit',compact('purchase_details','suppliers','products','update_notes','units'));
     }
 
-    public function delete(Request $request, $Id)
+    public function delete($Id)
     {
-        // TODO: Implement delete() method.
+        $purchase = Purchase::find($Id);
+        if($purchase && $purchase->paidBalance==0.00)
+        {
+            DB::transaction(function () use($purchase)
+            {
+                $user_id = session('user_id');
+                $company_id = session('company_id');
+
+                PurchaseDetail::where('purchase_id', '=', $purchase->id)->where('company_id', '=', $company_id)->update(['user_id' => $user_id]);
+                PurchaseDetail::where('purchase_id', '=', $purchase->id)->where('company_id', '=', $company_id)->delete();
+
+                AccountTransaction::where('Description', 'like', 'Purchase|' . $purchase->id)->where('company_id', '=', $company_id)->update(['user_id' => $user_id,'updateDescription'=>'hide']);
+                AccountTransaction::where('Description', 'like', 'Purchase|' . $purchase->id)->where('company_id', '=', $company_id)->delete();
+
+                $purchase->update(['user_id' => $user_id,]);
+                $purchase->delete();
+            });
+            return redirect()->route('purchases.index');
+        }
+        else
+        {
+            echo "Not allowed";die;
+        }
     }
 
     public function restore($Id)

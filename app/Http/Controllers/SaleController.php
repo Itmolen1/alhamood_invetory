@@ -77,9 +77,9 @@ class SaleController extends Controller
         return $this->saleRepository->all_sales($request);
     }
 
-    public function destroy(Request $request, $Id)
+    public function sales_delete($id)
     {
-        return $this->saleRepository->delete($request, $Id);
+        return $this->saleRepository->delete($id);
     }
 
     public function get_data(Request $request)

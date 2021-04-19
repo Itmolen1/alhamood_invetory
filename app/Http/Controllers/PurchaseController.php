@@ -71,4 +71,9 @@ class PurchaseController extends Controller
     {
         return $this->purchaseRepository->supplierSaleDetails($Id);
     }
+
+    public function purchase_delete($id)
+    {
+        return $this->purchaseRepository->delete($id);
+    }
 }

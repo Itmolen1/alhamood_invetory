@@ -424,7 +424,8 @@ class InwardLoanRepository implements IInwardLoanRepositoryInterface
 
     public function edit($id)
     {
-        $financer = Financer::find($id);
-        return view('admin.financer.edit',compact('financer'));
+        $financers=Financer::get();
+        $banks = Bank::all();
+        return view('admin.inward_loan.edit',compact('financers','banks'));
     }
 }

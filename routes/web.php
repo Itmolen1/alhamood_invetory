@@ -59,6 +59,7 @@ route::get('Deposit_delete/{Id}','DepositController@Deposit_delete');
 route::resource('withdrawals','WithdrawalController');
 route::get('Withdrawal_delete/{Id}','WithdrawalController@Withdrawal_delete');
 route::resource('bank_to_banks','BankToBankController');
+route::get('Bank_to_banks_delete/{Id}','BankToBankController@Bank_to_banks_delete');
 route::get('getBankAccountDetail/{id}','BankController@getBankAccountDetail');
 route::resource('countries','CountryController');
 route::resource('states','StateController');
@@ -74,6 +75,7 @@ route::get('productsDetails/{Id}','ProductController@productDetails');
 ////////// purchase section //////////////////////////
 route::resource('purchases','PurchaseController');
 route::get('purchasePrint/{id}','PurchaseController@print');
+route::get('purchase_delete/{Id}','PurchaseController@purchase_delete');
 
 route::get('supplierDetails/{id}','SupplierController@supplierDetails');
 Route::post('purchaseUpdate/{Id}','PurchaseController@purchaseUpdate');
@@ -91,6 +93,7 @@ route::get('Expense_delete/{Id}','ExpenseController@Expense_delete');
 
 ////////////// sales /////////////////////
 route::resource('sales','SaleController');
+route::get('sales_delete/{Id}','SaleController@sales_delete');
 route::post('salesUpdate/{Id}','SaleController@salesUpdate');
 Route::post('all_sales', 'SaleController@all_sales' )->name('all_sales');
 route::get('get_data','SaleController@get_data')->name('get_data');

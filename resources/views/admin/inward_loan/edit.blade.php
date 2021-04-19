@@ -1,5 +1,5 @@
 @extends('shared.layout-admin')
-@section('title', 'Financer Edit')
+@section('title', 'Inward Loan Edit')
 
 @section('content')
 
@@ -28,7 +28,7 @@
                             <h6 class="required">* Fields are required please don't leave blank</h6>
                         </div>
                         <div class="card-body">
-                            <form method="post" action="{{ route('financer.update', $financer->id) }}" enctype="multipart/form-data">
+                            <form method="post" action="{{ route('financer.update', $financers->id) }}" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <div class="form-body">
@@ -38,13 +38,13 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label class="control-label">Financer Name :- <span class="required">*</span></label>
-                                                <input type="text" id="Name" name="Name" value="{{ $financer->Name }}" class="form-control" placeholder="Enter Customer Company Name">
+                                                <input type="text" id="Name" name="Name" value="{{ $financers->Name }}" class="form-control" placeholder="Enter Customer Company Name">
                                             </div>
                                         </div>
                                         <div class="col-md-4 ">
                                             <div class="form-group">
                                                 <label>Mobile</label>
-                                                <input type="text" name="Mobile" value="{{ $financer->Mobile }}" placeholder="Mobile" class="form-control">
+                                                <input type="text" name="Mobile" value="{{ $financers->Mobile }}" placeholder="Mobile" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="control-label">Note</label>
-                                                <textarea name="Description" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $financer->Description }}</textarea>
+                                                <textarea name="Description" id="description" cols="30" rows="5" class="form-control" style="width: 100%" placeholder="Note">{{ $financers->Description }}</textarea>
                                             </div>
                                         </div>
                                     </div>

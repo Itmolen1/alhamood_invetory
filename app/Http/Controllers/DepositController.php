@@ -40,4 +40,9 @@ class DepositController extends Controller
     {
         return $this->depositRepository->update($request, $Id);
     }
+
+    public function Deposit_delete($id)
+    {
+        return $this->depositRepository->delete($id);
+    }
 }

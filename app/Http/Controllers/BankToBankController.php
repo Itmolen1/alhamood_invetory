@@ -43,4 +43,9 @@ class BankToBankController extends Controller
     {
         return $this->bankToBankRepository->update($request, $id);
     }
+
+    public function Bank_to_banks_delete($id)
+    {
+        return $this->bankToBankRepository->delete($id);
+    }
 }

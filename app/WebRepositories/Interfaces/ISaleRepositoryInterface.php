@@ -26,9 +26,9 @@ interface ISaleRepositoryInterface
 
     public function edit($Id);
 
-    public function delete(Request $request, $Id);
+    public function delete($Id);
 
-    public function  restore($Id);
+    public function restore($Id);
 
     public function trashed();
 

@@ -339,6 +339,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                     $AccData =
                         [
                             'customer_id' => $advance->customer_id,
+                            'referenceNumber' => $advance->receiptNumber,
                             'Debit' => 0.00,
                             'Credit' => $advance->Amount,
                             'Differentiate' => $last_closing-$advance->Amount,
@@ -375,6 +376,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                     $AccData =
                         [
                             'customer_id' => $advance->customer_id,
+                            'referenceNumber' => $advance->receiptNumber,
                             'Debit' => 0.00,
                             'Credit' => $advance->Amount,
                             'Differentiate' => $last_closing-$advance->Amount,
@@ -382,7 +384,6 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description'=>'CustomerBankAdvance|'.$Id,
-                            'referenceNumber'=>$advance->ChequeNumber,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                     $accountTransaction_ref=$AccountTransactions->id;
@@ -412,6 +413,7 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                     $AccData =
                         [
                             'customer_id' => $advance->customer_id,
+                            'referenceNumber' => $advance->receiptNumber,
                             'Debit' => 0.00,
                             'Credit' => $advance->Amount,
                             'Differentiate' => $last_closing-$advance->Amount,
@@ -419,7 +421,6 @@ class CustomerAdvanceRepository implements ICustomerAdvanceRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description'=>'SupplierChequeAdvance|'.$Id,
-                            'referenceNumber'=>$advance->ChequeNumber,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                     $accountTransaction_ref=$AccountTransactions->id;

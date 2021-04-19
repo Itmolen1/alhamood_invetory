@@ -187,7 +187,7 @@
                                         </div>
                                         <div class="col-md-10">
                                             <div class="form-group">
-                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paid Amount">
+                                                <input type="text" class="form-control amount" onClick="this.setSelectionRange(0, this.value.length)" onkeyup="toWords($('.amount').val())" name="" id="paidAmount" placeholder="Paying Amount" value="0.00">
                                             </div>
                                         </div>
                                     </div>
@@ -231,6 +231,21 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).on("focusout",'#paidAmount',function () {
+            var payable = $('#price').val();
+            var paying = $('#paidAmount').val();
+            payable=parseFloat(payable).toFixed(2);
+            paying=parseFloat(paying).toFixed(2);
+            if(paying>payable)
+            {
+                $('#paidAmount').val((payable));
+                toWords(payable);
+                delete payable;
+                delete paying;
+            }
+        });
+    </script>
     <script>
         $(document).ready(function () {
             $('#already_exist').hide();

@@ -14,6 +14,7 @@ use App\Models\AccountTransaction;
 use App\Models\Bank;
 use App\Models\BankTransaction;
 use App\Models\CashTransaction;
+use App\Models\Company;
 use App\Models\Customer;
 use App\Models\CustomerAdvance;
 use App\Models\Employee;
@@ -2441,7 +2442,7 @@ class ReportRepository implements IReportRepositoryInterface
 
         if ($request->fromDate!='' && $request->toDate!='')
         {
-            $account_transactions = AccountTransaction::orderBy('createdDate','asc')->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id)->whereNull('updateDescription')->orderBy('createdDate','desc')->get();
+            $account_transactions = AccountTransaction::orderBy('createdDate','asc')->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('supplier_id','=',$request->supplier_id)->whereNull('updateDescription')->orderBy('createdDate','desc')->orderBy('id')->get();
         }
         else
         {
@@ -3079,6 +3080,11 @@ class ReportRepository implements IReportRepositoryInterface
             $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
             $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
+            $company_name=Company::where('id',$company_id)->first();
+            $pdf::SetFont('helvetica', '', 18);
+            $html=$company_name->Name;
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
+
             $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
 
@@ -3152,11 +3158,16 @@ class ReportRepository implements IReportRepositoryInterface
             $total_receivable=array_sum($row);
 
             //cash in hand
-            $cash_in_hand=CashTransaction::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->max('id');
-            $lastTransaction = CashTransaction::where(['id'=> $cash_in_hand,])->get()->first();
-            $cash_in_hand=$lastTransaction->Differentiate;
+//            $cash_in_hand=CashTransaction::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->max('id');
+//            $lastTransaction = CashTransaction::where(['id'=> $cash_in_hand,])->get()->first();
+//            $cash_in_hand=$lastTransaction->Differentiate;
+
+            $sum_of_debit_before_from_date=CashTransaction::where('company_id',session('company_id'))->sum('Debit');
+            $sum_of_credit_before_from_date=CashTransaction::where('company_id',session('company_id'))->sum('Credit');
+            $cash_in_hand=$sum_of_debit_before_from_date-$sum_of_credit_before_from_date;
+
             //sum of all bank balances
-            $all_banks = Bank::where(['deleted_at'=> NULL,])->get();
+            $all_banks = Bank::where(['deleted_at'=> NULL,])->where('company_id',session('company_id'))->get();
             $total_balance_in_bank=0.00;
             foreach($all_banks as $bank)
             {
@@ -3167,7 +3178,7 @@ class ReportRepository implements IReportRepositoryInterface
             //stock value
                 //total purchase quantity
                 //$total_purchase_qty=PurchaseDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
-                $total_purchase_qty=PurchaseDetail::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->where('')->sum('Quantity');
+                $total_purchase_qty=PurchaseDetail::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->where('Quantity')->sum('Quantity');
                 //total sales quantity
                 $total_sales_qty=SaleDetail::where('createdDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('createdDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
                 $stock_qty=$total_sales_qty-$total_purchase_qty;
@@ -3193,11 +3204,7 @@ class ReportRepository implements IReportRepositoryInterface
             $row=array_column($row,'Differentiate');
             $total_supplier_outstanding=array_sum($row);
 
-
-//            $total_expense=Expense::where('expenseDate','>=',date("y/m/d", strtotime($start_date.' 00:00:00')))->where('expenseDate','<=',$end_date.' 23:59:59')->where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('grandTotal');
-
             //loans
-
             //loan payable
             $loan_payable=LoanMaster::where('company_id','=',$company_id)->where('isPushed','=',1)->where('deleted_at','=',NULL)->where('loanType',1)->sum('inward_RemainingBalance');
 
@@ -3213,6 +3220,11 @@ class ReportRepository implements IReportRepositoryInterface
 
             $pdf::AddPage();$pdf::SetFont('helvetica', '', 6);
             $pdf::SetFillColor(255,255,0);
+
+            $company_name=Company::where('id',$company_id)->first();
+            $pdf::SetFont('helvetica', '', 18);
+            $html=$company_name->Name;
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
 
             $pdf::SetFont('helvetica', '', 15);
             $html='GARAGE VALUE REPORT '.date('M Y', strtotime($request->month));

@@ -334,7 +334,7 @@ input:checked + .slider:before {
 <script>
     function ConfirmDelete()
     {
-        var result = confirm("Are you sure you want to delete?");
+        var result = confirm("Are you sure you want to delete ? ( your name will appear to admin for deleting this entry !!!)");
         if(result)
         {
             return true;

@@ -306,6 +306,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                     $AccData =
                         [
                             'supplier_id' => $advance->supplier_id,
+                            'referenceNumber' => $advance->receiptNumber,
                             'Debit' => $advance->Amount,
                             'Credit' => 0.00,
                             'Differentiate' => $last_closing - $advance->Amount,
@@ -340,6 +341,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                     $AccData =
                         [
                             'supplier_id' => $advance->supplier_id,
+                            'referenceNumber' => $advance->receiptNumber,
                             'Debit' => $advance->Amount,
                             'Credit' => 0.00,
                             'Differentiate' => $last_closing - $advance->Amount,
@@ -347,7 +349,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description' => 'SupplierBankAdvance|' . $Id,
-                            'referenceNumber' => $advance->ChequeNumber,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                     $accountTransaction_ref = $AccountTransactions->id;
@@ -375,6 +376,7 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                     $AccData =
                         [
                             'supplier_id' => $advance->supplier_id,
+                            'referenceNumber' => $advance->receiptNumber,
                             'Debit' => $advance->Amount,
                             'Credit' => 0.00,
                             'Differentiate' => $last_closing - $advance->Amount,
@@ -382,7 +384,6 @@ class SupplierAdvanceRepository implements ISupplierAdvanceRepositoryInterface
                             'user_id' => $user_id,
                             'company_id' => $company_id,
                             'Description' => 'SupplierChequeAdvance|' . $Id,
-                            'referenceNumber' => $advance->ChequeNumber,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                     $accountTransaction_ref = $AccountTransactions->id;

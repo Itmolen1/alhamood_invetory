@@ -79,8 +79,7 @@
                                                         <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber}}" placeholder="Pad Number" class="PadNumber form-control" onkeypress="return ((event.charCode >= 48 && event.charCode <= 57))" readonly></td>
                                                         <td>
                                                             <div class="form-group">
-                                                                <select name="customer" class="form-control customer_id slct" id="customer_id">
-                                                                    <option readonly="" disabled selected>--Customer--</option>
+                                                                <select name="customer" class="form-control customer_id slct" id="customer_id" readonly disabled>
                                                                     @foreach($customers as $customer)
                                                                         <option value="{{ $customer->id }}" {{ ($customer->id == $details->sale->customer_id) ? 'selected':'' }}>{{ $customer->Name }}</option>
                                                                     @endforeach
