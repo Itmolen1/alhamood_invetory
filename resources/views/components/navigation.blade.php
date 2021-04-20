@@ -21,6 +21,7 @@
                         <li class="border-bottom"><a href="{{ route('companies.index') }}">Companies list</a></li>
                         <li class="border-bottom"><a href="{{ route('roles.index') }}">Roles list</a></li>
                         <li class="border-bottom"><a href="{{ route('banks.index') }}">Banks list</a></li>
+                        <li class="border-bottom"><a href="{{ route('banks.index') }}">Login Activity</a></li>
                     @endif
                     <li><a href="{{ route('payment_terms.index') }}">Payment Terms list</a></li>
                 </ul>
@@ -157,6 +158,7 @@
                             @if(Session::get('role_name')=='superadmin' || Session::get('role_name')=='admin')
                             <li class="border-bottom"><a href="{{ route('GetSupplierStatement') }}">Payable Summary</a></li>
                             <li class="border-bottom"><a href="{{ route('GetPaidAdvancesSummary') }}">Supplier Advance Summary</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetSalesQuantitySummary') }}">Sales quantity Summary</a></li>
                             <li><a href="{{ route('GetReceivableSummaryAnalysis') }}">Receivable Summary Analysis</a></li>
                             @endif
                         </ul>
@@ -167,7 +169,9 @@
                         <ul aria-expanded="false" class="collapse">
                             <li class="border-bottom"><a href="{{ route('GetDetailCustomerStatement') }}">Customer Statement</a></li>
                             @if(Session::get('role_name')=='superadmin' || Session::get('role_name')=='admin')
-                            <li><a href="{{ route('GetDetailSupplierStatement') }}">Supplier Statement</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetDetailSupplierStatement') }}">Supplier Statement</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetInwardLoanStatement') }}">Inward Loan Statement</a></li>
+                            <li><a href="{{ route('GetOutwardLoanStatement') }}">Outward Loan Statement</a></li>
                             @endif
                         </ul>
                     </li>

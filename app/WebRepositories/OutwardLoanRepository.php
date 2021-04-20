@@ -159,7 +159,6 @@ class OutwardLoanRepository implements IOutwardLoandRepositoryInterface
                             'company_id' => $company_id,
                             'Description'=>'OutgoingCashLoan|'.$Id,
                             'referenceNumber'=>$loan->referenceNumber,
-                            'updateDescription'=>$loan->ChequeNumber,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                     $accountTransaction_ref=$AccountTransactions->id;

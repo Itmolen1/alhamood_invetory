@@ -244,4 +244,34 @@ class ReportController extends Controller
     {
         return $this->reportRepository->ViewExpenseAnalysisBySupplier($request);
     }
+
+    public function GetSalesQuantitySummary()
+    {
+        return $this->reportRepository->GetSalesQuantitySummary();
+    }
+
+    public function PrintSalesQuantitySummary(Request $request)
+    {
+        return $this->reportRepository->PrintSalesQuantitySummary($request);
+    }
+
+    public function GetInwardLoanStatement()
+    {
+        return $this->reportRepository->GetInwardLoanStatement();
+    }
+
+    public function PrintInwardLoanStatement(Request $request)
+    {
+        return $this->reportRepository->PrintInwardLoanStatement($request);
+    }
+
+    public function GetOutwardLoanStatement()
+    {
+        return $this->reportRepository->GetOutwardLoanStatement();
+    }
+
+    public function PrintOutwardLoanStatement(Request $request)
+    {
+        return $this->reportRepository->PrintOutwardLoanStatement($request);
+    }
 }

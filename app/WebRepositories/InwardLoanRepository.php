@@ -162,7 +162,6 @@ class InwardLoanRepository implements IInwardLoanRepositoryInterface
                             'company_id' => $company_id,
                             'Description'=>'IncomingCashLoan|'.$Id,
                             'referenceNumber'=>$loan->referenceNumber,
-                            'updateDescription'=>$loan->ChequeNumber,
                         ];
                     $AccountTransactions = AccountTransaction::Create($AccData);
                     $accountTransaction_ref=$AccountTransactions->id;

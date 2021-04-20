@@ -3,6 +3,29 @@
 
 @section('content')
 
+    <style>
+        .chosen-container-single .chosen-single {
+            height: 38px;
+            border-radius: 3px;
+            border: 1px solid #CCCCCC;
+        }
+        .chosen-container-single .chosen-single span {
+            padding-top: 5px;
+        }
+        .chosen-container-single .chosen-single div b {
+            margin-top: 5px;
+        }
+        .chosen-container-active .chosen-single,
+        .chosen-container-active.chosen-with-drop .chosen-single {
+            border-color: #ccc;
+            border-color: rgba(82, 168, 236, .8);
+            outline: 0;
+            outline: thin dotted \9;
+            -moz-box-shadow: 0 0 8px rgba(82, 168, 236, .6);
+            box-shadow: 0 0 8px rgba(82, 168, 236, .6)
+        }
+    </style>
+
     <div class="page-wrapper">
         <div class="container-fluid">
             <div class="row page-titles">
@@ -48,7 +71,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label class="control-label">CATEGORY</label>
-                        <select name="category" class="form-control" id="category">
+                        <select name="category" class="form-control chosen-select" id="category">
                             <option value="all" selected>ALL</option>
                             @foreach($expense_category as $category)
                                 <option value="{{ $category->id }}">{{ $category->Name }}</option>

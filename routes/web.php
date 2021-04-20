@@ -204,6 +204,15 @@ route::post('PrintProfit_loss','ReportController@PrintProfit_loss')->name('Print
 route::get('Garage_value','ReportController@Garage_value')->name('Garage_value');
 route::post('PrintGarage_value','ReportController@PrintGarage_value')->name('PrintGarage_value');
 
+route::get('GetSalesQuantitySummary','ReportController@GetSalesQuantitySummary')->name('GetSalesQuantitySummary');
+route::post('PrintSalesQuantitySummary','ReportController@PrintSalesQuantitySummary')->name('PrintSalesQuantitySummary');
+
+route::get('GetInwardLoanStatement','ReportController@GetInwardLoanStatement')->name('GetInwardLoanStatement');
+route::post('PrintInwardLoanStatement','ReportController@PrintInwardLoanStatement')->name('PrintInwardLoanStatement');
+
+route::get('GetOutwardLoanStatement','ReportController@GetOutwardLoanStatement')->name('GetOutwardLoanStatement');
+route::post('PrintOutwardLoanStatement','ReportController@PrintOutwardLoanStatement')->name('PrintOutwardLoanStatement');
+
 });
 
 route::view('welcome','welcome');

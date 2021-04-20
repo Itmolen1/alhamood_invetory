@@ -14,4 +14,6 @@ class LoginLog extends Model
     protected $guarded=[];
     protected $primaryKey = 'id';
     protected $table = 'login_logs';
+
+
 }

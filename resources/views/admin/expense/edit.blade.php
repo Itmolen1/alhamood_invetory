@@ -136,8 +136,8 @@
                                     </div>
                                 </div>
 
-                                <div class="table-responsive">
-                                    <table class="table color-bordered-table success-bordered-table">
+                                <div class="table-responsive" style="height:350px;">
+                                    <table class="table color-bordered-table success-bordered-table" style="height:350px;">
                                         <thead>
                                         <tr>
                                             <th style="width: 150px">Voucher Number</th>
@@ -171,7 +171,7 @@
                                                     <td><input type="text" onClick="this.setSelectionRange(0, this.value.length)" value="{{ $details->PadNumber }}" placeholder="Pad Number" name="padNumber" class="padNumber form-control"></td>
                                                     <td>
                                                         <div class="form-group">
-                                                            <select name="customer" class="form-control expense_category_id">
+                                                            <select name="customer" class="form-control expense_category_id chosen-select">
                                                                 @foreach($expense_categories as $category)
                                                                     <option value="{{ $category->id }}" {{ ($category->id == $details->expense_category_id ) ? 'selected':'' }}>{{ $category->Name }}</option>
                                                                 @endforeach

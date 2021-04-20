@@ -115,7 +115,7 @@
                                 </div>
 
                                 <div class="table-responsive">
-                                    <table class="table color-bordered-table success-bordered-table">
+                                    <table class="table color-bordered-table success-bordered-table" style="height: 350px;">
                                         <thead>
                                         <tr>
                                             <th style="width: 150px">Voucher Number</th>
@@ -131,7 +131,7 @@
                                             <td><input type="text" placeholder="" value="{{ $PadNumber }}" name="padNumber" class="padNumber form-control" autocomplete="off"></td>
                                             <td>
                                                 <div class="form-group">
-                                                    <select name="customer" class="form-control expense_category_id">
+                                                    <select name="customer" class="form-control expense_category_id chosen-select">
                                                         @foreach($expense_categories as $category)
                                                             <option value="{{ $category->id }}">{{ $category->Name }}</option>
                                                         @endforeach
