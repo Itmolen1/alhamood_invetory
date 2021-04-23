@@ -159,6 +159,8 @@
                             <li class="border-bottom"><a href="{{ route('GetSupplierStatement') }}">Payable Summary</a></li>
                             <li class="border-bottom"><a href="{{ route('GetPaidAdvancesSummary') }}">Supplier Advance Summary</a></li>
                             <li class="border-bottom"><a href="{{ route('GetSalesQuantitySummary') }}">Sales quantity Summary</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetPurchaseQuantitySummary') }}">Purchase quantity Summary</a></li>
+                            <li class="border-bottom"><a href="{{ route('GetDailyCashSummary') }}">Daily Cash Summary</a></li>
                             <li><a href="{{ route('GetReceivableSummaryAnalysis') }}">Receivable Summary Analysis</a></li>
                             @endif
                         </ul>

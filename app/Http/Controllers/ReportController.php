@@ -255,6 +255,16 @@ class ReportController extends Controller
         return $this->reportRepository->PrintSalesQuantitySummary($request);
     }
 
+    public function GetPurchaseQuantitySummary()
+    {
+        return $this->reportRepository->GetPurchaseQuantitySummary();
+    }
+
+    public function PrintPurchaseQuantitySummary(Request $request)
+    {
+        return $this->reportRepository->PrintPurchaseQuantitySummary($request);
+    }
+
     public function GetInwardLoanStatement()
     {
         return $this->reportRepository->GetInwardLoanStatement();
@@ -273,5 +283,15 @@ class ReportController extends Controller
     public function PrintOutwardLoanStatement(Request $request)
     {
         return $this->reportRepository->PrintOutwardLoanStatement($request);
+    }
+
+    public function GetDailyCashSummary()
+    {
+        return $this->reportRepository->GetDailyCashSummary();
+    }
+
+    public function PrintDailyCashSummary(Request $request)
+    {
+        return $this->reportRepository->PrintDailyCashSummary($request);
     }
 }

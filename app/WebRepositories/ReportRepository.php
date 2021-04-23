@@ -3182,7 +3182,7 @@ class ReportRepository implements IReportRepositoryInterface
                 $total_purchase_qty=PurchaseDetail::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
                 //total sales quantity
                 $total_sales_qty=SaleDetail::where('company_id','=',$company_id)->where('deleted_at','=',NULL)->sum('Quantity');
-                $stock_qty=$total_sales_qty-$total_purchase_qty;
+                $stock_qty=$total_purchase_qty-$total_sales_qty;
                 $stock_value=$stock_qty*$request->currentRate;
 
                 //supplier outstanding
@@ -3245,7 +3245,7 @@ class ReportRepository implements IReportRepositoryInterface
                      <td width="200" align="right">'.number_format($total_balance_in_bank,2,'.',',').'</td>
                     </tr>';
             $html.= '<tr style="color:#5e3431">
-                     <td width="300" align="right" colspan="3">Current Stock Value + <br>'.$stock_qty.'@'.$request->currentRate.'</td>
+                     <td width="300" align="right" colspan="3">Current Stock Value + <br>'.number_format($stock_qty,2,'.',',').'@'.$request->currentRate.'</td>
                      <td width="200" align="right">'.number_format($stock_value,2,'.',',').'</td>
                     </tr>';
             $html.= '<tr style="color:#5e3431">
@@ -3316,15 +3316,22 @@ class ReportRepository implements IReportRepositoryInterface
 //            $row=json_decode(json_encode($sales), true);
 //            for($i=0;$i<count($row);$i++)
 //            {
-//                $qty=$row[$i]['sale_details'][0]['sale_id'];
-//                //$tmp_array=array('Date'=>'null','Quantity'=>$qty);
-//                $final_array[]=$qty;
+//                if($row[$i]['sale_details'][0]['Quantity']==25.00)
+//                {
+//                    $qty = $row[$i]['sale_details'][0]['id'];
+//                    //$tmp_array=array('Date'=>'null','Quantity'=>$qty);
+//                    $final_array[] = $qty;
+//                }
 //            }
-//            $sales_ids=SaleDetail::where('company_id','=',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('deleted_at','=',NULL)->where('isActive','=',1)->get();
+//            $sales_ids=SaleDetail::where('Quantity','=',25)->where('company_id','=',session('company_id'))->where('createdDate','>=',$request->fromDate)->where('createdDate','<=',$request->toDate)->where('deleted_at','=',NULL)->where('isActive','=',1)->get();
 //            $sales_ids=json_decode(json_encode($sales_ids), true);
-//            $sales_ids=array_column($sales_ids,'sale_id');
+//            //echo "<pre>";print_r($final_array);die;
+//
+//            $sales_ids=array_column($sales_ids,'id');
+//            echo "<pre>";print_r($sales_ids);die;
 //            $sales_ids=array_diff($final_array,$sales_ids);
 //            //$final_array=array_sum($final_array);
+//            //$sales_ids=array_sum($sales_ids);
 //            echo "<pre>";print_r($sales_ids);die;
         }
         else
@@ -3400,6 +3407,220 @@ class ReportRepository implements IReportRepositoryInterface
 
             $time=time();
             $name='SALES_QTY_SUMMARY_'.date('d-m-Y', strtotime($request->fromDate)).'_To_'.date('d-m-Y', strtotime($request->toDate)).'_'.$time;
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$name.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            $url=url('/').'/storage/app/public/report_files/'.$name.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function GetPurchaseQuantitySummary()
+    {
+        return view('admin.report.get_purchase_quantity_summary');
+    }
+
+    public function PrintPurchaseQuantitySummary(Request $request)
+    {
+        if($request->fromDate!='' && $request->toDate!='')
+        {
+            $begin = new DateTime($request->fromDate);
+            $end   = new DateTime($request->toDate);
+            $all_dates=array();
+            $final_array=array();
+            for($i = $begin; $i <= $end; $i->modify('+1 day'))
+            {
+                $date=$i->format("Y-m-d");
+                $all_dates[]=$date=$i->format("Y-m-d");
+                $qty=PurchaseDetail::where('company_id','=',session('company_id'))->where('createdDate','=',$date)->where('deleted_at','=',NULL)->where('isActive','=',1)->sum('Quantity');
+                $tmp_array=array('Date'=>$date,'Quantity'=>$qty);
+                $final_array[]=$tmp_array;
+            }
+        }
+        else
+        {
+            return FALSE;
+        }
+
+        if(!empty($final_array))
+        {
+            $company_title='WATAN PHARMA LLP.';
+            $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
+            $company_email='Email : info@alhamood.ae';
+            $company_mobile='Mobile : +971-25550870  +971-557383866  +971-569777861';
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage('', 'A4');
+            $pdf::SetFont('helvetica', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+
+            $pdf::SetFont('helvetica', '', 12);
+            $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
+
+            $pdf::SetFont('helvetica', '', 12);
+            $html='DAILY PURCHASE QUANTITY REPORT';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $row=$final_array;
+
+            $pdf::SetFont('helvetica', 'B', 8);
+            $html = '<table border="0.5" cellpadding="1">
+                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="100">Date</th>
+                    <th align="center" width="100">Quantity</th>
+                </tr>';
+            $pdf::SetFont('helvetica', '', 12);
+
+            $qty_sum=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                $qty_sum+=$row[$i]['Quantity'];
+                if($i%2==1)
+                {
+                    $html .='<tr style="background-color: #aba9a9">
+                    <td align="center" width="100">'.(date('d-M-Y', strtotime($row[$i]['Date']))).'</td>
+                    <td align="right" width="100">'.number_format($row[$i]['Quantity'],2,'.',',').'</td>
+                    </tr>';
+                }
+                else
+                {
+                    $html .='<tr>
+                    <td align="center" width="100">'.(date('d-M-Y', strtotime($row[$i]['Date']))).'</td>
+                    <td align="right" width="100">'.number_format($row[$i]['Quantity'],2,'.',',').'</td>
+                    </tr>';
+                }
+            }
+
+            $html.= '<tr color="red">
+                     <td width="100" align="right">Total</td>
+                     <td width="100" align="right">'.number_format($qty_sum,2,'.',',').'</td>
+                 </tr>';
+
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::lastPage();
+
+            $time=time();
+            $name='PURCHASE_QTY_SUMMARY_'.date('d-m-Y', strtotime($request->fromDate)).'_To_'.date('d-m-Y', strtotime($request->toDate)).'_'.$time;
+            $fileLocation = storage_path().'/app/public/report_files/';
+            $fileNL = $fileLocation.'//'.$name.'.pdf';
+            $pdf::Output($fileNL, 'F');
+            $url=url('/').'/storage/app/public/report_files/'.$name.'.pdf';
+            $url=array('url'=>$url);
+            return $url;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function GetDailyCashSummary()
+    {
+        return view('admin.report.get_daily_cash_summary');
+    }
+
+    public function PrintDailyCashSummary(Request $request)
+    {
+        if($request->fromDate!='' && $request->toDate!='')
+        {
+            $begin = new DateTime($request->fromDate);
+            $end   = new DateTime($request->toDate);
+            $final_array=array();
+            for($i = $begin; $i <= $end; $i->modify('+1 day'))
+            {
+                $date=$i->format("Y-m-d");
+                $sum_of_debit=CashTransaction::where('company_id',session('company_id'))->where('createdDate','=',$date)->sum('Debit');
+                $sum_of_credit=CashTransaction::where('company_id',session('company_id'))->where('createdDate','=',$date)->sum('Credit');
+                $amount=$sum_of_debit-$sum_of_credit;
+                $tmp_array=array('Date'=>$date,'Amount'=>$amount);
+                $final_array[]=$tmp_array;
+            }
+        }
+        else
+        {
+            return FALSE;
+        }
+
+        if(!empty($final_array))
+        {
+            $company_title='WATAN PHARMA LLP.';
+            $company_address='MUSSAFAH M13,PLOT 100, ABU DHABI,UAE';
+            $company_email='Email : info@alhamood.ae';
+            $company_mobile='Mobile : +971-25550870  +971-557383866  +971-569777861';
+            $pdf = new PDF();
+            $pdf::setPrintHeader(false);
+            $pdf::setPrintFooter(false);
+            $pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+            $pdf::SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+            $pdf::AddPage('', 'A4');
+            $pdf::SetFont('helvetica', '', 6);
+            $pdf::SetFillColor(255,255,0);
+
+
+            $pdf::SetFont('helvetica', '', 12);
+            $html=date('d-m-Y', strtotime($request->fromDate)).' To '.date('d-m-Y', strtotime($request->toDate));
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'C', true);
+
+            $pdf::SetFont('helvetica', '', 12);
+            $html='DAILY CASH REPORT';
+            $pdf::writeHTMLCell(0, 0, '', '', $html,0, 1, 0, true, 'L', true);
+
+            $row=$final_array;
+
+            $pdf::SetFont('helvetica', 'B', 8);
+            $html = '<table border="0.5" cellpadding="1">
+                <tr style="background-color: rgb(122,134,216); color: rgb(255,255,255);">
+                    <th align="center" width="100">Date</th>
+                    <th align="center" width="100">Amount</th>
+                </tr>';
+            $pdf::SetFont('helvetica', '', 12);
+
+            $qty_sum=0.0;
+            for($i=0;$i<count($row);$i++)
+            {
+                $qty_sum+=$row[$i]['Amount'];
+                if($i%2==1)
+                {
+                    $html .='<tr style="background-color: #aba9a9">
+                    <td align="center" width="100">'.(date('d-M-Y', strtotime($row[$i]['Date']))).'</td>
+                    <td align="right" width="100">'.number_format($row[$i]['Amount'],2,'.',',').'</td>
+                    </tr>';
+                }
+                else
+                {
+                    $html .='<tr>
+                    <td align="center" width="100">'.(date('d-M-Y', strtotime($row[$i]['Date']))).'</td>
+                    <td align="right" width="100">'.number_format($row[$i]['Amount'],2,'.',',').'</td>
+                    </tr>';
+                }
+            }
+
+            $html.= '<tr color="red">
+                     <td width="100" align="right">Total</td>
+                     <td width="100" align="right">'.number_format($qty_sum,2,'.',',').'</td>
+                 </tr>';
+
+            $pdf::SetFillColor(255, 0, 0);
+            $html.='</table>';
+            $pdf::writeHTML($html, true, false, false, false, '');
+
+            $pdf::lastPage();
+
+            $time=time();
+            $name='DAILY_CASH_SUMMARY_'.date('d-m-Y', strtotime($request->fromDate)).'_To_'.date('d-m-Y', strtotime($request->toDate)).'_'.$time;
             $fileLocation = storage_path().'/app/public/report_files/';
             $fileNL = $fileLocation.'//'.$name.'.pdf';
             $pdf::Output($fileNL, 'F');

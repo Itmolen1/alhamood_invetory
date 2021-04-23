@@ -14,7 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('Login', 'api\UserController@login');
+Route::post('customer/customer_login', 'api\customer\CustomerController@customer_login');
+Route::post('customer/customer_logout', 'api\customer\CustomerController@customer_logout');
+Route::post('customer/customer_change_password', 'api\customer\CustomerController@customer_change_password');
+Route::post('customer/my_vehicles', 'api\customer\CustomerController@my_vehicles');
+Route::post('customer/my_purchase/{page_no}/{page_size}', 'api\customer\CustomerController@my_purchase');
+Route::post('customer/my_purchase_by_vehicle', 'api\customer\CustomerController@my_purchase_by_vehicle');
+Route::post('customer/my_account_status', 'api\customer\CustomerController@my_account_status');
+Route::post('customer/my_payments', 'api\customer\CustomerController@my_payments');
+Route::post('customer/my_advances', 'api\customer\CustomerController@my_advances');
+Route::post('customer/my_account_statement', 'api\customer\CustomerController@my_account_statement');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('Logout', 'api\UserController@logout');
