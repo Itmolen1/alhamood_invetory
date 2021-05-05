@@ -15,5 +15,8 @@ class LoginLog extends Model
     protected $primaryKey = 'id';
     protected $table = 'login_logs';
 
-
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User','user_id','id');
+    }
 }

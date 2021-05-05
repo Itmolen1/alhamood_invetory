@@ -231,7 +231,7 @@
             </div>
         </div>
     </div>
-    <script>
+    {{--<script>
         $(document).on("focusout",'#paidAmount',function () {
             var payable = $('#price').val();
             var paying = $('#paidAmount').val();
@@ -245,7 +245,7 @@
                 delete paying;
             }
         });
-    </script>
+    </script>--}}
     <script>
         $(document).ready(function () {
             $('#already_exist').hide();

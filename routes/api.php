@@ -21,9 +21,10 @@ Route::post('customer/my_vehicles', 'api\customer\CustomerController@my_vehicles
 Route::post('customer/my_purchase/{page_no}/{page_size}', 'api\customer\CustomerController@my_purchase');
 Route::post('customer/my_purchase_by_vehicle', 'api\customer\CustomerController@my_purchase_by_vehicle');
 Route::post('customer/my_account_status', 'api\customer\CustomerController@my_account_status');
-Route::post('customer/my_payments', 'api\customer\CustomerController@my_payments');
-Route::post('customer/my_advances', 'api\customer\CustomerController@my_advances');
+Route::post('customer/my_payments/{page_no}/{page_size}', 'api\customer\CustomerController@my_payments');
+Route::post('customer/my_advances/{page_no}/{page_size}', 'api\customer\CustomerController@my_advances');
 Route::post('customer/my_account_statement', 'api\customer\CustomerController@my_account_statement');
+Route::post('customer/check_app_access_status', 'api\customer\CustomerController@check_app_access_status');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('Logout', 'api\UserController@logout');

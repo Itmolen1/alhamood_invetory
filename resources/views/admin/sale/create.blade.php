@@ -561,5 +561,14 @@
             }
         });
     </script>
+    <script>
+        $( "#cur_qty" ).focusin(function() {
+            $(this).css({"background-color": "orange"});
+        });
+        $( "#cur_qty" ).focusout(function() {
+            $(this).css({"background-color": "white"});
+        });
+    </script>
+    </script>
     <script src="{{ asset('admin_assets/assets/dist/invoice/invoice.js') }}"></script>
 @endsection

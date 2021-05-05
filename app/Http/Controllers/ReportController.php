@@ -294,4 +294,9 @@ class ReportController extends Controller
     {
         return $this->reportRepository->PrintDailyCashSummary($request);
     }
+
+    public function GetLoginActivity()
+    {
+        return $this->reportRepository->GetLoginActivity();
+    }
 }

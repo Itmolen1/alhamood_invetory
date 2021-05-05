@@ -39,7 +39,6 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-
         if ($request->expectsJson()) {
             $userResponse=new ServiceResponse();
             return Response([

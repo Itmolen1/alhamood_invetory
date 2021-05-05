@@ -169,7 +169,7 @@
                                 for (var i = 0; i < result.length; i++)
                                 {
                                     var registrationNumber='';
-                                    if(result[i].sale_details[0].vehicle.length===0)
+                                    if(result[i].sale_details[0].vehicle===null)
                                     {
                                         registrationNumber='initial';
                                     }

@@ -160,7 +160,7 @@
                                     vehicleDetails += '<option value="0">No Data</option>';
                                 }
                                 $("#vehicle_id").append(vehicleDetails);
-
+                                $("#vehicle_id").trigger("chosen:updated");
                             } else {
                                 alert(result);
                             }

@@ -12,6 +12,7 @@
                     <li class="border-bottom"><a href="{{ route('states.index') }}">States list</a></li>
                     <li class="border-bottom"><a href="{{ route('cities.index') }}">Cities list</a></li>
                     <li class="border-bottom"><a href="{{ route('regions.index') }}">Regions list</a></li>
+                    <li class="border-bottom"><a href="{{ route('GetLoginActivity') }}">Login Activity</a></li>
 
 {{--                    <li class="border-bottom"><a href="{{ route('units.index') }}">Units list</a></li>--}}
 {{--                    <li class="border-bottom"><a href="{{ route('products.index') }}">Products list</a></li>--}}
@@ -21,7 +22,6 @@
                         <li class="border-bottom"><a href="{{ route('companies.index') }}">Companies list</a></li>
                         <li class="border-bottom"><a href="{{ route('roles.index') }}">Roles list</a></li>
                         <li class="border-bottom"><a href="{{ route('banks.index') }}">Banks list</a></li>
-                        <li class="border-bottom"><a href="{{ route('banks.index') }}">Login Activity</a></li>
                     @endif
                     <li><a href="{{ route('payment_terms.index') }}">Payment Terms list</a></li>
                 </ul>
@@ -214,7 +214,10 @@
                                 <a href="{{ route('CashReport') }}">Cash Book</a>
                             </li>
                             <li class="border-bottom">
-                                <a href="{{ route('BankReport') }}">Bank Book</a>
+                                <a href="{{ route('Profit_loss') }}">Profit Loss Statement</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('Garage_value') }}">Garage Value</a>
                             </li>
                            {{-- <li class="border-bottom">
                                 <a href="{{ route('GeneralLedger') }}">General Ledger</a>
@@ -227,10 +230,7 @@
                             </li>--}}
                             @if(Session::get('role_name')=='superadmin')
                             <li class="border-bottom">
-                                <a href="{{ route('Profit_loss') }}">Profit Loss Statement</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('Garage_value') }}">Garage Value</a>
+                                <a href="{{ route('BankReport') }}">Bank Book</a>
                             </li>
                             @endif
                         </ul>

@@ -30,7 +30,7 @@ class CustomerController extends Controller
         {
             if($request['login_email']!='' and $request['password']!='')
             {
-                $result=Customer::select('id','Name','login_email')->where('login_email','=',$request['login_email'])->where('password','=',md5($request['password']))->first();
+                $result=Customer::select('id','Name','login_email','app_access')->where('login_email','=',$request['login_email'])->where('password','=',md5($request['password']))->first();
                 if($result)
                 {
                     Customer::where('id', $result->id)->update(array('password_last_updated' => date('Y-m-d h:i:s')));
@@ -158,7 +158,7 @@ class CustomerController extends Controller
             }
             elseif($request['customer_id']!='' &&  $request['fromDate']!='' && $request['toDate']!='')
             {
-                $result=Sale::select('id','customer_id','SaleDate','grandTotal','paidBalance','remainingBalance','IsPaid')->where('isActive','=',1)->where('customer_id','=',$request['customer_id'])->whereBetween('SaleDate', [$request['fromDate'], $request['toDate']])->with('sale_details')->get()->sortDesc()->forPage($page_no,$page_size);
+                $result=Sale::select('id','customer_id','SaleDate','grandTotal','paidBalance','remainingBalance','IsPaid')->where('isActive','=',1)->where('customer_id','=',$request['customer_id'])->whereBetween('SaleDate', [$request['fromDate'], $request['toDate']])->with(['sale_details.vehicle'=>function($q){$q->select('id','registrationNumber');}])->get()->sortDesc()->forPage($page_no,$page_size);
                 $final_array=array();
                 foreach ($result as $item)
                 {
@@ -266,13 +266,13 @@ class CustomerController extends Controller
         }
     }
 
-    public function my_payments(Request $request)
+    public function my_payments(Request $request,$page_no,$page_size)
     {
         try
         {
             if($request['customer_id']!='' &&  $request['fromDate']=='' && $request['toDate']=='')
             {
-                $result=PaymentReceive::select('id','paidAmount','amountInWords','payment_type','transferDate','ChequeNumber')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->get()->sortDesc();
+                $result=PaymentReceive::select('id','paidAmount','amountInWords','payment_type','transferDate','ChequeNumber','accountNumber')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->get()->sortDesc()->forPage($page_no,$page_size);
                 $final_array=array();
                 foreach ($result as $item)
                 {
@@ -289,7 +289,7 @@ class CustomerController extends Controller
             }
             elseif($request['customer_id']!='' &&  $request['fromDate']!='' && $request['toDate']!='')
             {
-                $result=PaymentReceive::select('id','paidAmount','amountInWords','payment_type','transferDate','ChequeNumber')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->whereBetween('transferDate', [$request['fromDate'], $request['toDate']])->get()->sortDesc();
+                $result=PaymentReceive::select('id','paidAmount','amountInWords','payment_type','transferDate','ChequeNumber','accountNumber')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->whereBetween('transferDate', [$request['fromDate'], $request['toDate']])->get()->sortDesc()->forPage($page_no,$page_size);
                 $final_array=array();
                 foreach ($result as $item)
                 {
@@ -315,13 +315,13 @@ class CustomerController extends Controller
         }
     }
 
-    public function my_advances(Request $request)
+    public function my_advances(Request $request,$page_no,$page_size)
     {
         try
         {
             if($request['customer_id']!='' &&  $request['fromDate']=='' && $request['toDate']=='')
             {
-                $result=CustomerAdvance::select('id','Amount','sumOf','paymentType','TransferDate','ChequeNumber','spentBalance','remainingBalance')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->get()->sortDesc();
+                $result=CustomerAdvance::select('id','Amount','sumOf','paymentType','TransferDate','ChequeNumber','spentBalance','remainingBalance','accountNumber')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->get()->sortDesc()->forPage($page_no,$page_size);
                 $final_array=array();
                 foreach ($result as $item)
                 {
@@ -338,7 +338,7 @@ class CustomerController extends Controller
             }
             elseif($request['customer_id']!='' &&  $request['fromDate']!='' && $request['toDate']!='')
             {
-                $result=CustomerAdvance::select('id','Amount','sumOf','paymentType','TransferDate','ChequeNumber','spentBalance','remainingBalance')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->whereBetween('transferDate', [$request['fromDate'], $request['toDate']])->get()->sortDesc();
+                $result=CustomerAdvance::select('id','Amount','sumOf','paymentType','TransferDate','ChequeNumber','spentBalance','remainingBalance','accountNumber')->where('isActive','=',1)->where('isPushed','=',1)->where('customer_id','=',$request['customer_id'])->whereBetween('transferDate', [$request['fromDate'], $request['toDate']])->get()->sortDesc()->forPage($page_no,$page_size);
                 $final_array=array();
                 foreach ($result as $item)
                 {
@@ -470,6 +470,33 @@ class CustomerController extends Controller
             else
             {
                 return $this->userResponse->Exception('something is wrong.');
+            }
+        }
+        catch (\Exception $ex)
+        {
+            Return $this->userResponse->Exception($ex);
+        }
+    }
+
+    public function check_app_access_status(Request $request)
+    {
+        try
+        {
+            if($request['customer_id']!='')
+            {
+                $result=Customer::select('app_access')->where('id','=',$request['customer_id'])->first();
+                if($result)
+                {
+                    return $this->userResponse->Success($result);
+                }
+                else
+                {
+                    return $this->userResponse->Exception('customer not found.');
+                }
+            }
+            else
+            {
+                return $this->userResponse->Exception('Something is wrong.');
             }
         }
         catch (\Exception $ex)

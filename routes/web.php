@@ -219,6 +219,8 @@ route::post('PrintInwardLoanStatement','ReportController@PrintInwardLoanStatemen
 route::get('GetOutwardLoanStatement','ReportController@GetOutwardLoanStatement')->name('GetOutwardLoanStatement');
 route::post('PrintOutwardLoanStatement','ReportController@PrintOutwardLoanStatement')->name('PrintOutwardLoanStatement');
 
+route::get('GetLoginActivity','ReportController@GetLoginActivity')->name('GetLoginActivity');
+route::post('PrintDailyCashSummary','ReportController@PrintDailyCashSummary')->name('PrintDailyCashSummary');
 });
 
 route::view('welcome','welcome');

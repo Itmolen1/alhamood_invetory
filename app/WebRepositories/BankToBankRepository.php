@@ -235,6 +235,7 @@ class BankToBankRepository implements IBankToBankRepositoryInterface
                 $bankTransaction->bank_id = $transaction->from_bank_id;
                 $bankTransaction->updateDescription = strip_tags($transaction->Reference);
                 $bankTransaction->save();
+                BankTransaction::where('id', array($bankTransaction->id))->delete();
 
                 // credit to bank account
                 $bankTransaction = BankTransaction::where(['bank_id'=> $transaction->to_bank_id])->get();
@@ -252,6 +253,7 @@ class BankToBankRepository implements IBankToBankRepositoryInterface
                 $bank_transaction->bank_id = $transaction->to_bank_id;
                 $bank_transaction->updateDescription = strip_tags($transaction->Reference);
                 $bank_transaction->save();
+                BankTransaction::where('id', array($bankTransaction->id))->delete();
             }
             // end reverse accounting //
 

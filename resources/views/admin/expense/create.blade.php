@@ -128,7 +128,7 @@
                                         </thead>
                                         <tbody id="newRow">
                                         <tr>
-                                            <td><input type="text" placeholder="" value="{{ $PadNumber }}" name="padNumber" class="padNumber form-control" autocomplete="off"></td>
+                                            <td><input type="number" placeholder="" value="{{ $PadNumber }}" name="padNumber" class="padNumber form-control" autocomplete="off"></td>
                                             <td>
                                                 <div class="form-group">
                                                     <select name="customer" class="form-control expense_category_id chosen-select">

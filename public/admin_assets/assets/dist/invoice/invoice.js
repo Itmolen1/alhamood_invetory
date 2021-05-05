@@ -186,6 +186,7 @@
         {
             var GTotal = 0.00;
             $('.cashPaid').val(GTotal);
+            $('.cashPaid').prop('readonly', true);
         }
     }
     /////////////// end of cash paid ////////////////////
