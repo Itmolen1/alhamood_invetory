@@ -141,7 +141,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="display: none;">
                                             <div class="form-group">
                                                 <label class="control-label">Receipt Number</label>
                                                 <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
@@ -151,8 +151,9 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="control-label">Cheque or Ref. Number ?</label>
+                                            <label class="control-label">Cheque or Ref. Number ? <span class="required">*</span></label>
                                             <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Cheque or Ref. Number">
+                                            <span class="text-danger" id="already_exist">Similar to this may exist please verify and proceed</span>
                                         </div>
 
                                         <div class="col-md-4">
@@ -236,12 +237,45 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#already_exist').hide();
+            $('#referenceNumber').keyup(function () {
+                var referenceNumber=0;
+                referenceNumber = $('#referenceNumber').val();
 
+                var data={referenceNumber:referenceNumber};
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ URL('CheckSupplierPaymentReferenceExist') }}",
+                    type: "post",
+                    data: data,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result === true)
+                        {
+                            $('#already_exist').show();
+                        }
+                        else
+                        {
+                            $('#already_exist').hide();
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            });
+
+        });
+    </script>
     <script type="text/javascript">
-
         $(document).ready(function () {
             $('.bankTransfer').hide();
-
         });
 
         $(document).on("change", '#paymentType', function () {
@@ -259,7 +293,6 @@
                 $('.bankTransfer').hide();
             }
         });
-
 
         jQuery(function($)
         {
@@ -311,7 +344,6 @@
             $('.supplier_id').change(function () {
                 var Id = 0;
                 Id = $(this).val();
-
                 if (Id > 0)
                 {
                     $.ajax({
@@ -333,7 +365,6 @@
                                         Details += '<td>' + result[i].purchase_details[0].createdDate + '<input type="hidden" class="purchase_id" name="purchase_id" value="' + result[i].id + '"/></td>';
                                         var value = result[i].grandTotal - result[i].paidBalance;
                                         Details += '<td><input type="checkbox" class="singlechkbox" name="username" value="' + parseFloat(value).toFixed(2) + '"/> </td>';
-
                                     }
                                 }
                                 else {

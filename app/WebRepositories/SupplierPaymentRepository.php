@@ -28,8 +28,8 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
                 ->addColumn('action', function ($data) {
                     //$button = '<a href="'.route('supplier_payments.show', $data->id).'"  class=" btn btn-info btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
                     $button = '<button class="btn btn-primary" onclick="show_detail(this.id)" type="button" id="show_'.$data->id.'">Show Details</button>';
-//                    $button .= '&nbsp;&nbsp;';
-//                    $button .= '<a href="'.route('supplier_payments.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button class="btn btn-danger" onclick="cancel_supplier_payment(this.id)" type="button" id="cancel_'.$data->id.'">Cancel</button>';
 //                    $button .='&nbsp;';
                     return $button;
                 })
@@ -72,7 +72,6 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
 
     public function store(Request $request)
     {
-
         $AllRequestCount = collect($request->Data)->count();
         if($AllRequestCount > 0) {
             $user_id = session('user_id');
@@ -196,6 +195,19 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         return view('admin.supplier_payment.show',compact('supplier_payment_details'));
     }
 
+    public function CheckSupplierPaymentReferenceExist($request)
+    {
+        $data = SupplierPayment::where('company_id',session('company_id'))->where('referenceNumber','like','%'.$request->referenceNumber.'%')->get();
+        if($data->first())
+        {
+            return Response()->json(true);
+        }
+        else
+        {
+            return Response()->json(false);
+        }
+    }
+
     public function getSupplierPaymentDetail($Id)
     {
         $payment=SupplierPayment::with(['supplier','supplier_payment_details.purchase','supplier_payment_details.purchase.purchase_details_without_trash'])->where('id',$Id)->first();
@@ -223,19 +235,102 @@ class SupplierPaymentRepository implements ISupplierPaymentRepositoryInterface
         return Response()->json($html);
     }
 
-    public function delete(Request $request, $Id)
+    public function cancelSupplierPayment($id)
     {
-        // TODO: Implement delete() method.
-    }
+        $response=false;
+        DB::transaction(function () use($id,&$response){
+            $company_id = session('company_id');
+            $payment=SupplierPayment::with(['supplier_payment_details'])->where('id',$id)->first();
+            if($payment)
+            {
+                foreach($payment->supplier_payment_details as $single)
+                {
+                    $purchase=Purchase::where('id',$single->purchase_id)->get()->first();
+                    $remaining_paid_balance=$purchase->paidBalance-$single->amountPaid;
+                    $updated_remaining_balance=$purchase->remainingBalance+$single->amountPaid;
 
-    public function restore($Id)
-    {
-        // TODO: Implement restore() method.
-    }
+                    if($remaining_paid_balance==0.00)
+                    {
+                        $is_paid=0;
+                        $is_partial_paid=0;
+                    }
+                    else
+                    {
+                        $is_paid=0;
+                        $is_partial_paid=1;
+                    }
+                    $purchase->update([
+                        'paidBalance'=>$remaining_paid_balance,
+                        'remainingBalance'=>$updated_remaining_balance,
+                        'Description'=>null,
+                        'IsPaid'=>$is_paid,
+                        'IsPartialPaid'=>$is_partial_paid,
+                    ]);
+                }
 
-    public function trashed()
-    {
-        // TODO: Implement trashed() method.
+                if($payment->isPushed==1)
+                {
+                    if($payment->payment_type == 'cash')
+                    {
+                        $description_string='SupplierCashPayment|'.$id;
+                        $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string)->get()->first();
+                        if($previous_probable_cash_entry)
+                        {
+                            $previous_probable_cash_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_cash_entry->delete();
+                        }
+
+                        $previous_probable_account_entry = AccountTransaction::where('company_id','=',$company_id)->where('Description','like',$description_string)->get()->first();
+                        if($previous_probable_account_entry)
+                        {
+                            $previous_probable_account_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_account_entry->delete();
+                        }
+                    }
+                    elseif ($payment->payment_type == 'bank')
+                    {
+                        $description_string='SupplierBankPayment|'.$id;
+                        $previous_probable_bank_entry = BankTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string)->get()->first();
+                        if($previous_probable_bank_entry)
+                        {
+                            $previous_probable_bank_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_bank_entry->delete();
+                        }
+
+                        $previous_probable_account_entry = AccountTransaction::where('company_id','=',$company_id)->where('Description','like',$description_string)->get()->first();
+                        if($previous_probable_account_entry)
+                        {
+                            $previous_probable_account_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_account_entry->delete();
+                        }
+                    }
+                    elseif ($payment->payment_type == 'cheque')
+                    {
+                        $description_string='SupplierChequePayment|'.$id;
+                        $previous_probable_bank_entry = BankTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string)->get()->first();
+                        if($previous_probable_bank_entry)
+                        {
+                            $previous_probable_bank_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_bank_entry->delete();
+                        }
+
+                        $previous_probable_account_entry = AccountTransaction::where('company_id','=',$company_id)->where('Description','like',$description_string)->get()->first();
+                        if($previous_probable_account_entry)
+                        {
+                            $previous_probable_account_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_account_entry->delete();
+                        }
+                    }
+                }
+                $payment->update(['user_id'=>session('user_id')]);
+                SupplierPaymentDetail::where('supplier_payment_id',$id)->update(['user_id'=>session('user_id')]);
+
+                SupplierPaymentDetail::where('supplier_payment_id', array($id))->delete();
+                SupplierPayment::where('id', array($id))->delete();
+                $response=true;
+            }
+        });
+        return Response()->json($response);
     }
 
     public function supplier_payments_push(Request $request, $Id)

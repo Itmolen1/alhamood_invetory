@@ -130,12 +130,15 @@ route::post('payment_receivesUpdate','PaymentReceiveController@payment_receivesU
 route::PUT('customer_payments_push/{Id}','PaymentReceiveController@customer_payments_push');
 route::get('customerSaleDetails/{Id}','SaleController@customerSaleDetails');
 route::get('getCustomerPaymentDetail/{Id}','PaymentReceiveController@getCustomerPaymentDetail');
+route::get('cancelCustomerPayment/{Id}','PaymentReceiveController@cancelCustomerPayment');
 route::POST('/CheckCustomerPaymentReferenceExist','PaymentReceiveController@CheckCustomerPaymentReferenceExist');
 
 route::resource('supplier_payments','SupplierPaymentController');
 route::PUT('supplier_payment_push/{Id}','SupplierPaymentController@supplier_payments_push');
 route::get('supplierSaleDetails/{Id}','PurchaseController@supplierSaleDetails');
 route::get('getSupplierPaymentDetail/{Id}','SupplierPaymentController@getSupplierPaymentDetail');
+route::get('cancelSupplierPayment/{Id}','SupplierPaymentController@cancelSupplierPayment');
+route::POST('/CheckSupplierPaymentReferenceExist','SupplierPaymentController@CheckSupplierPaymentReferenceExist');
 ////////reports////////////
 route::get('GetCustomerStatement','ReportController@GetCustomerStatement')->name('GetCustomerStatement');
 route::get('PrintCustomerStatement','ReportController@PrintCustomerStatement')->name('PrintCustomerStatement');

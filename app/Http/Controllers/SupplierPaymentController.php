@@ -59,4 +59,13 @@ class SupplierPaymentController extends Controller
         return $this->supplierPaymentRepository->supplier_payments_push($request, $Id);
     }
 
+    public function CheckSupplierPaymentReferenceExist(Request $request)
+    {
+        return $this->supplierPaymentRepository->CheckSupplierPaymentReferenceExist($request);
+    }
+
+    public function cancelSupplierPayment($id)
+    {
+        return $this->supplierPaymentRepository->cancelSupplierPayment($id);
+    }
 }

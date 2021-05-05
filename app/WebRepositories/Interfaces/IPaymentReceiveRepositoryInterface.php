@@ -21,11 +21,7 @@ interface IPaymentReceiveRepositoryInterface
 
     public function edit($Id);
 
-    public function delete(Request $request, $Id);
-
-    public function  restore($Id);
-
-    public function trashed();
+    public function cancelCustomerPayment($id);
 
     public function customer_payments_push(Request $request, $Id);
 

@@ -35,6 +35,7 @@
                                         <th>Date</th>
                                         <th>Amount</th>
                                         <th>Ref#</th>
+                                        <th>Payment Type</th>
                                         <th>Desc.</th>
                                         <th width="100">Push Payment</th>
                                         <th width="100">Action</th>
@@ -97,6 +98,47 @@
             }
         }
     </script>
+
+    <script>
+        function cancel_supplier_payment(e)
+        {
+            if(ConfirmDelete())
+            {
+                var id=e;
+                id=id.split('_');
+                id=id[1];
+                if (id > 0)
+                {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        url: "{{ URL('cancelSupplierPayment') }}/"+id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result === true)
+                            {
+                                alert('Payment Cancelled Successfully.');
+                                location.reload()
+                            }
+                            else
+                            {
+                                alert('Payment Cancellation Failed.');
+                                location.reload()
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+
     <script>
         $(document).ready(function () {
             $('#supplier_payments_table').dataTable({
@@ -126,6 +168,10 @@
                     {
                         data: 'referenceNumber',
                         name: 'referenceNumber'
+                    },
+                    {
+                        data: 'payment_type',
+                        name: 'payment_type'
                     },
                     {
                         data: 'Description',

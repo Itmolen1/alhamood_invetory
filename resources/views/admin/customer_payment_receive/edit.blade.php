@@ -119,7 +119,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="display: none;">
                                             <div class="form-group">
                                                 <input type="text" id="receiptNumber" name="receiptNumber" value="{{ $payment_receive->receiptNumber }}" class="form-control" placeholder="Receipt Number">
                                                 @if ($errors->has('receiptNumber'))

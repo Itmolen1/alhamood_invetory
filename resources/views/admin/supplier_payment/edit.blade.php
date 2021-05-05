@@ -67,7 +67,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-4" style="display: none;">
                                         <div class="form-group">
                                             <label class="control-label">Receipt Number</label>
                                             <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number" value="{{ $supplier_payment[0]->receiptNumber}}">

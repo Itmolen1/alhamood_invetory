@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 interface ISupplierPaymentRepositoryInterface
 {
-
     public function index();
 
     public function create();
@@ -21,12 +20,7 @@ interface ISupplierPaymentRepositoryInterface
 
     public function edit($Id);
 
-    public function delete(Request $request, $Id);
-
-    public function  restore($Id);
-
-    public function trashed();
+    public function cancelSupplierPayment($id);
 
     public function supplier_payments_push(Request $request, $Id);
-
 }

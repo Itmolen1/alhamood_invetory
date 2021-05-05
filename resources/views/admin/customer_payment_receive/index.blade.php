@@ -35,6 +35,8 @@
                                         <th>Transfer Date</th>
                                         <th>Amount</th>
                                         <th>REF#</th>
+                                        <th>Payment Type</th>
+                                        <th>Description</th>
                                         <th width="100">Push Payment</th>
                                         <th width="100">Action</th>
                                     </tr>
@@ -98,6 +100,45 @@
         }
     </script>
     <script>
+        function cancel_customer_payment(e)
+        {
+            if(ConfirmDelete())
+            {
+                var id=e;
+                id=id.split('_');
+                id=id[1];
+                if (id > 0)
+                {
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+                    $.ajax({
+                        url: "{{ URL('cancelCustomerPayment') }}/"+id,
+                        type: "get",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result === true)
+                            {
+                                alert('Payment Cancelled Successfully.');
+                                location.reload()
+                            }
+                            else
+                            {
+                                alert('Payment Cancellation Failed.');
+                                location.reload()
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+    <script>
         $(document).ready(function () {
             $('#customer_payments_table').dataTable({
                 processing: true,
@@ -126,6 +167,14 @@
                     {
                         data: 'referenceNumber',
                         name: 'referenceNumber'
+                    },
+                    {
+                        data: 'payment_type',
+                        name: 'payment_type'
+                    },
+                    {
+                        data: 'Description',
+                        name: 'Description'
                     },
                     {
                         data: 'push',

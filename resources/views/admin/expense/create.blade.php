@@ -120,7 +120,7 @@
                                         <tr>
                                             <th style="width: 150px">Voucher Number</th>
                                             <th style="width: 150px">Category  <span class="required">*</span></th>
-                                            <th style="width: 300px">Description</th>
+                                            <th style="width: 300px">Description <span class="required">*</span></th>
                                             <th style="width: 200px">Sub Total <span class="required">*</span></th>
                                             <th style="width: 120px">VAT <span class="required">*</span></th>
                                             <th style="width: 200px">Total Amount</th>
@@ -138,7 +138,7 @@
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td><input type="text" placeholder="Description" name="description" class="description form-control" autocomplete="off"></td>
+                                            <td><input type="text" id="description" placeholder="Description" name="description" class="description form-control" autocomplete="off"></td>
 
                                             <td><input type="text" id="sub_total" value="0.00" placeholder="subTotal" class="total form-control">
                                                 <input type="hidden" placeholder="Single Row Vat" value="0.00" class="singleRowVat form-control">
@@ -364,6 +364,16 @@
             }
             fields = '1';
             $("#sub_total").addClass("error");
+        }
+
+        if (DoTrim(document.getElementById('description').value).length == 0)
+        {
+            if(fields != 1)
+            {
+                document.getElementById("description").focus();
+            }
+            fields = '1';
+            $("#description").addClass("error");
         }
 
         if(DoTrim(document.getElementById('payment_type').value).length == 0)

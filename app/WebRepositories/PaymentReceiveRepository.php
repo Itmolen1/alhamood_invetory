@@ -14,7 +14,9 @@ use App\Models\PaymentReceiveDetail;
 use App\Models\PaymentType;
 use App\Models\Sale;
 use App\WebRepositories\Interfaces\IPaymentReceiveRepositoryInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
 {
@@ -26,7 +28,8 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
                 ->addColumn('action', function ($data) {
                     //$button = '<a href="'.route('payment_receives.show', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-bars"></i></a>';
                     $button = '<button class="btn btn-primary" onclick="show_detail(this.id)" type="button" id="show_'.$data->id.'">Show Details</button>';
-//                    $button .= '&nbsp;&nbsp;';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button class="btn btn-danger" onclick="cancel_customer_payment(this.id)" type="button" id="cancel_'.$data->id.'">Cancel</button>';
 //                    $button .= '<a href="'.route('payment_receives.edit', $data->id).'"  class=" btn btn-primary btn-sm"><i style="font-size: 20px" class="fa fa-edit"></i></a>';
 //                    $button .='&nbsp;';
                     return $button;
@@ -242,19 +245,102 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         return view('admin.customer_payment_receive.edit',compact('payment_receive','customers','banks'));
     }
 
-    public function delete(Request $request, $Id)
+    public function cancelCustomerPayment($id)
     {
-        // TODO: Implement delete() method.
-    }
+        $response=false;
+        DB::transaction(function () use($id,&$response){
+            $company_id = session('company_id');
+            $payment=PaymentReceive::with(['payment_receive_details'])->where('id',$id)->first();
+            if($payment)
+            {
+                foreach($payment->payment_receive_details as $single)
+                {
+                    $sales=Sale::where('id',$single->sale_id)->get()->first();
+                    $remaining_paid_balance=$sales->paidBalance-$single->amountPaid;
+                    $updated_remaining_balance=$sales->remainingBalance+$single->amountPaid;
 
-    public function restore($Id)
-    {
-        // TODO: Implement restore() method.
-    }
+                    if($remaining_paid_balance==0.00)
+                    {
+                        $is_paid=0;
+                        $is_partial_paid=0;
+                    }
+                    else
+                    {
+                        $is_paid=0;
+                        $is_partial_paid=1;
+                    }
+                    $sales->update([
+                        'paidBalance'=>$remaining_paid_balance,
+                        'remainingBalance'=>$updated_remaining_balance,
+                        'Description'=>null,
+                        'IsPaid'=>$is_paid,
+                        'IsPartialPaid'=>$is_partial_paid,
+                    ]);
+                }
 
-    public function trashed()
-    {
-        // TODO: Implement trashed() method.
+                if($payment->isPushed==1)
+                {
+                    if($payment->payment_type == 'cash')
+                    {
+                        $description_string='CustomerCashPayment|'.$id;
+                        $previous_probable_cash_entry = CashTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string)->get()->first();
+                        if($previous_probable_cash_entry)
+                        {
+                            $previous_probable_cash_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_cash_entry->delete();
+                        }
+
+                        $previous_probable_account_entry = AccountTransaction::where('company_id','=',$company_id)->where('Description','like',$description_string)->get()->first();
+                        if($previous_probable_account_entry)
+                        {
+                            $previous_probable_account_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_account_entry->delete();
+                        }
+                    }
+                    elseif ($payment->payment_type == 'bank')
+                    {
+                        $description_string='CustomerBankPayment|'.$id;
+                        $previous_probable_bank_entry = BankTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string)->get()->first();
+                        if($previous_probable_bank_entry)
+                        {
+                            $previous_probable_bank_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_bank_entry->delete();
+                        }
+
+                        $previous_probable_account_entry = AccountTransaction::where('company_id','=',$company_id)->where('Description','like',$description_string)->get()->first();
+                        if($previous_probable_account_entry)
+                        {
+                            $previous_probable_account_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_account_entry->delete();
+                        }
+                    }
+                    elseif ($payment->payment_type == 'cheque')
+                    {
+                        $description_string='CustomerChequePayment|'.$id;
+                        $previous_probable_bank_entry = BankTransaction::where('company_id','=',$company_id)->where('Details','like',$description_string)->get()->first();
+                        if($previous_probable_bank_entry)
+                        {
+                            $previous_probable_bank_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_bank_entry->delete();
+                        }
+
+                        $previous_probable_account_entry = AccountTransaction::where('company_id','=',$company_id)->where('Description','like',$description_string)->get()->first();
+                        if($previous_probable_account_entry)
+                        {
+                            $previous_probable_account_entry->update(['user_id'=>session('user_id')]);
+                            $previous_probable_account_entry->delete();
+                        }
+                    }
+                }
+                $payment->update(['user_id'=>session('user_id')]);
+                PaymentReceiveDetail::where('payment_receive_id',$id)->update(['user_id'=>session('user_id')]);
+
+                PaymentReceiveDetail::where('payment_receive_id', array($id))->delete();
+                PaymentReceive::where('id', array($id))->delete();
+                $response=true;
+            }
+        });
+        return Response()->json($response);
     }
 
     public function CheckCustomerPaymentReferenceExist($request)
@@ -262,161 +348,163 @@ class PaymentReceiveRepository implements IPaymentReceiveRepositoryInterface
         $data = PaymentReceive::where('company_id',session('company_id'))->where('referenceNumber','like','%'.$request->referenceNumber.'%')->get();
         if($data->first())
         {
-            $result=array('result'=>true);
             return Response()->json(true);
         }
         else
         {
-            $result=array('result'=>false);
             return Response()->json(false);
         }
     }
 
     public function customer_payments_push(Request $request, $Id)
     {
-        $payments = PaymentReceive::with('customer','payment_receive_details')->find($Id);
-
-        foreach($payments->payment_receive_details as $single)
+        DB::transaction(function () use($request,$Id)
         {
-            $sales=Sale::where('id',$single->sale_id)->get()->first();
-            $is_paid=0;
-            if($sales->remainingBalance-$single->amountPaid==0)
+            $payments = PaymentReceive::with('customer','payment_receive_details')->find($Id);
+
+            foreach($payments->payment_receive_details as $single)
             {
-                $is_paid=1;
-                $is_partial_paid=0;
+                $sales=Sale::where('id',$single->sale_id)->get()->first();
+                $is_paid=0;
+                if($sales->remainingBalance-$single->amountPaid==0)
+                {
+                    $is_paid=1;
+                    $is_partial_paid=0;
+                }
+                else
+                {
+                    $is_partial_paid=1;
+                }
+                $sales->update([
+                    'paidBalance'=>$sales->paidBalance+$single->amountPaid,
+                    'remainingBalance'=>$sales->remainingBalance-$single->amountPaid,
+                    'Description'=>$payments->referenceNumber,
+                    'IsPaid'=>$is_paid,
+                    'IsPartialPaid'=>$is_partial_paid,
+                ]);
             }
-            else
-            {
-                $is_partial_paid=1;
-            }
-            $sales->update([
-                'paidBalance'=>$sales->paidBalance+$single->amountPaid,
-                'remainingBalance'=>$sales->remainingBalance-$single->amountPaid,
-                'Description'=>$payments->referenceNumber,
-                'IsPaid'=>$is_paid,
-                'IsPartialPaid'=>$is_partial_paid,
+
+            $user_id = session('user_id');
+            $company_id = session('company_id');
+            $payments->update([
+                'isPushed' =>true,
+                'user_id' =>$user_id,
             ]);
-        }
 
-        $user_id = session('user_id');
-        $company_id = session('company_id');
-        $payments->update([
-            'isPushed' =>true,
-            'user_id' =>$user_id,
-        ]);
+            $accountTransaction_ref=0;
 
-        $accountTransaction_ref=0;
+            if($payments->payment_type == 'cash')
+            {
+                $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
+                $difference = $cashTransaction->last()->Differentiate;
+                $cash_transaction = new CashTransaction();
+                $cash_transaction->Reference=$Id;
+                $cash_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
+                $cash_transaction->Type='payment_receives';
+                $cash_transaction->Details='CustomerCashPayment|'.$Id;
+                $cash_transaction->Credit=0.00;
+                $cash_transaction->Debit=$payments->paidAmount;
+                $cash_transaction->Differentiate=$difference+$payments->paidAmount;
+                $cash_transaction->user_id = $user_id;
+                $cash_transaction->company_id = $company_id;
+                $cash_transaction->PadNumber = $payments->referenceNumber;
+                $cash_transaction->save();
 
-        if($payments->payment_type == 'cash')
-        {
-            $cashTransaction = CashTransaction::where(['company_id'=> $company_id])->get();
-            $difference = $cashTransaction->last()->Differentiate;
-            $cash_transaction = new CashTransaction();
-            $cash_transaction->Reference=$Id;
-            $cash_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
-            $cash_transaction->Type='payment_receives';
-            $cash_transaction->Details='CustomerCashPayment|'.$Id;
-            $cash_transaction->Credit=0.00;
-            $cash_transaction->Debit=$payments->paidAmount;
-            $cash_transaction->Differentiate=$difference+$payments->paidAmount;
-            $cash_transaction->user_id = $user_id;
-            $cash_transaction->company_id = $company_id;
-            $cash_transaction->PadNumber = $payments->referenceNumber;
-            $cash_transaction->save();
+                // start new entry
+                $accountTransaction = AccountTransaction::where(['customer_id'=> $payments->customer_id,])->get();
+                $last_closing=$accountTransaction->last()->Differentiate;
+                $AccData =
+                    [
+                        'customer_id' => $payments->customer_id,
+                        'Debit' => 0.00,
+                        'Credit' => $payments->paidAmount,
+                        'Differentiate' => $last_closing-$payments->paidAmount,
+                        'createdDate' => $payments->transferDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'CustomerCashPayment|'.$Id,
+                        'referenceNumber'=>$payments->referenceNumber,
+                    ];
+                $AccountTransactions = AccountTransaction::Create($AccData);
+                $accountTransaction_ref=$AccountTransactions->id;
+                // new entry done
+            }
+            elseif ($payments->payment_type == 'bank')
+            {
+                $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
+                $difference = $bankTransaction->last()->Differentiate;
+                $bank_transaction = new BankTransaction();
+                $bank_transaction->Reference=$Id;
+                $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
+                $bank_transaction->Type='payment_receives';
+                $bank_transaction->Details='CustomerBankPayment|'.$Id;
+                $bank_transaction->Credit=0.00;
+                $bank_transaction->Debit=$payments->paidAmount;
+                $bank_transaction->Differentiate=$difference+$payments->paidAmount;
+                $bank_transaction->user_id = $user_id;
+                $bank_transaction->company_id = $company_id;
+                $bank_transaction->bank_id = $payments->bank_id;
+                $bank_transaction->updateDescription = $payments->referenceNumber;
+                $bank_transaction->save();
 
-            // start new entry
-            $accountTransaction = AccountTransaction::where(['customer_id'=> $payments->customer_id,])->get();
-            $last_closing=$accountTransaction->last()->Differentiate;
-            $AccData =
-                [
-                    'customer_id' => $payments->customer_id,
-                    'Debit' => 0.00,
-                    'Credit' => $payments->paidAmount,
-                    'Differentiate' => $last_closing-$payments->paidAmount,
-                    'createdDate' => $payments->transferDate,
-                    'user_id' => $user_id,
-                    'company_id' => $company_id,
-                    'Description'=>'CustomerCashPayment|'.$Id,
-                    'referenceNumber'=>$payments->referenceNumber,
-                ];
-            $AccountTransactions = AccountTransaction::Create($AccData);
-            $accountTransaction_ref=$AccountTransactions->id;
-            // new entry done
-        }
-        elseif ($payments->payment_type == 'bank')
-        {
-            $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
-            $difference = $bankTransaction->last()->Differentiate;
-            $bank_transaction = new BankTransaction();
-            $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
-            $bank_transaction->Type='payment_receives';
-            $bank_transaction->Details='CustomerBankPayment|'.$Id;
-            $bank_transaction->Credit=0.00;
-            $bank_transaction->Debit=$payments->paidAmount;
-            $bank_transaction->Differentiate=$difference+$payments->paidAmount;
-            $bank_transaction->user_id = $user_id;
-            $bank_transaction->company_id = $company_id;
-            $bank_transaction->bank_id = $payments->bank_id;
-            $bank_transaction->updateDescription = $payments->referenceNumber;
-            $bank_transaction->save();
+                // start new entry
+                $accountTransaction = AccountTransaction::where(['customer_id'=> $payments->customer_id,])->get();
+                $last_closing=$accountTransaction->last()->Differentiate;
+                $AccData =
+                    [
+                        'customer_id' => $payments->customer_id,
+                        'Debit' => 0.00,
+                        'Credit' => $payments->paidAmount,
+                        'Differentiate' => $last_closing-$payments->paidAmount,
+                        'createdDate' => $payments->transferDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'CustomerBankPayment|'.$Id,
+                        'referenceNumber'=>$payments->referenceNumber,
+                    ];
+                $AccountTransactions = AccountTransaction::Create($AccData);
+                $accountTransaction_ref=$AccountTransactions->id;
+                // new entry done
+            }
+            elseif ($payments->payment_type == 'cheque')
+            {
+                $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
+                $difference = $bankTransaction->last()->Differentiate;
+                $bank_transaction = new BankTransaction();
+                $bank_transaction->Reference=$Id;
+                $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
+                $bank_transaction->Type='payment_receives';
+                $bank_transaction->Details='CustomerChequePayment|'.$Id;
+                $bank_transaction->Credit=0.00;
+                $bank_transaction->Debit=$payments->paidAmount;
+                $bank_transaction->Differentiate=$difference+$payments->paidAmount;
+                $bank_transaction->user_id = $user_id;
+                $bank_transaction->company_id = $company_id;
+                $bank_transaction->bank_id = $payments->bank_id;
+                $bank_transaction->updateDescription = $payments->referenceNumber;
+                $bank_transaction->save();
 
-            // start new entry
-            $accountTransaction = AccountTransaction::where(['customer_id'=> $payments->customer_id,])->get();
-            $last_closing=$accountTransaction->last()->Differentiate;
-            $AccData =
-                [
-                    'customer_id' => $payments->customer_id,
-                    'Debit' => 0.00,
-                    'Credit' => $payments->paidAmount,
-                    'Differentiate' => $last_closing-$payments->paidAmount,
-                    'createdDate' => $payments->transferDate,
-                    'user_id' => $user_id,
-                    'company_id' => $company_id,
-                    'Description'=>'CustomerBankPayment|'.$Id,
-                    'referenceNumber'=>$payments->referenceNumber,
-                ];
-            $AccountTransactions = AccountTransaction::Create($AccData);
-            $accountTransaction_ref=$AccountTransactions->id;
-            // new entry done
-        }
-        elseif ($payments->payment_type == 'cheque')
-        {
-            $bankTransaction = BankTransaction::where(['bank_id'=> $payments->bank_id])->get();
-            $difference = $bankTransaction->last()->Differentiate;
-            $bank_transaction = new BankTransaction();
-            $bank_transaction->Reference=$Id;
-            $bank_transaction->createdDate=$payments->transferDate ?? date('Y-m-d h:i:s');
-            $bank_transaction->Type='payment_receives';
-            $bank_transaction->Details='CustomerChequePayment|'.$Id;
-            $bank_transaction->Credit=0.00;
-            $bank_transaction->Debit=$payments->paidAmount;
-            $bank_transaction->Differentiate=$difference+$payments->paidAmount;
-            $bank_transaction->user_id = $user_id;
-            $bank_transaction->company_id = $company_id;
-            $bank_transaction->bank_id = $payments->bank_id;
-            $bank_transaction->updateDescription = $payments->referenceNumber;
-            $bank_transaction->save();
+                // start new entry
+                $accountTransaction = AccountTransaction::where(['customer_id'=> $payments->customer_id,])->get();
+                $last_closing=$accountTransaction->last()->Differentiate;
+                $AccData =
+                    [
+                        'customer_id' => $payments->customer_id,
+                        'Debit' => 0.00,
+                        'Credit' => $payments->paidAmount,
+                        'Differentiate' => $last_closing-$payments->paidAmount,
+                        'createdDate' => $payments->transferDate,
+                        'user_id' => $user_id,
+                        'company_id' => $company_id,
+                        'Description'=>'CustomerChequePayment|'.$Id,
+                        'referenceNumber'=>$payments->referenceNumber,
+                    ];
+                $AccountTransactions = AccountTransaction::Create($AccData);
+                $accountTransaction_ref=$AccountTransactions->id;
+                // new entry done
+            }
+        });
 
-            // start new entry
-            $accountTransaction = AccountTransaction::where(['customer_id'=> $payments->customer_id,])->get();
-            $last_closing=$accountTransaction->last()->Differentiate;
-            $AccData =
-                [
-                    'customer_id' => $payments->customer_id,
-                    'Debit' => 0.00,
-                    'Credit' => $payments->paidAmount,
-                    'Differentiate' => $last_closing-$payments->paidAmount,
-                    'createdDate' => $payments->transferDate,
-                    'user_id' => $user_id,
-                    'company_id' => $company_id,
-                    'Description'=>'CustomerChequePayment|'.$Id,
-                    'referenceNumber'=>$payments->referenceNumber,
-                ];
-            $AccountTransactions = AccountTransaction::Create($AccData);
-            $accountTransaction_ref=$AccountTransactions->id;
-            // new entry done
-        }
 
         //now since account is affected we need to auto pay same amount to sales entries only if last closing is positive value
 

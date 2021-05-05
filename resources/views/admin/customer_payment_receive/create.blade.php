@@ -138,7 +138,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="display: none;">
                                             <div class="form-group">
                                                 <label class="control-label">Receipt Number</label>
                                                 <input type="text" id="receiptNumber" name="receiptNumber" class="form-control" placeholder="Receipt Number">
@@ -148,7 +148,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="control-label">Cheque or Ref. Number ?</label>
+                                            <label class="control-label">Cheque or Ref. Number ? <span class="required">*</span></label>
                                             <input type="text" class="form-control" name="" id="referenceNumber" placeholder="Cheque or Ref. Number">
                                             <span class="text-danger" id="already_exist">Similar to this may exist please verify and proceed</span>
                                         </div>
@@ -209,7 +209,7 @@
                                     <div class="row">
                                         <div class="col-md-2 mt-2 pl-5">
                                             <div class="form-group">
-                                                <label class="control-label">Paid By :- <span class="required">*</span> </label>
+                                                <label class="control-label">Received By :- <span class="required">*</span> </label>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
